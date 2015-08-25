@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Parametros_signosDao">
+
+	<resultMap id="parametros_signosMap" type="parametros_signos">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo" property="codigo" />
+		<result column="nombre" property="nombre" />
+		<result column="sexo" property="sexo" />
+		<result column="medida_edad" property="medida_edad" />
+		<result column="edad_inferior" property="edad_inferior" />
+		<result column="edad_superior" property="edad_superior" />
+		<result column="frecuencia_cardiaca_inf" property="frecuencia_cardiaca_inf" />
+		<result column="frecuencia_cardiaca_sup" property="frecuencia_cardiaca_sup" />
+		<result column="frecuencia_respiratoria_inf" property="frecuencia_respiratoria_inf" />
+		<result column="frecuencia_respiratoria_sup" property="frecuencia_respiratoria_sup" />
+		<result column="temperatura_inf" property="temperatura_inf" />
+		<result column="temperatura_sup" property="temperatura_sup" />
+		<result column="ta_sistolica_inf" property="ta_sistolica_inf" />
+		<result column="ta_sistolica_sup" property="ta_sistolica_sup" />
+		<result column="ta_diastolica_inf" property="ta_diastolica_inf" />
+		<result column="ta_diastolica_sup" property="ta_diastolica_sup" />
+		<result column="creatinina_cerica_inf" property="creatinina_cerica_inf" />
+		<result column="creatinina_cerica_sup" property="creatinina_cerica_sup" />
+	</resultMap>
+
+	<insert id="crear" parameterType="parametros_signos">
+		insert into public.parametros_signos (codigo_empresa,codigo,
+		nombre,sexo,medida_edad,
+		edad_inferior,edad_superior,frecuencia_cardiaca_inf,
+		frecuencia_cardiaca_sup,frecuencia_respiratoria_inf,frecuencia_respiratoria_sup,
+		temperatura_inf,temperatura_sup,ta_sistolica_inf,
+		ta_sistolica_sup,ta_diastolica_inf,ta_diastolica_sup,
+		creatinina_cerica_inf,creatinina_cerica_sup)
+
+		values (#{codigo_empresa},#{codigo},
+		#{nombre},#{sexo},#{medida_edad},
+		#{edad_inferior},#{edad_superior},#{frecuencia_cardiaca_inf},
+		#{frecuencia_cardiaca_sup},#{frecuencia_respiratoria_inf},#{frecuencia_respiratoria_sup},
+		#{temperatura_inf},#{temperatura_sup},#{ta_sistolica_inf},
+		#{ta_sistolica_sup},#{ta_diastolica_inf},#{ta_diastolica_sup},
+		#{creatinina_cerica_inf},#{creatinina_cerica_sup})
+	</insert>
+
+	<update id="actualizar" parameterType="parametros_signos">
+		update public.parametros_signos set codigo_empresa = #{codigo_empresa},
+		codigo = #{codigo},nombre = #{nombre},
+		sexo = #{sexo},medida_edad = #{medida_edad},
+		edad_inferior = #{edad_inferior},edad_superior = #{edad_superior},
+		frecuencia_cardiaca_inf = #{frecuencia_cardiaca_inf},frecuencia_cardiaca_sup = #{frecuencia_cardiaca_sup},
+		frecuencia_respiratoria_inf = #{frecuencia_respiratoria_inf},frecuencia_respiratoria_sup = #{frecuencia_respiratoria_sup},
+		temperatura_inf = #{temperatura_inf},temperatura_sup = #{temperatura_sup},
+		ta_sistolica_inf = #{ta_sistolica_inf},ta_sistolica_sup = #{ta_sistolica_sup},
+		ta_diastolica_inf = #{ta_diastolica_inf},ta_diastolica_sup = #{ta_diastolica_sup},
+		creatinina_cerica_inf = #{creatinina_cerica_inf},creatinina_cerica_sup = #{creatinina_cerica_sup}
+		where codigo_empresa = #{codigo_empresa}
+		and codigo = #{codigo}
+	</update>
+
+	<select id="consultar" parameterType="parametros_signos" resultMap="parametros_signosMap">
+		select codigo_empresa,codigo,
+		nombre,sexo,medida_edad,edad_inferior,
+		edad_superior,frecuencia_cardiaca_inf,frecuencia_cardiaca_sup,frecuencia_respiratoria_inf,
+		frecuencia_respiratoria_sup,temperatura_inf,temperatura_sup,ta_sistolica_inf,
+		ta_sistolica_sup,ta_diastolica_inf,ta_diastolica_sup,creatinina_cerica_inf,
+		creatinina_cerica_sup
+		from public.parametros_signos where codigo_empresa = #{codigo_empresa}
+		and codigo = #{codigo}
+	</select>
+
+	<delete id="eliminar" parameterType="parametros_signos">
+		delete from public.parametros_signos
+		where codigo_empresa = #{codigo_empresa}
+		and codigo = #{codigo}
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="parametros_signosMap">
+		select codigo_empresa,codigo,
+		nombre,sexo,medida_edad,edad_inferior,
+		edad_superior,frecuencia_cardiaca_inf,frecuencia_cardiaca_sup,frecuencia_respiratoria_inf,
+		frecuencia_respiratoria_sup,temperatura_inf,temperatura_sup,ta_sistolica_inf,
+		ta_sistolica_sup,ta_diastolica_inf,ta_diastolica_sup,creatinina_cerica_inf,
+		creatinina_cerica_sup
+		from public.parametros_signos 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="sexo != null">
+				AND sexo = #{sexo}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		
+		order by codigo
+		
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from public.parametros_signos 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

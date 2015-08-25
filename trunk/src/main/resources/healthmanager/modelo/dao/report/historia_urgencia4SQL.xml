@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.historia_urgencia4Model">
+	<select id="select" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+		SELECT
+		impresion_diagnostica."cie_principal" AS
+		impresion_diagnostica_cie_principal,
+		impresion_diagnostica."tipo_principal" AS
+		impresion_diagnostica_tipo_principal,
+		impresion_diagnostica."cie_relacionado1" AS
+		impresion_diagnostica_cie_relacionado1,
+		impresion_diagnostica."tipo_relacionado1" AS
+		impresion_diagnostica_tipo_relacionado1,
+		impresion_diagnostica."cie_relacionado2" AS
+		impresion_diagnostica_cie_relacionado2,
+		impresion_diagnostica."tipo_relacionado2" AS
+		impresion_diagnostica_tipo_relacionado2,
+		impresion_diagnostica."cie_relacionado3" AS
+		impresion_diagnostica_cie_relacionado3,
+		impresion_diagnostica."tipo_relacionado3" AS
+		impresion_diagnostica_tipo_relacionado3,
+		impresion_diagnostica."finalidad_consulta" AS
+		impresion_diagnostica_finalidad_consulta,
+		impresion_diagnostica."causas_externas" AS
+		impresion_diagnostica_causas_externas,
+		impresion_diagnostica."cie_relacionado4" AS
+		impresion_diagnostica_cie_relacionado4,
+		impresion_diagnostica."tipo_relacionado4" AS
+		impresion_diagnostica_tipo_relacionado4,
+		hisc_urgencia.farmocologico AS
+		farmocologico,
+		hisc_urgencia.no_farmacologicos,
+		hisc_urgencia.educacion_paciente AS educacion_paciente,
+		hisc_urgencia.plan_seguimiento AS plan_seguimiento,
+		elemento.descripcion AS finalidad_consulta,
+		cie."nombre" AS principal,
+		cie1."nombre" AS relacionado1,
+		cie2."nombre" AS relacionado2,
+		cie3."nombre" AS relacionado3,
+		elemento1.descripcion AS causas_externa,
+		med.nombres,med.apellidos,med.firma,hisc_urgencia.codigo_prestador,med.registro_medico
+		FROM
+		"public"."hisc_urgencia" hisc_urgencia INNER JOIN
+		"public"."impresion_diagnostica"
+		impresion_diagnostica ON
+		hisc_urgencia."codigo_historia" =
+		impresion_diagnostica."codigo_historia"
+		INNER JOIN "public"."cie" cie
+		ON impresion_diagnostica."cie_principal" =
+		cie."codigo"
+		LEFT JOIN
+		"public".elemento elemento on elemento.codigo =
+		impresion_diagnostica.finalidad_consulta
+		AND elemento.tipo =
+		'finalidad_cons'
+		LEFT JOIN "public".elemento elemento1 on
+		elemento1.codigo =
+		impresion_diagnostica.causas_externas
+		AND
+		elemento1.tipo='causa_externa'
+		LEFT JOIN "public"."cie" AS cie1 ON
+		impresion_diagnostica."cie_relacionado1" = cie1."codigo"
+		LEFT JOIN
+		"public"."cie" AS cie2 ON
+		impresion_diagnostica."cie_relacionado2" =
+		cie2."codigo"
+		LEFT JOIN "public"."cie" AS cie3 ON
+		impresion_diagnostica."cie_relacionado3" = cie3."codigo"
+
+		LEFT JOIN
+		usuarios med on (med.codigo_empresa =
+		hisc_urgencia.codigo_empresa
+		and
+		med.codigo_sucursal = hisc_urgencia.codigo_sucursal
+		and med.codigo =
+		hisc_urgencia.codigo_prestador)
+
+		where
+		hisc_urgencia.codigo_empresa =
+		#{codigo_empresa}
+		and
+		hisc_urgencia.codigo_sucursal = #{codigo_sucursal}
+		and
+		hisc_urgencia.codigo_historia = #{nro_historia}
+
+	</select>
+</mapper>

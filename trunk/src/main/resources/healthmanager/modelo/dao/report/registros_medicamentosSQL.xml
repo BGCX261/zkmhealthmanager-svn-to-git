@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.registro_medicamentosModel">
+	<select id="select" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+		select
+		re.codigo_empresa,
+		re.codigo_sucursal,
+		re.codigo_receta,
+		re.consecutivo,
+		re.codigo_registro,
+		re.fecha_registro,
+		re.descripcion,
+		rr.creacion_date as fecha_orden,
+		drr.codigo_articulo,
+		'' as
+		nombre_medicamento,
+		drr.cantidad_recetada,
+		drr.posologia,
+		ev.descripcion
+		as via_administracion,
+		p.apellido1 as apellido1_paciente,
+		p.apellido2 as apellido2_paciente,
+		p.nombre1 as nombre1_paciente,
+		p.nombre2 as nombre2_paciente,
+		p.sexo,
+		p.fecha_nacimiento,
+		er.descripcion as regimen,
+		re.nro_documento,
+		re.nro_ingreso,
+		a.nombre as administradora,
+		u.codigo,
+		u.nombres as nombres_enfermera,
+		u.apellidos as apellidos_enfermera
+		from registro_medicamentos re
+		left JOIN detalle_receta_rips drr on
+		re.codigo_empresa = drr.codigo_empresa and
+		re.codigo_sucursal =
+		drr.codigo_sucursal and
+		re.codigo_receta = drr.codigo_receta and
+		re.consecutivo = drr.consecutivo
+		left join receta_rips rr on
+		re.codigo_empresa = rr.codigo_empresa and
+		re.codigo_sucursal =
+		rr.codigo_sucursal and
+		re.codigo_receta = rr.codigo_receta
+		left JOIN admision ad on
+		ad.codigo_empresa = re.codigo_empresa and
+		ad.codigo_sucursal = re.codigo_sucursal and
+		ad.nro_ingreso = re.nro_ingreso and
+		ad.nro_identificacion = re.nro_documento
+		left join paciente p on
+		p.codigo_empresa = re.codigo_empresa
+		and p.codigo_sucursal = re.codigo_sucursal
+		and p.nro_identificacion = re.nro_documento
+		left join administradora a on
+		a.codigo = ad.codigo_administradora
+		left JOIN usuarios u on
+		u.codigo_empresa = re.codigo_empresa and
+		u.codigo_sucursal = re.codigo_sucursal and
+		u.codigo = re.codigo_enfermera
+		left join elemento er on
+		er.codigo = p.tipo_usuario and
+		er.tipo = 'tipo_usuario'
+		LEFT JOIN elemento ev on
+		ev.codigo =
+		drr.via_administracion and
+		ev.tipo = 'via_administracion_receta'
+		where
+		re.codigo_empresa = #{codigo_empresa}
+		and re.codigo_sucursal = #{codigo_sucursal}
+		and re.nro_ingreso = #{nro_ingreso}
+		and re.nro_documento = #{nro_documento}
+		order by re.codigo_empresa,
+		re.codigo_sucursal,re.codigo_receta,re.consecutivo,re.codigo_registro
+	</select>
+</mapper>

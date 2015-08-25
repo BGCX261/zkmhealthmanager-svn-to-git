@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="tablas_crecimiento_desarrollo.modelo.dao.Tabla_anios_mesesDao">
+
+	<!--<typeAlias alias="tabla_anios_meses" type="tablas_crecimiento_desarrollo.modelo.bean.Tabla_anios_meses" />-->
+
+	<!--<mapper resource="tablas_crecimiento_desarrollo/modelo/dao/xml/tabla_anios_mesesSQL.xml" />-->
+
+	<resultMap id="tabla_anios_mesesMap" type="tabla_anios_meses">
+		<result column="sexo" property="sexo" />
+		<result column="tipo" property="tipo" />
+		<result column="edad_inicial" property="edad_inicial" />
+		<result column="tipo_edad_inicial" property="tipo_edad_inicial" />
+		<result column="edad_final" property="edad_final" />
+		<result column="tipo_edad_final" property="tipo_edad_final" />
+		<result column="anio_mes" property="anio_mes" />
+		<result column="mes" property="mes" />
+		<result column="l" property="l" />
+		<result column="m" property="m" />
+		<result column="s" property="s" />
+		<result column="sd" property="sd" />
+		<result column="menos_3_sd" property="menos_3_sd" />
+		<result column="menos_2_sd" property="menos_2_sd" />
+		<result column="menos_1_sd" property="menos_1_sd" />
+		<result column="media" property="media" />
+		<result column="mas_1_sd" property="mas_1_sd" />
+		<result column="mas_2_sd" property="mas_2_sd" />
+		<result column="mas_3_sd" property="mas_3_sd" />
+	</resultMap>
+
+	<insert id="crear" parameterType="tabla_anios_meses">
+		insert into tablas_crecimiento_desarrollo.tabla_anios_meses (sexo,tipo,
+		edad_inicial,tipo_edad_inicial,edad_final,
+		tipo_edad_final,anio_mes,mes,
+		l,m,s,
+		sd,menos_3_sd,menos_2_sd,
+		menos_1_sd,media,mas_1_sd,
+		mas_2_sd,mas_3_sd)
+
+		values (#{sexo},#{tipo},
+		#{edad_inicial},#{tipo_edad_inicial},#{edad_final},
+		#{tipo_edad_final},#{anio_mes},#{mes},
+		#{l},#{m},#{s},
+		#{sd},#{menos_3_sd},#{menos_2_sd},
+		#{menos_1_sd},#{media},#{mas_1_sd},
+		#{mas_2_sd},#{mas_3_sd})
+	</insert>
+
+	<update id="actualizar" parameterType="tabla_anios_meses">
+		update tablas_crecimiento_desarrollo.tabla_anios_meses set sexo = #{sexo},
+		tipo = #{tipo},edad_inicial = #{edad_inicial},
+		tipo_edad_inicial = #{tipo_edad_inicial},edad_final = #{edad_final},
+		tipo_edad_final = #{tipo_edad_final},anio_mes = #{anio_mes},
+		mes = #{mes},l = #{l},
+		m = #{m},s = #{s},
+		sd = #{sd},menos_3_sd = #{menos_3_sd},
+		menos_2_sd = #{menos_2_sd},menos_1_sd = #{menos_1_sd},
+		media = #{media},mas_1_sd = #{mas_1_sd},
+		mas_2_sd = #{mas_2_sd},mas_3_sd = #{mas_3_sd}
+		where 	</update>
+
+	<select id="consultar" parameterType="tabla_anios_meses" resultMap="tabla_anios_mesesMap">
+		select sexo,tipo,
+		edad_inicial,tipo_edad_inicial,edad_final,tipo_edad_final,
+		anio_mes,mes,l,m,
+		s,sd,menos_3_sd,menos_2_sd,
+		menos_1_sd,media,mas_1_sd,mas_2_sd,
+		mas_3_sd
+		from tablas_crecimiento_desarrollo.tabla_anios_meses 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="sexo != null">
+			    AND sexo = #{sexo}
+			</if>
+			<if test="tipo != null">
+			   AND tipo = #{tipo}
+			</if>
+			<if test="edad_inicial != null">
+			   AND edad_inicial = #{edad_inicial}
+			</if>
+			<if test="edad_final != null">
+			    AND edad_final = #{edad_final}
+			</if>
+			<if test="anio_mes != null">
+			    AND anio_mes = #{anio_mes}
+			</if>
+			<if test="mes != null">
+			    AND mes = #{mes}
+			</if>
+		</trim>
+		</select>
+
+	<delete id="eliminar" parameterType="tabla_anios_meses">
+		delete from tablas_crecimiento_desarrollo.tabla_anios_meses
+		where 	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="tabla_anios_mesesMap">
+		select sexo,tipo,
+		edad_inicial,tipo_edad_inicial,edad_final,tipo_edad_final,
+		anio_mes,mes,l,m,
+		s,sd,menos_3_sd,menos_2_sd,
+		menos_1_sd,media,mas_1_sd,mas_2_sd,
+		mas_3_sd
+		from tablas_crecimiento_desarrollo.tabla_anios_meses 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+			<if test="sexo != null">
+			    AND sexo = #{sexo}
+			</if>
+			<if test="tipo != null">
+			   AND tipo = #{tipo}
+			</if>
+			<if test="edad_inicial != null">
+			   AND edad_inicial = ${edad_inicial}
+			</if>
+			<if test="edad_final != null">
+			    AND edad_final = ${edad_final}
+			</if>
+			<if test="anio_mes != null">
+			    AND anio_mes = #{anio_mes}
+			</if>
+			<if test="mes != null">
+			    AND mes = #{mes}
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from tablas_crecimiento_desarrollo.tabla_anios_meses 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

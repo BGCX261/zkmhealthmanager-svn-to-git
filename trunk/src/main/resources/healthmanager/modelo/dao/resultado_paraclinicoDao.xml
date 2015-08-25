@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Resultado_paraclinicoDao">
+
+	<!--<typeAlias alias="resultado_paraclinico" type="healthmanager.modelo.bean.Resultado_paraclinico" />-->
+
+	<!--<mapper resource="healthmanager/modelo/dao/xml/resultado_paraclinicoSQL.xml" />-->
+
+	<resultMap id="resultado_paraclinicoMap" type="resultado_paraclinico">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="codigo_historia" property="codigo_historia" />
+		<result column="consecutivo" property="consecutivo" />
+		<result column="codigo_paraclinico" property="codigo_paraclinico" />
+		<result column="fecha" property="fecha" />
+		<result column="resultado" property="resultado" />
+		<result column="examen" property="examen" />
+	</resultMap>
+
+	<insert id="crear" parameterType="resultado_paraclinico">
+		insert into public.resultado_paraclinico (codigo_empresa,codigo_sucursal,
+		codigo_historia,consecutivo,codigo_paraclinico,
+		fecha,resultado,examen)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{codigo_historia},#{consecutivo},#{codigo_paraclinico},
+		#{fecha},#{resultado}, #{examen})
+	</insert>
+
+	<update id="actualizar" parameterType="resultado_paraclinico">
+		update public.resultado_paraclinico set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},codigo_historia = #{codigo_historia},
+		consecutivo = #{consecutivo},codigo_paraclinico = #{codigo_paraclinico},
+		fecha = #{fecha},resultado = #{resultado},examen = #{examen}
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and codigo_historia = #{codigo_historia}
+		and consecutivo = #{consecutivo}
+	</update>
+
+	<select id="consultar" parameterType="resultado_paraclinico" resultMap="resultado_paraclinicoMap">
+		select codigo_empresa,codigo_sucursal,
+		codigo_historia,consecutivo,codigo_paraclinico,fecha,
+		resultado, examen
+		from public.resultado_paraclinico where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_historia = #{codigo_historia}
+		and consecutivo = #{consecutivo}
+	</select>
+
+	<delete id="eliminar" parameterType="resultado_paraclinico">
+		delete from public.resultado_paraclinico
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_historia = #{codigo_historia}
+		and consecutivo = #{consecutivo}
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="resultado_paraclinicoMap">
+		select rp.codigo_empresa,rp.codigo_sucursal,
+		rp.codigo_historia,rp.consecutivo,rp.codigo_paraclinico,rp.fecha,
+		rp.resultado,rp.examen
+		from public.resultado_paraclinico rp
+		<if test="tabla_historia != null">
+		left join public.${tabla_historia} th on (th.codigo_empresa = rp.codigo_empresa
+		and th.codigo_sucursal = rp.codigo_sucursal and th.codigo_historia = rp.codigo_historia)
+		</if>
+		
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND rp.codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND rp.codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="identificacion != null">
+				AND th.identificacion = #{identificacion}
+			</if>
+			<if test="codigo_paraclinico != null">
+			AND rp.codigo_paraclinico = #{codigo_paraclinico}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		
+		order by rp.codigo_historia,rp.fecha DESC,consecutivo desc
+		
+		<if test="limite_paginado != null">
+			${limite_paginado}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from public.resultado_paraclinico 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+	
+	<select id="obtenerConsecutivo" resultType="java.lang.Integer">
+		SELECT (max(cast(consecutivo as integer)) + 1) as consecutivo
+		from resultado_paraclinico where codigo_empresa  = #{codigo_empresa} 
+		and codigo_sucursal = #{codigo_sucursal}
+	</select>
+
+</mapper>

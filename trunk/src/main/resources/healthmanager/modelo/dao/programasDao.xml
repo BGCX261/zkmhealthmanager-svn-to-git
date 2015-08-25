@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.ProgramasDao">
+
+	<resultMap id="programasMap" type="programas">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="codigo_programa" property="codigo_programa" />
+		<result column="nombre_programa" property="nombre_programa" />
+		<result column="via_ingreso" property="via_ingreso" />
+		<result column="tipo_programa" property="tipo_programa" />
+		<result column="facturacion_recuperacion" property="facturacion_recuperacion" />
+	</resultMap>
+
+	<insert id="crear" parameterType="programas">
+		insert into public.programas (codigo_empresa,codigo_sucursal,
+		codigo_programa,nombre_programa,via_ingreso,
+		tipo_programa,facturacion_recuperacion)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{codigo_programa},#{nombre_programa},#{via_ingreso},
+		#{tipo_programa},#{facturacion_recuperacion})
+	</insert>
+
+	<update id="actualizar" parameterType="programas">
+		update public.programas set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},codigo_programa = #{codigo_programa},
+		nombre_programa = #{nombre_programa},via_ingreso = #{via_ingreso},
+		tipo_programa = #{tipo_programa},facturacion_recuperacion = #{facturacion_recuperacion}
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and codigo_programa = #{codigo_programa}
+	</update>
+
+	<select id="consultar" parameterType="programas" resultMap="programasMap">
+		select codigo_empresa,codigo_sucursal,
+		codigo_programa,nombre_programa,via_ingreso,tipo_programa,
+		facturacion_recuperacion
+		from public.programas where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_programa = #{codigo_programa}
+	</select>
+
+	<delete id="eliminar" parameterType="programas">
+		delete from public.programas
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_programa = #{codigo_programa}
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="programasMap">
+		select codigo_empresa,codigo_sucursal,
+		codigo_programa,nombre_programa,via_ingreso,tipo_programa,
+		facturacion_recuperacion
+		from public.programas 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="codigo_programa != null">
+			AND lower(codigo_programa) like '%${codigo_programa}%'
+			</if>
+			<if test="nombre_programa != null">
+			AND lower(nombre_programa) like '%${nombre_programa}%'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from public.programas 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

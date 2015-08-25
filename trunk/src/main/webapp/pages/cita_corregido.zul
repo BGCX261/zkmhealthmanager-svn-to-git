@@ -1,0 +1,436 @@
+<?page title="Citas medicas" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formCitas" width="100%" height="95%"
+		use="healthmanager.controller.Citas_corregidoAction">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+		<borderlayout width="100%" height="100%" id="groupboxEditar"
+			visible="true">
+			<north border="none">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<textbox id="tbxCodigo_centro" value=""
+						visible="false" />
+
+					<toolbarbutton image="/images/New16.gif"
+						label="Nueva Cita" onClick='formCitas.limpiarDatos()' id="btNew" />
+
+
+					<space />
+					<toolbarbutton image="/images/generar.png"
+						label="Ver registros" onClick='formCitas.abrirWindowHistorial()'
+						id="btGenerar" />
+
+					<space />
+					<toolbarbutton image="/images/editar.gif"
+						label="Editar registros"
+						onClick='formCitas.editarCitas_paciente()' id="btAbrir" />
+
+
+					<toolbarbutton image="/images/quit.png"
+						label="Atras" visible="false" onClick='formCitas.detach()'
+						id="btAtras" />
+
+					<space />
+					<toolbarbutton image="/images/add_perfil.png"
+						label="Registrar Paciente" onClick='formCitas.registrarPaciente()'
+						id="btAgregarPaciente" />
+				</toolbar>
+			</north>
+
+			<west title="Datos de la cita" width="500px"
+				autoscroll="true" id="westDatos_cita">
+				<grid>
+					<columns visible="false">
+						<column label="" width="120px" />
+						<column width="120px" />
+						<column />
+						<column />
+					</columns>
+					<rows>
+						<row>
+							<cell>
+								<label value="Paciente:" />
+								<toolbarbutton id="btnLimpiarPaciente"
+									image="/images/borrar.gif" />
+							</cell>
+							<cell>
+								<bandboxRegistros
+									id="tbxNro_identificacion" widthBandbox="110px"
+									widthListbox="650px" heightListbox="300px"
+									columnas="Tipo Ident#65px|Identificación|Nombres|Apellidos" />
+							</cell>
+							<cell colspan="2">
+								<textbox id="tbxNomPaciente" hflex="1"
+									style="text-transform:uppercase;" readonly="true" />
+							</cell>
+						</row>
+						<row>
+							<cell>
+								<label value="Administradora:" />
+							</cell>
+							<cell>
+								<textbox id="tbxCodigoAseguradora"
+									hflex="1" style="text-transform:uppercase" readonly="true" />
+							</cell>
+							<cell colspan="2">
+								<textbox id="tbxInfoAseguradora"
+									hflex="1" style="text-transform:uppercase" readonly="true" />
+							</cell>
+						</row>
+
+						<row id="rowContratos" >
+							<cell>
+								<label value="Contrato:" />
+							</cell>
+							<cell colspan="3">
+								<textbox readonly="true"
+									id="tbxContrato" hflex="1" style="font-weight:bold" />
+							</cell>
+						</row>
+
+						<row>
+							<cell>
+								<label value="Dirección:" />
+							</cell>
+							<cell colspan="3">
+								<textbox id="tbxDireccion" hflex="1"
+									style="text-transform:uppercase" />
+							</cell>
+						</row>
+
+						<row>
+							<cell>
+								<label value="Centro atención:" />
+							</cell>
+							<cell colspan="3">
+								<textbox id="tbxCentro_atencion"
+									hflex="1" style="text-transform:uppercase" readonly="true" />
+							</cell>
+						</row>
+
+						<row>
+							<cell>
+								<label value="Sexo: " />
+							</cell>
+							<cell>
+								<textbox id="tbxSexo" hflex="1"
+									style="text-transform:uppercase" readonly="true" />
+							</cell>
+							<cell>
+								<label value="Edad:" />
+							</cell>
+							<cell>
+								<textbox id="tbxEdad" hflex="1"
+									style="text-transform:uppercase" readonly="true" />
+							</cell>
+						</row>
+
+
+						<row>
+							<cell>
+								<checkbox id="chkAplica_tel"
+									label="Teléfono: " checked="true"
+									onCheck="formCitas.onCheckAplicaTel(dbxTel)"
+									tooltiptext="Deseleccione esta opción en caso de que el paciente no disponga de teléfono" />
+							</cell>
+							<cell>
+								<doublebox id="dbxTel" hflex="1"
+									locale="en" format="####" />
+							</cell>
+							<cell>
+								<label value="Medio solicitud:" />
+							</cell>
+							<cell>
+								<listbox id="lbxMedio_solicitud"
+									hflex="1" mold="select" name="medio_solicitud" />
+							</cell>
+						</row>
+
+						<row>
+							<cell>
+								<label value="Tipo consulta:"
+									style="color:red" />
+							</cell>
+							<cell colspan="2">
+								<listbox id="lbxVia_ingreso"
+									name="via_ingreso" mold="select" sclass="combobox" hflex="1"
+									disabled="true"
+									onSelect="formCitas.seleccionarTipo_consulta();" />
+							</cell>
+							<cell>
+								<listbox id="lbxTipo_cita"
+									tooltiptext="Tipo de cita" disabled="true" name="tipo_cita"
+									mold="select" hflex="1" sclass="combobox" />
+							</cell>
+						</row>
+
+						<row id="rowPrestador">
+							<cell>
+								<label value="Prestador:" />
+							</cell>
+							<cell>
+								<bandboxRegistros
+									id="tbxCodigo_prestador" widthBandbox="70%"
+									widthListbox="750px" heightListbox="300px"
+									columnas="Identificación#100px|Nombres y apellidos|Tipo#90px|Citas del días#90px|Citas asignadas#95px|Citas pendientes#95px" />
+							</cell>
+							<cell colspan="2">
+								<textbox id="tbxNomPrestador" hflex="1"
+									style="text-transform:uppercase" readonly="true" />
+								<toolbarbutton id="btnLimpiarPrestador"
+									image="/images/borrar.gif" />
+							</cell>
+						</row>
+
+						<row>
+							<cell>
+								<label value="Fecha solicitada:"
+									style="color:red" />
+							</cell>
+							<cell>
+								<datebox id="dtbxFecha_solicitada"
+									format="yyyy-MM-dd" hflex="1"
+									onChange="formCitas.onChangeFechaSolicitud();
+									formCitas.limpiarCalendarioCitas()" />
+							</cell>
+						</row>
+
+						<row>
+							<cell>
+								<label value="Fecha de busqueda"
+									style="color:blue" />
+							</cell>
+							<cell>
+								<datebox id="dtbxFecha_busqueda"
+									format="yyyy-MM-dd" width="110px" visible="true"
+									onChange="formCitas.limpiarCalendarioCitas()" />
+							</cell>
+
+							<cell colspan="2">
+								<toolbarbutton label="Consultar"
+									image="/images/Magnifier.gif"
+									onClick="formCitas.cargarCalendarioCitas()"
+									tooltiptext="Buscar Citas medicas para esta fecha"
+									visible="true" />
+							</cell>
+						</row>
+
+
+						<row id="rowEspecialidad" visible="false">
+							<cell>
+								<label value="Especialidad" />
+							</cell>
+							<cell colspan="3">
+								<textbox id="tbxEspecialidad" hflex="1"
+									style="text-transform:uppercase" readonly="true" />
+							</cell>
+						</row>
+
+						<row>
+							<cell valign="middle">
+								<label value="Acompañante: " />
+								<toolbarbutton
+									image="/images/info_icon.png" visible="true"
+									popup="popupAuxiliar" />
+							</cell>
+							<cell colspan="3">
+								<textbox id="tbxAcompaniante" hflex="1"
+									style="text-transform:uppercase"
+									tooltiptext="Nombres del acompañante" />
+								<space />
+								<textbox id="tbxApellidos_acomp"
+									hflex="1" style="text-transform:uppercase"
+									tooltiptext="Apellidos del acompañante" />
+							</cell>
+						</row>
+
+						<row>
+							<cell>
+								<label value="Nro de Cédula: " />
+							</cell>
+							<cell>
+								<textbox hflex="1"
+									style="text-transform:uppercase" id="tbxCedula_acomp"
+									maxlength="15" />
+							</cell>
+							<cell>
+								<label value="Teléfono: " />
+							</cell>
+							<cell>
+								<textbox hflex="1"
+									id="tbxTel_acompaniante" style="text-transform:uppercase"
+									maxlength="10" />
+							</cell>
+						</row>
+
+						<row>
+							<cell>
+								<label value="Relación: " />
+							</cell>
+							<cell colspan="2">
+								<listbox id="lbxRelacion"
+									name="relacion_acomp" mold="select" hflex="1" sclass="combobox"
+									onSelect="formCitas.onSeleccionarRelacion()" />
+							</cell>
+							<cell>
+								<textbox hflex="1" visible="false"
+									id="tbxOtro_acompaniante" style="text-transform:uppercase" />
+							</cell>
+						</row>
+					</rows>
+
+				</grid>
+
+
+			</west>
+
+
+			<center autoscroll="true" border="none">
+				<div height="100%">
+					<listbox id="listboxCitas" multiple="false"
+						checkmark="false" vflex="1" mold="paging" pageSize="20">
+						<auxhead>
+							<auxheader id="auxheaderCitas"
+								colspan="4">
+								<hlayout valign="middle">
+									<label id="labelProgramacion_citas"
+										value="LISTADO DE PROGRAMACIÓN DE CITAS"
+										style="font-weight:bold" />
+									<space />
+									<toolbarbutton
+										image="/images/configuracion_mini.png" label="Estados"
+										onClick='popupEstados.open(self,"end_after")' />
+								</hlayout>
+							</auxheader>
+						</auxhead>
+						<listhead>
+							<listheader label="Estado" width="80px" />
+							<listheader label="Fecha" width="200px" />
+							<listheader label="Prestador" />
+							<listheader label="Consultorio" />
+						</listhead>
+					</listbox>
+
+					<listbox id="listboxLaboratorios" multiple="false"
+						checkmark="false" vflex="1" mold="paging" pageSize="20"
+						visible="false">
+						<auxhead>
+							<auxheader colspan="1">
+								<hlayout valign="middle">
+									<label
+										value="LISTADO DE PROGRAMACIÓN DE CITAS DE LABOTARIOS"
+										style="font-weight:bold" />
+									<space width="50px" />
+									<label
+										value="fecha final de busqueda" />
+									<datebox id="dtbxFecha_final2"
+										format="yyyy-MM-dd" width="110px"
+										onChange="formCitas.cargarCalendarioCitas()" />
+								</hlayout>
+							</auxheader>
+						</auxhead>
+						<listhead>
+							<listheader label="Fecha de la cita" />
+						</listhead>
+					</listbox>
+
+				</div>
+				<zscript>
+						<![CDATA[
+	public void aplicaAcompaniante(boolean acompaniante) {
+		if (!acompaniante) {
+			tbxAcompaniante.setReadonly(true);
+			tbxAcompaniante.setValue("N/A");
+			tbxTel_acompaniante.setReadonly(true);
+			tbxTel_acompaniante.setText("N/A");
+			tbxApellidos_acomp.setReadonly(true);
+			tbxApellidos_acomp.setValue("N/A");
+			tbxCedula_acomp.setReadonly(true);
+			tbxCedula_acomp.setText("N/A");
+			lbxRelacion.setDisabled(true);
+			com.framework.util.Utilidades.seleccionarListitem(lbxRelacion, "9");
+			//		com.framework.notificaciones.Notificaciones.mostrarNotificacionInformacion("Información", "El número 999 significa que no aplica", 3000);
+		} else {
+			tbxAcompaniante.setReadonly(false);
+			if (tbxAcompaniante.getValue().startsWith("N/A")) {
+				tbxAcompaniante.setValue("");
+			}
+			tbxTel_acompaniante.setReadonly(false);
+			if (tbxTel_acompaniante.getText().isEmpty()
+					|| tbxTel_acompaniante.getText().equals("N/A")) {
+				tbxTel_acompaniante.setValue("");
+			}
+			tbxApellidos_acomp.setReadonly(false);
+			if (tbxApellidos_acomp.getValue().startsWith("N/A")) {
+				tbxApellidos_acomp.setValue("");
+			}
+			tbxCedula_acomp.setReadonly(false);
+			if (tbxCedula_acomp.getText().isEmpty()
+					|| tbxCedula_acomp.getText().equals("N/A")) {
+				tbxCedula_acomp.setText("");
+			}
+			lbxRelacion.setDisabled(false);
+			com.framework.util.Utilidades.seleccionarListitem(lbxRelacion, "");
+		}
+		popupAuxiliar.close();
+	}
+]]>
+                </zscript>
+
+			</center>
+		</borderlayout>
+
+		<popup id="popupAuxiliar">
+			<div>
+				<toolbar>
+					<toolbarbutton label="No Aplica (N/A)"
+						image="/images/estado_error.gif"
+						onClick="aplicaAcompaniante(false)" />
+					<space />
+					<toolbarbutton label="Si Aplica"
+						image="/images/ok.jpg" onClick="aplicaAcompaniante(true)" />
+				</toolbar>
+			</div>
+		</popup>
+
+		<popup id="popupEstados">
+			<listbox id="listboxEstados" multiple="true"
+				checkmark="true" width="155px">
+				<custom-attributes org.zkoss.zul.listbox.rod="true" />
+				<auxhead>
+					<auxheader colspan="1" valign="middle">
+						<label style="font-weight:bold" value="Estados" />
+						<toolbarbutton label="X"
+							style="color:red;float:right;font-weight:bold"
+							tooltiptext="Cerrar" onClick="popupEstados.close()" />
+					</auxheader>
+				</auxhead>
+				<listhead>
+					<listheader label="Estado" />
+				</listhead>
+				<listfoot>
+					<listfooter span="2" align="right">
+						<toolbarbutton label="Consultar por estados"
+							image="/images/Magnifier.gif"
+							onClick="formCitas.cargarCalendarioCitas()"
+							tooltiptext="Consultar por estados" />
+					</listfooter>
+				</listfoot>
+			</listbox>
+		</popup>
+
+	</window>
+</zk>

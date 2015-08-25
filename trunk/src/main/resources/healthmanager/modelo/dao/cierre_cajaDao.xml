@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Cierre_cajaDao">
+
+	<resultMap id="cierre_cajaMap" type="cierre_caja">
+	
+		<result column="id" property="id" />
+		<result column="fecha_inicio" property="fecha_inicio" />
+		<result column="fecha_fin" property="fecha_fin" />
+		<result column="codigo_centro" property="codigo_centro" />
+		<result column="codigo_usuario" property="codigo_usuario" />	
+		<result column="creacion_date" property="creacion_date" />
+		<result column="creacion_user" property="creacion_user" />			
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="ultimo_update" property="ultimo_update"/>
+		<result column="ultimo_user" property="ultimo_user"/>
+			<result column="valor_total" property="valor_total"/>
+	
+		
+	</resultMap>
+
+	<insert id="crear" parameterType="cierre_caja">
+	<selectKey keyProperty="id" resultType="java.lang.Long" >
+	    
+		insert into public.cierre_caja(fecha_inicio,fecha_fin,
+		codigo_centro,"codigo_usuario",creacion_date,
+		creacion_user,codigo_sucursal,codigo_empresa,ultimo_update,ultimo_user,valor_total)
+
+		values (#{fecha_inicio},#{fecha_fin},
+		#{codigo_centro},#{codigo_usuario},
+		#{creacion_date},#{creacion_user},
+		#{codigo_sucursal},#{codigo_empresa},#{ultimo_update},
+		#{ultimo_user},#{valor_total}
+		
+		)
+		
+		RETURNING id;
+		 </selectKey>
+	</insert>
+<update id="actualizar" parameterType="cierre_caja">
+		update public.cierre_caja set 
+		fecha_inicio = #{fecha_inicio},fecha_fin = #{fecha_fin},
+		codigo_centro = #{codigo_centro},codigo_usuario = #{codigo_usuario},
+		creacion_date = #{creacion_date},creacion_user = #{creacion_user},
+		codigo_sucursal=#{codigo_sucursal},codigo_empresa=#{codigo_empresa},ultimo_update=#{ultimo_update},ultimo_user=#{ultimo_user},
+		valor_total=#{valor_total}
+		
+		where id = #{id}
+	</update>
+	<select id="consultar" parameterType="cierre_caja" resultMap="cierre_cajaMap">
+		select id,fecha_inicio,fecha_fin,
+		codigo_centro,"codigo_usuario",creacion_date,
+		creacion_user,codigo_sucursal,codigo_empresa,ultimo_update,ultimo_user,valor_total
+		from public.cierre_caja where id = #{id}
+	</select>
+	<delete id="eliminar" parameterType="cierre_caja">
+		delete from public.cierre_caja
+		where id = #{id}
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="cierre_cajaMap">
+		select id, fecha_inicio,fecha_fin,
+		codigo_centro,codigo_usuario,creacion_date,
+		creacion_user,ultimo_update,ultimo_user,valor_total
+		from public.cierre_caja 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_usuario != null">
+				AND codigo_usuario = #{codigo_usuario}
+			</if>
+			<if test="codigo_centro != null">
+				AND codigo_centro = #{codigo_centro}
+			</if>
+			
+
+		</trim>
+	</select>
+
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from public.cierre_caja 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_usuario != null">
+				AND codigo_usuario = #{codigo_usuario}
+			</if>
+			
+		</trim>
+	</select>
+</mapper>

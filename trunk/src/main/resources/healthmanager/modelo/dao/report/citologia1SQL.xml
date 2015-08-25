@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.citologia1Model">
+	<select id="select" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+
+		SELECT
+		cta.fecha_ingreso as fecha_ingreso,
+		cta.codigo_historia as codigo_historia,
+
+		cta.identificacio_unidad AS centro_atencion,
+		cta.deteccion_cancer AS deteccion_cancer_c,
+		cta.fum AS fum,
+		cta.perinatales_g AS g,
+		cta.perinatales_p AS p,
+		cta.perinatales_a AS a,
+		cta.perinatales_c as c,
+		cta.perinatales_v AS v,
+		cta.cauterizacion_cevix AS cauterizacion_cervix,
+		cta.conizacion_cervix
+		AS conizacion_cervix,
+		cta.diu as diu,
+		cta.post_evento AS post_evento,
+		cta.postmenopausia AS postmenopausia,
+		cta.radioterapia as radioterapia,
+		cta.histerectomia AS histerectomia,
+		cta.embarazo as embarazo,
+		cta.anticoncepcion as anticoncepcion_hormonal,
+		cta.resul_cita_anterio
+		as resultado_cito,
+		cta.aspecto_normal AS normal,
+		cta.aspecto_hipertrofico AS hipertrofico,
+		cta.aspecto_erosion AS
+		erosion_periorifica,
+		cta.aspecto_leucorrea AS leucorrea,
+		cta.aspecto_sangrado AS sangrado,
+		cta.aspecto_diu_visible as
+		diu_visible,
+		cta.otro as otros_aspectos,
+		cta.cual_otro as cual_aspecto,
+		cta.medico_o_enfermera as quien_toma_cito,
+		cta.nombre_del_profesional
+		AS nombre_profesional,
+		cta.fecha_toma as fecha_toma,
+		cta.laboratorio AS
+		nom_laboratorio,
+		cta.fecha_lectura AS fecha_lectura,
+		cta.nro_placa AS
+		nro_placa,
+		cta.calidad_muestra AS calidad_de_muestra,
+		cta.especifique_motivo AS motivo_muestra,
+
+
+
+		paciente.tipo_identificacion
+		AS paciente_tipo_identificacion,
+		paciente.nro_identificacion AS
+		paciente_nro_identificacion,
+		paciente.codigo_administradora AS
+		paciente_codigo_administradora,
+		administradora.nombre AS 
+		nombre_administradora,
+		paciente.tipo_usuario AS
+		paciente_tipo_usuario,
+		paciente.apellido1 AS paciente_apellido1,
+		paciente.apellido2 AS paciente_apellido2,
+		paciente.nombre1 AS
+		paciente_nombre1,
+		paciente.nombre2 AS paciente_nombre2,
+		paciente.unidad_medidad AS paciente_unidad_medidad,
+		paciente.sexo AS
+		paciente_sexo,
+		paciente.profesion AS paciente_profesion,
+		paciente.tel_oficina AS paciente_tel_oficina,
+		paciente.tel_res AS
+		paciente_tel_res,
+		paciente.direccion AS paciente_direccion,
+		paciente.nivel_sisben AS paciente_nivel_sisben,
+		get_edad(paciente.fecha_nacimiento,CURRENT_DATE,paciente."unidad_medidad")
+		AS
+		paciente_edad,
+		pertenencia_etnica.nombre AS pert_etnica,
+		administradora.codigo AS administradora,
+		ocupaciones.nombre AS
+		ocupacion,
+		barrio.barrio AS barrio,
+		elemento.descripcion AS
+		estado_civil,
+		elemento1.descripcion AS regimen,
+		nivel_educativo.nombre
+		AS nivel_educativo,
+		localidad.localidad AS localidad,
+		paciente.login AS
+		paciente_login,
+		paciente.fecha_nacimiento AS paciente_fecha_nacimiento,
+		departamentos.nombre AS departamento,
+		municipios.nombre AS municipios
+
+		FROM
+		muestra_citologia_vaginal cta
+		LEFT JOIN paciente as paciente ON
+		(paciente.codigo_empresa =
+		cta.codigo_empresa
+		AND
+		paciente.nro_identificacion = cta.identificacion
+		AND
+		paciente.codigo_sucursal = cta.codigo_sucursal)
+
+		LEFT JOIN
+		pertenencia_etnica as pertenencia_etnica on
+		(pertenencia_etnica.id =
+		paciente.pertenencia_etnica)
+
+		LEFT JOIN
+		departamentos departamentos ON
+		(departamentos.codigo =
+		paciente.codigo_dpto)
+		LEFT JOIN municipios
+		municipios ON (
+		municipios.codigo = paciente.codigo_municipio
+		AND
+		municipios.coddep =
+		paciente.codigo_dpto
+		)
+
+		LEFT JOIN administradora
+		administradora on
+		(administradora.codigo=
+		paciente.codigo_administradora)
+
+		LEFT JOIN
+		ocupaciones ocupaciones on
+		(ocupaciones.id =
+		paciente.codigo_ocupacion)
+
+		LEFT JOIN
+		adicional_paciente adicional_paciente on
+		(adicional_paciente.codigo_empresa = paciente.codigo_empresa
+		AND
+		adicional_paciente.codigo_sucursal = paciente.codigo_sucursal
+		and
+		adicional_paciente.nro_identificacion = paciente.nro_identificacion)
+
+		LEFT JOIN barrio barrio on (barrio.codigo_barrio =
+		adicional_paciente.codigo_barrio)
+
+		LEFT JOIN elemento elemento on
+		(elemento.codigo = paciente.estado_civil
+		AND elemento.tipo =
+		'estado_civil')
+
+		LEFT JOIN elemento elemento1 on (elemento1.codigo =
+		paciente.tipo_usuario
+		and elemento1.tipo = 'tipo_usuario')
+		LEFT JOIN
+		nivel_educativo nivel_educativo on (nivel_educativo.id =
+		paciente.codigo_educativo)
+		LEFT JOIN localidad localidad on
+		(localidad.codigo_localidad =
+		barrio.codigo_localidad)
+
+		where
+		cta.codigo_empresa =#{codigo_empresa}
+		AND
+		cta.codigo_sucursal =#{codigo_sucursal}
+		AND
+		cta.codigo_historia = #{codigo_historia}
+
+
+	</select>
+
+</mapper>

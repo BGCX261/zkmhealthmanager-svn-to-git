@@ -1,0 +1,719 @@
+<?page title="Ficha_epidemiologia_n19" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+<window id="formFicha_epidemiologia_n19" width="890px"  height="450px"
+		border="normal" use="healthmanager.controller.Ficha_epidemiologia_n19Action">
+<style>
+		body ,table{ margin:0; padding:0;
+		} .z-fieldset{ -moz-border-radius:5px; border-radius: 5px;
+		-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+		border: 1px solid silver; }
+		tr.z-row .z-cell{ background-image:none; }
+		tr.z-row td.z-row-hover{ background-image:none; }
+		.GridSinBorde tr.z-row td.z-row-inner, tr.z-row
+			.z-cell,div.z-grid { border: none; overflow: hidden;
+			zoom: 1; border-top: none; border-left: none;
+			border-right: none; border-bottom: none; }
+		</style>
+		<style>
+        div.minimize {
+            border: 1px solid #79858E;
+            background: #D3E1EC;
+            position: absolute;
+            opacity: 0.8;       
+        }
+        div.loginGrid { 
+            border: none;
+        }
+        td.loginCtl {
+            text-align: center;
+        }
+        td.loginCtl .z-label {
+            color: red;         
+            font-style: italic;
+        }
+        </style>
+
+
+<!-- **************** -->
+<!-- Zona de Consulta -->
+<!-- **************** -->
+<groupbox id="groupboxConsulta" visible="false" closable="false" mold="3d" height="90%">
+<caption label="Consultar" style="color: blue;font-weight: bold"/>
+
+<separator />
+
+<!-- ***************************** -->
+<!--  Resultado Consulta Maestros  -->
+<!-- ***************************** -->
+<grid id="gridResultado" height="100%" mold="paging" pageSize="20"  vflex="1">
+<auxhead>
+						<auxheader colspan="4">
+								<hbox align="center">
+										<label value="Criterios de B&#250;squeda :" />
+										<space />
+										<listbox id="lbxParameter" mold="select"
+												sclass="combobox" width="150px" />
+										<separator />
+										<textbox id="tbxValue" width="200px"
+												onOK="formFicha_epidemiologia_n19.buscarDatos();"
+												style="text-transform:uppercase" />
+										<separator />
+										<button mold="trendy"
+												image="/images/Magnifier.gif"
+												onClick="formFicha_epidemiologia_n19.buscarDatos();"
+												tooltiptext="Consultar Ficha epidemiologia n19" />
+										<separator />
+										<button mold="trendy"
+												image="/images/New16.gif"
+												onClick='formFicha_epidemiologia_n19.accionForm(true,"registrar");'
+												tooltiptext="Nuevo Ficha epidemiologia n19" />
+								</hbox>
+						</auxheader>
+				</auxhead>
+<columns sizable="true">
+	<column label="Código ficha"/>
+	<column label="Identificación"/>
+	<column label="Fecha creación"/>
+	<column label="Acciones" align="center" width="80px"/>
+</columns>
+<rows id="rowsResultado" width="100%" />
+</grid>
+</groupbox>
+
+<borderlayout width="100%" height="98%" id="groupboxEditar" visible="true">
+				<north border="none" visible="false">
+						<toolbar width="100%" align="start">
+								<textbox id="tbxAccion" value="registrar"
+										visible="false" />
+								<toolbarbutton image="/images/Save16.gif"
+										label="Guardar Ficha"
+										onClick="formFicha_epidemiologia_n19.guardarDatos();" id="btGuardar" />
+		 		                  <toolbarbutton image="/images/New16.gif"
+										label="Nueva"
+										onClick='formFicha_epidemiologia_n19.accionForm(true,"registrar");'
+										id="btNew" />
+								<space />
+		 		                  <toolbarbutton image="/images/trasladar.gif"
+										label="Consultar" onClick='formFicha_epidemiologia_n19.accionForm(false,tbxAccion.getText());'
+										id="btCancel" />
+								<toolbarbutton image="/images/print_ico.gif"
+										label="Imprimir Ficha epidemiologia n19"
+										onClick="formFicha_epidemiologia_n19.imprimir();"
+										id="btImprimir" visible="false"/>
+								<space />
+								<label value="Formato impresión: " visible="false"/>
+									<listbox id="lbxFormato" mold="select" width="150px" visible="false"
+										sclass="combobox">
+										<listitem value="pdf" label="PDF"
+												selected="true" />
+										<listitem value="rtf" label="WORD" />
+								</listbox>
+						</toolbar>
+				</north>
+				<center autoscroll="true" border="none" >
+				<div align="center">
+				
+				<groupbox mold="3d" closable="false">
+						<caption label="DATOS DE LA FICHA"
+							style="font-weight:bold" />
+						<grid>
+							<columns>
+								<column />
+							</columns>
+							<rows>
+								
+								<row>
+									<cell>
+										<hlayout>
+											<space width="130px" />
+											<label value="* "
+												style="color: red" tooltiptext="Campo obligatorio" />
+											<label id="lbFecha_inicial"
+												value="Fecha: " />
+											<datebox
+												id="dtbxFecha_creacion" onCreate="self.value = new Date();"
+												format="dd-MM-yyyy" width="170px" readonly="true" buttonVisible="false"/>
+											<space width="70px" />
+											<label value="* "
+												style="color: red" tooltiptext="Campo obligatorio" />
+											<label id="lbCodigo_ficha"
+												value="Codigo ficha: " />
+											<textbox readonly="true"
+												id="tbxCodigo_ficha" width="170px"
+												style="text-transform:uppercase" maxlength="20" />
+										</hlayout>
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+
+<groupbox mold="3d" width="100%" closable="false">
+<caption label="RELACIÓN CON DATOS BÁSICOS" />
+<grid>
+<columns visible="false">
+		<column width="100px" />
+		<column />
+		<column />
+		<column />
+		<column />
+		<column width="220px" />
+	</columns>
+	<rows>
+			
+		<row>
+			<cell>
+				<label value="* " style="color: red"
+					tooltiptext="Campo obligatorio" />
+				<label value="Paciente: " />
+			</cell>
+			<cell colspan="4">
+				<textbox id="tbxIdentificacion" width="27%" readonly="true" disabled="true"/>
+					<!--  -->
+				<space width="1%" />
+				<textbox id="tbxNombrePaciente" width="65%"
+					style="text-transform:uppercase" readonly="true" />
+			</cell>
+			<cell>
+				<space width="15px" />
+				<label value="Tipo: " />
+				<space width="23px" />
+				<textbox id="tbxTipo_identificacion" width="135px" style="text-transform:uppercase" readonly="true"/>
+			</cell>
+				
+		</row>
+		<row>
+			<cell>
+				<label value="* " style="color: red"
+					tooltiptext="Campo obligatorio" />
+				<label value="Aseguradora: " />
+			</cell>
+			<cell colspan="4">
+				<textbox id="tbxAseguradora" width="27%" readonly="true" disabled="true"/>
+					<!--  -->
+				<space width="1%" />
+				<textbox id="tbxNombre_aseguradora" width="65%"
+					style="text-transform:uppercase" readonly="true" />
+			</cell>
+			<cell></cell>
+				
+		</row>
+		
+
+		<!-- fila 5 -->
+		<row>
+		<cell colspan="6"><label id="lbTipo_leucemia" value="Tipo leucemia: "/><space/>
+		<radiogroup id="rdbTipo_leucemia">
+		<radio label="Leucemia aguda probable" value="1" checked="true"/><space/>
+		<radio label="Leucemia linfoide aguda" value="2"/><space/>
+		<radio label="Leucemia mieloide aguda" value="3"/><space/>
+		<radio label="Mortalidad por leucemia aguda pediátrica" value="4" />
+		</radiogroup></cell>
+		</row>
+		
+		<!-- fila 4 -->
+		<row>
+		<cell><label id="lbCodigo_diagnostico" value="Codigo diagnostico: " visible="false"/></cell>
+		<cell><textbox id="tbxCodigo_diagnostico" width="170px" style="text-transform:uppercase" maxlength="8" visible="false"/></cell>
+		<cell colspan="4"></cell>
+		</row>
+
+	</rows>
+
+</grid>
+</groupbox>
+
+<groupbox mold="3d" width="100%" closable="false">
+<caption label="DATOS CLÍNICOS" />
+<grid>
+	<columns>
+		<column />
+		<column label="" width="50px" />
+		<column />
+		<column label="" width="50px" />
+		<column />
+		<column label="" width="50px" />
+	</columns>
+	<rows>
+		<row >
+			<cell><label id="lbInfeccion" value="Infeccion: "/></cell>
+			<cell ><checkbox id="chbInfeccion"/></cell>
+			<cell><label id="lbSondrome_lisis_tumoral" value="Sondrome lisis tumoral: "/></cell>
+			<cell ><checkbox id="chbSondrome_lisis_tumoral"/></cell>
+			<cell><label id="lbTrombosis" value="Trombosis: "/></cell>
+			<cell ><checkbox id="chbTrombosis"/></cell>
+		</row >
+		<row >
+			<cell><label id="lbHemorragia" value="Hemorragia: "/></cell>
+			<cell ><checkbox id="chbHemorragia"/></cell>
+			<cell><label id="lbCrisis_convulsiva" value="Crisis convulsiva: "/></cell>
+			<cell ><checkbox id="chbCrisis_convulsiva"/></cell>
+			<cell><label id="lbDesconocido" value="Desconocido: "/></cell>
+			<cell ><checkbox id="chbDesconocido"/></cell>
+		</row >
+		<row >
+			<cell><label id="lbOtras_complicaciones" value="Otras complicaciones: "/></cell>
+			<cell ><checkbox id="chbOtras_complicaciones" onCheck="formFicha_epidemiologia_n19.mostrar_conCheck(formFicha_epidemiologia_n19, self, new AbstractComponent[]{lbCual_complicaciones, tbxCual_complicaciones})"/></cell>
+			<cell><label id="lbCual_complicaciones" value="¿Cuál? " visible="false"/></cell>
+			<cell colspan="3">
+			<textbox id="tbxCual_complicaciones" width="98%" style="text-transform:uppercase" maxlength="-1" visible="false"/></cell>
+</row>
+		
+		
+	</rows>
+</grid>
+</groupbox>
+
+<groupbox mold="3d" width="100%" closable="false">
+<caption label="DATOS DE LABORATORIO" />
+<grid>
+<columns visible="false">
+		<column />
+		<column />
+		<column />
+		<column />
+	</columns>
+	<rows>
+	<row>
+	<cell colspan="4">
+		<groupbox width="100%" closable="false">
+		<caption label="Cuadro hemático" />
+		<grid>
+			<columns>
+				<column />
+				<column />
+				<column />
+				<column />
+				<column />
+				<column />
+			</columns>
+			<rows>
+				<row >
+					<cell><label id="lbHematico_fecha_toma" value="Fecha de toma: "/></cell>
+					<cell ><datebox id="dtbxHematico_fecha_toma" onCreate="" format="yyyy-MM-dd" width="98%"/></cell>
+					<cell><label id="lbHematico_fecha_recepcion" value="Fecha de recepción: "/></cell>
+					<cell ><datebox id="dtbxHematico_fecha_recepcion" onCreate="" format="yyyy-MM-dd" width="98%"/></cell>
+					<cell><label id="lbHematico_fecha_resultado" value="Fecha de resultado: "/></cell>
+					<cell ><datebox id="dtbxHematico_fecha_resultado" onCreate="" format="yyyy-MM-dd" width="98%"/></cell>
+				</row >
+
+			<!-- fila 7 -->
+			<row>
+			<cell colspan="5"><label id="lbHematico_valor" value="Valor Registrado (% de blastos): "/><space/>
+			<intbox constraint="no negative:Este valor no puede ser negativo" id="ibxHematico_valor" width="70px" style="text-transform:uppercase" maxlength="3"/></cell>
+			
+			<cell></cell>
+			</row>
+				
+			</rows>
+		</grid>
+		</groupbox>	
+	</cell>
+	</row>
+	
+	<row>
+	<cell colspan="4">
+		<groupbox width="100%" closable="false">
+		<caption label="Frotis de sangre periférica" />
+		<grid>
+			<columns>
+				<column />
+				<column />
+				<column />
+				<column />
+				<column />
+				<column />
+			</columns>
+			<rows>
+				
+				<row >
+					<cell><label id="lbFrotis_fecha_toma" value="Fecha de toma: "/></cell>
+					<cell ><datebox id="dtbxFrotis_fecha_toma" onCreate="" format="yyyy-MM-dd" width="98%"/></cell>
+					<cell><label id="lbFrotis_fecha_recepcion" value="Fecha de recepción: "/></cell>
+					<cell ><datebox id="dtbxFrotis_fecha_recepcion" onCreate="" format="yyyy-MM-dd" width="98%"/></cell>
+					<cell><label id="lbFrotis_fecha_resultado" value="Fecha de resultado: "/></cell>
+					<cell ><datebox id="dtbxFrotis_fecha_resultado" onCreate="" format="yyyy-MM-dd" width="98%"/></cell>
+				</row >
+
+			<!-- fila 8 -->
+			<row>
+			<cell colspan="5"><label id="lbFrotis_valor" value="Valor Registrado (% de blastos): "/><space/>
+			<intbox constraint="no negative:Este valor no puede ser negativo" id="ibxFrotis_valor" width="70px" style="text-transform:uppercase" maxlength="3"/></cell>
+			<cell></cell>
+			</row>		
+					
+			</rows>
+		</grid>
+		</groupbox>	
+	</cell>
+	</row>
+	
+	<row>
+	<cell colspan="4">
+		<groupbox width="100%" closable="false">
+		<caption label="Estudio de médula ósea" />
+		<grid>
+			<columns>
+				<column />
+				<column />
+				<column />
+				<column />
+				<column />
+				<column />
+			</columns>
+			<rows>
+				
+				<row >
+					<cell><label id="lbMedula_fecha_toma" value="Fecha de  toma: "/></cell>
+					<cell ><datebox id="dtbxMedula_fecha_toma" onCreate="" format="yyyy-MM-dd" width="98%"/></cell>
+					<cell><label id="lbMedula_fecha_recepcion" value="Fecha de recepción: "/></cell>
+					<cell ><datebox id="dtbxMedula_fecha_recepcion" onCreate="" format="yyyy-MM-dd" width="98%"/></cell>
+					<cell><label id="lbMedula_fecha_resultado" value="Fecha de resultado: "/></cell>
+					<cell ><datebox id="dtbxMedula_fecha_resultado" onCreate="" format="yyyy-MM-dd" width="98%"/></cell>
+				</row >
+				
+								
+				<!-- fila 9 -->
+				<row>
+				<cell colspan="5"><label id="lbMedula_valor" value="Valor Registrado (% de blastos): "/><space/>
+				<intbox constraint="no negative:Este valor no puede ser negativo" id="ibxMedula_valor" width="70px" style="text-transform:uppercase" maxlength="3"/></cell>
+			<cell></cell>
+			</row>
+				
+			</rows>
+		</grid>
+		</groupbox>	
+	</cell>
+	</row>
+		
+
+	</rows>
+
+</grid>
+</groupbox>
+
+<groupbox mold="3d" width="100%" closable="false">
+<caption label="CAUSAS DE MUERTE" />
+<grid>
+	<columns>
+		<column />
+		<column label="" width="50px" />
+		<column />
+		<column label="" width="50px" />
+		<column />
+		<column label="" width="50px" />
+	</columns>
+	<rows>
+	
+	<row>
+	<cell colspan="6">
+	<label value="Registre las causas de muerte de conformidad con el certificado de defunción." style="color: blue"/>
+	</cell>
+	</row>
+		
+	<row>
+	<cell colspan="6">
+	<groupbox width="100%" closable="false">
+	<caption label="Sitio de defunción" />
+	<grid>
+		<columns>
+			<column />
+			<column label="" width="50px" />
+			<column />
+			<column label="" width="50px" />
+			<column />
+			<column label="" width="50px" />
+		</columns>
+		<rows>
+		
+		<row>
+		<cell colspan="3">
+		<radiogroup id="rdbSitio_defucion" onCheck="formFicha_epidemiologia_n19.mostrar_conRadio(formFicha_epidemiologia_n19,self,new AbstractComponent[]{lbOtro_sitio, tbxOtro_sitio})">
+		<radio label="IPS - Clínica - Hospital" value="I" checked="true"/><space/>
+		<radio label="Domicilio" value="D"/><space/>
+		<radio label="Durante el traslado" value="DT"/><space/>
+		<radio label="Otro" value="O" />
+		</radiogroup>
+		</cell>
+		<cell colspan="3"><label id="lbOtro_sitio" value="¿Cuál? " visible="false"/><space/>
+		<textbox id="tbxOtro_sitio" width="260px" style="text-transform:uppercase" maxlength="-1" visible="false"/></cell>
+		</row>
+
+			
+		</rows>
+	</grid>
+	</groupbox>	
+	</cell>
+	</row>
+	
+	<row>
+	<cell colspan="6">
+	<groupbox width="100%" closable="false">
+	<caption label="Causa directa de muerte" />
+	<grid>
+		<columns>
+			<column label="" width="80px" />
+			<column label="" width="180px" />
+			<column />
+		</columns>
+		<rows>
+		
+		
+		<row>
+			<cell><label id="lbImpresion" value="CIE 10: "/></cell>
+			<cell>
+			<bandbox id="tbxImpresion_final" autodrop="true"
+					readonly="true" width="170px"
+					onOpen="formFicha_epidemiologia_n19.buscarDx(tbxValueDxRelacionado_2.getValue(),lbxDxRelacionado_2)">
+					<bandpopup>
+						<vbox>
+							<toolbar>
+								<label
+									value="Buscar: " />
+								<textbox
+									id="tbxValueDxRelacionado_2"
+									onChanging='formFicha_epidemiologia_n19.buscarDx(event.getValue(),lbxDxRelacionado_2)'
+									style="text-transform:uppercase;" />
+								<toolbarbutton
+									image="/images/borrar.gif" tooltiptext="Quitar" 
+									onClick='formFicha_epidemiologia_n19.selectedDx(new Listitem(), tbxImpresion_final, tbxNombre_impresion)' />
+							</toolbar>
+							<listbox
+								height="300px" width="600px" mold="paging"
+								pageSize="8" id="lbxDxRelacionado_2"
+								onSelect='formFicha_epidemiologia_n19.selectedDx(self.getSelectedItem(), tbxImpresion_final, tbxNombre_impresion)'>
+								<listhead>
+									<listheader
+										label="Código" width="65px" />
+									<listheader
+										label="Nombre" />
+									<listheader
+										label="Sexo" width="65px" />
+									<listheader
+										label="Limite inf" width="75px" />
+									<listheader
+										label="Limite sup" width="75px" />
+								</listhead>
+							</listbox>
+						</vbox>
+					</bandpopup>
+				</bandbox>
+				</cell>
+				<cell>
+					<textbox
+						id="tbxNombre_impresion" width="230px"
+						style="text-transform:uppercase" readonly="true" />
+				</cell>
+			</row>
+
+			
+		</rows>
+	</grid>
+	</groupbox>	
+	</cell>
+	</row>
+	
+	<row>
+	<cell colspan="6">
+	<groupbox width="100%" closable="false">
+	<caption label="Causa de muerte determinada por" />
+	<grid>
+		<columns>
+			<column />
+			<column label="" width="50px" />
+			<column />
+			<column label="" width="50px" />
+			<column />
+			<column label="" width="50px" />
+		</columns>
+		<rows>
+		
+		<!-- fila 13 -->
+		<row>
+		<cell colspan="6">
+		<radiogroup id="rdbCausa_muerte">
+		<radio label="Historia clínica" value="H"/><space/>
+		<radio label="Autopsia verbal" value="A"/><space/>
+		<radio label="Necropsia" value="N" checked="true" />
+		</radiogroup></cell>
+		</row>		
+					
+		</rows>
+	</grid>
+	</groupbox>	
+	</cell>
+	</row>
+	
+	<row>
+	<cell colspan="6">
+	<groupbox width="100%" closable="false">
+	<caption label="Causa antecedentes" />
+	<grid>
+		<columns>
+			<column />
+			<column label="" width="50px" />
+			<column />
+			<column label="" width="50px" />
+			<column />
+			<column label="" width="50px" />
+		</columns>
+		<rows>
+		
+		<!-- fila 14 -->
+		<row>
+		<cell colspan="6"><textbox id="tbxCausa_antecedentes" width="98%" rows="4" style="text-transform:uppercase" maxlength="-1"/></cell>
+		</row>		
+			
+			
+		</rows>
+	</grid>
+	</groupbox>	
+	</cell>
+	</row>
+		
+		
+	</rows>
+</grid>
+</groupbox>
+
+<groupbox mold="3d" width="100%" closable="false">
+<caption label="SEGUIMIENTO" />
+<grid>
+<columns visible="false">
+		<column />
+		<column />
+		<column />
+		<column />
+	</columns>
+	<rows>
+	<row>
+	<cell colspan="4">
+		<groupbox width="100%" closable="false">
+		<caption label="Tiempos en la atención" />
+		<grid>
+			<columns>
+				<column />
+				<column />
+				<column label="" width="160px"/>
+				<column label="" width="20px"/>
+				<column />
+			</columns>
+			<rows>
+
+			<!-- fila 15 -->
+			<row>
+			<cell><label id="lbFecha_tratamiento" value="Fecha de inicio de tratamiento: "/></cell>
+			<cell colspan="4"><datebox id="dtbxFecha_tratamiento" onCreate="" format="yyyy-MM-dd" width="170px"/></cell>
+			</row>
+			
+			<!-- fila 16 -->
+			<row>
+			<cell colspan="2"><label id="lbProbable" value="Tiempo entre primera consulta y diagnóstico probable: "/></cell>
+			<cell><label value="Días: "/><space/>
+			<intbox constraint="no negative:Este valor no puede ser negativo" id="ibxProbable_dias" width="70px" style="text-transform:uppercase"/></cell>
+			<cell></cell>
+			<cell><label value="Meses: "/><space/>
+			<intbox constraint="no negative:Este valor no puede ser negativo" id="ibxProbable_mes" width="70px" style="text-transform:uppercase"/></cell>
+			</row>
+			
+			<!-- fila 18 -->
+			<row>
+			<cell colspan="2"><label id="lbDefinitivo" value="Tiempo entre primera consulta y diagnóstico definitivo: "/></cell>
+			<cell><label value="Días: "/><space/>
+			<intbox constraint="no negative:Este valor no puede ser negativo" id="ibxDefinitivo_dias" width="70px" style="text-transform:uppercase"/></cell>
+			<cell></cell>
+			<cell><label value="Meses: "/><space/>
+			<intbox constraint="no negative:Este valor no puede ser negativo" id="ibxDefinitivo_mes" width="70px" style="text-transform:uppercase"/></cell>
+			</row>
+			
+			<!-- fila 20 -->
+			<row>
+			<cell colspan="2"><label id="lbTratamiento" value="Tiempo entre diagnóstico definitivo e inicio de tratamiento: "/></cell>
+			<cell><label value="Días: "/><space/>
+			<intbox constraint="no negative:Este valor no puede ser negativo" id="ibxTratamiento_dias" width="70px" style="text-transform:uppercase"/></cell>
+			<cell></cell>
+			<cell><label value="Meses: "/><space/>
+			<intbox constraint="no negative:Este valor no puede ser negativo" id="ibxTratamiento_mes" width="70px" style="text-transform:uppercase"/></cell>
+			</row>
+
+				
+			</rows>
+		</grid>
+		</groupbox>	
+	</cell>
+	</row>
+	
+	<row>
+	<cell colspan="4">
+		<groupbox width="100%" closable="false">
+		<caption label="Datos del diligenciamiento" />
+		<grid>
+			<columns>
+				<column label="" width="215px" />
+				<column label="" width="320px" />
+				<column />
+				<column />
+			</columns>
+			<rows>
+				
+
+			<!-- fila 24 -->
+			<row>
+			<cell><label id="lbCodigo_medico" value="Profesional que diligencia la ficha: "/></cell>
+			<cell>
+			<textbox id="tbxCodigo_medico" width="20%" style="text-transform:uppercase" maxlength="20"/><space/>
+			<textbox id="tbxNombre_medico" width="72%" style="text-transform:uppercase" maxlength="20"/>
+			</cell>
+			<cell><label id="lbTelefono" value="Teléfono de contacto: "/></cell>
+			<cell><intbox constraint="no negative:Este valor no puede ser negativo" id="ibxTelefono" width="100px" style="text-transform:uppercase" maxlength="10"/></cell>
+			</row>
+
+			<row>
+			<cell colspan="4">
+			<groupbox width="100%" closable="false">
+			<caption label="Observaciones y seguimiento" />
+			<grid>
+				<columns>
+					<column />
+					<column label="" width="50px" />
+					<column />
+					<column label="" width="50px" />
+					<column />
+					<column label="" width="50px" />
+				</columns>
+				<rows>
+				
+				<!-- fila 14 -->
+				<row>
+				<cell colspan="6"><textbox id="tbxObservaciones" width="98%" rows="4" style="text-transform:uppercase" maxlength="-1"/></cell>
+				</row>		
+					
+					
+				</rows>
+			</grid>
+			</groupbox>	
+			</cell>
+			</row>
+
+
+
+					
+			</rows>
+		</grid>
+		</groupbox>	
+	</cell>
+	</row>
+	
+	
+
+	</rows>
+
+</grid>
+</groupbox>
+
+
+	</div>
+	</center>
+	</borderlayout>
+</window>
+</zk>

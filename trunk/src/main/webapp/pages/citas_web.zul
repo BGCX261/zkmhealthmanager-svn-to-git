@@ -1,0 +1,210 @@
+<?page title="Citas medicas" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formCitas" width="100%" height="100%"
+		use="healthmanager.controller.Citas_webAction">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+		<borderlayout width="100%" height="100%" id="groupboxEditar"
+			visible="true">
+			<north border="none">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<textbox id="tbxCodigo_centro" value=""
+						visible="false" />
+
+					<toolbarbutton image="/images/New16.gif"
+						visible="false" label="Nueva Cita"
+						onClick='formCitas.limpiarDatos()' id="btNew" />
+
+
+					<space />
+					<toolbarbutton image="/images/generar.png"
+						label="Ver registros" onClick='formCitas.abrirWindowHistorial()'
+						id="" />
+				</toolbar>
+			</north>
+
+			<center autoscroll="true" border="none">
+				<div align="center">
+					<separator />
+					<groupbox closable="false" visible="true" mold="3d"
+						width="80%">
+						<div align="center">
+							<hlayout>
+								<grid>
+									<columns>
+										<column label="" width="12%" />
+										<column label="" width="17%" />
+										<column label="" width="37%" />
+										<column label="" width="13%" />
+										<column label="" width="12%" />
+										<column label="" width="5%" />
+										<column label="" width="10%" />
+									</columns>
+									<rows>
+										<row>
+											<cell>
+												<label
+													value="Paciente:" />
+											</cell>
+											<cell>
+												<textbox
+													id="tbxNro_identificacion" width="100px" readonly="true" />
+											</cell>
+											<cell>
+												<textbox
+													id="tbxNomPaciente" width="310px"
+													style="text-transform:uppercase;" readonly="true" />
+											</cell>
+											<cell>
+												<label value="Edad:" />
+											</cell>
+											<cell>
+												<textbox id="tbxEdad"
+													width="85px" style="text-transform:uppercase"
+													readonly="true" />
+											</cell>
+											<cell>
+												<label value="Sexo: " />
+											</cell>
+											<cell>
+												<textbox id="tbxSexo"
+													hflex="1" style="text-transform:uppercase" readonly="true" />
+											</cell>
+										</row>
+										<row>
+											<cell>
+												<label
+													value="Dirección:" />
+											</cell>
+											<cell colspan="2">
+												<textbox
+													id="tbxDireccion" width="464px"
+													style="text-transform:uppercase" />
+											</cell>
+											<cell>
+												<label
+													value="Teléfono:" />
+											</cell>
+											<cell>
+												<doublebox id="dbxTel"
+													width="85px" locale="en" format="####" maxlength="12" />
+											</cell>
+											<cell colspan="2" />
+										</row>
+										<row>
+											<cell>
+												<label
+													value="Administradora:" />
+											</cell>
+											<cell>
+												<textbox
+													id="tbxAseguradora" width="100px"
+													style="text-transform:uppercase" readonly="true" />
+											</cell>
+											<cell>
+												<textbox
+													id="tbxInfoAseguradora" width="310px"
+													style="text-transform:uppercase" readonly="true" />
+											</cell>
+											<cell>
+												<label
+													value="Centro atención:" />
+											</cell>
+											<cell colspan="3">
+												<textbox
+													id="tbxCentro_atencion" hflex="1"
+													style="text-transform:uppercase" readonly="true" />
+											</cell>
+										</row>
+
+										<row>
+											<cell>
+												<label
+													value="Tipo consulta:" />
+												<space width="15px" />
+											</cell>
+											<cell colspan="2">
+												<listbox
+													id="lbxVia_ingreso" name="via_ingreso" mold="select"
+													sclass="combobox" width="200px" disabled="true"
+													onSelect="formCitas.seleccionarTipo_consulta();" />
+
+												<space width="20px" />
+												<label
+													value="Fecha solicitada:" />
+												<space />
+												<datebox
+													id="dtbxFecha_solicitada" format="yyyy-MM-dd hh:mm a"
+													width="150px"  />
+											</cell>
+
+											<cell>
+												<label
+													value="Tipo cita:" />
+											</cell>
+											<cell colspan="3">
+												<listbox
+													id="lbxTipo_cita" disabled="true" name="tipo_cita"
+													mold="select" hflex="1" sclass="combobox" />
+											</cell>
+										</row>
+
+										<row>
+											<cell visible="false">
+												<space width="30px" />
+												<label
+													value="Medio solicitud:" />
+												<space width="10px" />
+												<listbox
+													id="lbxMedio_solicitud" width="190px" mold="select"
+													name="solicitud_web" disabled="true" />
+											</cell>
+										</row>
+									</rows>
+								</grid>
+							</hlayout>
+						</div>
+					</groupbox>
+					<separator />
+					<groupbox mold="3d" closable="false"
+						height="100%">
+						<caption
+							label="Fecha de programación de la cita medica" />
+						<hlayout valign="middle">
+							<label value="Año: " />
+							<listbox id="lbxAnios" mold="select"
+								sclass="combobox" width="150px"
+								onSelect="formCitas.cargarCalendario_medico();" />
+							<space />
+							<label value="Mes: " />
+							<listbox id="lbxMeses"
+								onSelect="formCitas.cargarCalendario_medico();" mold="select"
+								sclass="combobox" width="147px">
+								<listitem label="${each}"
+									forEach="Enero,Febrero,Marzo,Abril,Mayo,Junio,Julio,Agosto,Septiembre,Octubre,Noviembre,Diciembre" />
+							</listbox>
+						</hlayout>
+						<calendars firstDayOfWeek="Sunday" mold="month"
+							height="98%" id="calendars" timeZone="Bogota=GMT-5"
+							onEventEdit="formCitas.guardarCita(event);">
+						</calendars>
+					</groupbox>
+				</div>
+			</center>
+
+		</borderlayout>
+	</window>
+</zk>

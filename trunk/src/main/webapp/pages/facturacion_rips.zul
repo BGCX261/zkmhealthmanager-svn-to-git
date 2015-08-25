@@ -1,0 +1,631 @@
+<?page title="Facturacion_rips" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<?component name="impresionDiagnostica" macroURI="/WEB-INF/macros/impresionDiagnostica.zul"?>
+<?component name="serviciosFacturacion" macroURI="/WEB-INF/macros/servicios_facturacion_macro.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formFacturacion_rips" width="100%" height="100%"
+		use="healthmanager.controller.Facturacion_ripsAction"
+		ctrlKeys="@p@a@s@m@c@u@1@o@r@n^g^f">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+		<groupbox id="groupboxConsulta" visible="false" closable="false"
+			mold="3d" height="100%">
+
+			<separator />
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" vflex="1">
+				<auxhead>
+					<auxheader colspan="11">
+						<hlayout valign="middle">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<space />
+							<textbox id="tbxValue" hflex="1"
+								onOK="formFacturacion_rips.buscarDatos();"
+								style="text-transform:uppercase" />
+							<space />
+							<toolbarbutton id="btnFiltro_centros"
+								image="/images/filtro.png" label="Centros de atencion"
+								onClick='popupCentros_atencion.open(self,"end_after")' />
+							<space />
+							<toolbarbutton id="btnFiltro_ingreso"
+								image="/images/filtro.png" label="Vias de ingreso"
+								onClick='popupViasIngreso.open(self,"end_after")' />
+							<space />
+							<toolbarbutton label="Consultar"
+								image="/images/Magnifier.gif"
+								onClick="formFacturacion_rips.buscarDatos();"
+								tooltiptext="Consultar Facturacion servicio" />
+							<toolbarbutton label="Nueva"
+								image="/images/New16.gif"
+								onClick='formFacturacion_rips.accionForm(true,"registrar");'
+								tooltiptext="Nuevo Facturacion servicio" />
+							<space />
+						</hlayout>
+					</auxheader>
+				</auxhead>
+				<auxhead>
+					<auxheader colspan="11">
+						<hlayout valign="middle">
+							<label value="Tipo Facturacion:" />
+							<listbox mold="select"
+								id="lbxTipos_filtro">
+								<listitem label="Todo los tipos"
+									value="01" selected="true" />
+								<listitem label="Atenciones capitadas"
+									value="02" />
+								<listitem label="Todo el evento"
+									value="03" />
+								<listitem label="Evento facturado"
+									value="04" />
+								<listitem label="Evento sin facturar"
+									value="05" />
+								<listitem label="Todo portabilidad"
+									value="06" />
+								<listitem label="Portabilidad facturado"
+									value="07" />
+								<listitem
+									label="Portabilidad sin facturar" value="08" />
+							</listbox>
+
+
+							<label value="Fecha inicial: " />
+							<datebox format="yyyy-MM-dd"
+								id="dtbxFecha_inicial" width="100px" />
+							<space />
+							<label value="Fecha final: " />
+							<datebox format="yyyy-MM-dd"
+								id="dtbxFecha_final" width="100px" />
+
+							<space />
+
+							<toolbarbutton label="Admisiones abiertas"
+								id="btVerificar_abiertas" image="/images/open.png"
+								tooltiptext="Verificar admisiones que aun no se han cerrado"
+								onClick="formFacturacion_rips.abrirVentanaAdmisionesaAbiertas()" />
+
+						</hlayout>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Codigo Documento" width="120px" />
+					<column label="Nro atencion" width="120px" />
+					<column label="Fecha" width="100px" />
+					<column label="Nro identificación" width="110px" />
+					<column label="Nro ingreso" width="80px" />
+					<column label="Paciente" />
+					<column label="Via de ingreso" width="120px" />
+					<column label="Tipo" width="80px" />
+					<column label="Cont" width="60px" />
+					<column label="Anul" width="60px" />
+					<column label="Acciones" align="center"
+						width="100px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<borderlayout width="100%" height="100%" id="groupboxEditar"
+			visible="true">
+			<north border="none">
+				<toolbar width="100%" align="start" height="25px">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<toolbarbutton image="/images/factura.png"
+						label="Facturar(Ctrl+F)"
+						onClick="formFacturacion_rips.guardarFacturacion()"
+						id="btnFacturar" />
+					<toolbarbutton image="/images/Save16.gif"
+						label="Guardar(Ctrl+G)"
+						onClick="formFacturacion_rips.guardarDatos()"
+						id="btGuardarServicios" />
+
+					<toolbarbutton image="/images/New16.gif"
+						label="Nuevo(Alt+N)"
+						onClick='formFacturacion_rips.nuevoRegistro();' id="btNew" />
+					<space />
+					<toolbarbutton id="btnConfiguracionBusqeuda"
+						image="/images/menu.png" label="Menu(Alt+O)">
+						<attribute name="onClick">
+	popup.open(btnConfiguracionBusqeuda);
+</attribute>
+					</toolbarbutton>
+					<popup id="popup">
+						<vlayout>
+							<toolbarbutton image="/images/print_ico.gif"
+								label="Imprimir" onClick="formFacturacion_rips.imprimir();"
+								id="btImprimir" visible="true" />
+
+							<toolbarbutton image="/images/print_ico.gif"
+								label="Prefactura" onClick="formFacturacion_rips.prefactura();"
+								id="btImprimir_pre" visible="true" />
+
+							<toolbarbutton
+								image="/images/contabilizar.gif" label="Contabilizar"
+								onClick='formFacturacion_rips.contabilizar(true);' id="btCont"
+								visible="true" />
+
+							<toolbarbutton image="/images/print_ico.gif"
+								label="Imprimir contabilización"
+								onClick='formFacturacion_rips.imprimirNota_contable()'
+								id="btPrintCont" visible="true" />
+
+							<toolbarbutton
+								image="/images/contabilizar.gif" label="Ver contabilización"
+								onClick='formFacturacion_rips.contabilizar(false);'
+								id="btPrintVerCont" visible="true" />
+
+							<toolbarbutton
+								image="/images/print_ico16.gif" label="Recibo de caja"
+								onClick="formFacturacion_rips.generarReciboCaja()" id="btnRecibo_caja" />
+
+
+							<space />
+							<label value="Formato impresión: " />
+							<listbox id="lbxFormato" mold="select"
+								width="150px" visible="true" sclass="combobox">
+								<listitem value="pdf" label="PDF"
+									selected="true" />
+								<listitem value="rtf" label="WORD" />
+							</listbox>
+						</vlayout>
+					</popup>
+					<space />
+					<toolbarbutton image="/images/refresh2.png"
+						label="Refrescar(Alt+R)"
+						onClick='formFacturacion_rips.refrescarInformacion(true)'
+						id="btRefrescar" />
+					<space />
+
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Consultar"
+						onClick='formFacturacion_rips.accionForm(false,tbxAccion.getText());'
+						id="btCancel" />
+
+					<space />
+
+					<toolbarbutton image="/images/generar.png"
+						label="Hoja de gastos"
+						onClick='formFacturacion_rips.mostrarHojaGastos()'
+						id="btHoja_gastos" />
+
+					<space />
+
+					<toolbarbutton image="/images/egreso_urgencia.png"
+						label="Egreso Urg/Hosp" id="btnEgreso_paciente" visible="false"
+						onClick="formFacturacion_rips.actualizarEgresoPaciente()"
+						autodisable="self" />
+
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none" context="popup">
+				<div align="center">
+					<space />
+					<groupbox closable="false" width="950px"
+						mold="3d">
+						<caption label="DATOS DEL PACIENTE"
+							id="capPaciente">
+							<hlayout valign="middle">
+								<label value="Fecha acceso rapido: " />
+								<datebox id="dtbxFechaAccesoRapido"
+									format="dd/MM/yyyy" />
+							</hlayout>
+						</caption>
+						<grid>
+							<columns visible="false">
+								<column width="140px" />
+								<column width="160px" />
+								<column width="140px" />
+								<column />
+								<column width="30px" />
+							</columns>
+							<rows>
+								<row>
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label value="Paciente" />
+										<label value="(Alt+P)"
+											style="color: red;font-size:9px"
+											tooltiptext="Campo obligatorio" />
+									</cell>
+									<cell>
+										<bandboxRegistros
+											id="tbxNro_identificacion" widthBandbox="150px"
+											widthListbox="600px" heightListbox="300px"
+											columnas="Tipo Ident#65px|Identificación|Nombres|Apellidos" />
+									</cell>
+									<cell colspan="2">
+										<textbox id="tbxNomPaciente"
+											hflex="1" style="text-transform:uppercase" readonly="true" />
+									</cell>
+									<cell>
+										<toolbarbutton
+											id="btnLimpiarPaciente" image="/images/borrar.gif"
+											visible="false" />
+									</cell>
+								</row>
+								<row>
+									<cell>
+										<space width="7px" />
+										<label value="Nacimiento: " />
+									</cell>
+									<cell>
+										<textbox id="tbxNacimiento"
+											hflex="1" readonly="true" />
+									</cell>
+									<cell colspan="2">
+										<hlayout>
+											<label value="Edad: " />
+											<textbox id="tbxEdad"
+												width="50px" readonly="true" />
+											<space />
+											<label value="Sexo: " />
+											<textbox id="tbxSexo"
+												width="139px" readonly="true" />
+											<space />
+											<label value="Tipo ID: " />
+											<space width="2px" />
+											<textbox
+												id="tbxTipo_identificacion" width="53px" readonly="true" />
+											<space />
+											<label value="Estrato: " />
+											<textbox id="tbxEstrato"
+												width="52px" readonly="true" />
+										</hlayout>
+									</cell>
+									<cell />
+								</row>
+								<row>
+									<cell>
+										<space width="7px" />
+										<label value="Aseguradora: " />
+									</cell>
+									<cell>
+										<bandboxRegistros
+											id="tbxCodigo_administradora" widthBandbox="150px"
+											widthListbox="700px" heightListbox="300px"
+											columnas="Codigo#65px|Nombres|Nit#100px|Tipo#100px" />
+									</cell>
+									<cell colspan="2">
+										<textbox readonly="true"
+											id="tbxNomAdministradora" hflex="1" />
+									</cell>
+									<cell />
+								</row>
+								<row visible="false">
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label value="Nro Ingreso:" />
+									</cell>
+									<cell>
+
+									</cell>
+									<cell>
+										<label value="Aseguradora:" />
+									</cell>
+									<cell colspan="3">
+										<textbox id="tbxAseguradora"
+											width="317px" style="text-transform:uppercase"
+											readonly="true" />
+									</cell>
+								</row>
+								<row>
+									<cell>
+										<space width="7px" />
+										<label value="Contrato:" />
+									</cell>
+									<cell colspan="3">
+										<hlayout>
+											<listbox id="lbxContratos"
+												mold="select" hflex="1" />
+											<space />
+											<toolbarbutton
+												id="buttonInfo" label="Info" image="/images/info_icon.png"
+												tooltiptext="Informacion de contratos asociados"
+												popup="popupDetalle_contrato" />
+											<space />
+										</hlayout>
+									</cell>
+									<cell />
+								</row>
+							</rows>
+						</grid>
+
+						<popup id="popupDetalle_contrato">
+							<groupbox mold="3d" closable="false"
+								width="400px">
+								<caption label="Detalles de contrato"
+									style="font-weight:bold" />
+								<textbox id="tbxContrato"
+									readonly="true" hflex="1" rows="5"
+									style="text-transform:uppercase" />
+							</groupbox>
+						</popup>
+
+					</groupbox>
+					<separator />
+					<groupbox closable="false" width="950px"
+						mold="3d">
+						<caption label="DATOS DE LA ATENCION" />
+						<grid>
+							<columns visible="false">
+								<column width="140px" />
+								<column width="160px" />
+								<column width="140px" />
+								<column />
+								<column width="30px" />
+							</columns>
+							<rows>
+								<row>
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label value="Centro de salud: "
+											style="font-size:11px" />
+										<label value="(Alt+C)"
+											style="color: red;font-size:9px"
+											tooltiptext="Campo obligatorio" />
+									</cell>
+									<cell>
+										<bandboxRegistros
+											id="tbxCentro_salud" widthBandbox="150px"
+											widthListbox="600px" heightListbox="300px"
+											columnas="Código#65px|Nombres" />
+									</cell>
+									<cell colspan="2">
+										<textbox
+											id="tbxNomCentroAtencion" hflex="1"
+											style="text-transform:uppercase" readonly="true" />
+									</cell>
+									<cell>
+										<toolbarbutton
+											id="btnLimpiarCentroAtencion" image="/images/borrar.gif"
+											visible="false" />
+									</cell>
+								</row>
+								<row>
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label value="Via de ingreso: "
+											style="font-size:11px" />
+										<label value="(Alt+U)"
+											style="color: red;font-size:9px"
+											tooltiptext="Campo obligatorio" />
+									</cell>
+									<cell>
+										<listbox id="lbxVia_ingreso"
+											name="via_ingreso" mold="select" hflex="1" sclass="combobox"
+											onSelect="" />
+									</cell>
+									<cell colspan="2">
+										<hbox align="center">
+											<label value="Fecha: " />
+											<datebox id="dtbxFecha"
+												format="dd/MM/yyyy" width="97px" />
+											<space width="2px" />
+											<label value="Fecha Ing.: "
+												style="font-size:11px" />
+											<datebox
+												id="dtbxFecha_ingreso" format="dd/MM/yyyy HH:mm"
+												width="125px" buttonVisible="false" readonly="true" />
+											<space width="2px" />
+											<label value="Fecha Egr.: " />
+											<space width="7px" />
+											<datebox
+												id="dtbxFecha_egreso" format="dd/MM/yyyy HH:mm"
+												width="125px"
+												onChange="formFacturacion_rips.consultarServiciosFacturas(true)" />
+										</hbox>
+									</cell>
+									<cell />
+								</row>
+
+								<row id="rowProgramaPyp"
+									visible="false">
+									<cell>
+										<label value="Programa Pyp" />
+									</cell>
+									<cell>
+										<listbox id="lbxPrograma_pyp"
+											mold="select" hflex="1" sclass="combobox" onSelect="" />
+									</cell>
+									<cell colspan="3" />
+								</row>
+
+								<row>
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label value="Prestador: " />
+										<label value="(Alt+M)"
+											style="color: red;font-size:9px"
+											tooltiptext="Campo obligatorio" />
+									</cell>
+									<cell>
+										<bandboxRegistros
+											id="tbxPrestador" widthBandbox="150px" widthListbox="600px"
+											heightListbox="300px"
+											columnas="Identificación#100px|Nombres y apellidos|Tipo#90px" />
+									</cell>
+									<cell colspan="2">
+										<textbox id="tbxNomPrestador"
+											hflex="1" style="text-transform:uppercase" readonly="true" />
+									</cell>
+									<cell>
+										<toolbarbutton
+											id="btnLimpiarPrestador" image="/images/borrar.gif"
+											visible="false" />
+									</cell>
+								</row>
+								<row>
+									<cell valign="top">
+										<space width="7px" />
+										<label value="Nro ingreso:" />
+									</cell>
+									<cell>
+										<listbox id="lbxNro_ingreso"
+											mold="select" hflex="1" sclass="combobox" onSelect="" />
+									</cell>
+									<cell valign="top" colspan="3">
+										<hbox>
+											<label value="Plazo :" />
+											<intbox
+												constraint="no negative:Este valor no puede ser negativo"
+												id="ibxPlazo" width="92px" style="text-transform:uppercase"
+												value="30" />
+											<space width="2px" />
+											<label value="Nro Poliza:" />
+											<textbox id="tbxNro_poliza"
+												width="119px" style="text-transform:uppercase"
+												maxlength="20" />
+										</hbox>
+									</cell>
+								</row>
+								<row>
+									<cell>
+										<label value="Concepto:" />
+									</cell>
+									<cell colspan="3">
+										<textbox id="tbxDescripcion"
+											hflex="1" rows="2" style="text-transform:uppercase" />
+									</cell>
+									<cell />
+								</row>
+								<row visible="false">
+									<cell>
+										<label value="Observación: " />
+									</cell>
+									<cell colspan="3">
+										<textbox id="tbxObservacion"
+											readonly="true" hflex="1" rows="3"
+											style="text-transform:uppercase" />
+									</cell>
+									<cell />
+								</row>
+								<row>
+									<cell>
+										<label id="lbAutorizacion"
+											value="Autorización: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxNro_autorizacion" hflex="1"
+											style="text-transform:uppercase" maxlength="20" />
+									</cell>
+									<cell colspan="3" valign="top">
+										<div id="divBodega_centro"
+											visible="false">
+											<space />
+											<label value="Bodega" />
+											<space />
+											<listbox
+												id="lbxBodegas_centros" mold="select" width="170px" />
+										</div>
+										<checkbox
+											label="Admision de parto" id="chkAdmision_parto"
+											visible="false" />
+										<space />
+										<label value="Causa externa: "
+											visible="false" />
+										<space />
+										<listbox id="lbxCausa_externa"
+											name="causa_externa" mold="select" width="125px"
+											sclass="combobox" visible="false" />
+
+									</cell>
+								</row>
+								<row id="rowPaquetes_servicios"
+									visible="false">
+									<cell>
+										<label
+											value="Paquete de servicios" />
+									</cell>
+									<cell colspan="4">
+										<listbox
+											id="lbxPaquetes_servicios" hflex="1" mold="select" />
+										<space />
+										<toolbarbutton
+											image="/images/info_icon.png" />
+										<space />
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+					<separator />
+					<hbox width="950px">
+						<serviciosFacturacion id="lbxServicios" />
+					</hbox>
+					<space />
+				</div>
+			</center>
+		</borderlayout>
+
+		<popup id="popupCentros_atencion">
+			<listbox id="lbxCentros_atencion" multiple="true"
+				checkmark="true" width="250px" rows="8">
+				<custom-attributes org.zkoss.zul.listbox.rod="true" />
+				<listhead>
+					<listheader width="30px" />
+					<listheader>
+						<hlayout>
+							<label value="Centros"
+								style="font-weight:bold" />
+							<space />
+							<bandbox hflex="1"
+								id="bandboxBuscar_centros"
+								onOK="formFacturacion_rips.buscarCentro()" />
+						</hlayout>
+					</listheader>
+				</listhead>
+				<listfoot>
+					<listfooter align="middle" span="2">
+						<toolbarbutton
+							label="Consultar por centros de atencion"
+							image="/images/Magnifier.gif"
+							onClick="formFacturacion_rips.buscarDatos()"
+							tooltiptext="Consultar por centros de atencion" />
+					</listfooter>
+				</listfoot>
+			</listbox>
+		</popup>
+
+		<popup id="popupViasIngreso">
+			<listbox id="lbxVias_ingreso" multiple="true"
+				checkmark="true" width="300px" name="via_ingreso" rows="8">
+				<custom-attributes org.zkoss.zul.listbox.rod="true" />
+				<listhead>
+					<listheader label="Vias de ingreso" />
+				</listhead>
+				<listfoot>
+					<listfooter align="middle">
+						<toolbarbutton
+							label="Consultar por via de ingreso"
+							image="/images/Magnifier.gif"
+							onClick="formFacturacion_rips.buscarDatos()"
+							tooltiptext="Consultar por via de ingreso" />
+					</listfooter>
+				</listfoot>
+			</listbox>
+		</popup>
+
+
+	</window>
+</zk>

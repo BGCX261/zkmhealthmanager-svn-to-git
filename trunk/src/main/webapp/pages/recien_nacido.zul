@@ -1,0 +1,327 @@
+<?page title="Hospitalizacion" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formRecien_nacido" width="100%" height="97%" use="healthmanager.controller.Recien_nacidoAction">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+		<!-- **************** -->
+		<!-- Zona de Objetivo -->
+		<!-- **************** -->
+
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="false" closable="false"
+			mold="3d" height="90%">
+
+			<separator />
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" height="90%" mold="paging"
+				pageSize="20" vflex="1">
+				<auxhead>
+					<auxheader colspan="7">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<separator />
+							<textbox id="tbxValue" width="200px"
+								onOK="formRecien_nacido.buscarDatos();"
+								style="text-transform:uppercase" />
+							<separator />
+							<button mold="trendy"
+								image="/images/Magnifier.gif"
+								onClick="formRecien_nacido.buscarDatos();"
+								tooltiptext="Consultar Hospitalizacion" />
+							<separator />
+							<button mold="trendy"
+								image="/images/New16.gif"
+								onClick='formRecien_nacido.accionForm(true,"registrar");'
+								tooltiptext="Nuevo Hospitalizacion" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Nro factura" width="100px"/>
+					<column label="Tipo id"  width="80px"/>
+					<column label="Nro ident." width="120px" />
+					<column label="Nro ingreso"  width="80px"/>
+					<column label="Fecha nacimiento"/>
+					<column label="Apellidos" />
+					<column label="Nombres" />
+					<column label="Acciones" align="center"
+						width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<borderlayout width="100%" height="90%" id="groupboxEditar"
+			visible="true">
+			<north border="none">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<toolbarbutton image="/images/Save16.gif"
+						label="Guardar"
+						onClick="formRecien_nacido.guardarDatos();" id="btGuardar" />
+					<toolbarbutton image="/images/New16.gif"
+						label="Nuevo"
+						onClick='formRecien_nacido.nuevoRegistro();'
+						id="btNew" />
+					<space />
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Cancelar"
+						onClick='formRecien_nacido.accionForm(false,tbxAccion.getText());'
+						id="btCancel" />
+					
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center">
+
+					<!-- *************************** -->
+					<!-- *** Insertar/Actualizar *** -->
+					<!-- *************************** -->
+					<space></space>
+					<groupbox closable="false" width="760px"
+						mold="3d">
+						<textbox id="tbxNro_factura" visible="false" />
+						<grid>
+							<auxhead>
+								<auxheader colspan="4"
+									label="EGRESO DE RECIEN NACIDO"
+									style="font-weight:bold" align="center" />
+							</auxhead>
+							<columns visible="false">
+								<column width="100px" />
+								<column width="180px" />
+								<column />
+								<column width="170px" />
+							</columns>
+							
+							<rows>
+								<!-- Fila 1 -->
+								<row>
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label value="Paciente:" />
+									</cell>
+									<cell>
+									<bandboxRegistros
+											id="tbxNro_identificacion" widthBandbox="170px"
+											widthListbox="600px" heightListbox="300px"
+											columnas="Tipo Ident#65px|Identificación|Nombres|Apellidos" />
+									</cell>
+									<cell colspan="2">
+										<textbox id="tbxNomPaciente"
+											width="410px" style="text-transform:uppercase"
+											readonly="true" />
+										<space />
+										<toolbarbutton
+											id="btnLimpiarPaciente" image="/images/borrar.gif" />
+									</cell>
+								</row>
+								<!-- Fila 2 -->
+								<row>
+									<cell>
+										<label value="Nacimiento:" />
+									</cell>
+									<cell colspan="3">
+										<hlayout>
+											<textbox id="tbxNacimiento"
+												width="80px" style="text-transform:uppercase"
+												readonly="true" />
+											<label value="Edad: " />
+											<textbox id="tbxEdad"
+												width="50px" style="text-transform:uppercase"
+												readonly="true" />
+											<label value="Sexo: " />
+											<textbox id="tbxSexo"
+												width="80px" style="text-transform:uppercase"
+												readonly="true" />
+											<label value="Estrato: " />
+											<textbox id="tbxEstrato"
+												width="30px" style="text-transform:uppercase"
+												readonly="true" />
+											<label value="Tipo afiliado: " />
+											<textbox id="tbxTipo_afiliado"
+												width="115px" style="text-transform:uppercase"
+												readonly="true" />
+										</hlayout>
+									</cell>
+								</row>
+								<!-- Fila 3 -->
+								<row>
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label value="Nro Ingreso:" />
+									</cell>
+									<cell colspan="3">
+										<listbox id="lbxNro_ingreso"
+											mold="select" width="170px" sclass="combobox"
+											onSelect="formRecien_nacido.selectedAdmision(self.getSelectedItem())" />
+										<space />
+										<label value="Aseguradora:" />
+										<space />
+										<textbox
+											id="tbxAseguradora" width="330px"
+											style="text-transform:uppercase" readonly="false"/>
+									</cell>
+								</row>
+								<!-- Fila 4 -->
+								<row>
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label value="Médico:" />
+									</cell>
+									<cell>
+										<bandboxRegistros
+											id="tbxCodigo_prestador" idthBandbox="170px"
+											widthListbox="600px" heightListbox="300px"
+											columnas="Identificación|Nombres|Apellidos|Especialidad" />
+									</cell>
+									<cell colspan="2">
+										<textbox id="tbxNomPrestador"
+											width="410px" style="text-transform:uppercase"
+											readonly="true" />
+										<space />
+										<toolbarbutton
+											id="btnLimpiarPrestador" image="/images/borrar.gif" />
+									</cell>
+								</row>
+								
+								<!-- Fila 5 -->
+								
+								<row>
+									<cell colspan="4">
+										<grid width="95%">
+											<columns>
+												<column label=""/>
+												<column label=""/>
+												<column label=""/>
+												<column label="" width="150px"/>
+											</columns>
+											<rows>
+												<row>
+													<cell align="center"><label value="Sexo"/></cell>
+													<cell align="center" colspan="2"><label value="Nro Autorización"/></cell>
+													<cell align="center"><label value="Fecha Nacimiento"/></cell>
+												</row>
+												
+												<row>
+													<cell align="center"><listbox id="lbxSexo" name="sexo" mold="select"  hflex="1" sclass="combobox"/></cell>
+													<cell align="center" colspan="2"><textbox id="tbxNumero_autorizacion" hflex="1" style="text-transform:uppercase" maxlength="15"/></cell>
+													<cell align="center"><datebox id="dtbxFecha_nacimiento" onCreate="self.value = new Date();" format="dd/MM/yyyy HH:mm" hflex="1"/></cell>
+												</row>
+												
+												<row>
+													<cell align="center"><label value="Control Prenatal"/></cell>
+													<cell align="center"><label value="Edad (Semanas)"/></cell>
+													<cell align="center"><label value="Peso (Gramos)"/></cell>
+													<cell align="center"><label value="Fecha Muerte"/></cell>
+												</row>
+												
+												<row>
+													<cell align="center">
+														<radiogroup
+															id="rdbControl_prenatal">
+															<radio
+																id="radioControl_prenatalS" label="SI" checked="true" value="S" />
+															<space />
+															<radio
+																id="radioControl_prenatalN" label="NO" value="N" />
+															<space />
+														</radiogroup>
+													</cell>
+
+													<cell align="center">
+														<intbox
+															constraint="no negative:Este valor no puede ser negativo"
+															id="ibxEdad_gestacional" hflex="1"
+															style="text-transform:uppercase" value="0"/>
+													</cell>
+													<cell align="center">
+														<intbox
+															constraint="no negative:Este valor no puede ser negativo"
+															id="ibxPeso" hflex="1"
+															style="text-transform:uppercase" value="0"/>
+													</cell>
+													<cell align="center"><datebox id="dtbxFecha_muerte" format="dd/MM/yyyy HH:mm" hflex="1"/></cell>
+												</row>
+											</rows>
+										</grid>
+									</cell>
+								</row>
+								<!-- Fila 6 -->
+								<row>
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label value="Diag Ppal:" />
+									</cell>
+									<cell>
+										<bandboxRegistros
+											id="tbxCodigo_diagnostico_principal" idthBandbox="170px"
+											widthListbox="600px" heightListbox="300px"
+											columnas="Código|Nombre|Sexo|L. inferior|L. superior" />
+									</cell>
+									<cell colspan="2">
+										<textbox id="tbxNomDxp"
+											width="410px" style="text-transform:uppercase"
+											readonly="true" />
+										<space />
+										<toolbarbutton
+											id="btnLimpiarDxp" image="/images/borrar.gif" />
+									</cell>
+								</row>									
+								
+								<!-- Fila 11 -->
+								<row>
+									<cell>
+										<label value="Causa muerte:" />
+									</cell>
+									<cell>
+										<bandboxRegistros
+											id="tbxCausa_muerte" idthBandbox="170px"
+											widthListbox="600px" heightListbox="300px"
+											columnas="Código|Nombre|Sexo|L. inferior|L. superior" />
+									</cell>
+									<cell colspan="2">
+										<textbox id="tbxNomDx5"
+											width="410px" style="text-transform:uppercase"
+											readonly="true" />
+										<space />
+										<toolbarbutton
+											id="btnLimpiarDx5" image="/images/borrar.gif" />
+									</cell>
+								</row>
+								
+								
+							</rows>
+							
+						</grid>
+
+					</groupbox>
+				</div>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

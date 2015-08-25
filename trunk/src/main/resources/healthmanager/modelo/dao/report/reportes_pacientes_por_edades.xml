@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.reporte_pacientes_edad_sexoModel">
+	<select id="select" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+		(SELECT DISTINCT ON (act.codigo_medico, fecha) act.codigo_medico,
+		(SELECT "count"(DISTINCT actaux.nro_id_paciente) FROM activ_pacient_atendidos
+		AS actaux
+		WHERE actaux.codigo_empresa = act.codigo_empresa AND actaux.codigo_sucursal
+		= act.codigo_sucursal
+		AND actaux.codigo_medico = act.codigo_medico AND
+		to_char(actaux.creacion_date, 'yyyy-MM') = to_char(act.creacion_date,
+		'yyyy-MM')) AS cantidad_pacientes
+		, 'PAC' AS tipo
+		,to_char(act.creacion_date, 'yyyy-MM') fecha, (u.apellidos || ' ' || u.nombres) As medico,
+		act.creacion_date, act.codigo_empresa, act.codigo_sucursal,
+		act.tipo_actividad, act.nro_id_paciente,
+		calcula_edad(pa.fecha_nacimiento, CURRENT_DATE) AS edad, pa.sexo
+		FROM "public".activ_pacient_atendidos AS act
+		INNER JOIN usuarios AS u ON (u.codigo_empresa = act.codigo_empresa AND
+		u.codigo_sucursal = act.codigo_sucursal AND u.codigo =
+		act.codigo_medico)
+		INNER JOIN paciente AS pa ON (pa.codigo_empresa = act.codigo_empresa AND
+		pa.codigo_sucursal = act.codigo_sucursal AND pa.nro_identificacion =
+		act.nro_id_paciente)
+		where act.codigo_empresa = #{codigo_empresa}
+		and act.codigo_sucursal = #{codigo_sucursal}
+		AND to_char(act.creacion_date, 'yyyy-MM') = #{fecha_aniomes}
+		ORDER BY act.codigo_medico, fecha)
+    </select>
+
+</mapper>

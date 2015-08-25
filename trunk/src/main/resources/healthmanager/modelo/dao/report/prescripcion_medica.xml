@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.prescripcionMedicaModel">
+    <select id="select" resultType="java.util.HashMap" parameterType="java.util.Map">
+    SELECT
+		public.detalle_receta_rips.codigo_receta,
+		public.detalle_receta_rips.consecutivo,
+		public.detalle_receta_rips.codigo_articulo,
+		public.detalle_receta_rips.cantidad_recetada,
+		CAST(public.detalle_receta_rips.cantidad_recetada AS VARCHAR) AS cantidad,
+		public.detalle_receta_rips.cantidad_entregada,
+		public.detalle_receta_rips.valor_unitario,
+		public.detalle_receta_rips.valor_total,
+		public.detalle_receta_rips.valor_real,
+		public.detalle_receta_rips.descuento,
+		public.detalle_receta_rips.incremento,
+		public.detalle_receta_rips.unm,
+		public.detalle_receta_rips.posologia,
+		public.detalle_receta_rips.autorizado,
+		public.detalle_receta_rips.entregado,
+		public.detalle_receta_rips.cantidad_pendiente,
+		public.detalle_receta_rips.estado_cobro,
+		public.detalle_receta_rips.tiempo_tto,
+		public.receta_rips.codigo_receta,
+		public.receta_rips.nro_identificacion,
+		public.receta_rips.codigo_administradora,
+		public.receta_rips.id_plan,
+		public.receta_rips.nro_ingreso,
+		public.receta_rips.fecha,
+		public.receta_rips.facturacion,
+		public.receta_rips.creacion_date,
+		public.receta_rips.ultimo_update,
+		public.receta_rips.delete_date,
+		public.receta_rips.creacion_user,
+		public.receta_rips.ultimo_user,
+		public.receta_rips.delete_user,
+		public.receta_rips.estado,
+		public.receta_rips.tipo_hc,
+		public.receta_rips.codigo_prestador,
+		public.receta_rips.leido,
+		public.receta_rips.leido_auditor,
+		public.receta_rips.contiene_med_no_autorizados,
+		public.receta_rips.procedencia,
+		public.receta_rips.tipo_id_prestador_externo,
+		public.receta_rips.observaciones,
+		public.receta_rips.vigencia,
+		public.historia_clinica_uci.nro_historia,
+		public.sucursal.direccion_sucursal,
+		public.sucursal.telefono_sucursal,
+		public.paciente.tipo_identificacion,
+		public.paciente.nro_identificacion,
+		public.paciente.nombre1 AS nombre1_paciente,
+		public.paciente.nombre2 AS nombre2_paciente,
+		public.paciente.apellido1 AS apellido1_paciente,
+		public.paciente.apellido2 AS apellido2_paciente,
+		public.cie.codigo AS codigo_diagnostico,
+		public.cie.nombre AS diagnostico,
+		CASE WHEN  public.receta_rips.procedencia = '01' THEN public.usuarios.nombres || ' ' || public.usuarios.apellidos  ELSE public.receta_rips.nombre_medico END AS nombre_medico,
+		public.usuarios.registro_medico,
+		public.usuarios.firma AS firma_medico,
+		'XXX' as nombre_medicamento,
+		'XXX' as forma,
+		'XXX' as via_administracion,
+		public.usuarios.codigo AS codigo_prestador,
+		public.empresa.email AS email,
+		public.empresa.pagina_web,
+		public.sucursal.email AS email_sucursal
+		FROM
+		public.detalle_receta_rips
+		INNER JOIN public.receta_rips ON public.detalle_receta_rips.codigo_empresa = public.receta_rips.codigo_empresa AND public.detalle_receta_rips.codigo_sucursal = public.receta_rips.codigo_sucursal AND public.detalle_receta_rips.codigo_receta = public.receta_rips.codigo_receta
+		INNER JOIN public.historia_clinica_uci ON public.historia_clinica_uci.codigo_empresa = public.receta_rips.codigo_empresa AND public.historia_clinica_uci.codigo_sucursal = public.receta_rips.codigo_sucursal AND public.historia_clinica_uci.nro_identificacion = public.receta_rips.nro_identificacion AND public.historia_clinica_uci.nro_ingreso = public.receta_rips.nro_ingreso AND public.historia_clinica_uci.tipo_hc = public.receta_rips.tipo_hc
+		INNER JOIN public.sucursal ON public.sucursal.codigo_empresa = public.detalle_receta_rips.codigo_empresa AND public.sucursal.codigo_sucursal = public.detalle_receta_rips.codigo_sucursal
+		INNER JOIN public.paciente ON public.paciente.codigo_empresa = public.receta_rips.codigo_empresa AND public.paciente.codigo_sucursal = public.receta_rips.codigo_sucursal AND public.paciente.nro_identificacion = public.receta_rips.nro_identificacion
+		INNER JOIN public.cie ON public.cie.codigo = public.historia_clinica_uci.impresion_diagnostica
+		INNER JOIN public.usuarios ON public.usuarios.codigo_empresa = public.receta_rips.codigo_empresa AND public.usuarios.codigo_sucursal = public.receta_rips.codigo_sucursal AND public.usuarios.codigo = public.receta_rips.codigo_prestador
+		INNER JOIN public.empresa ON public.empresa.codigo_empresa = public.sucursal.codigo_empresa
+		where public.receta_rips.codigo_empresa = #{codigo_empresa}
+		and public.receta_rips.codigo_sucursal = #{codigo_sucursal}
+		and public.receta_rips.codigo_receta = #{codigo_receta}
+		order by public.detalle_receta_rips.consecutivo
+    </select>
+   
+</mapper>

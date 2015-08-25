@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Notas_enfermeriaDao">
+
+	<resultMap id="notas_enfermeriaMap" type="notas_enfermeria">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="codigo_nota" property="codigo_nota" />
+		<result column="nro_ingreso" property="nro_ingreso" />
+		<result column="via_ingreso" property="via_ingreso" />
+		<result column="nro_documento" property="nro_documento" />
+		<result column="fecha_nota" property="fecha_nota" />
+		<result column="descripcion_nota" property="descripcion_nota" />
+		<result column="codigo_enfermera" property="codigo_enfermera" />
+		<result column="creacion_date" property="creacion_date" />
+		<result column="creacion_user" property="creacion_user" />
+		<result column="codigo_centro" property="codigo_centro" />
+	</resultMap>
+
+	<insert id="crear" parameterType="notas_enfermeria">
+		insert into public.notas_enfermeria (codigo_empresa,codigo_sucursal,
+		codigo_nota,nro_ingreso,via_ingreso,
+		nro_documento,fecha_nota,descripcion_nota,
+		codigo_enfermera,creacion_date,creacion_user,codigo_centro)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{codigo_nota},#{nro_ingreso},#{via_ingreso},
+		#{nro_documento},#{fecha_nota},#{descripcion_nota},
+		#{codigo_enfermera},#{creacion_date},#{creacion_user},#{codigo_centro})
+	</insert>
+
+	<update id="actualizar" parameterType="notas_enfermeria">
+		update public.notas_enfermeria set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},codigo_nota = #{codigo_nota},
+		nro_ingreso = #{nro_ingreso},via_ingreso = #{via_ingreso},
+		nro_documento = #{nro_documento},fecha_nota = #{fecha_nota},
+		descripcion_nota = #{descripcion_nota},codigo_enfermera = #{codigo_enfermera},
+		creacion_date = #{creacion_date},creacion_user = #{creacion_user},
+		codigo_centro = #{codigo_centro} 
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and codigo_nota = #{codigo_nota}
+	</update>
+
+	<select id="consultar" parameterType="notas_enfermeria" resultMap="notas_enfermeriaMap">
+		select codigo_empresa,codigo_sucursal,
+		codigo_nota,nro_ingreso,via_ingreso,nro_documento,
+		fecha_nota,descripcion_nota,codigo_enfermera,creacion_date,
+		creacion_user,codigo_centro 
+		from public.notas_enfermeria where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_nota = #{codigo_nota}
+	</select>
+
+	<delete id="eliminar" parameterType="notas_enfermeria">
+		delete from public.notas_enfermeria
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_nota = #{codigo_nota}
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="notas_enfermeriaMap">
+		select codigo_empresa,codigo_sucursal,
+		codigo_nota,nro_ingreso,via_ingreso,nro_documento,
+		fecha_nota,descripcion_nota,codigo_enfermera,creacion_date,
+		creacion_user,codigo_centro 
+		from public.notas_enfermeria 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="nro_ingreso != null">
+			AND nro_ingreso = #{nro_ingreso}
+			</if>
+			<if test="nro_documento != null">
+			AND nro_documento = #{nro_documento}
+			</if>
+			<if test="codigo_centro != null">
+				and codigo_centro = #{codigo_centro} 
+			</if>
+			<if test="codigo_nota != null">
+			AND codigo_nota like '%${codigo_nota}%'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from public.notas_enfermeria 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

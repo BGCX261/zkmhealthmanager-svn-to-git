@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="contaweb.modelo.dao.CarteraDao">
+
+	<!--<typeAlias alias="cartera" type="contaweb.modelo.bean.Cartera" />-->
+
+	<!--<mapper resource="contaweb/modelo/dao/xml/carteraSQL.xml" />-->
+
+	<resultMap id="carteraMap" type="cartera">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="codigo_comprobante" property="codigo_comprobante" />
+		<result column="codigo_documento" property="codigo_documento" />
+		<result column="nro_cuota" property="nro_cuota" />
+		<result column="vencimiento" property="vencimiento" />
+		<result column="abono" property="abono" />
+		<result column="saldos" property="saldos" />
+		<result column="total" property="total" />
+		<result column="tipo" property="tipo" />
+		<result column="creacion_date" property="creacion_date" />
+		<result column="ultimo_update" property="ultimo_update" />
+		<result column="delete_date" property="delete_date" />
+		<result column="creacion_user" property="creacion_user" />
+		<result column="ultimo_user" property="ultimo_user" />
+		<result column="delete_user" property="delete_user" />
+		<result column="dto_cuota" property="dto_cuota" />
+		<result column="interes" property="interes" />
+		<result column="manejo" property="manejo" />
+		<result column="codigo_tercero" property="codigo_tercero" />
+		<result column="cuenta" property="cuenta" />
+		<result column="concepto" property="concepto" />
+		<result column="anio" property="anio" />
+		<result column="grado" property="grado" />
+		<result column="documento_soporte" property="documento_soporte" />
+		<result column="detalle" property="detalle" />
+	</resultMap>
+
+	<insert id="crear" parameterType="cartera">
+		insert into contaweb.cartera (codigo_empresa,codigo_sucursal,
+		codigo_comprobante,codigo_documento,nro_cuota,
+		vencimiento,abono,saldos,
+		total,tipo,creacion_date,
+		ultimo_update,delete_date,creacion_user,
+		ultimo_user,delete_user,dto_cuota,
+		interes,manejo,codigo_tercero,
+		cuenta,concepto,anio,
+		grado,documento_soporte,
+		detalle)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{codigo_comprobante},#{codigo_documento},#{nro_cuota},
+		#{vencimiento},#{abono},#{saldos},
+		#{total},#{tipo},#{creacion_date},
+		#{ultimo_update},#{delete_date},#{creacion_user},
+		#{ultimo_user},#{delete_user},#{dto_cuota},
+		#{interes},#{manejo},#{codigo_tercero},
+		#{cuenta},#{concepto},#{anio},
+		#{grado},#{documento_soporte},
+		#{detalle})
+	</insert>
+
+	<update id="actualizar" parameterType="cartera">
+		update contaweb.cartera set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},codigo_comprobante = #{codigo_comprobante},
+		codigo_documento = #{codigo_documento},nro_cuota = #{nro_cuota},
+		vencimiento = #{vencimiento},abono = #{abono},
+		saldos = #{saldos},total = #{total},
+		tipo = #{tipo},
+		ultimo_update = #{ultimo_update},delete_date = #{delete_date},
+		ultimo_user = #{ultimo_user},
+		delete_user = #{delete_user},dto_cuota = #{dto_cuota},
+		interes = #{interes},manejo = #{manejo},
+		codigo_tercero = #{codigo_tercero},cuenta = #{cuenta},
+		concepto = #{concepto},anio = #{anio},
+		grado = #{grado},
+		documento_soporte = #{documento_soporte},detalle = #{detalle}
+		where 		codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and codigo_comprobante = #{codigo_comprobante}
+		and codigo_documento = #{codigo_documento}
+		and manejo = #{manejo}
+		and nro_cuota = #{nro_cuota}
+		and codigo_tercero = #{codigo_tercero}
+		and concepto = #{concepto}
+	</update>
+
+	<select id="consultar" parameterType="cartera" resultMap="carteraMap">
+		select codigo_empresa,codigo_sucursal,
+		codigo_comprobante,codigo_documento,nro_cuota,vencimiento,
+		abono,saldos,total,tipo,
+		creacion_date,ultimo_update,delete_date,creacion_user,
+		ultimo_user,delete_user,dto_cuota,interes,
+		manejo,codigo_tercero,cuenta,concepto,
+		anio,grado,documento_soporte,detalle
+		from contaweb.cartera where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_comprobante = #{codigo_comprobante}
+		and codigo_documento = #{codigo_documento} and manejo = #{manejo}
+		and nro_cuota = #{nro_cuota} and codigo_tercero = #{codigo_tercero}
+		and concepto = #{concepto}
+	</select>
+
+	<delete id="eliminar" parameterType="cartera">
+		delete from contaweb.cartera
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} 
+		and codigo_comprobante = #{codigo_comprobante}
+		and codigo_documento = #{codigo_documento}
+		<if test="manejo != null"> AND manejo = #{manejo}</if>
+		<if test="nro_cuota != null"> AND nro_cuota = #{nro_cuota}</if>
+		<if test="codigo_tercero != null"> AND codigo_tercero = #{codigo_tercero}</if>
+		<if test="concepto != null"> AND concepto = #{concepto}</if>
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="carteraMap">
+		select codigo_empresa,codigo_sucursal,
+		codigo_comprobante,codigo_documento,nro_cuota,vencimiento,
+		abono,saldos,total,tipo,
+		creacion_date,ultimo_update,delete_date,creacion_user,
+		ultimo_user,delete_user,dto_cuota,interes,
+		manejo,codigo_tercero,cuenta,concepto,
+		anio,grado,documento_soporte,detalle
+		from contaweb.cartera 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null"> AND codigo_empresa = #{codigo_empresa}</if>
+			<if test="codigo_sucursal != null"> AND codigo_sucursal = #{codigo_sucursal}</if>
+			<if test="codigo_comprobante != null"> AND codigo_comprobante = #{codigo_comprobante}</if>
+			<if test="codigo_documento != null"> AND codigo_documento = #{codigo_documento}</if>
+			<if test="codigo_tercero != null"> AND codigo_tercero = #{codigo_tercero}</if>
+			<if test="manejo != null"> AND manejo = #{manejo}</if>
+			<if test="concepto != null"> AND concepto = #{concepto}</if>
+			<if test="parameter != null"> AND ${parameter} like '${value}'</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from contaweb.cartera 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

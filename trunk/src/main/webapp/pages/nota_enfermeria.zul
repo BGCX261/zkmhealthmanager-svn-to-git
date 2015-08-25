@@ -1,0 +1,139 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+<window id="formNota_enfermeria" width="100%" height="100%" use="healthmanager.controller.Nota_enfermeriaAction" >
+<style src="estilo.css" />
+<style>
+body ,table{
+	margin:0;
+	padding:0;
+	
+}
+.z-fieldset{
+	-moz-border-radius:5px;
+	border-radius: 5px;
+	-webkit-border-radius: 5px;
+}
+.combobox{
+	font-size:12px;
+	border: 1px solid silver;
+}
+
+tr.z-row .z-cell{
+	background-image:none;
+}
+
+tr.z-row td.z-row-inner{
+	background-image:none;
+}
+</style>
+<borderlayout width="100%" height="100%">
+<center autoscroll="true" border="none">
+
+<!-- *********************** -->
+<!--        Principal        -->
+<!-- *********************** -->
+<groupbox id="groupboxPrincipal" style="border:0;padding:2px">
+
+
+<!-- *************************** -->
+<!-- *** Insertar/Actualizar *** -->
+<!-- *************************** -->
+<groupbox visible="true" id="groupboxEditar" closable="false" style="border:0;padding:0">
+<!-- *************************** -->
+<!-- **** Barra de Botones ***** -->
+<!-- *************************** -->
+
+<toolbar width="100%" align="start">
+<textbox id="tbxAccion" value="registrar" visible="false"/>
+<textbox id="tbxNro_identificacion" value="" visible="false"/>
+<textbox id="tbxNro_ingreso" value="" visible="false"/>
+<textbox id="tbxCodigo_administradora" value="" visible="false"/>
+<textbox id="tbxId_plan" value="" visible="false"/>
+<textbox id="tbxTipo_hc" value="" visible="false"/>
+<textbox id="tbxTipo" value="" visible="false"/>
+<toolbarbutton image="/images/Save16.gif" label="Guardar Nota" onClick="formNota_enfermeria.guardarDatos();" id="btGuardar"/>
+<toolbarbutton image="/images/eliminar.gif" label="Eliminar Nota" onClick='formNota_enfermeria.eliminarDatos(tbxCodigo_nota.getValue());' id="btEliminar"/>
+<toolbarbutton image="/images/print_ico.gif" label="Imprimir Nota" onClick="formNota_enfermeria.imprimir(tbxCodigo_nota.getValue());" id="btImprimir"/>
+<space/>
+
+<label value="Formato impresión: "/>
+<listbox id="lbxFormato" mold="select" width="150px" sclass="combobox">
+<listitem value="pdf" label="PDF" selected="true"/>
+<listitem value="rtf" label="WORD"/>
+</listbox>
+
+</toolbar>
+
+<space/>
+
+<grid sclass="GridSinBorde" style="border:none">
+<columns>
+<column label="" width="92px"/>
+<column label="" width="182px"/>
+<column label="" width="68px"/>
+<column label="" width="175px"/>
+<column label="" width="60px"/>
+<column label="" />
+</columns>
+
+<rows>
+
+<row>
+<cell><label value="* " style="color: red" tooltiptext="Campo obligatorio"/><label id="lbCodigo_prestador" value="Prestador: "/></cell>
+<cell>
+<bandbox id="tbxCodigo_prestador" autodrop="true" readonly="true" width="170px" onOpen='formNota_enfermeria.buscarPrestador(tbxValuePrestador.getValue(),lbxPrestador)'>
+<bandpopup>
+	<vbox>
+		<toolbar>
+			<label value="Buscar: "/>
+		    <textbox id="tbxValuePrestador" onChanging='formNota_enfermeria.buscarPrestador(event.getValue(),lbxPrestador)' style="text-transform:uppercase;"/>
+		    <toolbarbutton image="/images/borrar.gif" tooltiptext="Quitar" onClick='formNota_enfermeria.selectedPrestador(new Listitem())'/>
+		</toolbar>
+		<listbox height="300px" width="600px" mold="paging" pageSize="8" id="lbxPrestador"
+		    onSelect='formNota_enfermeria.selectedPrestador(self.getSelectedItem())' >
+		    <listhead>
+		    <listheader label="Tipo Ident." width="65px"/>
+		    <listheader label="Identificación"/>
+		    <listheader label="Nombres"/>
+		    <listheader label="Apellidos"/>
+		    <listheader label="Especialidad"/>
+		    </listhead>
+		</listbox>
+	</vbox>
+  </bandpopup>
+</bandbox>
+</cell>
+<cell colspan="2"><textbox id="tbxNomPrestador" width="213px" style="text-transform:uppercase" readonly="true"/></cell>
+<cell><label id="lbCodigo_nota" value="Codigo: "/></cell>
+<cell><textbox id="tbxCodigo_nota" width="120px" style="text-transform:uppercase" readonly="true"/></cell>
+</row>
+
+<!-- fila 1 -->
+<row>
+<cell colspan="2"><button mold="trendy" label="Adicionar Registro" onClick="formNota_enfermeria.adicionarNuevo();" id="btAdicionar"/></cell>
+<cell><space/></cell>
+<cell><space/></cell>
+<cell><space/></cell>
+<cell><space/></cell>
+</row>
+
+
+</rows>
+</grid>
+
+<grid id="gridNotas" width="800px" style="margin-top:3px"   mold="paging" pageSize="20">
+<columns sizable="true">
+     <column label="Fecha y hora" align="center" width="150px"/>
+     <column label="Nota" align="center"/>
+     <column label="" align="center" width="28px"/>
+ </columns>
+    <rows id="rowsNotas" width="100%" />
+</grid>
+
+</groupbox>
+
+</groupbox>
+</center>
+</borderlayout>
+</window>
+</zk>

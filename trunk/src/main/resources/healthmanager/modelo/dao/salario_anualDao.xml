@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.Salario_anualDao">
+
+	
+
+	<resultMap id="salario_anualMap" type="salario_anual">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="anio" property="anio" />
+		<result column="valor_activos" property="valor_activos" />
+		<result column="valor_pensionado" property="valor_pensionado" />
+	</resultMap>
+
+	<insert id="crear" parameterType="salario_anual">
+		insert into public.salario_anual (codigo_empresa,codigo_sucursal,
+		anio,valor_activos,valor_pensionado)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{anio},#{valor_activos},#{valor_pensionado})
+	</insert>
+
+	<update id="actualizar" parameterType="salario_anual">
+		update public.salario_anual set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},anio = #{anio},
+		valor_activos = #{valor_activos},valor_pensionado = #{valor_pensionado}
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and anio = #{anio}
+	</update>
+
+	<select id="consultar" resultMap="salario_anualMap" parameterType="salario_anual">
+		select codigo_empresa,codigo_sucursal,
+		anio,valor_activos,valor_pensionado
+		from public.salario_anual where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and anio = #{anio}
+	</select>
+
+	<delete id="eliminar" parameterType="salario_anual">
+		delete from public.salario_anual
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and anio = #{anio}
+	</delete>
+
+	<select id="listar" resultMap="salario_anualMap" parameterType="java.util.Map">
+		select codigo_empresa,codigo_sucursal,
+		anio,valor_activos,valor_pensionado
+		from public.salario_anual 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">AND codigo_empresa = #{codigo_empresa}</if>
+			<if test="codigo_sucursal != null">AND codigo_sucursal = #{codigo_sucursal}</if>
+			<if test="parameter != null">AND ${parameter} like '${value}'</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

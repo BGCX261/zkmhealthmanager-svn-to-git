@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.anexo4Report">
+    <select id="select" resultType="java.util.HashMap" parameterType="java.util.Map">
+           SELECT
+				dtt_servicio.codigo_procedimiento,
+				dtt_servicio.nombre_pcd,
+				dtt_servicio.unidades,
+				dtt_servicio.valor_procedimiento,
+				dtt_servicio.unidades * dtt_servicio.valor_procedimiento AS valor_total_procedimiento,
+				prestador.nit,
+				prestador.nombre AS nombre_prestador,
+				prestador.direccion AS direccion_prestador,
+				pac.tipo_identificacion,
+				pac.nro_identificacion,
+				pac.apellido1,
+				pac.apellido2,
+				pac.nombre1,
+				pac.nombre2,
+				anexo4.estado,
+				orden.codigo_cie_principal,
+				diagnostico.nombre AS nompre_diagnostico,
+				usuario.codigo AS codigo_usuario,
+				usuario.nombres,
+				usuario.apellidos,
+				prestador.telefono AS telefono_administradora,
+				getzerofill(anexo4.codigo, 10) AS codigo_orden,
+				anexo4.codigo_solicitud,
+				to_char(anexo4.fecha, 'dd-MM-yyyy') AS fecha_autorizacion,
+				usuario.firma,
+				config.nombre AS nombre_servicio,
+				upper(elms.descripcion) AS tipo_afiliado,
+				dtt_servicio.codigo_cups,
+				config.mostrar_tipo_pcd,
+				anexo4.observaciones,
+				elms_forma_rea.descripcion AS tipo_cirugia,
+				elms_estado_cobro.descripcion AS  estado_cobro
+		  FROM public.detalle_anexo4 AS dtt_servicio
+		  INNER JOIN public.anexo4_entidad AS anexo4 ON anexo4.codigo_empresa = dtt_servicio.codigo_empresa AND anexo4.codigo_sucursal = dtt_servicio.codigo_sucursal AND anexo4.codigo = dtt_servicio.codigo_orden
+		  INNER JOIN public.administradora AS prestador ON prestador.codigo_empresa = anexo4.codigo_empresa AND prestador.codigo_sucursal = anexo4.codigo_sucursal AND prestador.codigo = anexo4.codigo_prestador
+		  INNER JOIN public.paciente AS pac ON pac.codigo_empresa = anexo4.codigo_empresa AND pac.codigo_sucursal = anexo4.codigo_sucursal AND pac.nro_identificacion = anexo4.nro_identificacion_paciente
+		  INNER JOIN public.orden_autorizacion AS orden ON orden.codigo_empresa = anexo4.codigo_empresa AND orden.codigo_sucursal = anexo4.codigo_sucursal AND orden.codigo_orden = anexo4.codigo_solicitud
+		  INNER JOIN public.cie AS diagnostico ON orden.codigo_cie_principal = diagnostico.codigo
+		  INNER JOIN public.usuarios AS usuario ON usuario.codigo_empresa = anexo4.codigo_empresa AND usuario.codigo_sucursal = anexo4.codigo_sucursal AND usuario.codigo = anexo4.nro_identificacion_reporta
+		  INNER JOIN public.configuracion_servicios_autorizacion AS config ON anexo4.tipo_servicio = config."id"
+	      INNER JOIN public.afiliaciones_me AS afl ON (afl.nro_identificacion_afiliado = pac.nro_identificacion AND afl.codigo_empresa = pac.codigo_empresa AND afl.codigo_sucursal = pac.codigo_sucursal)
+		  LEFT JOIN public.elemento AS elms ON  elms.codigo = pac.tipo_afiliado AND elms.tipo = 'tipo_afiliado2'
+	      LEFT JOIN public.elemento AS elms_estado_cobro ON  elms_estado_cobro.codigo = anexo4.estado_cobro AND elms_estado_cobro.tipo = 'estado_pago'
+	      LEFT JOIN public.elemento AS elms_forma_rea ON  elms_forma_rea.codigo = anexo4.tipo_cirugia AND elms_forma_rea.tipo = 'forma_realizacion'
+	      WHERE anexo4.codigo_empresa = #{codigo_empresa} 
+          AND anexo4.codigo_sucursal = #{codigo_sucursal} 
+          AND anexo4.codigo = #{codigo} 
+    </select>
+   
+</mapper>

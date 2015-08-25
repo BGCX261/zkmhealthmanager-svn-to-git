@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Via_ingreso_consultasDao">
+
+	<resultMap id="via_ingreso_consultasMap" type="via_ingreso_consultas">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="via_ingreso" property="via_ingreso" />
+		<result column="pro_consulta_primera" property="pro_consulta_primera" />
+		<result column="pro_consulta_control" property="pro_consulta_control" />
+		<result column="pro_enfermeria_primera" property="pro_enfermeria_primera" />
+		<result column="pro_enfermeria_control" property="pro_enfermeria_control" />
+		<result column="creacion_user" property="creacion_user" />
+		<result column="creacion_date" property="creacion_date" />
+		<result column="finalidad" property="finalidad" />
+	</resultMap>
+
+	<insert id="crear" parameterType="via_ingreso_consultas">
+		insert into public.via_ingreso_consultas (codigo_empresa,codigo_sucursal,
+		via_ingreso,pro_consulta_primera,pro_consulta_control,
+		pro_enfermeria_primera,pro_enfermeria_control,creacion_user,
+		creacion_date,finalidad)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{via_ingreso},#{pro_consulta_primera},#{pro_consulta_control},
+		#{pro_enfermeria_primera},#{pro_enfermeria_control},#{creacion_user},
+		#{creacion_date},#{finalidad})
+	</insert>
+
+	<update id="actualizar" parameterType="via_ingreso_consultas">
+		update public.via_ingreso_consultas set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},via_ingreso = #{via_ingreso},
+		pro_consulta_primera = #{pro_consulta_primera},pro_consulta_control = #{pro_consulta_control},
+		pro_enfermeria_primera = #{pro_enfermeria_primera},pro_enfermeria_control = #{pro_enfermeria_control},
+		creacion_user = #{creacion_user},creacion_date = #{creacion_date}, finalidad = #{finalidad}
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and via_ingreso = #{via_ingreso}
+	</update>
+
+	<select id="consultar" parameterType="via_ingreso_consultas" resultMap="via_ingreso_consultasMap">
+		select codigo_empresa,codigo_sucursal,
+		via_ingreso,pro_consulta_primera,pro_consulta_control,pro_enfermeria_primera,
+		pro_enfermeria_control,creacion_user,creacion_date,finalidad 
+		from public.via_ingreso_consultas where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and via_ingreso = #{via_ingreso}
+	</select>
+
+	<delete id="eliminar" parameterType="via_ingreso_consultas">
+		delete from public.via_ingreso_consultas
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		<if test="via_ingreso != null">
+			AND via_ingreso = #{via_ingreso}
+		</if>
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="via_ingreso_consultasMap">
+		select codigo_empresa,codigo_sucursal,
+		via_ingreso,pro_consulta_primera,pro_consulta_control,pro_enfermeria_primera,
+		pro_enfermeria_control,creacion_user,creacion_date,finalidad 
+		from public.via_ingreso_consultas 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="filtro_consulta != null">
+			${filtro_consulta}
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from public.via_ingreso_consultas 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limite_paginado != null">
+			${limite_paginado}
+		</if>
+	</select>
+
+</mapper>

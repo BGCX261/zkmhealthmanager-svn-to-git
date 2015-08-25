@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Coordenadas_graficasDao">
+
+	<!--<typeAlias alias="coordenadas_graficas" type="healthmanager.modelo.bean.Coordenadas_graficas" />-->
+
+	<!--<mapper resource="healthmanager/modelo/dao/xml/coordenadas_graficasSQL.xml" />-->
+
+	<resultMap id="coordenadas_graficasMap" type="coordenadas_graficas">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="codigo_historia" property="codigo_historia" />
+		<result column="identificacion" property="identificacion" />
+		<result column="tipo_coordenada" property="tipo_coordenada" />
+		<result column="fecha_historia" property="fecha_historia" />
+		<result column="valor" property="valor" />
+		<result column="x" property="x" />
+		<result column="y" property="y" />
+		<result column="ihistoria_clinica" property="ihistoria_clinica" />
+	</resultMap>
+
+	<insert id="crear" parameterType="coordenadas_graficas">
+		insert into public.coordenadas_graficas (codigo_empresa,codigo_sucursal,
+		codigo_historia,identificacion,tipo_coordenada,fecha_historia,
+		valor,x,y,
+		ihistoria_clinica)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{codigo_historia},#{identificacion},#{tipo_coordenada},#{fecha_historia},
+		#{valor},#{x},#{y},
+		#{ihistoria_clinica})
+	</insert>
+
+	<update id="actualizar" parameterType="coordenadas_graficas">
+		update public.coordenadas_graficas set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},codigo_historia = #{codigo_historia},
+		identificacion = #{identificacion},tipo_coordenada = #{tipo_coordenada},fecha_historia = #{fecha_historia},
+		valor = #{valor},x = #{x},
+		y = #{y},ihistoria_clinica = #{ihistoria_clinica}
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and codigo_historia = #{codigo_historia}
+		and tipo_coordenada = #{tipo_coordenada}
+		and ihistoria_clinica = #{ihistoria_clinica}
+	</update>
+
+	<select id="consultar" parameterType="coordenadas_graficas" resultMap="coordenadas_graficasMap">
+		select codigo_empresa,codigo_sucursal,
+		codigo_historia,identificacion,tipo_coordenada,fecha_historia,valor,
+		x,y,ihistoria_clinica
+		from public.coordenadas_graficas where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_historia = #{codigo_historia} and tipo_coordenada = #{tipo_coordenada} and ihistoria_clinica = #{ihistoria_clinica}
+	</select>
+
+	<delete id="eliminar" parameterType="coordenadas_graficas">
+		delete from public.coordenadas_graficas
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_historia = #{codigo_historia} and tipo_coordenada = #{tipo_coordenada} and ihistoria_clinica = #{ihistoria_clinica}
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="coordenadas_graficasMap">
+		select codigo_empresa,codigo_sucursal,
+		codigo_historia,identificacion,tipo_coordenada,fecha_historia,valor,
+		x,y,ihistoria_clinica
+		from public.coordenadas_graficas
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+				AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+				AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="identificacion != null">
+				AND identificacion = #{identificacion}
+			</if>
+			<if test="tipo_coordenada != null">
+				AND tipo_coordenada = #{tipo_coordenada}
+			</if>
+			<if test="ihistoria_clinica != null">
+				AND ihistoria_clinica = #{ihistoria_clinica}
+			</if>
+			<if test="parameter != null">
+				AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from public.coordenadas_graficas 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.RiesgoDao">
+
+	
+
+	<resultMap id="riesgoMap" type="riesgo">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="codigo_registro" property="codigo_registro" />
+		<result column="codigo_detalle" property="codigo_detalle" />
+		<result column="gestacion" property="gestacion" />
+		<result column="sifilis_gestacional" property="sifilis_gestacional" />
+		<result column="hipertension" property="hipertension" />
+		<result column="hipotiroidismo" property="hipotiroidismo" />
+		<result column="sintomatico" property="sintomatico" />
+		<result column="tuberculosis" property="tuberculosis" />
+		<result column="lepra" property="lepra" />
+		<result column="obesidad" property="obesidad" />
+		<result column="maltrato" property="maltrato" />
+		<result column="violencia" property="violencia" />
+		<result column="infeccion" property="infeccion" />
+		<result column="enfermedad_mental" property="enfermedad_mental" />
+		<result column="cancer_cervix" property="cancer_cervix" />
+		<result column="cancer_seno" property="cancer_seno" />
+		<result column="fluorosis" property="fluorosis" />
+	</resultMap>
+
+	<insert id="crear" parameterType="riesgo">
+		insert into public.riesgo (codigo_empresa,codigo_sucursal,
+		codigo_registro,codigo_detalle,gestacion,
+		sifilis_gestacional,hipertension,hipotiroidismo,
+		sintomatico,tuberculosis,lepra,
+		obesidad,maltrato,violencia,
+		infeccion,enfermedad_mental,cancer_cervix,
+		cancer_seno,fluorosis)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{codigo_registro},#{codigo_detalle},#{gestacion},
+		#{sifilis_gestacional},#{hipertension},#{hipotiroidismo},
+		#{sintomatico},#{tuberculosis},#{lepra},
+		#{obesidad},#{maltrato},#{violencia},
+		#{infeccion},#{enfermedad_mental},#{cancer_cervix},
+		#{cancer_seno},#{fluorosis})
+	</insert>
+
+	<update id="actualizar" parameterType="riesgo">
+		update public.riesgo set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},codigo_registro = #{codigo_registro},
+		codigo_detalle = #{codigo_detalle},gestacion = #{gestacion},
+		sifilis_gestacional = #{sifilis_gestacional},hipertension = #{hipertension},
+		hipotiroidismo = #{hipotiroidismo},sintomatico = #{sintomatico},
+		tuberculosis = #{tuberculosis},lepra = #{lepra},
+		obesidad = #{obesidad},maltrato = #{maltrato},
+		violencia = #{violencia},infeccion = #{infeccion},
+		enfermedad_mental = #{enfermedad_mental},cancer_cervix = #{cancer_cervix},
+		cancer_seno = #{cancer_seno},fluorosis = #{fluorosis}
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and codigo_registro = #{codigo_registro}
+		and codigo_detalle = #{codigo_detalle}
+	</update>
+
+	<select id="consultar" resultMap="riesgoMap" parameterType="riesgo">
+		select codigo_empresa,codigo_sucursal,
+		codigo_registro,codigo_detalle,gestacion,sifilis_gestacional,
+		hipertension,hipotiroidismo,sintomatico,tuberculosis,
+		lepra,obesidad,maltrato,violencia,
+		infeccion,enfermedad_mental,cancer_cervix,cancer_seno,
+		fluorosis
+		from public.riesgo where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_registro = #{codigo_registro}
+		and codigo_detalle = #{codigo_detalle}
+	</select>
+
+	<delete id="eliminar" parameterType="riesgo">
+		delete from public.riesgo
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_registro = #{codigo_registro}
+		and codigo_detalle = #{codigo_detalle}
+	</delete>
+
+	<select id="listar" resultMap="riesgoMap" parameterType="java.util.Map">
+		select codigo_empresa,codigo_sucursal,
+		codigo_registro,codigo_detalle,gestacion,sifilis_gestacional,
+		hipertension,hipotiroidismo,sintomatico,tuberculosis,
+		lepra,obesidad,maltrato,violencia,
+		infeccion,enfermedad_mental,cancer_cervix,cancer_seno,
+		fluorosis
+		from public.riesgo 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">AND codigo_empresa = #{codigo_empresa}</if>
+			<if test="codigo_sucursal != null">AND codigo_sucursal = #{codigo_sucursal}</if>
+			<if test="parameter != null">AND ${parameter} like '${value}'</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

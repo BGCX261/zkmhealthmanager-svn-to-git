@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.DepartamentosDao">
+
+	
+
+	<resultMap id="departamentosMap" type="departamentos">
+		<result column="codigo" property="codigo" />
+		<result column="nombre" property="nombre" />
+	</resultMap>
+
+	<insert id="crear" parameterType="departamentos">
+		insert into public.departamentos (codigo,nombre)
+
+		values (#{codigo},#{nombre})
+	</insert>
+
+	<update id="actualizar" parameterType="departamentos">
+		update public.departamentos set codigo = #{codigo},
+		nombre = #{nombre}
+		where 		codigo = #{codigo}
+	</update>
+
+	<select id="consultar" resultMap="departamentosMap" parameterType="departamentos">
+		select codigo,nombre
+		from public.departamentos where codigo = #{codigo}
+	</select>
+
+	<delete id="eliminar" parameterType="departamentos">
+		delete from public.departamentos
+		where codigo = #{codigo}
+	</delete>
+
+	<select id="listar" resultMap="departamentosMap" parameterType="java.util.Map">
+		select codigo,nombre
+		from public.departamentos 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="parameter != null">AND ${parameter} like '${value}'</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

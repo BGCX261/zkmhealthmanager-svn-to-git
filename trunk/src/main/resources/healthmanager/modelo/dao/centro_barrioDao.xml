@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Centro_barrioDao">
+
+	<!--<typeAlias alias="centro_barrio" type="healthmanager.modelo.bean.Centro_barrio" />-->
+
+	<!--<mapper resource="healthmanager/modelo/dao/xml/centro_barrioSQL.xml" />-->
+
+	<resultMap id="centro_barrioMap" type="centro_barrio">
+		<result column="codigo_barrio" property="codigo_barrio" />
+		<result column="codigo_centro" property="codigo_centro" />
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+	</resultMap>
+
+	<insert id="crear" parameterType="centro_barrio">
+		insert into public.centro_barrio (codigo_barrio,codigo_centro,
+		codigo_empresa,codigo_sucursal)
+
+		values (#{codigo_barrio},#{codigo_centro},
+		#{codigo_empresa},#{codigo_sucursal})
+	</insert>
+
+	<update id="actualizar" parameterType="centro_barrio">
+		update public.centro_barrio set codigo_barrio = #{codigo_barrio},
+		codigo_centro = #{codigo_centro},codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal}
+		where 		codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and codigo_centro = #{codigo_centro}
+		and codigo_barrio = #{codigo_barrio}
+	</update>
+
+	<select id="consultar" parameterType="centro_barrio" resultMap="centro_barrioMap">
+		select codigo_barrio,codigo_centro,
+		codigo_empresa,codigo_sucursal
+		from public.centro_barrio 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="codigo_centro != null">
+			AND codigo_centro = #{codigo_centro}
+			</if>
+			<if test="codigo_barrio != null">
+			AND codigo_barrio = #{codigo_barrio}
+			</if>
+		</trim>
+	</select>
+
+	<delete id="eliminar" parameterType="centro_barrio">
+		delete from public.centro_barrio
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_centro = #{codigo_centro}
+		<if test="codigo_barrio != null">
+		AND codigo_barrio = #{codigo_barrio}
+		</if>
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="centro_barrioMap">
+		select codigo_barrio,codigo_centro,
+		codigo_empresa,codigo_sucursal
+		from public.centro_barrio 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+		    <if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="codigo_centro != null">
+			AND codigo_centro = #{codigo_centro}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limite_paginado != null">
+		${limite_paginado}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from public.centro_barrio 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

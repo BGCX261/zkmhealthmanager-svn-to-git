@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.Facturacion_medicamentoDao">
+
+	
+
+	<resultMap id="facturacion_medicamentoMap" type="facturacion_medicamento">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="nro_factura" property="nro_factura" />
+		<result column="tipo_identificacion" property="tipo_identificacion" />
+		<result column="nro_identificacion" property="nro_identificacion" />
+		<result column="codigo_administradora" property="codigo_administradora" />
+		<result column="id_plan" property="id_plan" />
+		<result column="nro_ingreso" property="nro_ingreso" />
+		<result column="fecha_medicamento" property="fecha_medicamento" />
+		<result column="numero_autorizacion" property="numero_autorizacion" />
+		<result column="observacion" property="observacion" />
+		<result column="tipo" property="tipo" />
+		<result column="creacion_date" property="creacion_date" />
+		<result column="ultimo_update" property="ultimo_update" />
+		<result column="delete_date" property="delete_date" />
+		<result column="creacion_user" property="creacion_user" />
+		<result column="ultimo_user" property="ultimo_user" />
+		<result column="delete_user" property="delete_user" />
+		<result column="codigo_solicitud" property="codigo_solicitud" />
+		<result column="codigo_receta" property="codigo_receta" />
+		<result column="c_costo" property="c_costo" />
+	</resultMap>
+
+	<insert id="crear" parameterType="facturacion_medicamento">
+	    <selectKey keyProperty="nro_factura" resultType="java.lang.String">
+			insert into public.facturacion_medicamento
+			(codigo_empresa,codigo_sucursal,tipo_identificacion,nro_identificacion,
+			codigo_administradora,id_plan,nro_ingreso,
+			fecha_medicamento,numero_autorizacion,observacion,
+			tipo,creacion_date,
+			ultimo_update,delete_date,creacion_user,
+			ultimo_user,delete_user,codigo_solicitud,
+			codigo_receta,c_costo)
+			values
+			(#{codigo_empresa},#{codigo_sucursal},#{tipo_identificacion},#{nro_identificacion},
+			#{codigo_administradora},#{id_plan},#{nro_ingreso},
+			#{fecha_medicamento},#{numero_autorizacion},#{observacion},
+			#{tipo},#{creacion_date},
+			#{ultimo_update},#{delete_date},#{creacion_user},
+			#{ultimo_user},#{delete_user},#{codigo_solicitud},
+			#{codigo_receta},#{c_costo})	
+			RETURNING nro_factura;        
+	    </selectKey>
+	</insert>
+
+	<update id="actualizar" parameterType="facturacion_medicamento">
+		update public.facturacion_medicamento set
+		codigo_empresa = #{codigo_empresa},
+		codigo_sucursal =
+		#{codigo_sucursal},nro_factura = #{nro_factura},
+		tipo_identificacion =
+		#{tipo_identificacion},nro_identificacion = #{nro_identificacion},
+		codigo_administradora = #{codigo_administradora},id_plan = #{id_plan},
+		nro_ingreso = #{nro_ingreso},fecha_medicamento = #{fecha_medicamento},
+		numero_autorizacion = #{numero_autorizacion},observacion =
+		#{observacion},
+		tipo = #{tipo},
+		creacion_date
+		= #{creacion_date},ultimo_update = #{ultimo_update},
+		delete_date =
+		#{delete_date},creacion_user = #{creacion_user},
+		ultimo_user =
+		#{ultimo_user},delete_user = #{delete_user},
+		codigo_solicitud =
+		#{codigo_solicitud},codigo_receta = #{codigo_receta},
+		c_costo = #{c_costo}
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal =
+		#{codigo_sucursal}
+		and nro_factura = #{nro_factura}
+	</update>
+
+	<select id="consultar" resultMap="facturacion_medicamentoMap" parameterType="facturacion_medicamento">
+		select codigo_empresa,codigo_sucursal,
+		nro_factura,tipo_identificacion,nro_identificacion,codigo_administradora,
+		id_plan,nro_ingreso,fecha_medicamento,numero_autorizacion,
+		observacion,tipo,creacion_date,
+		ultimo_update,delete_date,creacion_user,ultimo_user,
+		delete_user,codigo_solicitud,codigo_receta,c_costo
+		from
+		public.facturacion_medicamento
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">AND codigo_empresa = #{codigo_empresa}</if>
+			<if test="codigo_sucursal != null">AND codigo_sucursal = #{codigo_sucursal}</if>
+			<if test="nro_factura != null">AND nro_factura = #{nro_factura}</if>
+			<if test="codigo_receta != null">AND codigo_receta = #{codigo_receta}</if>
+			<if test="tipo != null">AND tipo = #{tipo}</if>
+			<if test="nro_ingreso != null">AND nro_ingreso = #{nro_ingreso}</if>
+			<if test="nro_identificacion != null">AND nro_identificacion = #{nro_identificacion}</if>
+			<if test="id_plan != null">AND id_plan = #{id_plan}</if>
+		</trim>
+	</select>
+	
+	<sql id="sql_complementacion_eliminacion">
+	    WHERE codigo_empresa = #{codigo_empresa}
+		AND codigo_sucursal = #{codigo_sucursal}
+		<if test="nro_factura != null">AND nro_factura = #{nro_factura}</if>
+		<if test="nro_ingreso != null">AND nro_ingreso = #{nro_ingreso}</if>
+		<if test="nro_identificacion != null">AND nro_identificacion = #{nro_identificacion}</if>
+		<if test="codigo_administradora != null">AND codigo_administradora = #{codigo_administradora}</if>
+		<if test="id_plan != null">AND id_plan = #{id_plan}</if>
+	</sql>
+
+	<delete id="eliminar" parameterType="facturacion_medicamento">
+	    UPDATE public.facturacion_medicamento SET delete_user = #{delete_user} 
+	    <include refid="sql_complementacion_eliminacion"/>;
+		DELETE FROM public.facturacion_medicamento <include refid="sql_complementacion_eliminacion"/>;
+	</delete>
+
+	<select id="listar" resultMap="facturacion_medicamentoMap" parameterType="java.util.Map">
+		select facturacion_medicamento.codigo_empresa,facturacion_medicamento.codigo_sucursal,
+		nro_factura,facturacion_medicamento.tipo_identificacion,facturacion_medicamento.nro_identificacion,
+		facturacion_medicamento.codigo_administradora,
+		facturacion_medicamento.id_plan,nro_ingreso,fecha_medicamento,numero_autorizacion,
+		observacion,tipo,facturacion_medicamento.creacion_date,
+		facturacion_medicamento.ultimo_update,facturacion_medicamento.delete_date,
+		facturacion_medicamento.creacion_user,facturacion_medicamento.ultimo_user,
+		facturacion_medicamento.delete_user,codigo_solicitud,codigo_receta,c_costo
+		from
+		public.facturacion_medicamento 
+		left join paciente t2 ON
+        facturacion_medicamento.codigo_empresa=t2.codigo_empresa
+        and facturacion_medicamento.codigo_sucursal=t2.codigo_sucursal
+        and facturacion_medicamento.nro_identificacion=t2.nro_identificacion
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">AND facturacion_medicamento.codigo_empresa = #{codigo_empresa}</if>
+			<if test="codigo_sucursal != null">AND facturacion_medicamento.codigo_sucursal = #{codigo_sucursal}</if>
+			<if test="tipo != null">AND facturacion_medicamento.tipo = #{tipo}</if>
+			<if test="nro_identificacion != null">
+			AND facturacion_medicamento.nro_identificacion = #{nro_identificacion}
+			</if>
+			<if test="nro_ingreso != null">
+			AND facturacion_medicamento.nro_ingreso = #{nro_ingreso}
+			</if>
+			<if test="parameter != null">AND ${parameter} like '${value}'</if>
+		</trim>
+		<if test="limit != null">
+			${limit}
+		</if>
+	</select>
+	
+	<select id="existe" resultType="java.lang.Boolean">
+		SELECT count(1) != 0 AS exist FROM public.facturacion_medicamento
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">AND facturacion_medicamento.codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">AND facturacion_medicamento.codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="nro_identificacion != null">AND facturacion_medicamento.nro_identificacion =
+				#{nro_identificacion}</if>
+			<if test="nro_ingreso != null">AND facturacion_medicamento.nro_ingreso = #{nro_ingreso}</if>
+			<if test="nro_factura != null">AND nro_factura = #{nro_factura}</if>
+		</trim>
+		LIMIT 1
+	</select>
+
+</mapper>

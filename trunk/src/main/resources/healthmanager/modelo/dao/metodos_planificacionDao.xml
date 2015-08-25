@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.Metodos_planificacionDao">
+
+	
+
+	<resultMap id="metodos_planificacionMap" type="metodos_planificacion">
+		<result column="codigo_metodo_planificacion" property="codigo_metodo_planificacion" />
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="nro_historia" property="nro_historia" />
+	</resultMap>
+
+	<insert id="crear" parameterType="metodos_planificacion">
+		insert into public.metodos_planificacion (codigo_metodo_planificacion,codigo_empresa,
+		codigo_sucursal,nro_historia)
+
+		values (#{codigo_metodo_planificacion},#{codigo_empresa},
+		#{codigo_sucursal},#{nro_historia})
+	</insert>
+
+	<update id="actualizar" parameterType="metodos_planificacion">
+		update public.metodos_planificacion set codigo_metodo_planificacion = #{codigo_metodo_planificacion},
+		codigo_empresa = #{codigo_empresa},codigo_sucursal = #{codigo_sucursal},
+		nro_historia = #{nro_historia}
+		where 		codigo_metodo_planificacion = #{codigo_metodo_planificacion}
+		and codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and nro_historia = #{nro_historia}
+	</update>
+
+	<select id="consultar" resultMap="metodos_planificacionMap" parameterType="metodos_planificacion">
+		select codigo_metodo_planificacion,codigo_empresa,
+		codigo_sucursal,nro_historia
+		from public.metodos_planificacion where codigo_metodo_planificacion = #{codigo_metodo_planificacion}
+		and codigo_empresa = #{codigo_empresa} and codigo_sucursal = #{codigo_sucursal}
+		and nro_historia = #{nro_historia}
+	</select>
+
+	<delete id="eliminar" parameterType="metodos_planificacion">
+		delete from public.metodos_planificacion
+		where  codigo_empresa = #{codigo_empresa} and codigo_sucursal = #{codigo_sucursal}
+		and nro_historia = #{nro_historia}
+	</delete>
+
+	<select id="listar" resultMap="metodos_planificacionMap" parameterType="java.util.Map">
+		select codigo_metodo_planificacion,codigo_empresa,
+		codigo_sucursal,nro_historia
+		from public.metodos_planificacion 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">AND codigo_empresa = #{codigo_empresa}</if>
+			<if test="codigo_sucursal != null">AND codigo_sucursal = #{codigo_sucursal}</if>
+			<if test="nro_historia != null">AND nro_historia = #{nro_historia}</if>
+			<if test="parameter != null">AND ${parameter} like '${value}'</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

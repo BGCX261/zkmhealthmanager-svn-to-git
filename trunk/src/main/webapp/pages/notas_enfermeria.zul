@@ -1,0 +1,191 @@
+<?page title="Notas_enfermeria" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formNotas_enfermeria" width="100%" height="100%"
+		use="healthmanager.controller.Notas_enfermeriaAction" onCreate="formNotas_enfermeria.onCreateNotas()" >
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="true" closable="false"
+			mold="3d" height="95%">
+			<caption label="Listado de notas de enfermeria para este paciente" id="captionConsulta"
+				style="color: blue;font-weight: bold" />
+			
+			<listbox id="listboxResultado" height="100%" mold="paging"
+				pageSize="20" vflex="1" checkmark="true" multiple="true" >
+				<auxhead>
+					<auxheader colspan="5">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<space />
+							<textbox id="tbxValue" width="200px"
+								onOK="formNotas_enfermeria.buscarDatos();"
+								style="text-transform:uppercase" />
+							<space />
+							<toolbarbutton 
+								image="/images/Magnifier.gif"
+								onClick="formNotas_enfermeria.buscarDatos();"
+								tooltiptext="Consultar Notas enfermeria" label="Consultar Notas" />
+							<space />
+							<toolbarbutton id="toolbarbuttonNuevo"
+								image="/images/New16.gif"
+								onClick='formNotas_enfermeria.accionForm(true,"registrar");'
+								label="Nueva Nota"
+								tooltiptext="Nueva Nota de enfermeria" />
+								<space width="10px" />
+								<label value="Formato impresión: " />
+								<listbox id="lbxFormatos" mold="select"
+									width="150px" sclass="combobox">
+									<listitem value="pdf" label="PDF"
+										selected="true" />
+									<listitem value="rtf" label="WORD" />
+								</listbox>
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<listhead sizable="true">
+					<listheader label="Código" width="110px" />
+					<listheader label="Fecha - Hora" width="130px" />
+					<listheader label="Descripcion de la nota" />
+					<listheader label="Enfermera(o)" width="150px" />
+					<listheader label="Acciones" align="center" id="columnaAcciones"
+						width="80px" />
+				</listhead>
+				<listfoot>
+					<listfooter span="5">
+						<toolbarbutton 
+								image="/images/print_ico.gif"
+								onClick="formNotas_enfermeria.imprimirNotas();"
+								tooltiptext="Imprimir Notas seleccionadas" label="Imprimir Notas" />
+					</listfooter>
+				</listfoot>
+			</listbox>
+		</groupbox>
+
+		<borderlayout width="100%" height="90%" id="groupboxEditar"
+			visible="false">
+			<north border="none">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<toolbarbutton image="/images/Save16.gif"
+						label="Guardar Notas enfermeria"
+						onClick="formNotas_enfermeria.guardarDatos();" id="btGuardar" />
+					<space />
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Cancelar"
+						onClick='formNotas_enfermeria.accionForm(false,tbxAccion.getText());'
+						id="btCancel" />
+					<toolbarbutton image="/images/print_ico.gif"
+						label="Imprimir Notas enfermeria"
+						onClick="formNotas_enfermeria.imprimir();" id="btImprimir"
+						visible="false" />
+					<space />
+					<label value="Formato impresión: " visible="false" />
+					<listbox id="lbxFormato" mold="select" width="150px"
+						visible="false" sclass="combobox">
+						<listitem value="pdf" label="PDF"
+							selected="true" />
+						<listitem value="rtf" label="WORD" />
+					</listbox>
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center">
+
+					<!-- *************************** -->
+					<!-- *** Insertar/Actualizar *** -->
+					<!-- *************************** -->
+					<groupbox closable="false" width="600px"
+						mold="3d">
+						<grid sclass="GridSinBorde" hflex="1">
+							
+							<auxhead>
+								<auxheader colspan="4" label="DATOS DE LA NOTA DE ENFERMERIA" align="center" />
+							</auxhead>
+						
+							<columns visible="false" >
+								<column width="100px" />
+								<column />
+								<column width="100px" align="right" />
+								<column />
+							</columns>
+							<rows>
+
+								<!-- fila 1 -->
+								<row>
+									<cell height="30px">
+										<label id="lbCodigo_nota"
+											value="Codigo  de nota: " />
+									</cell>
+									<cell>
+										<textbox id="tbxCodigo_nota" readonly="true"
+											hflex="1" style="text-transform:uppercase" />
+									</cell>
+									<cell>
+										<label id="lbFecha_nota"
+											value="Fecha nota: " />
+									</cell>
+									<cell>
+										<datebox id="dtbxFecha_nota" buttonVisible="false" readonly="true"
+											onCreate="self.setValue(new Date());" format="yyyy-MM-dd hh:mm:ss"
+											width="170px" />
+									</cell>
+								</row>
+
+			
+								<!-- fila 6 -->
+								<row>
+									<cell colspan="4" >
+										<label id="lbDescripcion_nota"
+											value="Descripcion nota: " />
+									</cell>
+								</row>
+								
+								<row>
+									<cell colspan="4" >
+										<textbox
+											id="tbxDescripcion_nota" hflex="1" rows="15"
+											style="text-transform:uppercase"  />
+									</cell>
+								</row>
+
+								<!-- fila 7 -->
+								<row>
+									<cell>
+										<label id="lbCodigo_enfermera"
+											value="Enfermera(o): " />
+									</cell>
+									<cell colspan="3" >
+										<textbox visible="false"
+											id="tbxCodigo_enfermera" hflex="1"
+											style="text-transform:uppercase" />
+										<textbox
+											id="tbxInformacion_enfermera" hflex="1"
+											style="text-transform:uppercase" readonly="true" />
+									</cell>
+								</row>
+
+							</rows>
+						</grid>
+
+					</groupbox>
+				</div>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

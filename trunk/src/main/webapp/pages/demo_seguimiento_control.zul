@@ -1,0 +1,633 @@
+<?page title="Segumiento_lepra" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<?component name="gridGradoDiscapacidad" macroURI="/WEB-INF/macros/gridGradoDiscapacidad.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formSeguimiento_control_pqt" width="100%" height="100%"
+		use="">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+			
+			.z-label{
+			font-size:11px
+			}
+			
+			.z-checkbox-cnt{
+			font-size:11px
+			}
+		</style>
+		
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="false" closable="false"
+			mold="3d" height="90%">
+			
+
+			<separator />
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" height="100%" mold="paging"
+				pageSize="20" vflex="1">
+				<auxhead>
+					<auxheader colspan="5">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<separator />
+							<textbox id="tbxValue" width="200px"
+								onOK="formSeguimiento_control_pqt.buscarDatos();"
+								style="text-transform:uppercase" />
+							<separator />
+							<button mold="trendy"
+								image="/images/Magnifier.gif"
+								onClick="formSeguimiento_control_pqt.buscarDatos();"
+								tooltiptext="Consultar" />
+							<separator />
+							<button mold="trendy"
+								image="/images/New16.gif"
+								onClick='formSeguimiento_control_pqt.accionForm(true,"registrar");'
+								tooltiptext="Nuevo" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Codigo ficha" />
+					<column label="Nro identificacion" />
+					<column label="Apellidos" />
+					<column label="Nombres" />
+					<column label="Acciones" align="center"
+						width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<borderlayout width="100%" height="100%" id="groupboxEditar"
+			visible="true">
+			<north border="none">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<toolbarbutton image="/images/Save16.gif"
+						label="Guardar"
+						onClick="formSeguimiento_control_pqt.guardarDatos();" id="btGuardar" />
+					<toolbarbutton image="/images/New16.gif"
+						label="Nuevo"
+						onClick='formSeguimiento_control_pqt.accionForm(true,"registrar");'
+						id="btNew" />
+					<space />
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Consultar"
+						onClick='formSeguimiento_control_pqt.accionForm(false,tbxAccion.getText());'
+						id="btCancel" />
+
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center">
+
+					<!-- *************************** -->
+					<!-- *** Insertar/Actualizar *** -->
+					<!-- *************************** -->
+					<groupbox closable="false" width="950px"
+						mold="3d">
+
+						<grid>
+							<auxhead>
+								<auxheader colspan="6" align="center"
+									label="SEGUIMIENTO Y CONTROL DEL PACIENTE DURANTE LA PQT" />
+							</auxhead>
+							<columns visible="false">
+								<column width="155px" />
+								<column width="170px" />
+								<column width="128px" />
+								<column width="180px" />
+								<column width="120px" />
+								<column />
+							</columns>
+							<rows>
+
+								<!-- fila 1 -->
+								<row>
+								
+									<cell><label value="Nro Ingreso:"/></cell>
+									<cell><textbox width="150px" readonly="true"/></cell>
+									
+									<cell><label value="Código Ficha:"/></cell>
+									<cell><textbox width="167px" readonly="true"/></cell>
+									
+									<cell><space/></cell>
+									<cell><space/></cell>
+									
+									
+									
+								</row>
+							</rows>
+						</grid>
+
+						<groupbox mold="3d" closable="false"
+							visible="true" id="gbxIdentificacion">
+							<caption label="IDENTIFICACIÓN DEL PACIENTE"
+								style="font-weight:bold" />
+							<!--  <informacionPacientes id="infoPacientes" />-->
+							
+							<grid>
+							
+								<columns visible="false">
+									<column width="150px" />
+									<column width="160px" />
+									<column width="138px" />
+									<column width="180px" />
+									<column width="120px" />
+									<column />
+								</columns>
+								<rows>
+
+									<!-- fila 1 -->
+									<row>
+									
+										<cell><label value="Paciente:" /></cell>
+										<cell><bandboxRegistros
+									    		id="tbxNro_identificacion" widthBandbox="150px"
+									    		widthListbox="600px" heightListbox="300px"
+									    		columnas="Tipo Ident#65px|Identificación|Nombres|Apellidos" /></cell>
+										
+										<cell colspan="2">
+										<textbox id="tbxNomPaciente"
+											width="270px"
+											readonly="true" />
+										<toolbarbutton
+											id="btnLimpiarPaciente" image="/images/borrar.gif" />
+										</cell>
+										
+										<cell><label value="Tipo Identificación:"/></cell>
+										<cell><textbox width="164px" readonly="true"/></cell>
+									
+									</row>
+									
+									<row>
+										<cell><label value="Edad (Años cumplidos):"/></cell>
+										<cell><textbox width="143px" readonly="true"/></cell>
+										
+										<cell><label value="Ocupación:"/></cell>
+										<cell><textbox width="163px" readonly="true"/></cell>
+										
+										<cell><label value="Sexo:"/></cell>
+										<cell><textbox width="163px" readonly="true"/></cell>
+									</row>
+									
+									<row>
+										<cell><label value="País:"/></cell>
+										<cell><textbox width="143px" readonly="true"/></cell>
+										
+										<cell><label value="Departamento:"/></cell>
+										<cell><textbox width="163px" readonly="true"/></cell>
+										
+										<cell><label value="Municipio:"/></cell>
+										<cell><textbox width="163px" readonly="true"/></cell>
+									</row>
+									
+									<row>
+										<cell><label value="Administradora:"/></cell>
+										<cell colspan="3"><textbox hflex="1" readonly="true"/></cell>
+										
+										
+										<cell><label value="Regimen:"/></cell>
+										<cell><textbox width="163px" readonly="true"/></cell>
+									</row>
+									
+									<row>
+										<cell><label value="Dirección"/></cell>
+										<cell colspan="3"><textbox hflex="1" readonly="true"/></cell>
+										
+										
+										<cell><label value="Barrio:"/></cell>
+										<cell><textbox width="163px" readonly="true"/></cell>
+									</row>
+									
+									<row>
+										<cell><label value="Área:"/></cell>
+										<cell><textbox width="143px" readonly="true"/></cell>
+										
+										<cell><label value="Pertenencia étnica:"/></cell>
+										<cell><textbox width="163px" readonly="true"/></cell>
+										
+										<cell><label value="Grupo poblacional:"/></cell>
+										<cell><textbox width="163px" readonly="true"/></cell>
+									</row>
+								</rows>
+						</grid>
+
+
+						</groupbox>
+						
+						<separator/>
+
+
+                        <groupbox mold="3d" closable="false"
+							visible="true" id="gbx">
+							<caption label="EVALUACION DE LOS GRADOS DE DISCAPACIDAD"
+								style="font-weight:bold" />
+							<grid>
+								<columns visible="false">
+									<column width="150px" />
+									<column width="160px" />
+									<column width="138px" />
+									<column width="180px" />
+									<column width="120px" />
+									<column />
+								</columns>
+								
+								<rows>
+									<row>
+										<cell colspan="3" width="50%">
+										
+										   <groupbox closable="false">
+												<caption
+													label="A los seis (6) meses" style="font-size:11px" />
+													
+												<gridGradoDiscapacidad/>
+										  </groupbox>
+											
+                                        </cell>
+										<cell colspan="3" width="50%">
+											 <groupbox closable="false">
+												<caption
+													label="A los seis (12) meses" style="font-size:11px" />
+													
+												<gridGradoDiscapacidad/>
+										  </groupbox>
+                                        </cell>
+									</row>
+									
+									<row>
+										
+										<cell colspan="3">
+											
+											<groupbox closable="false">
+												<caption label="Presencia de reacciones" style="font-size:11px"/>
+												<label value="Reacción Tipo 1:"/>
+												<checkbox/>
+												<space/>
+												<datebox width="90px"/>
+												
+												<space width="17px"/>
+												
+												<label value="Reacción Tipo 2:"/>
+												<checkbox/>
+												<space/>
+												<datebox width="90px"/>
+											</groupbox>
+											
+										</cell>
+										
+										<cell colspan="3" rowspan="2" valign="top">
+											<groupbox closable="false">
+												<caption label="Prevención de discapacidades" style="font-size:11px"/>
+												<vbox>
+													<hbox widths="250px">
+														<checkbox label="Charla general sobre lepra"/>
+														<checkbox label="Utilización de guantes"/>
+													</hbox>
+													
+													<hbox widths="250px">
+														<checkbox label="Charla general sobre autocuidado"/>
+														<checkbox label="Utilización de plantillas"/>
+													</hbox>
+													<hbox widths="250px">
+														<checkbox label="Adecuación de utensilios caseros"/>
+														<checkbox label="Utilización de zapatos otropédicos"/>
+													</hbox>
+													<hbox>
+														<checkbox label="Entrega de material educativo"/>
+													</hbox>
+													<hbox>
+														<checkbox label="Utilización de cachuchas, viseras, gafas  para protección solar"/>
+													</hbox>
+												</vbox>
+											</groupbox>
+										</cell>
+									</row>
+									
+									<row>
+										
+										<cell colspan="3">
+											<groupbox closable="false" height="93px">
+												<caption label="Remisiones a especialista" style="font-size:11px"/>
+												<vbox>
+													<hbox>
+														<label value="Remitido a:"/>
+														<space width="50px"/>
+														<datebox width="90px"/>
+														
+														<space width="5px"/>
+														
+														<listbox width="203px" mold="select"/>
+													</hbox>
+													
+													<hbox>
+														<label value="Remitido a:"/>
+														<space width="50px"/>
+														<datebox width="90px"/>
+														
+														<space width="5px"/>
+														
+														<listbox width="203px" mold="select"/>
+													</hbox>
+												</vbox>
+											</groupbox>
+											
+										</cell>
+										
+										
+									</row>
+									
+									
+									
+									
+								</rows>
+							</grid>
+							
+							
+						</groupbox>
+						
+						<separator/>
+
+						<groupbox mold="3d" closable="false"
+							visible="true" id="gbxClasificacion">
+							<caption label="CONTROL DE BASCILOSCOPIA DURANTE LA PQT"
+								style="font-weight:bold" />
+							<grid>
+								<columns visible="false">
+									<column width="150px" />
+									<column width="160px" />
+									<column width="138px" />
+									<column width="180px" />
+									<column width="120px" />
+									<column />
+								</columns>
+								
+								<rows>
+									<row>
+										<cell><label value="Fecha diagnóstico:"/></cell>
+										<cell><datebox width="150px"/></cell>
+										
+										<cell><label value="Resultado Baciloscopia:"/></cell>
+										<cell colspan="3">
+											<radiogroup>
+												<radio value="0" label="0"/><space width="30px"/>
+												<radio value="1" label="1+"/><space width="30px"/>
+												<radio value="2" label="2+"/><space width="30px"/>
+												<radio value="3" label="3+"/><space width="30px"/>
+												<radio value="4" label="4+"/><space width="30px"/>
+												<radio value="5" label="5+"/><space width="30px"/>
+												<radio value="6" label="6+"/>
+											</radiogroup>
+										</cell>
+										
+										
+									</row>
+									
+									
+									
+								</rows>
+							</grid>
+							
+							
+						</groupbox>
+						
+						<separator/>
+						
+						<groupbox mold="3d" closable="false"
+							visible="true" >
+							<caption label="CAUSAS DEL EGRESO DEL PROGRAMA"
+								style="font-weight:bold" />
+							<grid>
+								<columns visible="false">
+									<column width="150px" />
+									<column width="160px" />
+									<column width="138px" />
+									<column width="180px" />
+									<column width="120px" />
+									<column />
+								</columns>
+								
+								<rows>
+									<row>
+										<cell><label value="Tratamiento PQT Temrinado:"/></cell>
+										<cell>
+											<checkbox/>
+											<datebox width="130px"/>
+										</cell>
+										
+										<cell><label value="Paciente fallecido:"/></cell>
+										<cell>
+											<checkbox/>
+											<datebox width="130px"/>
+										</cell>
+										<cell><label value="Paciente perdido:"/></cell>
+										<cell>
+											<checkbox/>
+											<datebox width="130px"/>
+										</cell>
+										
+										
+									</row>
+									
+									<row>
+										<cell><label value="Error diagnóstico:"/></cell>
+										<cell>
+											<checkbox/>
+											<datebox width="130px"/>
+										</cell>
+										
+										<cell><label value="Traslado otro org. salud:"/></cell>
+										<cell colspan="3">
+											<checkbox/>
+											<datebox width="130px"/>
+										</cell>
+										
+										
+										
+									</row>
+									
+									
+									
+								</rows>
+							</grid>
+							
+							
+						</groupbox>
+						
+						<separator/>
+						
+						<groupbox mold="3d" closable="false"
+							visible="true" id="gbxControl">
+							<caption label="CONTROL DE CONVIVIENTES DURANTE LA PQT"
+								style="font-weight:bold" />
+								
+							
+							<grid>
+								<columns>
+									<column label=""/>
+									<column width="185px" label="Conviviente 1"  align="center"/>
+									<column width="185px" label="Conviviente 2"  align="center"/>
+									<column width="185px" label="Conviviente 3"  align="center"/>
+									<column width="185px" label="Conviviente 4"  align="center"/>
+									
+								</columns>
+								
+								<rows>
+									<row>
+										<cell><label value="Nombre"/></cell>
+										<cell><textbox width="170px"/></cell>
+										<cell><textbox width="170px"/></cell>
+										<cell><textbox width="170px"/></cell>
+										<cell><textbox width="170px"/></cell>
+										
+									</row>
+									
+									<row>
+										<cell><label value="Apellido"/></cell>
+										<cell><textbox width="170px"/></cell>
+										<cell><textbox width="170px"/></cell>
+										<cell><textbox width="170px"/></cell>
+										<cell><textbox width="170px"/></cell>
+										
+									</row>
+									
+									<row>
+										<cell><label value="Edad"/></cell>
+										<cell>
+											<hlayout>
+												<textbox width="72px"/>
+												<listbox mold="select" width="90px">
+													<listitem value="1" label="Años" selected="true"/>
+													<listitem value="2" label="Meses"/>
+												</listbox>
+											</hlayout>
+											
+										</cell>
+										<cell>
+											<hlayout>
+												<textbox width="72px"/>
+												<listbox mold="select" width="90px">
+													<listitem value="1" label="Años" selected="true"/>
+													<listitem value="2" label="Meses"/>
+												</listbox>
+											</hlayout>
+											
+										</cell>
+										<cell>
+											<hlayout>
+												<textbox width="72px"/>
+												<listbox mold="select" width="90px">
+													<listitem value="1" label="Años" selected="true"/>
+													<listitem value="2" label="Meses"/>
+												</listbox>
+											</hlayout>
+											
+										</cell>
+										<cell>
+											<hlayout>
+												<textbox width="72px"/>
+												<listbox mold="select" width="90px">
+													<listitem value="1" label="Años" selected="true"/>
+													<listitem value="2" label="Meses"/>
+												</listbox>
+											</hlayout>
+											
+										</cell>
+										
+									</row>
+									
+									<row>
+										<cell><label value="Sexo"/></cell>
+										<cell><listbox mold="select" width="170px"/></cell>
+										<cell><listbox mold="select" width="170px"/></cell>
+										<cell><listbox mold="select" width="170px"/></cell>
+										<cell><listbox mold="select" width="170px"/></cell>
+										
+									</row>
+									
+									<row>
+										<cell><label value="Fecha inscripción"/></cell>
+										<cell><datebox width="170px"/></cell>
+										<cell><datebox width="170px"/></cell>
+										<cell><datebox width="170px"/></cell>
+										<cell><datebox width="170px"/></cell>
+										
+									</row>
+									
+									<row>
+										<cell><label value="Fecha revisión"/></cell>
+										<cell><datebox width="170px"/></cell>
+										<cell><datebox width="170px"/></cell>
+										<cell><datebox width="170px"/></cell>
+										<cell><datebox width="170px"/></cell>
+										
+									</row>
+									
+									<row>
+										<cell><label value="BCG"/></cell>
+										<cell><listbox mold="select" width="170px"/></cell>
+										<cell><listbox mold="select" width="170px"/></cell>
+										<cell><listbox mold="select" width="170px"/></cell>
+										<cell><listbox mold="select" width="170px"/></cell>
+										
+									</row>
+									
+									<row>
+										<cell><label value="Resultado clínico"/></cell>
+										<cell><listbox mold="select" width="170px"/></cell>
+										<cell><listbox mold="select" width="170px"/></cell>
+										<cell><listbox mold="select" width="170px"/></cell>
+										<cell><listbox mold="select" width="170px"/></cell>
+										
+									</row>
+									
+									<row>
+										<cell><label value="Diagnóstico confirmado"/></cell>
+										<cell><datebox width="170px"/></cell>
+										<cell><datebox width="170px"/></cell>
+										<cell><datebox width="170px"/></cell>
+										<cell><datebox width="170px"/></cell>
+										
+									</row>
+									
+									<row>
+										<cell><label value="Clasificación"/></cell>
+										<cell><listbox mold="select" width="170px"/></cell>
+										<cell><listbox mold="select" width="170px"/></cell>
+										<cell><listbox mold="select" width="170px"/></cell>
+										<cell><listbox mold="select" width="170px"/></cell>
+										
+									</row>
+									
+									
+								</rows>
+								
+								
+							</grid>
+						</groupbox>
+
+
+
+					</groupbox>
+				</div>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

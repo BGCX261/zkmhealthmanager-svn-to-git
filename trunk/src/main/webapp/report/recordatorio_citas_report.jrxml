@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="recordatorio_citas_report" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="4aa4d1cd-1f44-41bb-84fa-cc48cb7ffbfa">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="codigo_empresa" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="codigo_sucursal" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="empresa" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="id" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="direccion" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="telefono" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="imagen" class="java.io.InputStream">
+		<defaultValueExpression><![CDATA[null]]></defaultValueExpression>
+	</parameter>
+	<parameter name="resolucion" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="nombre_centro" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+citas.codigo_cita,
+citas.nro_identificacion,
+citas.codigo_prestador,
+citas.fecha_cita,
+citas.hora,
+usuarios.nombres,
+usuarios.apellidos,
+usuarios.registro_medico,
+paciente.apellido1,
+paciente.apellido2,
+paciente.nombre1,
+paciente.nombre2,
+paciente.nro_identificacion,
+elemento.descripcion as tipo_cita
+FROM
+citas
+INNER JOIN usuarios ON usuarios.codigo_empresa = citas.codigo_empresa AND usuarios.codigo_sucursal = citas.codigo_sucursal AND usuarios.codigo = citas.codigo_prestador
+INNER JOIN paciente ON paciente.codigo_empresa = citas.codigo_empresa AND paciente.codigo_sucursal = citas.codigo_sucursal AND paciente.nro_identificacion = citas.nro_identificacion
+LEFT JOIN elemento elemento ON elemento.codigo = citas.tipo_consulta and elemento.tipo = 'via_ingreso' ]]>
+	</queryString>
+	<field name="codigo_cita" class="java.lang.String"/>
+	<field name="nro_identificacion" class="java.lang.String"/>
+	<field name="codigo_prestador" class="java.lang.String"/>
+	<field name="fecha_cita" class="java.sql.Timestamp"/>
+	<field name="hora" class="java.lang.String"/>
+	<field name="nombres" class="java.lang.String"/>
+	<field name="apellidos" class="java.lang.String"/>
+	<field name="registro_medico" class="java.lang.String"/>
+	<field name="apellido1" class="java.lang.String"/>
+	<field name="apellido2" class="java.lang.String"/>
+	<field name="nombre1" class="java.lang.String"/>
+	<field name="nombre2" class="java.lang.String"/>
+	<field name="tipo_cita" class="java.lang.String"/>
+	<detail>
+		<band height="195" splitType="Stretch">
+			<image scaleImage="FillFrame" isUsingCache="true" onErrorType="Blank">
+				<reportElement mode="Transparent" x="339" y="16" width="186" height="106" uuid="5cfb5f48-1d86-46cd-bad4-27872d4274df"/>
+				<imageExpression><![CDATA[$P{imagen}]]></imageExpression>
+			</image>
+			<rectangle radius="10">
+				<reportElement mode="Transparent" x="14" y="16" width="524" height="169" forecolor="#CBDCFC" uuid="5b32e1bc-58a6-4222-94e4-48d8c821558c"/>
+				<graphicElement>
+					<pen lineStyle="Dashed"/>
+				</graphicElement>
+			</rectangle>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="26" y="63" width="423" height="14" uuid="05a9bf1d-0e48-441b-b5f0-f605666c205e"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Dirección: "+$P{direccion}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="25" y="16" width="424" height="20" uuid="9dad45d8-b3d0-4fce-aa54-8432893620f8"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{empresa}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="26" y="79" width="424" height="14" uuid="616dbb14-96c4-4f27-84db-dea3fceab227"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Telefono: "+$P{telefono}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="26" y="96" width="100" height="20" uuid="73879b1e-ef21-44e8-bad6-c400b7c0d344"/>
+				<textFieldExpression><![CDATA["Hora: " + $F{hora}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="201" y="96" width="100" height="20" uuid="17db4710-5e75-44ff-bcf1-a95c7b503b57"/>
+				<textFieldExpression><![CDATA[$F{fecha_cita}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="157" y="96" width="44" height="20" uuid="2aadf7a5-0c07-4fba-ab70-c7a3c49ffb30"/>
+				<text><![CDATA[Fecha:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="26" y="134" width="512" height="20" uuid="93c8f1ea-c0a5-41e3-bceb-3eca28774ee7"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Medico: " + $F{apellidos} + " " + $F{nombres}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="26" y="154" width="512" height="20" uuid="15bbf39e-cbaa-4f06-999d-e5f7dedabaea"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Documento: "+$F{nro_identificacion}+"  Paciente : "  + $F{apellido1} + " " + $F{apellido2} + " " + $F{nombre1} + " " + $F{nombre2}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="26" y="114" width="512" height="20" uuid="d3bd30ba-c037-42ad-ab0a-b7b10f1eb2b7"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Tipo de cita: "+$F{tipo_cita}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="26" y="40" width="424" height="20" uuid="f87a0c8c-b689-4ebd-acc1-4720953c25cb"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{nombre_centro}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

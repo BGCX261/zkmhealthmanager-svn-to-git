@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="contaweb.modelo.dao.ElementoDao">
+
+	
+
+	<resultMap id="elementoMap" type="elementoCont">
+		<result column="codigo" property="codigo" />
+		<result column="tipo" property="tipo" />
+		<result column="descripcion" property="descripcion" />
+	</resultMap>
+
+	<insert id="crear" parameterType="elementoCont">
+		insert into contaweb.elemento (codigo,tipo,
+		descripcion)
+
+		values (#{codigo},#{tipo},
+		#{descripcion})
+	</insert>
+
+	<update id="actualizar" parameterType="elementoCont">
+		update contaweb.elemento set codigo = #{codigo},
+		tipo = #{tipo},descripcion = #{descripcion}
+		where codigo = #{codigo}
+		and tipo = #{tipo}
+	</update>
+
+	<select id="consultar" resultMap="elementoMap" parameterType="elementoCont">
+		select codigo,tipo,
+		descripcion
+		from contaweb.elemento where codigo = #{codigo}
+		and tipo = #{tipo}
+	</select>
+
+	<delete id="eliminar" parameterType="elementoCont">
+		delete from contaweb.elemento
+		where codigo = #{codigo}
+		and tipo = #{tipo}
+	</delete>
+
+	<select id="listar" resultMap="elementoMap" parameterType="java.util.Map">
+		select codigo,tipo,
+		descripcion
+		from contaweb.elemento 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+		    <if test="tipo != null">AND tipo = #{tipo}</if>
+			<if test="parameter != null">AND ${parameter} like '${value}'</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

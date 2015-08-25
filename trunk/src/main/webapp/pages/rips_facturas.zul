@@ -1,0 +1,676 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formRipsFacturas" border="none" width="100%"
+		height="98%" use="healthmanager.controller.RipsFacturasController">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+		<borderlayout height="90%">
+			<north border="none">
+				<toolbar width="100%" align="start">
+					<toolbarbutton label="Generar Factura"
+						image="/images/Save16.gif"
+						onClick="formRipsFacturas.generarFactura()" />
+
+					<toolbarbutton label="Limpiar"
+						image="/images/limpiar_mini.png"
+						onClick="formRipsFacturas.limpiar()" />
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center">
+					<separator />
+					<groupbox id="groupboxDatosPrestador"
+						closable="false" width="730px" mold="3d">
+						<caption label="DATOS DEL PRESTADOR"
+							style="color: black;font-weight: bold" />
+						<grid mold="paging" pageSize="20" hflex="1"
+							vflex="1">
+							<columns sizable="true">
+								<column label="" width="5px" />
+								<column label="" width="130px" />
+								<column label="" width="160px" />
+								<column label="" />
+								<column label="" width="5px" />
+							</columns>
+							<rows width="100%">
+								<row>
+									<cell />
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label
+											id="lbCodigo_administradora" value="Prestador: " />
+										<toolbarbutton visible="false"
+											id="btnLimpiarAseguradora" image="/images/borrar.gif" />
+									</cell>
+									<cell>
+										<bandboxRegistros
+											id="tbxCodigo_administradora" hflexBandbox="1"
+											widthListbox="600px" heightListbox="300px"
+											columnas="Código#65px|Nit#100px|Nombres" />
+									</cell>
+									<cell>
+										<textbox id="tbxInfoAseguradora"
+											hflex="1" style="text-transform:uppercase" readonly="true" />
+									</cell>
+									<cell />
+								</row>
+								<row>
+									<cell />
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label value="Contrato: " />
+										<toolbarbutton visible="false"
+											id="btnLimpiarContrato" image="/images/borrar.gif" />
+									</cell>
+									<cell>
+										<bandboxRegistros
+											id="tbxCodigo_contrato" hflexBandbox="1" widthListbox="600px"
+											heightListbox="300px" columnas="Número#65px|Nombre" />
+									</cell>
+									<cell>
+										<textbox id="tbxInfoContrato"
+											hflex="1" style="text-transform:uppercase" readonly="true" />
+									</cell>
+									<cell />
+								</row>
+								<row>
+									<cell />
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label value="Fecha Cont/zación: " />
+									</cell>
+									<cell>
+										<datebox id="dtbxFecha_contabilizacion" format="yyyy-MM-dd" hflex="1"/>
+									</cell>
+									<cell colspan="2"/> 
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+					<separator />
+					<groupbox id="groupboxRipsToFacturas"
+						closable="false" width="730px" height="90%" mold="3d">
+						<caption label="Cargar Rips"
+							style="color: black;font-weight: bold" />
+
+						<grid id="gridResultado" mold="paging"
+							pageSize="20" hflex="1" vflex="1">
+							<columns sizable="true">
+								<column label="" width="5px" />
+								<column label="" />
+								<column label="" width="130px" />
+								<column label="" width="5px" />
+							</columns>
+							<rows width="100%">
+
+								<!-- CT -->
+								<row>
+									<cell></cell>
+									<cell>
+										<textbox id="nameCT" hflex="1"
+											style="text-transform:uppercase" readonly="true" />
+									</cell>
+									<cell>
+										<toolbarbutton
+											image="/images/upload.png" sclass="attachBtn" upload="true"
+											label="Subir (CT)" tooltiptext="ARCHIVO DE CONTROL ">
+											<attribute name="onUpload">
+	{
+		org.zkoss.util.media.Media media = event.getMedia();
+		if (media.getName().toLowerCase().endsWith("txt")) {
+			if (media.getName().toLowerCase().startsWith("ct")) {
+				String txtString = media.getStringData();
+				if (txtString.trim().isEmpty()) {
+					formRipsFacturas.setCt(null);
+					nameCT.setValue("");
+					alert("Este archivo no puede estar vacio");
+				} else {
+					formRipsFacturas.setCt(txtString);
+					nameCT.setValue(media.getName());
+				}
+			} else {
+				formRipsFacturas.setCt(null);
+				nameCT.setValue("");
+				alert("Debe ser de tipo CT");
+			}
+		} else {
+			formRipsFacturas.setCt(null);
+			nameCT.setValue("");
+			alert("Debe ser de tipo txt");
+		}
+	}
+</attribute>
+										</toolbarbutton>
+										<toolbarbutton
+											tooltiptext="Limpiar" image="/images/limpiar_mini.png">
+											<attribute name="onClick">
+	formRipsFacturas.setCt(null);
+	nameCT.setValue("");
+</attribute>
+										</toolbarbutton>
+									</cell>
+									<cell></cell>
+								</row>
+
+
+								<!-- AF -->
+								<row>
+									<cell></cell>
+									<cell>
+										<textbox id="nameAF" hflex="1"
+											style="text-transform:uppercase" readonly="true" />
+									</cell>
+									<cell>
+										<toolbarbutton
+											image="/images/upload.png" sclass="attachBtn" upload="true"
+											label="Subir (AF)">
+											<attribute name="onUpload">
+	{
+		org.zkoss.util.media.Media media = event.getMedia();
+		if (media.getName().toLowerCase().endsWith("txt")) {
+			if (media.getName().toLowerCase().startsWith("af")) {
+				String txtString = media.getStringData();
+				if (txtString.trim().isEmpty()) {
+					formRipsFacturas.setAf(null);
+					nameAF.setValue("");
+					alert("Este archivo no puede estar vacio");
+				} else {
+					formRipsFacturas.setAf(txtString);
+					nameAF.setValue(media.getName());
+				}
+			} else {
+				formRipsFacturas.setAf(null);
+				nameAF.setValue("");
+				alert("Debe ser de tipo AF");
+			}
+		} else {
+			formRipsFacturas.setAf(null);
+			nameAF.setValue("");
+			alert("Debe ser de tipo txt");
+		}
+	}
+</attribute>
+										</toolbarbutton>
+										<toolbarbutton
+											tooltiptext="Limpiar" image="/images/limpiar_mini.png">
+											<attribute name="onClick">
+	formRipsFacturas.setAf(null);
+	nameAF.setValue("");
+</attribute>
+										</toolbarbutton>
+									</cell>
+									<cell></cell>
+								</row>
+
+
+								<!-- AD -->
+								<row>
+									<cell></cell>
+									<cell>
+										<textbox id="nameAD" hflex="1"
+											style="text-transform:uppercase" readonly="true" />
+									</cell>
+									<cell>
+										<toolbarbutton
+											image="/images/upload.png" sclass="attachBtn" upload="true"
+											label="Subir (AD)"
+											tooltiptext="ARCHIVO DE DESCRIPCIÓN AGRUPADA DE LOS SERVICIOS DE SALUD PRESTADOS">
+											<attribute name="onUpload">
+	{
+		org.zkoss.util.media.Media media = event.getMedia();
+		if (media.getName().toLowerCase().endsWith("txt")) {
+			if (media.getName().toLowerCase().startsWith("ad")) {
+				String txtString = media.getStringData();
+				if (txtString.trim().isEmpty()) {
+					formRipsFacturas.setAd(null);
+					nameAD.setValue("");
+					alert("Este archivo no puede estar vacio");
+				} else {
+					formRipsFacturas.setAd(txtString);
+					nameAD.setValue(media.getName());
+				}
+			} else {
+				formRipsFacturas.setAd(null);
+				nameAD.setValue("");
+				alert("Debe ser de tipo AD");
+			}
+		} else {
+			formRipsFacturas.setAd(null);
+			nameAD.setValue("");
+			alert("Debe ser de tipo txt");
+		}
+	}
+</attribute>
+										</toolbarbutton>
+										<toolbarbutton
+											tooltiptext="Limpiar" image="/images/limpiar_mini.png">
+											<attribute name="onClick">
+	formRipsFacturas.setAd(null);
+	nameAD.setValue("");
+</attribute>
+										</toolbarbutton>
+									</cell>
+									<cell></cell>
+								</row>
+
+
+								<!-- AC -->
+								<row>
+									<cell></cell>
+									<cell>
+										<textbox id="nameAC" hflex="1"
+											style="text-transform:uppercase" readonly="true" />
+									</cell>
+									<cell>
+										<toolbarbutton
+											image="/images/upload.png" sclass="attachBtn" upload="true"
+											label="Subir (AC)">
+											<attribute name="onUpload">
+	{
+		org.zkoss.util.media.Media media = event.getMedia();
+		if (media.getName().toLowerCase().endsWith("txt")) {
+			if (media.getName().toLowerCase().startsWith("ac")) {
+				String txtString = media.getStringData();
+				if (txtString.trim().isEmpty()) {
+					formRipsFacturas.setAc(null);
+					nameAC.setValue("");
+					alert("Este archivo no puede estar vacio");
+				} else {
+					formRipsFacturas.setAc(txtString);
+					nameAC.setValue(media.getName());
+				}
+			} else {
+				formRipsFacturas.setAc(null);
+				nameAC.setValue("");
+				alert("Debe ser de tipo AC");
+			}
+		} else {
+			formRipsFacturas.setAc(null);
+			nameAC.setValue("");
+			alert("Debe ser de tipo txt");
+		}
+	}
+</attribute>
+										</toolbarbutton>
+										<toolbarbutton
+											tooltiptext="Limpiar" image="/images/limpiar_mini.png">
+											<attribute name="onClick">
+	formRipsFacturas.setAc(null);
+	nameAC.setValue("");
+</attribute>
+										</toolbarbutton>
+									</cell>
+									<cell></cell>
+								</row>
+
+
+								<!-- AP -->
+								<row>
+									<cell></cell>
+									<cell>
+										<textbox id="nameAP" hflex="1"
+											style="text-transform:uppercase" readonly="true" />
+									</cell>
+									<cell>
+										<toolbarbutton
+											image="/images/upload.png" sclass="attachBtn" upload="true"
+											label="Subir (AP)">
+											<attribute name="onUpload">
+	{
+		org.zkoss.util.media.Media media = event.getMedia();
+		if (media.getName().toLowerCase().endsWith("txt")) {
+			if (media.getName().toLowerCase().startsWith("ap")) {
+				String txtString = media.getStringData();
+				if (txtString.trim().isEmpty()) {
+					formRipsFacturas.setAp(null);
+					nameAP.setValue("");
+					alert("Este archivo no puede estar vacio");
+				} else {
+					formRipsFacturas.setAp(txtString);
+					nameAP.setValue(media.getName());
+				}
+			} else {
+				formRipsFacturas.setAp(null);
+				nameAP.setValue("");
+				alert("Debe ser de tipo AP");
+			}
+		} else {
+			formRipsFacturas.setAp(null);
+			nameAP.setValue("");
+			alert("Debe ser de tipo txt");
+		}
+	}
+</attribute>
+										</toolbarbutton>
+										<toolbarbutton
+											tooltiptext="Limpiar" image="/images/limpiar_mini.png">
+											<attribute name="onClick">
+	formRipsFacturas.setAp(null);
+	nameAP.setValue("");
+</attribute>
+										</toolbarbutton>
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- AM -->
+								<row>
+									<cell></cell>
+									<cell>
+										<textbox id="nameAM" hflex="1"
+											style="text-transform:uppercase" readonly="true" />
+
+									</cell>
+									<cell>
+										<toolbarbutton
+											image="/images/upload.png" sclass="attachBtn" upload="true"
+											label="Subir (AM)">
+											<attribute name="onUpload">
+	{
+		org.zkoss.util.media.Media media = event.getMedia();
+		if (media.getName().toLowerCase().endsWith("txt")) {
+			if (media.getName().toLowerCase().startsWith("am")) {
+				String txtString = media.getStringData();
+				if (txtString.trim().isEmpty()) {
+					formRipsFacturas.setAm(null);
+					nameAM.setValue("");
+					alert("Este archivo no puede estar vacio");
+				} else {
+					formRipsFacturas.setAm(txtString);
+					nameAM.setValue(media.getName());
+				}
+			} else {
+				formRipsFacturas.setAm(null);
+				nameAM.setValue("");
+				alert("Debe ser de tipo AM");
+			}
+		} else {
+			formRipsFacturas.setAm(null);
+			nameAM.setValue("");
+			alert("Debe ser de tipo txt");
+		}
+	}
+</attribute>
+										</toolbarbutton>
+										<toolbarbutton
+											tooltiptext="Limpiar" image="/images/limpiar_mini.png">
+											<attribute name="onClick">
+	formRipsFacturas.setAm(null);
+	nameAM.setValue("");
+</attribute>
+										</toolbarbutton>
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- AT -->
+								<row>
+									<cell></cell>
+									<cell>
+										<textbox id="nameAT" hflex="1"
+											style="text-transform:uppercase" readonly="true" />
+									</cell>
+									<cell>
+										<toolbarbutton
+											image="/images/upload.png" sclass="attachBtn" upload="true"
+											label="Subir (AT)">
+											<attribute name="onUpload">
+	{
+		org.zkoss.util.media.Media media = event.getMedia();
+		if (media.getName().toLowerCase().endsWith("txt")) {
+			if (media.getName().toLowerCase().startsWith("at")) {
+				String txtString = media.getStringData();
+				if (txtString.trim().isEmpty()) {
+					formRipsFacturas.setAt(null);
+					nameAT.setValue("");
+					alert("Este archivo no puede estar vacio");
+				} else {
+					formRipsFacturas.setAt(txtString);
+					nameAT.setValue(media.getName());
+				}
+			} else {
+				formRipsFacturas.setAt(null);
+				nameAT.setValue("");
+				alert("Debe ser de tipo AT");
+			}
+		} else {
+			formRipsFacturas.setAt(null);
+			nameAT.setValue("");
+			alert("Debe ser de tipo txt");
+		}
+	}
+</attribute>
+										</toolbarbutton>
+										<toolbarbutton
+											tooltiptext="Limpiar" image="/images/limpiar_mini.png">
+											<attribute name="onClick">
+	formRipsFacturas.setAt(null);
+	nameAT.setValue("");
+</attribute>
+										</toolbarbutton>
+									</cell>
+									<cell></cell>
+								</row>
+
+
+
+								<!-- US -->
+								<row>
+									<cell></cell>
+									<cell>
+										<textbox id="nameUS" hflex="1"
+											style="text-transform:uppercase" readonly="true" />
+										<space></space>
+									</cell>
+									<cell>
+										<toolbarbutton
+											image="/images/upload.png" sclass="attachBtn" upload="true"
+											label="Subir (US)">
+											<attribute name="onUpload">
+	{
+		org.zkoss.util.media.Media media = event.getMedia();
+		if (media.getName().toLowerCase().endsWith("txt")) {
+			if (media.getName().toLowerCase().startsWith("us")) {
+				String txtString = media.getStringData();
+				if (txtString.trim().isEmpty()) {
+					formRipsFacturas.setUs(null);
+					nameUS.setValue("");
+					alert("Este archivo no puede estar vacio");
+				} else {
+					formRipsFacturas.setUs(txtString);
+					nameUS.setValue(media.getName());
+				}
+			} else {
+				formRipsFacturas.setUs(null);
+				nameUS.setValue("");
+				alert("Debe ser de tipo US");
+			}
+		} else {
+			formRipsFacturas.setUs(null);
+			nameUS.setValue("");
+			alert("Debe ser de tipo txt");
+		}
+	}
+</attribute>
+										</toolbarbutton>
+										<toolbarbutton
+											tooltiptext="Limpiar" image="/images/limpiar_mini.png">
+											<attribute name="onClick">
+	formRipsFacturas.setUs(null);
+	nameUS.setValue("");
+</attribute>
+										</toolbarbutton>
+									</cell>
+									<cell></cell>
+								</row>
+
+
+								<!-- AH -->
+								<row>
+									<cell></cell>
+									<cell>
+										<textbox id="nameAH" hflex="1"
+											style="text-transform:uppercase" readonly="true" />
+									</cell>
+									<cell>
+										<toolbarbutton
+											image="/images/upload.png" sclass="attachBtn" upload="true"
+											label="Subir (AH)">
+											<attribute name="onUpload">
+	{
+		org.zkoss.util.media.Media media = event.getMedia();
+		if (media.getName().toLowerCase().endsWith("txt")) {
+			if (media.getName().toLowerCase().startsWith("ah")) {
+				String txtString = media.getStringData();
+				if (txtString.trim().isEmpty()) {
+					formRipsFacturas.setAh(null);
+					nameAH.setValue("");
+					alert("Este archivo no puede estar vacio");
+				} else {
+					formRipsFacturas.setAh(txtString);
+					nameAH.setValue(media.getName());
+				}
+			} else {
+				formRipsFacturas.setAh(null);
+				nameAH.setValue("");
+				alert("Debe ser de tipo AH");
+			}
+		} else {
+			formRipsFacturas.setAh(null);
+			nameAH.setValue("");
+			alert("Debe ser de tipo txt");
+		}
+	}
+</attribute>
+										</toolbarbutton>
+										<toolbarbutton
+											tooltiptext="Limpiar" image="/images/limpiar_mini.png">
+											<attribute name="onClick">
+	formRipsFacturas.setAh(null);
+	nameAH.setValue("");
+</attribute>
+										</toolbarbutton>
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- AU -->
+								<row>
+									<cell></cell>
+									<cell>
+										<textbox id="nameAU" hflex="1"
+											style="text-transform:uppercase" readonly="true" />
+									</cell>
+									<cell>
+										<toolbarbutton
+											image="/images/upload.png" sclass="attachBtn" upload="true"
+											label="Subir (AU)">
+											<attribute name="onUpload">
+	{
+		org.zkoss.util.media.Media media = event.getMedia();
+		if (media.getName().toLowerCase().endsWith("txt")) {
+			if (media.getName().toLowerCase().startsWith("au")) {
+				String txtString = media.getStringData();
+				if (txtString.trim().isEmpty()) {
+					formRipsFacturas.setAu(null);
+					nameAU.setValue("");
+					alert("Este archivo no puede estar vacio");
+				} else {
+					formRipsFacturas.setAu(txtString);
+					nameAU.setValue(media.getName());
+				}
+			} else {
+				formRipsFacturas.setAu(null);
+				nameAU.setValue("");
+				alert("Debe ser de tipo AU");
+			}
+		} else {
+			formRipsFacturas.setAu(null);
+			nameAU.setValue("");
+			alert("Debe ser de tipo txt");
+		}
+	}
+</attribute>
+										</toolbarbutton>
+										<toolbarbutton
+											tooltiptext="Limpiar" image="/images/limpiar_mini.png">
+											<attribute name="onClick">
+	formRipsFacturas.setAu(null);
+	nameAU.setValue("");
+</attribute>
+										</toolbarbutton>
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- AN -->
+								<row>
+									<cell></cell>
+									<cell>
+										<textbox id="nameAN" hflex="1"
+											style="text-transform:uppercase" readonly="true" />
+									</cell>
+									<cell>
+										<toolbarbutton
+											image="/images/upload.png" sclass="attachBtn" upload="true"
+											label="Subir (AN)">
+											<attribute name="onUpload">
+	{
+		org.zkoss.util.media.Media media = event.getMedia();
+		if (media.getName().toLowerCase().endsWith("txt")) {
+			if (media.getName().toLowerCase().startsWith("an")) {
+				String txtString = media.getStringData();
+				if (txtString.trim().isEmpty()) {
+					formRipsFacturas.setAn(null);
+					nameAN.setValue("");
+					alert("Este archivo no puede estar vacio");
+				} else {
+					formRipsFacturas.setAn(txtString);
+					nameAN.setValue(media.getName());
+				}
+			} else {
+				formRipsFacturas.setAn(null);
+				nameAN.setValue("");
+				alert("Debe ser de tipo AN");
+			}
+		} else {
+			formRipsFacturas.setAn(null);
+			nameAN.setValue("");
+			alert("Debe ser de tipo txt");
+		}
+	}
+</attribute>
+										</toolbarbutton>
+										<toolbarbutton
+											tooltiptext="Limpiar" image="/images/limpiar_mini.png">
+											<attribute name="onClick">
+	formRipsFacturas.setAn(null);
+	nameAN.setValue("");
+</attribute>
+										</toolbarbutton>
+									</cell>
+									<cell></cell>
+								</row>
+
+							</rows>
+						</grid>
+
+					</groupbox>
+				</div>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

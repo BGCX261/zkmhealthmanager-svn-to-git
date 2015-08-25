@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<?page title="Maestro_manual" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formMaestro_manual" width="100%" height="100%"
+		use="healthmanager.controller.Maestro_manualAction">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="true" closable="false"
+			mold="3d" height="100%">
+			<caption label="Consultar manuales tarifarios Registrados"
+				style="font-weight: bold" />
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<div>
+				<label value="Criterios de B&#250;squeda :" />
+				<space />
+				<listbox id="lbxParameter" mold="select"
+					sclass="combobox" width="150px" />
+				<textbox id="tbxValue" width="250px"
+					onOK="formMaestro_manual.buscarDatos();"
+					style="text-transform:uppercase" />
+				<toolbarbutton image="/images/Magnifier.gif"
+					onClick="formMaestro_manual.buscarDatos();" label="Buscar manuales"
+					tooltiptext="Buscar manuales" />
+				<toolbarbutton image="/images/New16.gif"
+					onClick='formMaestro_manual.accionForm(true,"registrar");'
+					tooltiptext="Nuevo Maestro manual" id="btnNuevo"
+					label="Nuevo manual" />
+			</div>
+			<listbox id="listboxResultado" autopaging="true"
+				style="margin-top:5px" vflex="1">
+				<listhead sizable="true">
+					<listheader label="Id" width="70px" />
+					<listheader label="Manual" width="" />
+					<listheader label="Tipo manual" width="" />
+					<listheader label="Tipo moneda" width="" />
+					<listheader label="Acciones" align="center"
+						width="150px" />
+				</listhead>
+			</listbox>
+		</groupbox>
+
+		<borderlayout width="100%" height="100%" id="groupboxEditar"
+			visible="false">
+			<north border="none">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<toolbarbutton image="/images/Save16.gif"
+						label="Guardar manual tarifario"
+						onClick="formMaestro_manual.guardarDatos();" id="btnGuardar" />
+					<toolbarbutton image="/images/New16.gif"
+						label="Nuevo manual tarifario"
+						onClick='formMaestro_manual.accionForm(true,"registrar");'
+						id="btnNuevo2" />
+					<space />
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Atras"
+						onClick='formMaestro_manual.accionForm(false,tbxAccion.getText());'
+						id="btnAtras" />
+					<space />
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center" height="100%">
+
+					<!-- *************************** -->
+					<!-- *** Insertar/Actualizar *** -->
+					<!-- *************************** -->
+					<groupbox closable="false" width="800px" mold="3d"
+						height="100%">
+						<grid>
+							<auxhead>
+								<auxheader colspan="3"
+									label="DATOS DEL REGISTRO (MANUAL TARIFARIO)" align="center" />
+							</auxhead>
+							<columns visible="false">
+								<column width="150px" />
+								<column width="190px" />
+								<column />
+							</columns>
+							<rows>
+								<!-- fila 1 -->
+								<row id="rowId_manual"
+									visible="false">
+									<cell>
+										<label id="lbId_manual"
+											value="Id manual: " />
+									</cell>
+									<cell>
+										<longbox id="lgxId_manual"
+											width="170px" readonly="true" />
+									</cell>
+									<cell>
+										<label
+											value="Id manual de maestro manual" />
+									</cell>
+								</row>
+
+								<!-- fila 2 -->
+								<row>
+									<cell>
+										<label id="lbManual"
+											value="Manual: " />
+									</cell>
+									<cell>
+										<textbox id="tbxManual"
+											width="170px" style="text-transform:uppercase" />
+									</cell>
+									<cell>
+										<label
+											value="Nombre que se le va a dar al manual" />
+									</cell>
+								</row>
+
+								<!-- fila 3 -->
+								<row>
+									<cell>
+										<label id="lbTipo_manual"
+											value="Tipo manual: " />
+									</cell>
+									<cell>
+										<listbox id="lbxTipo_manual"
+											name="tipo_manual" mold="select" width="170px"
+											style="text-transform:uppercase" />
+									</cell>
+									<cell>
+										<label value="Tipo manual" />
+									</cell>
+								</row>
+
+								<!-- fila 4 -->
+								<row>
+									<cell>
+										<label id="lbTipo_moneda"
+											value="Tipo moneda: " />
+									</cell>
+									<cell>
+										<listbox id="lbxTipo_moneda"
+											name="tipo_moneda" width="170px"
+											style="text-transform:uppercase" mold="select" />
+									</cell>
+									<cell>
+										<label
+											value="Tipo moneda del manual" />
+									</cell>
+								</row>
+
+							</rows>
+						</grid>
+
+						<listbox vflex="1" id="listboxProcedimientos"
+							checkmark="true" multiple="true" mold="paging" pageSize="20"
+							onSelect="formMaestro_manual.verificarSeleccion()">
+							<custom-attributes
+								org.zkoss.zul.listbox.rod="true" />
+							<auxhead>
+								<auxheader colspan="6">
+									<toolbarbutton
+										image="/images/agregar.png" label="Agregar procedimiento"
+										onClick="formMaestro_manual.openProcedimientos()" />
+									<space />
+									<toolbarbutton
+										image="/images/agregar.png"
+										label="Agregar todos los procedimientos"
+										onClick="formMaestro_manual.agregarTodosProcedimientos()" />
+									<space />
+									<toolbarbutton
+										image="/images/borrar.gif" label="Quitar procedimientos"
+										onClick="formMaestro_manual.quitarItemsSeleccionados()" />
+									<space />
+									<bandbox style="float:right"
+										id="bandboxBusqueda" width="170px"
+										tooltiptext="Buscar procedimientos dentro de los agregados"
+										onOK="formMaestro_manual.buscarProcedimientos()" />
+								</auxheader>
+							</auxhead>
+							<listhead>
+								<listheader width="30px">
+									<checkbox
+										id="checkboxSeleccionar_todos"
+										onCheck="formMaestro_manual.seleccionarTodos()" />
+								</listheader>
+								<listheader label="Codigo Cups"
+									width="100px" />
+								<listheader label="Codigo en manual"
+									width="100px" />
+								<listheader
+									label="Nombre de procedimiento" />
+								<listheader label="Valor | (%)"
+									width="70px" />
+								<listheader label="Grupo/Uvr"
+									width="70px" />
+									<!-- No borrar es de medicos y auditores -->
+								<listheader id="lhrNroCuenta" label="Nro cuenta"
+									width="70px" visible="false"/> 
+							</listhead>
+						</listbox>
+
+					</groupbox>
+				</div>
+			</center>
+		</borderlayout>
+		<div id="divPopups" />
+	</window>
+</zk>

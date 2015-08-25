@@ -1,0 +1,964 @@
+<?page title="Datos_procedimiento_multiple" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formDatos_procedimiento_multiple" width="100%" height="100%"
+		use="healthmanager.controller.Datos_procedimiento_multipleAction">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+		<!-- **************** -->
+		<!-- Zona de Objetivo -->
+		<!-- **************** -->
+		<groupbox id="groupboxObjetivo" closable="false" mold="3d"
+			visible="false">
+			<caption label="Modulo de Datos_consulta"
+				style="color: blue;font-weight: bold" visible="false" />
+			<label
+				value="Esta pagina permite gestionar los Datos consulta."
+				visible="false" />
+		</groupbox>
+
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="false" closable="false"
+			mold="3d" height="100%">
+			<caption label="Consultar"
+				style="color: blue;font-weight: bold" visible="false" />
+
+			<separator />
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" height="100%" mold="paging"
+				pageSize="20" vflex="1">
+				<auxhead>
+					<auxheader colspan="7">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<separator />
+							<textbox id="tbxValue" width="200px"
+								onOK="formDatos_procedimiento_multiple.buscarDatos();"
+								style="text-transform:uppercase" />
+							<separator />
+							<button mold="trendy"
+								image="/images/Magnifier.gif"
+								onClick="formDatos_procedimiento_multiple.buscarDatos();"
+								tooltiptext="Consultar" />
+							<separator />
+							<button mold="trendy"
+								image="/images/New16.gif"
+								onClick='formDatos_procedimiento_multiple.accionForm(true,"registrar");'
+								tooltiptext="Nuevo" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Nro factura" width="100px" />
+					<column label="Tipo identificacion" width="120px" />
+					<column label="Nro identificacion" width="120px" />
+					<column label="Fecha consulta" width="120px" />
+					<column label="Apellidos" />
+					<column label="Nombres" />
+					<column label="Acciones" align="center"
+						width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<borderlayout width="100%" height="100%" id="groupboxEditar"
+			visible="true">
+			<north border="none">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<toolbarbutton image="/images/Save16.gif"
+						label="Guardar Datos"
+						onClick="formDatos_procedimiento_multiple.guardarDatos();"
+						id="btGuardar" />
+					<toolbarbutton image="/images/New16.gif"
+						label="Nueva Datos"
+						onClick='formDatos_procedimiento_multiple.nuevoRegistro()'
+						id="btNew" />
+					<space />
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Cancelar"
+						onClick='formDatos_procedimiento_multiple.accionForm(false,tbxAccion.getText());'
+						id="btCancel" />
+
+					<toolbarbutton image="/images/print_ico.gif"
+						label="Imprimir"
+						onClick="formDatos_procedimiento_multiple.imprimir(tbxNro_factura.getValue());"
+						id="btImprimir" visible="true" />
+
+
+					<label value="Formato impresión: " visible="true" />
+					<listbox id="lbxFormato" mold="select" width="150px"
+						visible="true" sclass="combobox">
+						<listitem value="pdf" label="PDF"
+							selected="true" />
+						<listitem value="rtf" label="WORD" />
+					</listbox>
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center">
+
+					<!-- *************************** -->
+					<!-- *** Insertar/Actualizar *** -->
+					<!-- *************************** -->
+					<groupbox closable="false" width="690px" mold="3d"
+						id="groupboxForm">
+
+						<textbox id="tbxCodigo_administradora"
+							visible="false" />
+						<textbox id="tbxId_plan" visible="false" />
+
+						<textbox id="tbxSexo_pct" visible="false" />
+						<textbox id="tbxFecha_nac" visible="false" />
+
+						<textbox id="tbxSexo_pcd" visible="false" />
+						<textbox id="tbxLimite_inferior_pcd"
+							visible="false" />
+						<textbox id="tbxLimite_superior_pcd"
+							visible="false" />
+						<textbox id="tbxEs_pyp" visible="false" />
+
+						<textbox id="tbxSexo_dxpp" visible="false" />
+						<textbox id="tbxLimite_inferior_dxpp"
+							visible="false" />
+						<textbox id="tbxLimite_superior_dxpp"
+							visible="false" />
+
+						<textbox id="tbxSexo_dx1" visible="false" />
+						<textbox id="tbxLimite_inferior_dx1"
+							visible="false" />
+						<textbox id="tbxLimite_superior_dx1"
+							visible="false" />
+
+						<textbox id="tbxSexo_dx2" visible="false" />
+						<textbox id="tbxLimite_inferior_dx2"
+							visible="false" />
+						<textbox id="tbxLimite_superior_dx2"
+							visible="false" />
+
+						<textbox id="tbxSexo_dx3" visible="false" />
+						<textbox id="tbxLimite_inferior_dx3"
+							visible="false" />
+						<textbox id="tbxLimite_superior_dx3"
+							visible="false" />
+
+						<textbox id="tbxManual" visible="false" />
+						<textbox id="tbxAnio" visible="false" />
+						<textbox id="tbxGrupo" visible="false" />
+						<doublebox id="dbxUvr" format="#,##0.00"
+							visible="false" />
+
+						<textbox id="tbxTipo_int" visible="false" />
+
+						<grid sclass="GridSinBorde"
+							style="border:solid 1px ">
+							<columns>
+								<column value="" width="121px" />
+								<column value="" width="171px" />
+								<column value="" width="123px" />
+								<column value="" width="260px" />
+							</columns>
+							<rows>
+								<row>
+									<cell align="left">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbNro_identificacion"
+											value="Paciente: " />
+									</cell>
+									<cell colspan="3" align="left">
+										<hlayout>
+											<bandbox
+												id="tbxNro_identificacion" autodrop="true" readonly="true"
+												width="150px"
+												onOpen='formDatos_procedimiento_multiple.buscarPaciente(tbxNro_identificacion.getValue(),lbxPaciente)'>
+												<bandpopup>
+													<vbox>
+														<toolbar>
+															<label
+																value="Buscar: " />
+															<textbox
+																id="tbxValuePaciente"
+																onOK='formDatos_procedimiento_multiple.buscarPaciente(tbxValuePaciente.getValue(),lbxPaciente)'
+																style="text-transform:uppercase;" />
+
+														</toolbar>
+														<listbox
+															height="300px" width="600px" mold="paging" pageSize="8"
+															id="lbxPaciente"
+															onSelect='formDatos_procedimiento_multiple.selectedPaciente(self.getSelectedItem());'>
+															<listhead>
+																<listheader
+																	label="Tipo Ident." width="65px" />
+																<listheader
+																	label="Identificación" />
+																<listheader
+																	label="Nombres" />
+																<listheader
+																	label="Apellidos" />
+															</listhead>
+														</listbox>
+													</vbox>
+												</bandpopup>
+											</bandbox>
+
+											<textbox id="tbxNomPaciente"
+												width="340px" style="text-transform:uppercase"
+												readonly="true" />
+											<toolbarbutton
+												image="/images/borrar.gif" tooltiptext="Quitar registro"
+												onClick="formDatos_procedimiento_multiple.selectedPaciente(new Listitem());"
+												id="imgQuitar_pct" />
+										</hlayout>
+									</cell>
+								</row>
+
+								<row>
+									<cell align="left">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label value="Nro ingreso: " />
+									</cell>
+									<cell align="left">
+										<listbox id="lbxNro_ingreso"
+											mold="select" width="155px" sclass="combobox"
+											onSelect="formDatos_procedimiento_multiple.selectedAdmision(self.getSelectedItem())" />
+									</cell>
+									<cell align="left">
+										<label value="Aseguradora: " />
+									</cell>
+									<cell align="left">
+										<textbox id="tbxAseguradora"
+											width="225px" style="text-transform:uppercase"
+											readonly="true" />
+									</cell>
+								</row>
+								<row>
+									<cell align="left">
+										<label value="Nacimiento: " />
+									</cell>
+									<cell colspan="3" align="left">
+										<hlayout>
+											<textbox id="tbxNacimiento"
+												width="100px" style="text-transform:uppercase"
+												readonly="true" />
+											<label value="Edad: " />
+											<textbox id="tbxEdad"
+												width="50px" style="text-transform:uppercase"
+												readonly="true" />
+											<label value="Sexo: " />
+											<textbox id="tbxSexo"
+												width="80px" style="text-transform:uppercase"
+												readonly="true" />
+											<label value="Tipo ID: " />
+											<textbox
+												id="tbxTipo_identificacion" width="40px"
+												style="text-transform:uppercase" readonly="true" />
+											<label value="Estrato: " />
+											<textbox id="tbxEstrato"
+												width="40px" style="text-transform:uppercase"
+												readonly="true" />
+										</hlayout>
+									</cell>
+								</row>
+							</rows>
+
+						</grid>
+						<space height="3px" />
+						<grid sclass="GridSinBorde"
+							style="border:solid 1px ">
+							<columns>
+								<column value="" width="121px" />
+								<column value="" width="291px" />
+								<column value="" width="73px" />
+								<column value="" />
+							</columns>
+							<rows>
+
+								<row>
+									<cell align="left">
+										<label
+											value="No. Procedimiento: " />
+									</cell>
+									<cell align="left">
+										<textbox id="tbxNro_factura"
+											width="270px" readonly="true" />
+									</cell>
+									<cell align="left" colspan="2"
+										rowspan="4">
+										<radiogroup
+											id="rdbTipo_intervencion" orient="vertical"
+											onCheck="formDatos_procedimiento_multiple.selectedTipo_intervension(self.getSelectedItem().getValue().toString());">
+											<radio
+												id="radioTipo_intervencion1" label="Una sola intervención"
+												checked="true" value="1" />
+											<radio
+												id="radioTipo_intervencion2" label="Bilateral" value="2" />
+											<radio
+												id="radioTipo_intervencion3"
+												label="Intervención multiple igual vía" value="3" />
+											<radio
+												id="radioTipo_intervencion5"
+												label="Intervención multiple diferente vía" value="5" />
+											<radio
+												id="radioTipo_intervencion4"
+												label="Intervención multiple dos o más cirujano" value="6"
+												disabled="true" />
+										</radiogroup>
+									</cell>
+								</row>
+
+								<row>
+									<cell align="left">
+										<label value="Fecha: " />
+									</cell>
+									<cell align="left">
+										<label value="Ambito: " />
+									</cell>
+
+								</row>
+
+								<row>
+									<cell align="left">
+										<datebox
+											id="dtbxFecha_procedimiento"
+											onCreate="self.value = new Date();" format="dd/MM/yyyy"
+											width="115px" />
+									</cell>
+									<cell align="left">
+										<listbox
+											id="lbxAmbito_procedimiento" name="ambito_procedimiento"
+											mold="select" width="270px" sclass="combobox" />
+									</cell>
+
+								</row>
+
+								<row>
+									<cell align="left">
+										<label
+											value="Forma realización: " />
+									</cell>
+									<cell align="left">
+										<label
+											value="Finalidad  procedimiento: " />
+									</cell>
+								</row>
+
+								<row>
+									<cell align="left">
+										<listbox
+											id="lbxForma_realizacion" name="forma_realizacion"
+											mold="select" width="117px" sclass="combobox"
+											disabled="false" />
+									</cell>
+									<cell align="left">
+										<listbox
+											id="lbxFinalidad_procedimiento" name="finalidad_proc"
+											mold="select" width="270px" sclass="combobox" />
+									</cell>
+									<cell align="left" colspan="2">
+										<checkbox id="chbIncruento"
+											label="Proced. Incruento"
+											onCheck="formDatos_procedimiento_multiple.selectedIncruento(self.isChecked())" />
+									</cell>
+
+								</row>
+
+								<row>
+									<cell align="left">
+										<label
+											value="Personal atiende: " />
+									</cell>
+									<cell align="left">
+										<label
+											value="No. Autorización:: " />
+									</cell>
+									<cell align="left" colspan="2">
+										<label value="Total: " />
+									</cell>
+								</row>
+
+								<row>
+									<cell align="left">
+										<listbox
+											id="lbxPersonal_atiende" name="personal_atiende"
+											mold="select" width="117px" sclass="combobox" />
+									</cell>
+									<cell align="left">
+										<textbox
+											id="tbxNumero_autorizacion" width="270px"
+											style="text-transform:uppercase" maxlength="15" />
+									</cell>
+									<cell align="left" colspan="2">
+										<doublebox id="dbxValor_neto"
+											format="#,##0.00" style="text-align:right" width="170px"
+											value="0.00" readonly="true" />
+									</cell>
+								</row>
+
+								<row>
+									<cell align="left">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label value="Consulta: " />
+									</cell>
+									<cell align="left" colspan="4">
+										<hlayout>
+											<textbox
+												id="tbxCodigo_procedimiento" width="120px"
+												style="text-transform:uppercase" maxlength="8"
+												readonly="true" />
+											<toolbarbutton
+												image="/images/Magnifier.gif"
+												tooltiptext="Consultar registro"
+												onClick="formDatos_procedimiento_multiple.openPcd();"
+												id="imgConsultar_pcd" />
+											<button label="..."
+												mold="trendy"
+												onClick="formDatos_procedimiento_multiple.openPcd();"
+												visible="false" />
+											<textbox id="tbxNomPcd"
+												width="340px" style="text-transform:uppercase"
+												readonly="true" />
+											<toolbarbutton
+												image="/images/borrar.gif" tooltiptext="Quitar registro"
+												onClick="formDatos_procedimiento_multiple.quitarPcd();"
+												id="imgQuitar_pcd" />
+										</hlayout>
+									</cell>
+								</row>
+
+								<row>
+									<cell align="left" colspan="5">
+										<!-- Grilla para marcar lo que se cobra de la cirugía -->
+										<grid sclass="GridSinBorde">
+											<columns>
+												<column value=""
+													width="151px" />
+												<column value=""
+													width="100px" />
+												<column value=""
+													width="95px" />
+												<column value="" />
+											</columns>
+											<rows>
+
+												<row>
+													<cell
+														align="left">
+														<checkbox
+															id="chbCobra_cirujano" label="Cirujano"
+															onClick='formDatos_procedimiento_multiple.calcularValorServicio("1",self.isChecked(),dbxValor_cirujano,dbxAuxValor_cirujano);' />
+													</cell>
+													<cell
+														align="left">
+														<doublebox
+															id="dbxValor_cirujano" format="#,##0.00" width="85px"
+															value="0.00" readonly="true" />
+														<doublebox
+															id="dbxAuxValor_cirujano" format="#,##0.00"
+															visible="false" />
+													</cell>
+													<cell align="left"
+														colspan="2">
+														<hlayout>
+															<bandbox
+																id="tbxCodigo_prestador" autodrop="true" readonly="true"
+																width="120px"
+																onOpen='com.framework.util.Utilidades.buscarMedicos(tbxValuePrestador.getValue(),lbxPrestador, formDatos_procedimiento_multiple.getServiceLocator(), formDatos_procedimiento_multiple.getSucursal())'>
+																<bandpopup>
+																	<vbox>
+																		<toolbar>
+																			<label
+																				value="Buscar: " />
+																			<textbox
+																				id="tbxValuePrestador"
+																				onOK='com.framework.util.Utilidades.buscarMedicos(tbxValuePrestador.getValue(),lbxPrestador, formDatos_procedimiento_multiple.getServiceLocator(), formDatos_procedimiento_multiple.getSucursal())'
+																				style="text-transform:uppercase;" />
+
+																		</toolbar>
+																		<listbox
+																			height="300px" width="600px" mold="paging"
+																			pageSize="8" id="lbxPrestador"
+																			onSelect='com.framework.util.Utilidades.selectedMedicos(self.getSelectedItem(), tbxCodigo_prestador, tbxNomMedico, formDatos_procedimiento_multiple)'>
+																			<listhead>
+																				<listheader
+																					label="Identificación" />
+																				<listheader
+																					label="Nombres" />
+																				<listheader
+																					label="Apellidos" />
+																				<listheader
+																					label="Especialidad" />
+																			</listhead>
+																		</listbox>
+																	</vbox>
+																</bandpopup>
+															</bandbox>
+															<textbox
+																id="tbxNomMedico" width="240px"
+																style="text-transform:uppercase" />
+															<toolbarbutton
+																image="/images/borrar.gif" tooltiptext="Quitar registro"
+																onClick="com.framework.util.Utilidades.selectedMedicos(new Listitem(), tbxCodigo_prestador, tbxNomMedico, formDatos_procedimiento_multiple);"
+																id="imgQuitar_med" />
+														</hlayout>
+													</cell>
+												</row>
+
+												<row>
+													<cell
+														align="left">
+														<checkbox
+															id="chbCobra_anestesiologo" label="Anestesiologo"
+															onClick='formDatos_procedimiento_multiple.calcularValorServicio("2",self.isChecked(),dbxValor_anestesiologo,dbxAuxValor_anestesiologo);' />
+													</cell>
+													<cell
+														align="left">
+														<doublebox
+															id="dbxValor_anestesiologo" format="#,##0.00"
+															width="85px" value="0.00" readonly="true" />
+														<doublebox
+															id="dbxAuxValor_anestesiologo" format="#,##0.00"
+															visible="false" />
+													</cell>
+													<cell align="left"
+														colspan="2">
+														<hlayout>
+															<bandbox
+																id="tbxCodigo_anestesiologo" autodrop="true"
+																readonly="true" width="120px"
+																onOpen='com.framework.util.Utilidades.buscarMedicos(tbxValueAnestesiologo.getValue(),lbxAnestesiologo, formDatos_procedimiento_multiple.getServiceLocator(), formDatos_procedimiento_multiple.getSucursal())'>
+																<bandpopup>
+																	<vbox>
+																		<toolbar>
+																			<label
+																				value="Buscar: " />
+																			<textbox
+																				id="tbxValueAnestesiologo"
+																				onOK='com.framework.util.Utilidades.buscarMedicos(tbxValueAnestesiologo.getValue(),lbxAnestesiologo, formDatos_procedimiento_multiple.getServiceLocator(), formDatos_procedimiento_multiple.getSucursal())'
+																				style="text-transform:uppercase;" />
+
+																		</toolbar>
+																		<listbox
+																			height="300px" width="600px" mold="paging"
+																			pageSize="8" id="lbxAnestesiologo"
+																			onSelect='com.framework.util.Utilidades.selectedMedicos(self.getSelectedItem(), tbxCodigo_anestesiologo, tbxNomAnestesiologo, formDatos_procedimiento_multiple);'>
+																			<listhead>
+																				<listheader
+																					label="Identificación" />
+																				<listheader
+																					label="Nombres" />
+																				<listheader
+																					label="Apellidos" />
+																				<listheader
+																					label="Especialidad" />
+																			</listhead>
+																		</listbox>
+																	</vbox>
+																</bandpopup>
+															</bandbox>
+															<textbox
+																id="tbxNomAnestesiologo" width="240px"
+																style="text-transform:uppercase" />
+															<toolbarbutton
+																image="/images/borrar.gif" tooltiptext="Quitar registro"
+																onClick="com.framework.util.Utilidades.selectedMedicos(new Listitem(), tbxCodigo_anestesiologo, tbxNomAnestesiologo, formDatos_procedimiento_multiple);"
+																id="imgQuitar_ana" />
+														</hlayout>
+													</cell>
+												</row>
+
+												<row>
+													<cell
+														align="left">
+														<checkbox
+															id="chbCobra_ayudante" label="Ayudante quirurgico"
+															onClick='formDatos_procedimiento_multiple.calcularValorServicio("3",self.isChecked(),dbxValor_ayudante,dbxAuxValor_ayudante);' />
+													</cell>
+													<cell
+														align="left">
+														<doublebox
+															id="dbxValor_ayudante" format="#,##0.00" width="85px"
+															value="0.00" readonly="true" />
+														<doublebox
+															id="dbxAuxValor_ayudante" format="#,##0.00"
+															visible="false" />
+													</cell>
+													<cell align="left"
+														colspan="2">
+														<hlayout>
+															<bandbox
+																id="tbxCodigo_ayudante" autodrop="true" readonly="true"
+																width="120px"
+																onOpen='com.framework.util.Utilidades.buscarMedicos(tbxValueAyudante.getValue(),lbxAyudante, formDatos_procedimiento_multiple.getServiceLocator(), formDatos_procedimiento_multiple.getSucursal())'>
+																<bandpopup>
+																	<vbox>
+																		<toolbar>
+																			<label
+																				value="Buscar: " />
+																			<textbox
+																				id="tbxValueAyudante"
+																				onOK='com.framework.util.Utilidades.buscarMedicos(tbxValueAyudante.getValue(),lbxAyudante, formDatos_procedimiento_multiple.getServiceLocator(), formDatos_procedimiento_multiple.getSucursal())'
+																				style="text-transform:uppercase;" />
+
+																		</toolbar>
+																		<listbox
+																			height="300px" width="600px" mold="paging"
+																			pageSize="8" id="lbxAyudante"
+																			onSelect='com.framework.util.Utilidades.selectedMedicos(lbxAyudante.getSelectedItem(), tbxCodigo_ayudante, tbxNomAyudante, formDatos_procedimiento_multiple);'>
+																			<listhead>
+																				<listheader
+																					label="Identificación" />
+																				<listheader
+																					label="Nombres" />
+																				<listheader
+																					label="Apellidos" />
+																				<listheader
+																					label="Especialidad" />
+																			</listhead>
+																		</listbox>
+																	</vbox>
+																</bandpopup>
+															</bandbox>
+															<textbox
+																id="tbxNomAyudante" width="240px"
+																style="text-transform:uppercase" />
+															<toolbarbutton
+																image="/images/borrar.gif" tooltiptext="Quitar registro"
+																onClick="com.framework.util.Utilidades.selectedMedicos(new Listitem(), tbxCodigo_ayudante, tbxNomAyudante, formDatos_procedimiento_multiple);"
+																id="imgQuitar_ayu" />
+														</hlayout>
+													</cell>
+												</row>
+
+												<row>
+													<cell
+														align="left">
+														<checkbox
+															id="chbCobra_sala" label="Sala de cirugía"
+															onClick='formDatos_procedimiento_multiple.calcularValorServicio("4",self.isChecked(),dbxValor_sala,dbxAuxValor_sala);' />
+													</cell>
+													<cell
+														align="left">
+														<doublebox
+															id="dbxValor_sala" format="#,##0.00" width="85px"
+															value="0.00" readonly="true" />
+														<doublebox
+															id="dbxAuxValor_sala" format="#,##0.00" visible="false" />
+													</cell>
+													<cell
+														align="left">
+														<label
+															value="Diag. Previo:" />
+													</cell>
+													<cell
+														align="left">
+														<hlayout>
+															<bandbox
+																id="tbxCodigo_diagnostico_principal" autodrop="true"
+																readonly="true" width="80px"
+																onOpen="formDatos_procedimiento_multiple.buscarDx(tbxValueDx.getValue(),lbxDxpp)">
+																<bandpopup>
+																	<vbox>
+																		<toolbar>
+																			<label
+																				value="Buscar: " />
+																			<textbox
+																				id="tbxValueDx"
+																				onOK='formDatos_procedimiento_multiple.buscarDx(tbxValueDx.getValue(),lbxDxpp)'
+																				style="text-transform:uppercase;" />
+
+																		</toolbar>
+																		<listbox
+																			height="300px" width="600px" mold="paging"
+																			pageSize="8" id="lbxDxpp"
+																			onSelect='formDatos_procedimiento_multiple.selectedDx(self.getSelectedItem(), tbxCodigo_diagnostico_principal, tbxNomDxpp,
+			tbxSexo_dxpp,tbxLimite_inferior_dxpp,tbxLimite_superior_dxpp)'>
+																			<listhead>
+																				<listheader
+																					label="Código" width="65px" />
+																				<listheader
+																					label="Nombre" />
+																				<listheader
+																					label="Sexo" width="65px" />
+																				<listheader
+																					label="Limite inf" width="75px" />
+																				<listheader
+																					label="Limite sup" width="75px" />
+																			</listhead>
+																		</listbox>
+																	</vbox>
+																</bandpopup>
+															</bandbox>
+															<textbox
+																id="tbxNomDxpp" width="186px"
+																style="text-transform:uppercase" readonly="true" />
+															<toolbarbutton
+																image="/images/borrar.gif" tooltiptext="Quitar registro"
+																onClick="formDatos_procedimiento_multiple.selectedDx(new Listitem(), tbxCodigo_diagnostico_principal, tbxNomDxpp,
+			tbxSexo_dxpp,tbxLimite_inferior_dxpp,tbxLimite_superior_dxpp);"
+																id="imgQuitar_dxpp" />
+														</hlayout>
+													</cell>
+												</row>
+
+												<row>
+													<cell
+														align="left">
+														<checkbox
+															id="chbCobra_materiales" label="Materiales e insumos"
+															onClick='formDatos_procedimiento_multiple.calcularValorServicio("5",self.isChecked(),dbxValor_materiales,dbxAuxValor_materiales);' />
+													</cell>
+													<cell
+														align="left">
+														<doublebox
+															id="dbxValor_materiales" format="#,##0.00" width="85px"
+															value="0.00" readonly="true"
+															onChange="formDatos_procedimiento_multiple.calcularSubtotal();" />
+														<doublebox
+															id="dbxAuxValor_materiales" format="#,##0.00"
+															visible="false" />
+													</cell>
+													<cell
+														align="left">
+														<label
+															value="Diag. Posterior:" />
+													</cell>
+													<cell
+														align="left">
+														<hlayout>
+															<bandbox
+																id="tbxCodigo_diagnostico_relacionado" autodrop="true"
+																readonly="true" width="80px"
+																onOpen="formDatos_procedimiento_multiple.buscarDx(tbxValueDx1.getValue(),lbxDx1)">
+																<bandpopup>
+																	<vbox>
+																		<toolbar>
+																			<label
+																				value="Buscar: " />
+																			<textbox
+																				id="tbxValueDx1"
+																				onOK='formDatos_procedimiento_multiple.buscarDx(tbxValueDx1.getValue(),lbxDx1)'
+																				style="text-transform:uppercase;" />
+
+																		</toolbar>
+																		<listbox
+																			height="300px" width="600px" mold="paging"
+																			pageSize="8" id="lbxDx1"
+																			onSelect='formDatos_procedimiento_multiple.selectedDx(self.getSelectedItem(), tbxCodigo_diagnostico_relacionado, tbxNomDx1,
+				tbxSexo_dx1,tbxLimite_inferior_dx1,tbxLimite_superior_dx1)'>
+																			<listhead>
+																				<listheader
+																					label="Código" width="65px" />
+																				<listheader
+																					label="Nombre" />
+																				<listheader
+																					label="Sexo" width="65px" />
+																				<listheader
+																					label="Limite inf" width="75px" />
+																				<listheader
+																					label="Limite sup" width="75px" />
+																			</listhead>
+																		</listbox>
+																	</vbox>
+																</bandpopup>
+															</bandbox>
+															<textbox
+																id="tbxNomDx1" width="186px"
+																style="text-transform:uppercase" readonly="true" />
+															<toolbarbutton
+																image="/images/borrar.gif" tooltiptext="Quitar registro"
+																onClick="formDatos_procedimiento_multiple.selectedDx(new Listitem(), tbxCodigo_diagnostico_relacionado, tbxNomDx1,
+				tbxSexo_dx1,tbxLimite_inferior_dx1,tbxLimite_superior_dx1);"
+																id="imgQuitar_dx1" />
+														</hlayout>
+													</cell>
+												</row>
+
+												<row>
+													<cell
+														align="left">
+														<checkbox
+															id="chbCobra_perfusionista" label="Perfusionista"
+															onClick='formDatos_procedimiento_multiple.calcularValorServicio("6",self.isChecked(),dbxValor_perfusionista,dbxAuxValor_perfusionista);' />
+													</cell>
+													<cell
+														align="left">
+														<doublebox
+															id="dbxValor_perfusionista" format="#,##0.00"
+															width="85px" value="0.00" readonly="true" />
+														<doublebox
+															id="dbxAuxValor_perfusionista" format="#,##0.00"
+															visible="false" />
+													</cell>
+													<cell
+														align="left">
+														<label
+															value="Complicación:" />
+													</cell>
+													<cell
+														align="left">
+														<hlayout>
+															<bandbox
+																id="tbxComplicacion" autodrop="true" readonly="true"
+																width="80px"
+																onOpen="formDatos_procedimiento_multiple.buscarDx(tbxValueDx2.getValue(),lbxDx2)">
+																<bandpopup>
+																	<vbox>
+																		<toolbar>
+																			<label
+																				value="Buscar: " />
+																			<textbox
+																				id="tbxValueDx2"
+																				onOK='formDatos_procedimiento_multiple.buscarDx(tbxValueDx2.getValue(),lbxDx2)'
+																				style="text-transform:uppercase;" />
+
+																		</toolbar>
+																		<listbox
+																			height="300px" width="600px" mold="paging"
+																			pageSize="8" id="lbxDx2"
+																			onSelect='formDatos_procedimiento_multiple.selectedDx(self.getSelectedItem(), tbxComplicacion, tbxNomDx2,
+				tbxSexo_dx2,tbxLimite_inferior_dx2,tbxLimite_superior_dx2)'>
+																			<listhead>
+																				<listheader
+																					label="Código" width="65px" />
+																				<listheader
+																					label="Nombre" />
+																				<listheader
+																					label="Sexo" width="65px" />
+																				<listheader
+																					label="Limite inf" width="75px" />
+																				<listheader
+																					label="Limite sup" width="75px" />
+																			</listhead>
+																		</listbox>
+																	</vbox>
+																</bandpopup>
+															</bandbox>
+															<textbox
+																id="tbxNomDx2" width="186px"
+																style="text-transform:uppercase" readonly="true" />
+															<toolbarbutton
+																image="/images/borrar.gif" tooltiptext="Quitar registro"
+																onClick="formDatos_procedimiento_multiple.selectedDx(new Listitem(), tbxComplicacion, tbxNomDx2,
+				tbxSexo_dx2,tbxLimite_inferior_dx2,tbxLimite_superior_dx2);"
+																id="imgQuitar_dx2" />
+														</hlayout>
+													</cell>
+												</row>
+
+												<row>
+													<cell colspan="4">
+														<!-- Para cirugías agregadas -->
+														<grid
+															id="gridProcedimientos" width="670px" height="150px"
+															style="margin-top:3px" mold="paging" pageSize="20">
+															<auxhead>
+																<auxheader
+																	colspan="11">
+																	<hlayout>
+																		<toolbarbutton
+																			image="/images/add.png" label="Agregar Registro"
+																			onClick="formDatos_procedimiento_multiple.agregarProcedimiento();" />
+																		<space />
+																		<label
+																			value="Total: " />
+																		<doublebox
+																			id="dbxValor_neto2" format="#,##0.00"
+																			style="text-align:right" width="100px" value="0.00"
+																			readonly="true" />
+																		<doublebox
+																			id="dbxAuxValor_neto2" format="#,##0.00" value="0.00"
+																			visible="false" />
+																	</hlayout>
+																</auxheader>
+															</auxhead>
+															<columns
+																sizable="true">
+																<column
+																	label="" align="center" width="28px" />
+																<column
+																	label="Codigo" align="center" width="110px" />
+																<column
+																	label="Procedimiento" align="center" width="210px" />
+																<column
+																	label="Grupo" align="center" width="50px" />
+																<column
+																	label="Cirujano" align="center" width="80px" />
+																<column
+																	label="Anestes." align="center" width="80px" />
+																<column
+																	label="Ayudante" align="center" width="80px" />
+																<column
+																	label="Sala" align="center" width="80px" />
+																<column
+																	label="Materiales" align="center" width="80px" />
+																<column
+																	label="Perfusionista" align="center" width="80px" />
+																<column
+																	label="Total" align="center" width="80px" />
+
+															</columns>
+															<rows
+																id="rowsProcedimientos" width="100%" />
+														</grid>
+													</cell>
+												</row>
+
+												<row>
+													<cell colspan="4"
+														align="left">
+														<hlayout>
+															<label
+																id="lbTipo_sala" value="Tipo de sala: " />
+															<listbox
+																id="lbxTipo_sala" name="tipo_sala" mold="select"
+																width="170px" sclass="combobox"
+																onSelect="formDatos_procedimiento_multiple.selectedTipo_sala(self.getSelectedItem().getValue().toString(),self.getSelectedIndex())" />
+															<space />
+															<checkbox
+																id="chbCirugia_conjunto" label="Cirugía en conjunto"
+																onCheck="formDatos_procedimiento_multiple.selectedCirugia_conjunto(self.isChecked())" />
+														</hlayout>
+													</cell>
+												</row>
+
+											</rows>
+										</grid>
+									</cell>
+								</row>
+
+							</rows>
+
+						</grid>
+
+
+
+
+
+					</groupbox>
+				</div>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

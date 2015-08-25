@@ -1,0 +1,440 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="prescripcion_medica" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="codigo_empresa" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="codigo_sucursal" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="empresa" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="id" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="direccion" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="telefono" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="imagen" class="java.io.InputStream" isForPrompting="false">
+		<defaultValueExpression><![CDATA[null]]></defaultValueExpression>
+	</parameter>
+	<parameter name="resolucion" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="usuario_imprimio" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+public.detalle_receta_rips.codigo_receta,
+public.detalle_receta_rips.consecutivo,
+public.detalle_receta_rips.codigo_articulo,
+public.detalle_receta_rips.cantidad_recetada,
+CAST(public.detalle_receta_rips.cantidad_recetada AS VARCHAR) AS cantidad,
+public.detalle_receta_rips.cantidad_entregada,
+public.detalle_receta_rips.valor_unitario,
+public.detalle_receta_rips.valor_total,
+public.detalle_receta_rips.valor_real,
+public.detalle_receta_rips.descuento,
+public.detalle_receta_rips.incremento,
+public.detalle_receta_rips.unm,
+public.detalle_receta_rips.posologia,
+public.detalle_receta_rips.autorizado,
+public.detalle_receta_rips.entregado,
+public.detalle_receta_rips.cantidad_pendiente,
+public.detalle_receta_rips.estado_cobro,
+public.receta_rips.codigo_receta,
+public.receta_rips.nro_identificacion,
+public.receta_rips.codigo_administradora,
+public.receta_rips.id_plan,
+public.receta_rips.nro_ingreso,
+public.receta_rips.fecha,
+public.receta_rips.facturacion,
+public.receta_rips.creacion_date,
+public.receta_rips.ultimo_update,
+public.receta_rips.delete_date,
+public.receta_rips.creacion_user,
+public.receta_rips.ultimo_user,
+public.receta_rips.delete_user,
+public.receta_rips.estado,
+public.receta_rips.tipo_hc,
+public.receta_rips.codigo_prestador,
+public.receta_rips.leido,
+public.receta_rips.leido_auditor,
+public.receta_rips.contiene_med_no_autorizados,
+public.receta_rips.procedencia,
+public.receta_rips.tipo_id_prestador_externo,
+public.receta_rips.observaciones,
+public.receta_rips.vigencia,
+public.historia_clinica_uci.nro_historia,
+public.sucursal.direccion_sucursal,
+public.sucursal.telefono_sucursal,
+public.paciente.tipo_identificacion,
+public.paciente.nro_identificacion,
+public.paciente.nombre1 AS nombre1_paciente,
+public.paciente.nombre2 AS nombre2_paciente,
+public.paciente.apellido1 AS apellido1_paciente,
+public.paciente.apellido2 AS apellido2_paciente,
+public.cie.codigo AS codigo_diagnostico,
+public.cie.nombre AS diagnostico,
+CASE WHEN  public.receta_rips.procedencia = '01' THEN public.usuarios.nombres || ' ' || public.usuarios.apellidos  ELSE public.receta_rips.nombre_medico END AS nombre_medico,
+public.usuarios.registro_medico,
+public.usuarios.firma AS firma_medico,
+'XXX' as nombre_medicamento,
+'XXX' as forma,
+'XXX' as via_administracion,
+'' as tiempo_tto,
+public.usuarios.codigo AS codigo_prestador,
+public.empresa.email AS email,
+public.empresa.pagina_web,
+public.sucursal.email AS email_sucursal
+FROM
+public.detalle_receta_rips
+INNER JOIN public.receta_rips ON public.detalle_receta_rips.codigo_empresa = public.receta_rips.codigo_empresa AND public.detalle_receta_rips.codigo_sucursal = public.receta_rips.codigo_sucursal AND public.detalle_receta_rips.codigo_receta = public.receta_rips.codigo_receta
+INNER JOIN public.historia_clinica_uci ON public.historia_clinica_uci.codigo_empresa = public.receta_rips.codigo_empresa AND public.historia_clinica_uci.codigo_sucursal = public.receta_rips.codigo_sucursal AND public.historia_clinica_uci.nro_identificacion = public.receta_rips.nro_identificacion AND public.historia_clinica_uci.nro_ingreso = public.receta_rips.nro_ingreso AND public.historia_clinica_uci.tipo_hc = public.receta_rips.tipo_hc
+INNER JOIN public.sucursal ON public.sucursal.codigo_empresa = public.detalle_receta_rips.codigo_empresa AND public.sucursal.codigo_sucursal = public.detalle_receta_rips.codigo_sucursal
+INNER JOIN public.paciente ON public.paciente.codigo_empresa = public.receta_rips.codigo_empresa AND public.paciente.codigo_sucursal = public.receta_rips.codigo_sucursal AND public.paciente.nro_identificacion = public.receta_rips.nro_identificacion
+INNER JOIN public.cie ON public.cie.codigo = public.historia_clinica_uci.impresion_diagnostica
+INNER JOIN public.usuarios ON public.usuarios.codigo_empresa = public.receta_rips.codigo_empresa AND public.usuarios.codigo_sucursal = public.receta_rips.codigo_sucursal AND public.usuarios.codigo = public.receta_rips.codigo_prestador
+INNER JOIN public.empresa ON public.empresa.codigo_empresa = public.sucursal.codigo_empresa]]>
+	</queryString>
+	<field name="codigo_receta" class="java.lang.String"/>
+	<field name="consecutivo" class="java.lang.String"/>
+	<field name="codigo_articulo" class="java.lang.String"/>
+	<field name="cantidad_recetada" class="java.math.BigDecimal"/>
+	<field name="cantidad" class="java.lang.String"/>
+	<field name="cantidad_entregada" class="java.math.BigDecimal"/>
+	<field name="valor_unitario" class="java.math.BigDecimal"/>
+	<field name="valor_total" class="java.math.BigDecimal"/>
+	<field name="valor_real" class="java.math.BigDecimal"/>
+	<field name="descuento" class="java.math.BigDecimal"/>
+	<field name="incremento" class="java.math.BigDecimal"/>
+	<field name="unm" class="java.lang.Integer"/>
+	<field name="posologia" class="java.lang.String"/>
+	<field name="autorizado" class="java.lang.Boolean"/>
+	<field name="entregado" class="java.lang.String"/>
+	<field name="cantidad_pendiente" class="java.math.BigDecimal"/>
+	<field name="estado_cobro" class="java.lang.String"/>
+	<field name="nro_identificacion" class="java.lang.String"/>
+	<field name="codigo_administradora" class="java.lang.String"/>
+	<field name="id_plan" class="java.lang.String"/>
+	<field name="nro_ingreso" class="java.lang.String"/>
+	<field name="fecha" class="java.sql.Date"/>
+	<field name="facturacion" class="java.lang.String"/>
+	<field name="creacion_date" class="java.sql.Timestamp"/>
+	<field name="ultimo_update" class="java.sql.Timestamp"/>
+	<field name="delete_date" class="java.sql.Timestamp"/>
+	<field name="creacion_user" class="java.lang.String"/>
+	<field name="ultimo_user" class="java.lang.String"/>
+	<field name="delete_user" class="java.lang.String"/>
+	<field name="estado" class="java.lang.Boolean"/>
+	<field name="tipo_hc" class="java.lang.String"/>
+	<field name="codigo_prestador" class="java.lang.String"/>
+	<field name="leido" class="java.lang.Boolean"/>
+	<field name="leido_auditor" class="java.lang.String"/>
+	<field name="contiene_med_no_autorizados" class="java.lang.String"/>
+	<field name="procedencia" class="java.lang.String"/>
+	<field name="tipo_id_prestador_externo" class="java.lang.String"/>
+	<field name="observaciones" class="java.lang.String"/>
+	<field name="vigencia" class="java.lang.Integer"/>
+	<field name="nro_historia" class="java.lang.String"/>
+	<field name="direccion_sucursal" class="java.lang.String"/>
+	<field name="telefono_sucursal" class="java.lang.String"/>
+	<field name="tipo_identificacion" class="java.lang.String"/>
+	<field name="nombre1_paciente" class="java.lang.String"/>
+	<field name="nombre2_paciente" class="java.lang.String"/>
+	<field name="apellido1_paciente" class="java.lang.String"/>
+	<field name="apellido2_paciente" class="java.lang.String"/>
+	<field name="codigo_diagnostico" class="java.lang.String"/>
+	<field name="diagnostico" class="java.lang.String"/>
+	<field name="nombre_medico" class="java.lang.String"/>
+	<field name="registro_medico" class="java.lang.String"/>
+	<field name="firma_medico" class="java.io.InputStream"/>
+	<field name="nombre_medicamento" class="java.lang.String"/>
+	<field name="forma" class="java.lang.String"/>
+	<field name="via_administracion" class="java.lang.String"/>
+	<field name="tiempo_tto" class="java.lang.Integer"/>
+	<field name="email" class="java.lang.String"/>
+	<field name="pagina_web" class="java.lang.String"/>
+	<field name="email_sucursal" class="java.lang.String"/>
+	<group name="receta_medica">
+		<groupExpression><![CDATA[$F{codigo_receta}]]></groupExpression>
+		<groupHeader>
+			<band height="172">
+				<rectangle>
+					<reportElement x="0" y="0" width="86" height="80"/>
+				</rectangle>
+				<textField>
+					<reportElement x="90" y="0" width="256" height="20"/>
+					<textElement>
+						<font size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{empresa}]]></textFieldExpression>
+				</textField>
+				<rectangle>
+					<reportElement x="360" y="3" width="182" height="42"/>
+				</rectangle>
+				<textField pattern="yyyy/MM/dd hh:mm:ss">
+					<reportElement x="437" y="7" width="101" height="20"/>
+					<textElement/>
+					<textFieldExpression class="java.util.Date"><![CDATA[$F{fecha}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="366" y="9" width="71" height="20"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[Fecha de Atención: ]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="91" y="16" width="256" height="20"/>
+					<textElement>
+						<font size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Código del Prestador:  " + $F{codigo_prestador}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="92" y="35" width="278" height="20"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Dirección: " + $F{direccion_sucursal} + " Tel: " + $F{telefono_sucursal}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="93" y="53" width="297" height="20"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Web: " + $F{pagina_web} + " Email: " + $F{email_sucursal}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="366" y="45" width="172" height="20"/>
+					<textElement textAlignment="Center">
+						<font size="6"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["VIGENCIA: " + $F{vigencia}.toString() + " HORAS"]]></textFieldExpression>
+				</textField>
+				<rectangle>
+					<reportElement x="0" y="83" width="555" height="65"/>
+				</rectangle>
+				<rectangle>
+					<reportElement x="0" y="84" width="555" height="20" backcolor="#CCCCCC"/>
+				</rectangle>
+				<staticText>
+					<reportElement x="0" y="87" width="555" height="20" forecolor="#000000" backcolor="#CCCCCC"/>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[Datos del paciente]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="8" y="107" width="126" height="20"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Identificación: " + $F{tipo_identificacion} + " " + $F{nro_identificacion}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="134" y="107" width="116" height="20"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Nro historia: " + $F{nro_historia}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="266" y="107" width="272" height="20"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Nombre: " + $F{apellido1_paciente} + " " + $F{apellido2_paciente} + " " + $F{nombre1_paciente} + " " + $F{nombre2_paciente}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="9" y="122" width="241" height="20"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Diagnóstico: " + $F{codigo_diagnostico} + " - " + $F{diagnostico}]]></textFieldExpression>
+				</textField>
+				<image isUsingCache="true" onErrorType="Blank">
+					<reportElement x="3" y="3" width="82" height="76"/>
+					<imageExpression class="java.io.InputStream"><![CDATA[$P{imagen}]]></imageExpression>
+				</image>
+				<rectangle>
+					<reportElement x="0" y="152" width="555" height="20"/>
+				</rectangle>
+				<staticText>
+					<reportElement x="3" y="155" width="129" height="17"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[MEDICAMENTO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="132" y="155" width="50" height="17"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[FORMA]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="182" y="155" width="84" height="17"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[VIA DE ADMIN ]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="266" y="155" width="104" height="17"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[DOSIS Y FREC]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="370" y="155" width="100" height="17"/>
+					<textElement textAlignment="Right">
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[CANTIDAD]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="470" y="155" width="85" height="17"/>
+					<textElement textAlignment="Right">
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[TIEMPO TTO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="382" y="28" width="132" height="20"/>
+					<textElement/>
+					<text><![CDATA[PRESCRIPCIÓN MÉDICA]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="173">
+				<rectangle>
+					<reportElement x="0" y="4" width="555" height="79"/>
+				</rectangle>
+				<rectangle>
+					<reportElement x="0" y="4" width="555" height="20" backcolor="#CCCCCC"/>
+				</rectangle>
+				<staticText>
+					<reportElement x="192" y="7" width="192" height="20"/>
+					<textElement/>
+					<text><![CDATA[INDICACIONES Y/O RECOMENDACION]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="9" y="30" width="533" height="46"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{observaciones}]]></textFieldExpression>
+				</textField>
+				<rectangle>
+					<reportElement x="0" y="89" width="100" height="55"/>
+				</rectangle>
+				<staticText>
+					<reportElement x="10" y="103" width="79" height="20"/>
+					<textElement/>
+					<text><![CDATA[FIRMA MEDICO]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="0" y="148" width="553" height="20"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["IMPRESO: " + $P{usuario_imprimio} + " - FECHA: " + new SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date())+ " - HORA: " + new SimpleDateFormat("hh:mm:ss").format(new java.util.Date())]]></textFieldExpression>
+				</textField>
+				<image scaleImage="FillFrame" onErrorType="Blank">
+					<reportElement x="5" y="92" width="91" height="50"/>
+					<imageExpression class="java.io.InputStream"><![CDATA[$F{firma_medico}]]></imageExpression>
+				</image>
+				<textField>
+					<reportElement x="104" y="94" width="186" height="20"/>
+					<textElement/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{nombre_medico}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="104" y="117" width="186" height="20"/>
+					<textElement/>
+					<textFieldExpression class="java.lang.String"><![CDATA["Reg Médico: " + $F{registro_medico}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band height="802" splitType="Stretch">
+			<image isUsingCache="true" onErrorType="Blank">
+				<reportElement mode="Opaque" x="181" y="0" width="374" height="389"/>
+				<imageExpression class="java.io.InputStream"><![CDATA[$P{imagen}]]></imageExpression>
+			</image>
+		</band>
+	</background>
+	<detail>
+		<band height="20">
+			<rectangle>
+				<reportElement x="0" y="0" width="555" height="20"/>
+			</rectangle>
+			<textField>
+				<reportElement x="134" y="0" width="50" height="20"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{forma}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="183" y="0" width="84" height="20"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{via_administracion}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="268" y="0" width="104" height="20"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{posologia}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="378" y="0" width="90" height="20"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{cantidad}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="468" y="0" width="85" height="20"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$F{tiempo_tto}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="3" y="0" width="129" height="20"/>
+				<textElement lineSpacing="Single" markup="none">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{nombre_medicamento}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="132" y="0" width="1" height="20"/>
+			</line>
+			<line>
+				<reportElement x="181" y="0" width="1" height="20"/>
+			</line>
+			<line>
+				<reportElement x="265" y="0" width="1" height="20"/>
+			</line>
+			<line>
+				<reportElement x="370" y="0" width="1" height="20"/>
+			</line>
+			<line>
+				<reportElement x="470" y="0" width="1" height="20"/>
+			</line>
+		</band>
+	</detail>
+</jasperReport>

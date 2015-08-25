@@ -1,0 +1,695 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="facturado" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="73b4e1bb-e8d3-4eba-9c84-b033bf2bb0ad">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="21"/>
+	<parameter name="codigo_empresa" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="codigo_sucursal" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="empresa" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="id" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="direccion" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="telefono" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="imagen" class="java.io.InputStream" isForPrompting="false">
+		<defaultValueExpression><![CDATA[null]]></defaultValueExpression>
+	</parameter>
+	<parameter name="resolucion" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="codigo" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="fecha" class="java.util.Date" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="fecha_inicio" class="java.sql.Timestamp"/>
+	<parameter name="fecha_final" class="java.sql.Timestamp"/>
+	<parameter name="tipo_item" class="java.lang.String"/>
+	<parameter name="impreso_por" class="java.lang.String"/>
+	<parameter name="titulo" class="java.lang.String"/>
+	<parameter name="nivel" class="java.lang.Integer"/>
+	<parameter name="grupo1" class="java.lang.String"/>
+	<parameter name="grupo2" class="java.lang.String"/>
+	<parameter name="grupo3" class="java.lang.String"/>
+	<parameter name="grupo4" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+adm.nombre AS nombre_administradora,
+adm.nit,
+cont.id_plan,
+cont.nro_contrato,
+cont.nombre AS nombre_contrato,
+"upper"(elm_servicio.descripcion) AS servicio,
+'XXXXXX' AS nro_factura,
+'XXXX-XX-XX' AS fecha_fact,
+CAST(0 AS double precision)  AS valor_factura,
+CAST(0 AS double precision)  AS valor_recuperado,
+-- Grupos
+ads.codigo_administradora AS grupo_1,
+ads.id_plan AS grupo_2,
+ads.via_ingreso AS grupo_3,
+centro.codigo_centro AS grupo_4,
+
+-- Descripcion de grupos
+(adm.nit || '' ||  adm.nombre) AS descipcion_grupo1,
+cont.nro_contrato || '' ||  cont.nombre AS descipcion_grupo2,
+"upper"(elm_servicio.descripcion) AS descipcion_grupo3,
+"upper"(centro.nombre_centro) AS descipcion_grupo4
+
+FROM
+"public".admision AS ads
+INNER JOIN "public".elemento AS elm_servicio ON elm_servicio.codigo = ads.via_ingreso AND elm_servicio.tipo = 'via_ingreso'
+INNER JOIN "public".administradora AS adm ON ads.codigo_administradora = adm.codigo
+INNER JOIN "public".contratos AS cont ON ads.codigo_empresa = cont.codigo_empresa AND ads.codigo_sucursal = cont.codigo_sucursal AND ads.codigo_administradora = cont.codigo_administradora AND ads.id_plan = cont.id_plan
+INNER JOIN public.centro_atencion AS centro ON centro.codigo_empresa = ads.codigo_empresa AND centro.codigo_sucursal = ads.codigo_sucursal AND centro.codigo_centro = ads.codigo_centro
+ORDER BY
+grupo_1 ASC,
+grupo_2 ASC,
+grupo_3 ASC,
+grupo_4 ASC]]>
+	</queryString>
+	<field name="nombre_administradora" class="java.lang.String"/>
+	<field name="nit" class="java.lang.String"/>
+	<field name="id_plan" class="java.lang.String"/>
+	<field name="nro_contrato" class="java.lang.String"/>
+	<field name="nombre_contrato" class="java.lang.String"/>
+	<field name="servicio" class="java.lang.String"/>
+	<field name="nro_factura" class="java.lang.String"/>
+	<field name="fecha_fact" class="java.lang.String"/>
+	<field name="valor_factura" class="java.lang.Double"/>
+	<field name="valor_recuperado" class="java.lang.Double"/>
+	<field name="grupo_1" class="java.lang.String"/>
+	<field name="grupo_2" class="java.lang.String"/>
+	<field name="grupo_3" class="java.lang.String"/>
+	<field name="grupo_4" class="java.lang.String"/>
+	<field name="descipcion_grupo1" class="java.lang.String"/>
+	<field name="descipcion_grupo2" class="java.lang.String"/>
+	<field name="descipcion_grupo3" class="java.lang.String"/>
+	<field name="descipcion_grupo4" class="java.lang.String"/>
+	<variable name="valor_facturado_grupo1" class="java.lang.Double" resetType="Group" resetGroup="grupo2" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_factura}]]></variableExpression>
+	</variable>
+	<variable name="valor_facturado_grupo2" class="java.lang.Double" resetType="Group" resetGroup="grupo3" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_factura}]]></variableExpression>
+	</variable>
+	<variable name="valor_facturado_grupo3" class="java.lang.Double" resetType="Group" resetGroup="grupo4" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_factura}]]></variableExpression>
+	</variable>
+	<variable name="valor_recuperado_grupo1" class="java.lang.Double" resetType="Group" resetGroup="grupo2" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_recuperado}]]></variableExpression>
+	</variable>
+	<variable name="valor_recuperado_grupo2" class="java.lang.Double" resetType="Group" resetGroup="grupo3" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_recuperado}]]></variableExpression>
+	</variable>
+	<variable name="valor_recuperado_grupo3" class="java.lang.Double" resetType="Group" resetGroup="grupo4" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_recuperado}]]></variableExpression>
+	</variable>
+	<variable name="valor_facturado_total" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_factura}]]></variableExpression>
+		<initialValueExpression><![CDATA[$F{valor_recuperado}]]></initialValueExpression>
+	</variable>
+	<variable name="valor_recuperado_total" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_recuperado}]]></variableExpression>
+	</variable>
+	<variable name="valor_facturado_grupo4" class="java.lang.Double" resetType="Group" resetGroup="grupo2" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_factura}]]></variableExpression>
+	</variable>
+	<variable name="valor_recuperado_grupo4" class="java.lang.Double" resetType="Group" resetGroup="grupo2" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_recuperado}]]></variableExpression>
+	</variable>
+	<group name="grupo4">
+		<groupExpression><![CDATA[$F{grupo_4}]]></groupExpression>
+		<groupHeader>
+			<band height="20">
+				<printWhenExpression><![CDATA[$P{nivel} > 0]]></printWhenExpression>
+				<textField>
+					<reportElement mode="Opaque" x="0" y="0" width="555" height="20" backcolor="#79C1F9" uuid="645e141a-2ac0-44a8-ac61-61a03cc87076"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{descipcion_grupo4}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="30">
+				<printWhenExpression><![CDATA[$P{nivel} > 0]]></printWhenExpression>
+				<textField pattern="$ #,##0.00">
+					<reportElement x="244" y="0" width="112" height="20" uuid="4804bf7e-e4db-4d67-ae1d-c813418780e7"/>
+					<box leftPadding="2" rightPadding="3">
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$V{valor_facturado_grupo4}]]></textFieldExpression>
+				</textField>
+				<textField pattern="$ #,##0.00">
+					<reportElement x="456" y="0" width="99" height="20" uuid="86224444-083e-4a63-977a-c23824ce2f1a"/>
+					<box leftPadding="2" rightPadding="3">
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$V{valor_facturado_grupo4} - $V{valor_recuperado_grupo4}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement mode="Opaque" x="0" y="0" width="244" height="20" backcolor="#79C1F9" uuid="f8824fe0-5c7b-4741-a562-c3dc95bcf868"/>
+					<box leftPadding="3" rightPadding="4">
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$P{grupo4}]]></textFieldExpression>
+				</textField>
+				<textField pattern="$ #,##0.00">
+					<reportElement x="356" y="0" width="100" height="20" uuid="859057a9-f0de-4e83-ab89-cdd887a5fb54"/>
+					<box leftPadding="2" rightPadding="3">
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$V{valor_recuperado_grupo4}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="grupo3">
+		<groupExpression><![CDATA[$F{grupo_3}]]></groupExpression>
+		<groupHeader>
+			<band height="20">
+				<printWhenExpression><![CDATA[$P{nivel} > 1]]></printWhenExpression>
+				<textField>
+					<reportElement mode="Opaque" x="0" y="0" width="555" height="20" backcolor="#8DC8F5" uuid="8609f9ae-8779-4638-8552-8b2412dc5b43"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{descipcion_grupo3}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="20">
+				<printWhenExpression><![CDATA[$P{nivel} > 1]]></printWhenExpression>
+				<textField>
+					<reportElement mode="Opaque" x="0" y="0" width="244" height="20" backcolor="#8DC8F5" uuid="05346bed-3f06-4c58-a1b2-9136c44a4907"/>
+					<box leftPadding="3" rightPadding="4">
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$P{grupo3}]]></textFieldExpression>
+				</textField>
+				<textField pattern="$ #,##0.00">
+					<reportElement x="244" y="0" width="112" height="20" uuid="744b285c-7a00-413a-9e84-5dfa2794952d"/>
+					<box leftPadding="2" rightPadding="3">
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$V{valor_facturado_grupo3}]]></textFieldExpression>
+				</textField>
+				<textField pattern="$ #,##0.00">
+					<reportElement x="356" y="0" width="100" height="20" uuid="ccabbbd2-d585-4c98-a5af-c25f67ac635a"/>
+					<box leftPadding="2" rightPadding="3">
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$V{valor_recuperado_grupo3}]]></textFieldExpression>
+				</textField>
+				<textField pattern="$ #,##0.00">
+					<reportElement x="456" y="0" width="99" height="20" uuid="bd43f73a-abb0-4731-853a-0ceb6b6a4715"/>
+					<box leftPadding="2" rightPadding="3">
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$V{valor_facturado_grupo3} - $V{valor_recuperado_grupo3}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="grupo2">
+		<groupExpression><![CDATA[$F{grupo_2}]]></groupExpression>
+		<groupHeader>
+			<band height="20">
+				<printWhenExpression><![CDATA[$P{nivel} > 2]]></printWhenExpression>
+				<textField>
+					<reportElement mode="Opaque" x="0" y="0" width="555" height="20" backcolor="#C9E5FA" uuid="f78ba85f-4260-4085-b2de-9f7bbec94771"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{descipcion_grupo2}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="20">
+				<printWhenExpression><![CDATA[$P{nivel} > 2]]></printWhenExpression>
+				<textField pattern="$ #,##0.00">
+					<reportElement x="244" y="0" width="112" height="20" uuid="ab4585d3-1bcf-4807-ba27-5c43da94807f"/>
+					<box leftPadding="2" rightPadding="3">
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$V{valor_facturado_grupo2}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement mode="Opaque" x="0" y="0" width="244" height="20" backcolor="#C9E5FA" uuid="cb64f403-88bb-4e3b-8c87-d2bc89cae1f4"/>
+					<box leftPadding="3" rightPadding="4">
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$P{grupo2}]]></textFieldExpression>
+				</textField>
+				<textField pattern="$ #,##0.00">
+					<reportElement x="356" y="0" width="100" height="20" uuid="f794c9d8-1bd4-4ac1-bfdf-6a4e4e61f248"/>
+					<box leftPadding="2" rightPadding="3">
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$V{valor_recuperado_grupo2}]]></textFieldExpression>
+				</textField>
+				<textField pattern="$ #,##0.00">
+					<reportElement x="456" y="0" width="99" height="20" uuid="ce24f544-5f57-4b05-8c54-4a495c0d7636"/>
+					<box leftPadding="2" rightPadding="3">
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$V{valor_facturado_grupo2} - $V{valor_recuperado_grupo2}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="cabecera_detalle">
+		<groupExpression><![CDATA[$F{grupo_1}]]></groupExpression>
+		<groupHeader>
+			<band height="20">
+				<printWhenExpression><![CDATA[$P{nivel} > 3]]></printWhenExpression>
+				<textField>
+					<reportElement mode="Opaque" x="0" y="0" width="555" height="20" backcolor="#F6F4F4" uuid="80c27adf-19c1-4831-a54e-6b82b4312dbe"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{descipcion_grupo1}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="20">
+				<printWhenExpression><![CDATA[$P{nivel} > 3]]></printWhenExpression>
+				<textField pattern="$ #,##0.00">
+					<reportElement x="356" y="0" width="100" height="20" uuid="9bfba5da-fd7c-4c03-b184-bafafca01e55"/>
+					<box leftPadding="2" rightPadding="3">
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$V{valor_recuperado_grupo1}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement mode="Opaque" x="0" y="0" width="244" height="20" backcolor="#F6F4F4" uuid="b5fc8cf6-14a1-4645-a956-2a77a1afa7e8"/>
+					<box leftPadding="3" rightPadding="4">
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$P{grupo1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="$ #,##0.00">
+					<reportElement x="244" y="0" width="112" height="20" uuid="3373f2d5-6ec9-4380-b98e-03e1dc1e0cbf"/>
+					<box leftPadding="2" rightPadding="3">
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$V{valor_facturado_grupo1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="$ #,##0.00">
+					<reportElement x="456" y="0" width="99" height="20" uuid="00b159f6-d071-4096-9c2c-81c654d63adb"/>
+					<box leftPadding="2" rightPadding="3">
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$V{valor_facturado_grupo1} - $V{valor_recuperado_grupo1}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="grupo1">
+		<groupHeader>
+			<band height="20">
+				<staticText>
+					<reportElement mode="Opaque" x="144" y="0" width="100" height="20" backcolor="#EDECEC" uuid="c2fec5e9-b931-4b75-aaa6-06e9ead5186c"/>
+					<box leftPadding="3" rightPadding="3">
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[FECHA FACTURA]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="244" y="0" width="112" height="20" backcolor="#EDECEC" uuid="dc8b853f-9e7a-42bf-bb23-7574561d53bc"/>
+					<box leftPadding="3" rightPadding="3">
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[VALOR]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="356" y="0" width="100" height="20" backcolor="#EDECEC" uuid="d7b97bee-55a7-41a6-a83a-50399da48e9f"/>
+					<box leftPadding="3" rightPadding="3">
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[VALOR RECUPERADO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="456" y="0" width="99" height="20" backcolor="#EDECEC" uuid="179d9e60-9320-4bbd-9107-584d9c049e01"/>
+					<box leftPadding="3" rightPadding="3">
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[TOTAL]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="0" y="0" width="144" height="20" backcolor="#EDECEC" uuid="38554797-2fe9-4855-95e4-f4182afecb5c"/>
+					<box leftPadding="3" rightPadding="3">
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[NRO FACTURA]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="66" splitType="Stretch">
+			<image scaleImage="FillFrame" isUsingCache="true" onErrorType="Icon">
+				<reportElement x="0" y="4" width="101" height="62" uuid="cf5ebb81-6b63-4b77-ab4e-1bdd109dcb54"/>
+				<imageExpression><![CDATA[$P{imagen}]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="101" y="52" width="359" height="14" uuid="4a7f5b11-3569-4c8c-9fc2-2eb36a2c775a"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Telefono: "+$P{telefono}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="101" y="4" width="359" height="20" uuid="d8aec47f-c391-4c88-9674-876ae23e6f8d"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{empresa}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="101" y="24" width="359" height="14" uuid="7acf27fc-0a18-4de4-8846-97e85d126e0c"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{id}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="101" y="38" width="359" height="14" uuid="296aedd2-7167-4fa9-a842-6f741463fd64"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Dirección: "+$P{direccion}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="22" splitType="Stretch">
+			<rectangle>
+				<reportElement x="101" y="1" width="359" height="21" backcolor="#CCCCCC" uuid="6c611679-a4a3-4812-be1e-766ab61cc18d"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="460" y="1" width="95" height="21" uuid="935e16f4-e716-489f-820c-424551cf96d2"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="0" y="1" width="101" height="21" uuid="7bac2cf1-02e8-427b-86cb-4fe22bf7cfba"/>
+			</rectangle>
+			<textField evaluationTime="Report">
+				<reportElement x="515" y="2" width="41" height="20" uuid="52fe1b46-9da7-42d3-bce9-e0fdad2489bb"/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd-MMMMMMMMMMM-yyyy">
+				<reportElement x="3" y="3" width="97" height="15" uuid="743696e0-a7ca-48ae-8e92-8957ebaba641"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="111" y="4" width="325" height="14" uuid="2a089b3d-26eb-4255-92a6-f61c53841789"/>
+				<textElement textAlignment="Center">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{titulo} + " " + new SimpleDateFormat("dd-MM-yyyy").format($P{fecha_inicio}) + " al " + new SimpleDateFormat("dd-MM-yyyy").format($P{fecha_final})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="436" y="2" width="80" height="20" uuid="19506976-e1ae-4047-9cac-4b76254f3ef5"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Pag. "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="144" height="20" uuid="d8e02395-afa6-4ca2-a0e1-70bd3b544a54"/>
+				<box leftPadding="2" rightPadding="1">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{nro_factura}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="144" y="0" width="100" height="20" uuid="be9e2b41-719a-4416-98da-c689d07258b6"/>
+				<box leftPadding="2" rightPadding="1">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{fecha_fact}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$ #,##0.00">
+				<reportElement x="244" y="0" width="112" height="20" uuid="33e881c5-9cf7-458b-9bbc-d51c094f0109"/>
+				<box leftPadding="2" rightPadding="1">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{valor_factura}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$ #,##0.00">
+				<reportElement x="356" y="0" width="100" height="20" uuid="b1e78fef-d7f7-43d7-ba61-b90fadc63392"/>
+				<box leftPadding="2" rightPadding="1">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{valor_recuperado}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$ #,##0.00">
+				<reportElement x="456" y="0" width="99" height="20" uuid="c4ec121e-60f5-4d76-a67b-b0d70d74c483"/>
+				<box leftPadding="2" rightPadding="1">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{valor_factura} - $F{valor_recuperado}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="556" height="20" uuid="a892c9c0-c5a3-4220-9138-7e2d59161594"/>
+				<textFieldExpression><![CDATA["Impreso por: " + $P{impreso_por}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="20" splitType="Stretch">
+			<textField pattern="$ #,##0.00">
+				<reportElement x="243" y="0" width="113" height="20" uuid="190b6aa9-a2fd-4a61-85c2-874bd758a476"/>
+				<box leftPadding="3" rightPadding="3">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{valor_facturado_total}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$ #,##0.00">
+				<reportElement x="356" y="0" width="100" height="20" uuid="4329e3d5-0c9a-495e-9081-6e0034aaa499"/>
+				<box leftPadding="3" rightPadding="3">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{valor_recuperado_total}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$ #,##0.00">
+				<reportElement x="456" y="0" width="99" height="20" uuid="878fe774-58b9-432a-b98a-e3324291d267"/>
+				<box leftPadding="3" rightPadding="3">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{valor_facturado_total} - $V{valor_recuperado_total}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="0" width="243" height="20" backcolor="#8DC8F5" uuid="9074241b-cec9-44e5-9533-1395c56ad6c2"/>
+				<box leftPadding="3" rightPadding="3">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<text><![CDATA[Total facturado:]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

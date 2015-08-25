@@ -1,0 +1,767 @@
+<?page title="Admision" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+
+	<window id="formAdmision2" width="100%" height="100%"
+		use="healthmanager.controller.Admision_nuevaAction">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="false" closable="false"
+			mold="3d" height="100%">
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" vflex="1">
+				<auxhead>
+					<auxheader colspan="11">
+						<hbox align="center" hflex="1">
+							<label value="B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="110px" />
+							<space />
+							<textbox id="tbxValue" hflex="1"
+								style="text-transform:uppercase" />
+							<space />
+							<toolbarbutton id="btnFiltro_centros"
+								image="/images/filtro.png" label="Centros de atencion"
+								onClick='popupCentros_atencion.open(self,"end_after")' />
+							<space />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<auxhead>
+					<auxheader colspan="11">
+						<hlayout valign="middle">
+							<label value="Tipo admisión: " />
+							<listbox id="lbxTipo_admision" mold="select"
+								sclass="combobox" width="95px" name="tipo_admision" />
+							<space width="5px" />
+							<label id="lblEstado" value="Atendida" />
+							<listbox id="lbxFiltro_atendidas"
+								mold="select" sclass="combobox" width="95px"
+								name="admision_atendido" />
+							<space />
+							<label value="Estado" />
+							<listbox id="lbxFiltro_estado" mold="select"
+								sclass="combobox" width="90px" name="admision_estado" />
+							<space />
+							<toolbarbutton id="btnFiltro_ingreso"
+								image="/images/filtro.png" label="Vias de ingreso"
+								onClick='popupViasIngreso.open(self,"end_after")' />
+							<space />
+							<label value="Fecha" />
+							<space />
+							<datebox id="dtbxFecha_busqueda"
+								format="yyyy-MM-dd" width="110px" />
+							<space />
+							<toolbarbutton image="/images/Magnifier.gif"
+								onClick="formAdmision2.buscarDatos();"
+								tooltiptext="Consultar Admisión" label="Consultar"
+								autodisable="self" />
+							<space />
+							<toolbarbutton image="/images/New16.gif"
+								onClick='formAdmision2.accionForm(true,"registrar");'
+								tooltiptext="Nueva Admisión" label="Nueva" />
+						</hlayout>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="N. ingreso" width="70px" />
+					<column label="Nro identificación" width="110px" />
+					<column label="Paciente" />
+					<column label="Prestador" />
+					<column label="Via de ingreso" />
+					<column label="Fecha ingreso" width="120px" />
+					<column label="Tipo" width="80px" />
+					<column label="Atendida" width="85px" />
+					<column label="Estado" width="85px" />
+					<column label="Acciones" align="center"
+						width="140px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<borderlayout width="100%" height="100%" id="groupboxEditar"
+			visible="true">
+			<north border="none">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<toolbarbutton image="/images/Save16.gif"
+						label="Guardar Admisión" onClick="formAdmision2.guardarDatos();"
+						id="btGuardar" />
+					<toolbarbutton image="/images/New16.gif"
+						label="Nueva Admisión"
+						onClick='formAdmision2.accionForm(true,"registrar");' id="btNew" />
+					<toolbarbutton image="/images/editar02.gif"
+						label="Editar Paciente" onClick='formAdmision2.editarPaciente();'
+						id="btEditar" visible="false" />
+					<space />
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Consultar"
+						onClick='formAdmision2.accionForm(false,tbxAccion.getText());'
+						id="btCancel" />
+					<toolbarbutton image="/images/print_ico16.gif"
+						label="Recibo de caja" onClick="formAdmision2.mostrarReciboCaja()"
+						id="btnRecibo_caja" />
+					<toolbarbutton image="/images/print_ico16.gif"
+						label="Imprimir Admisión" onClick="formAdmision2.imprimir();"
+						id="btImprimir" />
+					<space />
+					<label value="Formato impresión: " />
+					<listbox id="lbxFormato" mold="select" width="150px"
+						sclass="combobox">
+						<listitem value="pdf" label="PDF"
+							selected="true" />
+						<listitem value="rtf" label="WORD" />
+					</listbox>
+					<space />
+					<toolbarbutton image="/images/informe.png"
+						label="Furips" onClick='formAdmision2.abrirFurips()' id="btFurips"
+						visible="false" />
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center">
+					<space />
+					<!-- *************************** -->
+					<!-- *** Insertar/Actualizar *** -->
+					<!-- *************************** -->
+					<groupbox closable="false" width="805px"
+						mold="3d">
+						<caption label="MODULO DE ADMISIÓN"
+							style="font-weight: bold;">
+							<div style="float:right">
+								<label
+									value="Via de ingreso por defecto" />
+								<space />
+								<listbox id="lbxVia_ingreso_defecto"
+									name="via_ingreso" mold="select" width="140px"
+									sclass="combobox" />
+							</div>
+						</caption>
+						<grid sclass="GridSinBorde">
+							<columns visible="false">
+								<column label="" width="115px"
+									align="left" />
+								<column label="" width="150px"
+									align="left" />
+								<column label="" width="70px"
+									align="left" />
+								<column label="" width="177px"
+									align="left" />
+								<column label="" width="98px"
+									align="left" />
+								<column label="" align="left" />
+							</columns>
+
+							<rows>
+								<row>
+									<cell>
+										<label value="Identificación: " />
+										<toolbarbutton
+											id="btnLimpiarPaciente" image="/images/borrar.gif" />
+									</cell>
+									<cell colspan="5">
+										<bandboxRegistros
+											id="tbxNro_identificacion" widthBandbox="170px"
+											widthListbox="600px" heightListbox="300px"
+											columnas="Tipo Ident#65px|Identificación|Nombres|Apellidos" />
+										<textbox id="tbxNro_ingreso"
+											width="80px" style="text-transform:uppercase"
+											readonly="true" />
+										<space width="5px" />
+										<textbox id="tbxNomPaciente"
+											hflex="1" style="text-transform:uppercase" readonly="true" />
+									</cell>
+								</row>
+								<row>
+									<cell>
+										<label value="Aseguradora: " />
+									</cell>
+									<cell colspan="5">
+										<bandboxRegistros
+											id="tbxCodigo_administradora" widthBandbox="170px"
+											widthListbox="700px" heightListbox="300px"
+											columnas="Codigo#65px|Nombres|Nit#100px|Tipo#100px" />
+										<textbox readonly="true"
+											id="tbxNomAdministradora" hflex="1" />
+									</cell>
+								</row>
+								<row>
+									<cell>
+										<label value="Contrato: " />
+									</cell>
+									<cell colspan="5">
+										<hlayout>
+											<listbox id="lbxContratos"
+												mold="select" hflex="1"
+												onSelect="formAdmision2.seleccionarContrato()" />
+											<space />
+											<toolbarbutton
+												id="buttonInfo" label="Info" image="/images/info_icon.png"
+												tooltiptext="Informacion de contratos asociados"
+												popup="popupDetalle_contrato" />
+											<space />
+										</hlayout>
+									</cell>
+								</row>
+
+								<row>
+									<cell>
+										<label value="Nacimiento: " />
+									</cell>
+									<cell colspan="5">
+										<hlayout>
+											<textbox id="tbxNacimiento"
+												width="110px" readonly="true" />
+											<space />
+											<label value="Edad: " />
+											<textbox id="tbxEdad"
+												width="50px" readonly="true" />
+											<space />
+											<label value="Sexo: " />
+											<textbox id="tbxSexo"
+												width="90px" readonly="true" />
+											<space />
+											<label value="Tipo ID: " />
+											<space width="2px" />
+											<textbox
+												id="tbxTipo_identificacion" width="53px" readonly="true" />
+											<space />
+											<label value="Estrato: " />
+											<textbox id="tbxEstrato"
+												width="52px" readonly="true" />
+										</hlayout>
+									</cell>
+
+								</row>
+
+								<row>
+									<cell>
+										<label value="Dirección: " />
+									</cell>
+									<cell colspan="5">
+										<hlayout>
+											<textbox id="tbxDireccion"
+												width="372px" readonly="true" />
+											<space />
+											<label value="Teléfono: " />
+											<textbox id="tbxTel"
+												width="177px" readonly="true" />
+
+										</hlayout>
+									</cell>
+
+								</row>
+
+								<row>
+									<cell>
+										<label value="Departamento: " />
+									</cell>
+									<cell>
+										<textbox id="tbxDpto"
+											width="138px" readonly="true" />
+									</cell>
+									<cell>
+										<label value="Municipio: " />
+									</cell>
+									<cell>
+										<textbox id="tbxMun"
+											width="153px" readonly="true" />
+									</cell>
+									<cell>
+										<label value="Tipo afiliado: " />
+									</cell>
+									<cell>
+										<textbox id="tbxTipo_afiliado"
+											width="134px" readonly="true" />
+									</cell>
+								</row>
+
+								<row>
+									<cell colspan="6">
+										<groupbox closable="false">
+											<caption
+												label="Datos Ingreso" />
+											<grid>
+												<columns>
+													<column label=""
+														width="105px" align="left" />
+													<column label=""
+														width="150px" align="left" />
+													<column label=""
+														width="70px" align="left" />
+													<column label=""
+														width="160px" align="left" />
+													<column label=""
+														width="98px" align="left" />
+													<column label=""
+														align="left" />
+												</columns>
+
+												<rows>
+													<row>
+														<cell>
+															<label
+																value="Vía ingreso: " />
+														</cell>
+														<cell>
+															<listbox
+																id="lbxVia_ingreso" name="via_ingreso" mold="select"
+																width="140px" sclass="combobox" disabled="true"
+																onSelect="formAdmision2.seleccionarVia_ingreso(true, false);" />
+														</cell>
+														<cell
+															colspan="4">
+															<hlayout>
+																<toolbarbutton
+																	label="Procedimientos" style="color:red"
+																	image="/images/editar_.png" id="btnProcedimientos"
+																	visible="false"
+																	onClick="formAdmision2.mostrarVentanaProcedimientos(true)" />
+																<toolbarbutton
+																	label="Medicamentos" style="color:red"
+																	image="/images/editar_.png" id="btnMedicamentos"
+																	visible="false"
+																	onClick="formAdmision2.mostrarVentanaMedicamentos(true)" />
+																<space />
+																<label
+																	value="Fecha: " />
+																<space />
+																<datebox
+																	id="dtbxFecha_ingreso" format="yyyy-MM-dd HH:mm"
+																	width="100px" constraint="no future: now or never" />
+																<space />
+																<label
+																	value="Autorización: " />
+																<space />
+																<textbox
+																	id="tbxNro_autorizacion" width="80px"
+																	style="text-transform:uppercase" maxlength="20" />
+															</hlayout>
+														</cell>
+													</row>
+
+													<row
+														id="rowProgramaPyp" visible="false">
+														<cell>
+															<label
+																value="Programa Pyp" />
+														</cell>
+														<cell
+															colspan="6">
+															<listbox
+																id="lbxPrograma_pyp" mold="select" width="140px"
+																sclass="combobox"
+																onSelect="formAdmision2.seleccionarVia_ingreso(true, true);" />
+														</cell>
+													</row>
+
+													<row
+														id="rowProcedencia" visible="false">
+														<cell
+															colspan="7">
+															<hlayout
+																id="hlayoutRemitido" visible="false">
+																<label
+																	value="Paciente viene remitido?: " />
+																<space />
+																<radiogroup
+																	id="rdbPaciente_remitido">
+																	<radio
+																		id="paciente_remitido1" label="SI" value="S" />
+																	<radio
+																		id="paciente_remitido2" checked="true" label="NO"
+																		value="N" />
+																</radiogroup>
+															</hlayout>
+
+															<hlayout
+																id="hlayoutProcedencia">
+																<label
+																	value="Indique procedencia de hospitalización: " />
+																<space />
+																<listbox
+																	id="lbxProcedencia" name="via_ingreso" mold="select"
+																	width="140px" sclass="combobox" />
+															</hlayout>
+														</cell>
+													</row>
+
+													<row
+														id="rowMarca_admision" visible="false">
+														<cell>
+															<label
+																value="Marca: ">
+															</label>
+														</cell>
+														<cell>
+															<listbox
+																id="lbxMarca_admision" name="marca_admision"
+																mold="select" width="140px" sclass="combobox" />
+														</cell>
+														<cell
+															colspan="4">
+															<space
+																width="23px" />
+															<label
+																value="Tipo psicologia" id="lbTipo_psicologia"
+																visible="false" />
+															<space />
+															<listbox
+																id="lbxTipo_psicologia" width="170px" mold="select"
+																visible="false">
+																<listitem
+																	label="-- Seleccione --" value="" selected="true" />
+																<listitem
+																	label="Consulta Psicologica" value="01" />
+																<listitem
+																	label="Asesoria para examen" value="02" />
+															</listbox>
+														</cell>
+													</row>
+													<row
+														id="rowTipo_atencion" visible="false">
+														<cell>
+															<label
+																value="Tipo atención: " />
+														</cell>
+														<cell>
+															<listbox
+																id="lbxTipo_atencion" name="tipo_atencion" mold="select"
+																width="140px" sclass="combobox"
+																onSelect="formAdmision2.seleccionarTipo_atencion();" />
+														</cell>
+														<cell>
+															<label
+																value="Cama: " id="lbCama" />
+														</cell>
+														<cell
+															colspan="3" id="cellCama">
+															<textbox
+																id="tbxCama" width="123px"
+																style="text-transform:uppercase" maxlength="8"
+																readonly="true" />
+															<toolbarbutton
+																image="/images/Magnifier.gif"
+																tooltiptext="Consultar registro"
+																onClick="formAdmision2.openPcd();"
+																id="imgConsultar_cama" />
+															<textbox
+																id="tbxNomCama" width="237px"
+																style="text-transform:uppercase" readonly="true" />
+															<textbox
+																id="tbxCodigo_atencion" visible="false" />
+															<textbox
+																id="tbxCodigo_pabellon" visible="false" />
+															<textbox
+																id="tbxCodigo_habitacion" visible="false" />
+															<toolbarbutton
+																id="btnLimpiarCama" onClick="formAdmision2.quitarPcd();"
+																image="/images/borrar.gif" />
+
+														</cell>
+
+													</row>
+
+													<row
+														id="rowCitaEspecialidad">
+														<cell>
+															<label
+																value="Cita Medica: " />
+														</cell>
+														<cell
+															colspan="3">
+															<listbox
+																id="lbxCodigo_cita" mold="select" hflex="1"
+																sclass="combobox"
+																onSelect="formAdmision2.seleccionarCita();" />
+														</cell>
+														<cell>
+															<label
+																value="Especialidad: " />
+														</cell>
+														<cell>
+															<listbox
+																id="lbxCodigo_especialidad" mold="select" width="155px"
+																sclass="combobox" name="" />
+														</cell>
+													</row>
+													<row
+														id="rowCheckboxsRips" visible="false">
+														<cell
+															colspan="2">
+															<checkbox
+																label="Aplicar triage" id="chbAplicar_triage"
+																checked="true" visible="false" />
+															<checkbox
+																label="Aplicar tuberculosis"
+																id="chbAplicar_tuberculosis" checked="false"
+																visible="false" />
+															<checkbox
+																label="Aplicar lepra" id="chbAplicar_lepra"
+																checked="false" visible="false" />
+														</cell>
+														<cell
+															colspan="4" align="right">
+															<checkbox
+																id="chbUrgencias" label="Urgencias" />
+															<space
+																width="30px" />
+															<checkbox
+																id="chbHospitalizacion" label="Hospitalizacion" />
+															<space
+																width="30px" />
+															<checkbox
+																id="chbRecien_nacido" label="Recien nacido" />
+														</cell>
+													</row>
+
+													<row
+														id="rowPrestador" visible="false">
+														<cell>
+															<label
+																id="lbPrestador" value="Prestador: " />
+															<toolbarbutton
+																id="btnLimpiarPrestador" image="/images/borrar.gif" />
+														</cell>
+														<cell
+															colspan="5">
+															<bandboxRegistros
+																id="tbxCodigo_medico" widthBandbox="170px"
+																widthListbox="750px" heightListbox="300px"
+																columnas="Identificación#100px|Nombres y apellidos|Tipo#90px|Citas del días#90px|Citas asignadas#95px|Citas pendientes#95px" />
+															<textbox
+																id="tbxNomPrestador" hflex="1"
+																style="text-transform:uppercase" readonly="true" />
+														</cell>
+													</row>
+												</rows>
+											</grid>
+										</groupbox>
+									</cell>
+								</row>
+
+								<row style="background-color:white">
+									<cell colspan="6"></cell>
+								</row>
+
+								<row>
+									<cell colspan="6">
+										<groupbox closable="false">
+											<caption
+												label="Señalizacion para la Atención priorizada" />
+											<grid>
+												<columns>
+													<column label=""
+														width="105px" align="left" />
+													<column label=""
+														width="150px" align="left" />
+													<column label=""
+														width="70px" align="left" />
+													<column label=""
+														width="100px" align="left" />
+													<column label=""
+														width="98px" align="left" />
+													<column label=""
+														align="left" />
+												</columns>
+
+												<rows>
+													<row>
+														<cell>
+															<label
+																value="Condición : " />
+														</cell>
+														<cell
+															colspan="2">
+															<listbox
+																id="lbxCondicion_usuaria" name="condicion_usuaria"
+																mold="select" width="200px" sclass="combobox" />
+														</cell>
+														<cell>
+															<label
+																value="Causa externa: " id="lbCausa_externa" />
+														</cell>
+														<cell
+															colspan="2">
+															<listbox
+																id="lbxCausa_externa" disabled="true"
+																name="causa_externa" mold="select" width="200px"
+																sclass="combobox" />
+															<label
+																value="T. diagnostico: " visible="false" />
+															<listbox
+																id="lbxTipo_diagnostico" name="tipo_diagnostico"
+																mold="select" width="150px" sclass="combobox"
+																visible="false" />
+														</cell>
+													</row>
+													<row
+														visible="false">
+														<cell>
+															<label
+																value="Diagnostico: " />
+														</cell>
+														<cell
+															colspan="5">
+															<hlayout>
+																<bandboxRegistros
+																	id="tbxDiagnostico_ingreso" widthBandbox="140px"
+																	widthListbox="600px" heightListbox="300px"
+																	columnas="Código|Nombre|Sexo|L. inferior|L. superior" />
+																<textbox
+																	id="tbxNomDx" width="480px"
+																	style="text-transform:uppercase" readonly="true" />
+																<toolbarbutton
+																	id="btnLimpiarDx" image="/images/borrar.gif" />
+															</hlayout>
+														</cell>
+													</row>
+
+													<row
+														visible="false">
+														<cell
+															colspan="6">
+															<groupbox
+																closable="false">
+																<caption
+																	label="Discapacidad" />
+																<grid>
+																	<columns>
+																		<column
+																			label="" width="93px" align="left" />
+																		<column
+																			label="" width="150px" align="left" />
+																		<column
+																			label="" width="70px" align="left" />
+																		<column
+																			label="" width="160px" align="left" />
+																		<column
+																			label="" width="98px" align="left" />
+																		<column
+																			label="" align="left" />
+																	</columns>
+
+																	<rows>
+																		<row>
+																			<cell>
+																				<label
+																					value="Tipo: " />
+																			</cell>
+																			<cell>
+																				<listbox
+																					id="lbxTipo_discapacidad" name="tipo_discapacidad"
+																					mold="select" width="140px" sclass="combobox" />
+																			</cell>
+																			<cell>
+																				<label
+																					value="Grado: " />
+																			</cell>
+																			<cell>
+																				<listbox
+																					id="lbxGrado_discapacidad"
+																					name="grado_discapacidad" mold="select"
+																					width="153px" sclass="combobox" />
+																			</cell>
+																			<cell>
+																				<space />
+																			</cell>
+																			<cell>
+																				<space />
+																			</cell>
+																		</row>
+
+																	</rows>
+																</grid>
+															</groupbox>
+														</cell>
+													</row>
+
+												</rows>
+											</grid>
+										</groupbox>
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+
+					<popup id="popupDetalle_contrato">
+						<groupbox mold="3d" closable="false"
+							width="400px">
+							<caption label="Detalles de contrato"
+								style="font-weight:bold" />
+							<textbox id="tbxDetalle_plan" hflex="1"
+								rows="2" readonly="true" />
+						</groupbox>
+					</popup>
+				</div>
+			</center>
+		</borderlayout>
+
+		<popup id="popupViasIngreso">
+			<listbox id="lbxVias_ingreso" multiple="true"
+				checkmark="true" width="250px" name="via_ingreso" rows="8">
+				<custom-attributes org.zkoss.zul.listbox.rod="true" />
+				<listhead>
+					<listheader label="Vias de ingreso" />
+				</listhead>
+				<listfoot>
+					<listfooter align="middle">
+						<toolbarbutton
+							label="Consultar por via de ingreso"
+							image="/images/Magnifier.gif"
+							onClick="formAdmision2.buscarDatos()"
+							tooltiptext="Consultar por via de ingreso" />
+					</listfooter>
+				</listfoot>
+			</listbox>
+		</popup>
+
+		<popup id="popupCentros_atencion">
+			<listbox id="lbxCentros_atencion" multiple="true"
+				checkmark="true" width="250px" rows="8">
+				<listhead>
+					<listheader width="30px" />
+					<listheader>
+						<hlayout>
+							<label value="Centros"
+								style="font-weight:bold" />
+							<space />
+							<bandbox hflex="1"
+								id="bandboxBuscar_centros" onOK="formAdmision2.buscarCentro()" />
+						</hlayout>
+					</listheader>
+				</listhead>
+				<listfoot>
+					<listfooter align="middle" span="2">
+						<toolbarbutton
+							label="Consultar por centros de atencion"
+							image="/images/Magnifier.gif"
+							onClick="formAdmision2.buscarDatos()"
+							tooltiptext="Consultar por centros de atencion" />
+					</listfooter>
+				</listfoot>
+			</listbox>
+		</popup>
+
+	</window>
+</zk>

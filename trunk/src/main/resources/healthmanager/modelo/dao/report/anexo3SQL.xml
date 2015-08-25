@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.anexo3Report">
+    <select id="select" resultType="java.util.HashMap" parameterType="java.util.Map">
+            select a.numero_solicitud as numero_solicitud,a.entidad, 
+            a.fecha::varchar,e2.nombres as nombre_empresa, 
+            e2.tipo_identificacion as tipo_id_empresa, 
+            e2.nro_identificacion as id_empresa,e2.codigo_habilitacion as codigo_empresa, 
+            e2.direccion as direccion_empresa,e2.telefono as telefonos,e2.dptdo as cod_dpto_empresa, 
+            de.nombre as dpto_empresa,e2.municipio as cod_mun_empresa, 
+            me.nombre as mun_empresa,a.codigo_administradora,ad.nombre as aseguradora, 
+            p.tipo_identificacion,p.apellido1,p.apellido2,p.nombre1,p.nombre2,p.nro_identificacion, 
+            p.fecha_nacimiento::varchar,p.direccion,p.tel_res,p.codigo_dpto,dp.nombre as dpto, 
+            p.codigo_municipio,mp.nombre as municipio,a.cobertura,a.origen_general, 
+            a.origen_profesional,a.origen_trabajo,a.origen_transito, 
+            a.origen_evento,a.tipo_servicio,a.prioridad,a.ubicacion, 
+            a.servicio,a.cama,a.guia_atencion, 
+            a.codigo_cups1, CASE a.cantidad1||'' WHEN '0' THEN '' ELSE a.cantidad1||'' END  as cantidad1,a.nombre1 as cups1,tipo_pcd1, 
+            a.codigo_cups2, CASE a.cantidad2||'' WHEN '0' THEN '' ELSE a.cantidad2||'' END  as cantidad2,a.nombre2 as cups2,tipo_pcd2, 
+           a.codigo_cups3, CASE a.cantidad3||'' WHEN '0' THEN '' ELSE a.cantidad3||'' END  as cantidad3,a.nombre3 as cups3,tipo_pcd3,
+						a.codigo_cups4, CASE a.cantidad4||'' WHEN '0' THEN '' ELSE a.cantidad4||'' END  as cantidad4,a.nombre4 as cups4,tipo_pcd4,
+						a.codigo_cups5, CASE a.cantidad5||'' WHEN '0' THEN '' ELSE a.cantidad5||'' END  as cantidad5,a.nombre5 as cups5,tipo_pcd5,
+						a.codigo_cups6, CASE a.cantidad6||'' WHEN '0' THEN '' ELSE a.cantidad6||'' END  as cantidad6,a.nombre6 as cups6,tipo_pcd6,
+						a.codigo_cups7, CASE a.cantidad7||'' WHEN '0' THEN '' ELSE a.cantidad7||'' END  as cantidad7,a.nombre7 as cups7,tipo_pcd7,
+						a.codigo_cups8, CASE a.cantidad8||'' WHEN '0' THEN '' ELSE a.cantidad8||'' END  as cantidad8,a.nombre8 as cups8,tipo_pcd8,
+						a.codigo_cups9, CASE a.cantidad9||'' WHEN '0' THEN '' ELSE a.cantidad9||'' END  as cantidad9,a.nombre9 as cups9,tipo_pcd9,
+						a.codigo_cups10, CASE a.cantidad10||'' WHEN '0' THEN '' ELSE a.cantidad10||'' END  as cantidad10,a.nombre10 as cups10,tipo_pcd10,
+						a.codigo_cups11, CASE a.cantidad11||'' WHEN '0' THEN '' ELSE a.cantidad11||'' END  as cantidad11,a.nombre11 as cups11,tipo_pcd11,
+						a.codigo_cups12, CASE a.cantidad12||'' WHEN '0' THEN '' ELSE a.cantidad12||'' END  as cantidad12,a.nombre12 as cups12,tipo_pcd12,
+						a.codigo_cups13, CASE a.cantidad13||'' WHEN '0' THEN '' ELSE a.cantidad13||'' END  as cantidad13,a.nombre13 as cups13,tipo_pcd13,
+						a.codigo_cups14, CASE a.cantidad14||'' WHEN '0' THEN '' ELSE a.cantidad14||'' END  as cantidad14,a.nombre14 as cups14,tipo_pcd14,
+						a.codigo_cups15, CASE a.cantidad15||'' WHEN '0' THEN '' ELSE a.cantidad15||'' END  as cantidad15,a.nombre15 as cups15,tipo_pcd15,
+						a.codigo_cups16, CASE a.cantidad16||'' WHEN '0' THEN '' ELSE a.cantidad16||'' END  as cantidad16,a.nombre16 as cups16,tipo_pcd16,
+						a.codigo_cups17, CASE a.cantidad17||'' WHEN '0' THEN '' ELSE a.cantidad17||'' END  as cantidad17,a.nombre17 as cups17,tipo_pcd17,
+						a.codigo_cups18, CASE a.cantidad18||'' WHEN '0' THEN '' ELSE a.cantidad18||'' END  as cantidad18,a.nombre18 as cups18,tipo_pcd18,
+						a.codigo_cups19, CASE a.cantidad19||'' WHEN '0' THEN '' ELSE a.cantidad19||'' END  as cantidad19,a.nombre19 as cups19,tipo_pcd19,
+						a.codigo_cups20, CASE a.cantidad20||'' WHEN '0' THEN '' ELSE a.cantidad20||'' END  as cantidad20,a.nombre20 as cups20,tipo_pcd20, 
+            a.justificacion,a.cie_p,cp.nombre as cp, 
+            a.cie_1,c1.nombre as c1,a.cie_2,c2.nombre as c2, 
+            a.nombre_reporta,a.tel_reporta,a.cargo_reporta,a.cel_reporta 
+            from anexo3_entidad a 
+            left join prestadores_caja e2 on(e2.codigo = a.codigo_ips and e2.codigo_empresa = a.codigo_empresa and e2.codigo_sucursal = a.codigo_sucursal) 
+            left join departamentos de on(de.codigo=e2.dptdo) 
+            left join municipios me on(me.codigo=e2.municipio and me.coddep = e2.dptdo) 
+            left join administradora ad 
+            on(ad.codigo = a.codigo_administradora) 
+            left join paciente p 
+            on(p.codigo_empresa = a.codigo_empresa 
+            and p.codigo_sucursal = a.codigo_sucursal 
+            and p.nro_identificacion = a.codigo_paciente) 
+            left join departamentos dp 
+            on(dp.codigo=p.codigo_dpto) 
+            left join municipios mp on(mp.codigo = p.codigo_municipio and mp.coddep = p.codigo_dpto) 
+            left join cie cp on(cp.codigo=a.cie_p) 
+            left join cie c1 on(c1.codigo=a.cie_1) 
+            left join cie c2 on(c2.codigo=a.cie_2)  
+            where a.codigo_empresa = #{codigo_empresa} 
+            and a.codigo_sucursal = #{codigo_sucursal} 
+            and a.codigo = #{codigo} 
+    </select>
+   
+</mapper>

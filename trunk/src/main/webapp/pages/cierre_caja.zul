@@ -1,0 +1,181 @@
+<?page title="Cierre de Caja" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formCierre_caja" width="100%" height="100%"
+		use="healthmanager.controller.Cierre_cajaAction">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="false" closable="false"
+			mold="3d" height="100%">
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" vflex="1">
+				<auxhead>
+					<auxheader colspan="6">
+						<hbox align="center" hflex="1">
+							<label value="B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="110px" />
+							<space />
+							<textbox id="tbxValue"
+								style="text-transform:uppercase" />
+							<space />
+							<toolbarbutton image="/images/Magnifier.gif"
+								onClick="formCierre_caja.buscarDatos();"
+								tooltiptext="Consultar Cierres" label="Consultar"
+								autodisable="self" />
+							<space/>
+							<toolbarbutton image="/images/New16.gif"
+								onClick='formCierre_caja.accionForm(true,"registrar");'
+								tooltiptext="Nueva" label="Nueva" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Usuario" width="200px" />
+					<column label="Fecha Inicio" width="250px" />
+					<column label="Fecha Fin" width="170px" />
+					<column label="Centro de Atencion" />
+					<column label="Total Cierre" />
+					<column label="Acciones" align="center"
+						width="140px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+		<borderlayout width="100%" height="100%" id="groupboxEditar"
+			visible="true">
+			<north border="none">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<toolbarbutton image="/images/Save16.gif"
+						label="Guardar cierre" onClick="formCierre_caja.guardarDatos();"
+						id="btGuardar" />
+					<toolbarbutton image="/images/New16.gif"
+						label="Nuevo cierre"
+						onClick='formCierre_caja.accionForm(true,"registrar");'
+						id="btNew" />
+					<space />
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Consultar"
+						onClick='formCierre_caja.accionForm(false,tbxAccion.getText());'
+						id="btCancel" />
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center">
+					<space />
+					<!-- *************************** -->
+					<!-- *** Insertar/Actualizar *** -->
+					<!-- *************************** -->
+					<groupbox closable="false" width="805px"
+						mold="3d">
+						<caption label="CIERRE DE CAJA"
+							style="font-weight: bold;">
+						</caption>
+						<grid sclass="GridSinBorde">
+							<columns visible="false">
+								<column label="" width="115px"
+									align="left" />
+								<column label="" width="150px"
+									align="left" />
+								<column label="" width="70px"
+									align="left" />
+								<column label="" width="177px"
+									align="left" />
+								<column label="" width="98px"
+									align="left" />
+								<column label="" align="left" />
+							</columns>
+							<rows>
+								<row>
+									<cell>
+										<label value="Codigo Usuario " />
+									</cell>
+									<cell>
+										<textbox id="tbxCodigo_usuario"
+											style="text-transform:uppercase" readonly="true">
+										</textbox>
+									</cell>
+									<cell colspan="5">
+										<textbox id="tbxNomUsuario"
+											hflex="1" style="text-transform:uppercase" readonly="true" />
+										<space width="20px" />
+										<bandboxRegistros
+											id="bandboxUsuarios" widthBandbox="170px"
+											widthListbox="600px" heightListbox="300px"
+											columnas="Codigo|Nombres|Apellidos" />
+											</cell>
+								</row>								
+								<row>							
+									<cell colspan="6">
+										<label value="Fecha Inicio: " />
+										<space width="44px" />
+										<datebox id="dtbxFecha_inicio"
+											format="yyyy-MM-dd HH:mm" width="150px"
+											constraint="no future: now or never" />
+										<space width="23px" />
+										<label value="Fecha Final: " />
+										<datebox id="dtbxFecha_fin"
+											format="yyyy-MM-dd HH:mm" width="170px"
+											constraint="no future: now or never" />
+										<space width="23px" />
+									</cell>
+								</row>
+								<row>
+									<cell colspan="2">									
+										<space />
+										<toolbarbutton
+											image="/images/Magnifier.gif"
+											onClick="formCierre_caja.listarRecibos_caja();"
+											tooltiptext="Consultar Cierres"
+											label="Mostrar Recibos de caja" autodisable="self" />
+										<space />
+									
+								</cell>	
+								</row>																
+								<row>
+									<cell colspan="6">
+										<listbox id="listboxRecibos"
+											checkmark="true" multiple="true">
+										
+											<listhead>
+												<listheader width="30px" />
+												
+												<listheader
+												 	width="120px" label="Id recibo" />
+												<listheader
+													width="240px" label="Valor total" />
+												<listheader
+													width="370px" label="Estado" />
+											</listhead>
+										</listbox>
+									</cell>
+								</row>
+								<row style="background-color:white">
+									<cell colspan="6" />
+								</row>
+								
+							</rows>
+						</grid>
+					</groupbox>
+				</div>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

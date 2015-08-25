@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:jee="http://www.springframework.org/schema/jee" xmlns:jms="http://www.springframework.org/schema/jms"
+       xmlns:tx="http://www.springframework.org/schema/tx" xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+		http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+		http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms-3.0.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+
+	<util:properties id="props" location="classpath:database.properties" />
+	
+    <import resource="applicationContext-DAO.xml"/>  
+    <import resource="applicationContext-SIOS.xml"/>   
+
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="#{props.dataSourceDriver}" />
+		<property name="url" value="#{props.dataSourceUrl}" />
+		<property name="username" value="#{props.dataSourceUsername}" />
+		<property name="password" value="#{props.dataSourcePassword}" />
+		<property name="maxActive" value="#{props.dataSourceMaxActive}" />
+		<property name="minIdle" value="5" />
+		<property name="validationQuery" value="select 1" />
+		<property name="testOnReturn" value="false" />
+		<property name="testWhileIdle" value="true" />
+		<property name="testOnBorrow" value="true" />
+		<property name="timeBetweenEvictionRunsMillis" value="5000" />
+		<property name="maxWait" value="1000" />
+		<property name="initialSize" value="3" />
+		<property name="removeAbandonedTimeout" value="60" />
+		<property name="removeAbandoned" value="true" />
+		<property name="minEvictableIdleTimeMillis" value="30000" />
+	</bean>
+	
+    <bean id="transactionManager"
+          class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+  
+    <!-- El advice indicarÃƒÂ¡ quÃƒÂ© tipo de transacciÃƒÂ³n tendrÃƒÂ¡n las 
+    clases interceptadas por el pointcut. -->
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <!-- the transactional semantics... -->
+        <tx:attributes>
+            <tx:method name="crear*" propagation="REQUIRED" read-only="false" />
+            <tx:method name="guardar*" propagation="REQUIRED"
+                       read-only="false" />
+            <tx:method name="eliminar*" propagation="REQUIRED"
+                       read-only="false" />
+            <tx:method name="actualizar*" propagation="REQUIRED"
+                       read-only="false" />
+            <tx:method name="*" propagation="SUPPORTS" read-only="true" />
+        </tx:attributes>
+    </tx:advice>
+
+
+    <!-- Pointcut que indicarÃƒÂ¡ quÃƒÂ© clases serÃƒÂ¡n interceptadas para 
+    agregar transacciÃƒÂ³n -->
+    <aop:config>
+        <aop:pointcut id="serviceOperation" expression="execution(* *.modelo.service.*.*(..))" />
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="serviceOperation" />
+    </aop:config>
+
+    <!-- Paquete donde estan ubicados todos los servicios -->
+    <context:component-scan
+        base-package="healthmanager.modelo.service,imagen_diagnostica.modelo.service,tablas_crecimiento_desarrollo.modelo.service,contaweb.modelo.service" />
+
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="configLocation">
+			<value>classpath:myibatis-configuration.xml</value>
+		</property>
+    </bean>
+
+    <bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg index="0" ref="sqlSessionFactory" />
+    </bean>
+       
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage"
+                  value="healthmanager.modelo.dao,imagen_diagnostica.modelo.dao,tablas_crecimiento_desarrollo.modelo.dao,contaweb.modelo.dao" />
+        <property name="sqlSessionTemplate" ref="sqlSession" />
+    </bean>
+
+	
+
+</beans>

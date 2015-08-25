@@ -1,0 +1,178 @@
+<?page title="Importador de pacientes" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formImportador" width="100%" height="97%"
+		use="healthmanager.controller.ImportarPacientesAction"
+		onCreate="formImportador.onSeleccionarEntidad()">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+		<borderlayout width="100%" height="90%" id="borderlayoutEditar"
+			visible="true">
+			<center autoscroll="true" border="none">
+				<panel width="850px" framable="true">
+					<caption label="Importador de archivos en excel" />
+					<panelchildren>
+						<grid>
+							<columns>
+								<column width="150px" />
+								<column />
+							</columns>
+							<rows>
+								<row>
+									<cell>
+										<label
+											value="Modulo a importar:" />
+									</cell>
+									<cell>
+										<listbox id="listboxModulo"
+											sclass="combobox" mold="select" width="150px" />
+									</cell>
+
+								</row>
+
+								<row>
+									<cell>
+										<label value="Entidad" />
+									</cell>
+									<cell>
+										<listbox id="listboxEntidades"
+											sclass="combobox" mold="select" width="150px"
+											onSelect="formImportador.onSeleccionarEntidad()">
+											<listitem label="GENERAL"
+												value="GENERAL" visible="false" />
+											<listitem
+												label="ESE CARTAGENA" value="ESE_CARTAGENA" selected="true" />
+										</listbox>
+									</cell>
+								</row>
+
+								<row id="rowContratos"
+									visible="false">
+									<cell valign="top">
+										<label value="Administradora" />
+									</cell>
+									<cell>
+										<hlayout>
+											<bandboxRegistros
+												id="bandboxAdministradora" widthBandbox="150px"
+												widthListbox="600px" heightListbox="300px"
+												columnas="Código Administradora#140px|Nombre adminstradora" />
+											<space />
+											<textbox
+												id="tbxAdministradora" width="250px" readonly="true" />
+											<toolbarbutton
+												id="btnLimpiar_administradora" image="/images/borrar.gif" />
+										</hlayout>
+
+										<groupbox mold="3d"
+											style="margin-top:5px" width="430px" closable="false">
+											<caption
+												label="Configuración de la importación"
+												style="font-weight:bold" />
+											<label
+												value="Tipo de delimitador" />
+											<space width="15px" />
+											<listbox id="lbxDelimitador"
+												mold="select">
+												<listitem value=","
+													label="Coma(,)" selected="true" />
+												<listitem value=";"
+													label="Punto y Coma(;)" />
+											</listbox>
+											<separator />
+											<label
+												value="Tipo de importación" />
+											<space />
+											<listbox
+												id="lbxTipo_importacion" mold="select"
+												onSelect="formImportador.onSeleccionarTipoImportacion()">
+												<listitem
+													label="-- Seleccione --" value="" selected="true" />
+												<listitem
+													label="Base de datos" value="01" />
+												<listitem
+													label="Novedades ingreso" value="02" />
+												<listitem
+													label="Novedades retiro" value="03" />
+											</listbox>
+											<separator />
+											<checkbox visible="false"
+												label="Eliminar contratos anteriores de los pacientes"
+												id="chkAnteriores" />
+
+										</groupbox>
+
+										<listbox style="margin-top:5px"
+											width="430px" id="listboxContratos" checkmark="true"
+											multiple="true">
+											<custom-attributes
+												org.zkoss.zul.listbox.rod="true" />
+											<listhead>
+												<listheader
+													width="30px" />
+												<listheader
+													label="Listado de contratos" />
+											</listhead>
+										</listbox>
+									</cell>
+								</row>
+								<row>
+									<cell colspan="2">
+										<hlayout>
+											<button id="buttonAdjuntar"
+												upload="true,maxsize=202400" sclass="attachBtn"
+												label="Adjuntar"
+												onUpload="formImportador.adjuntarArchivo(event.getMedia());" />
+											<button id="buttonEliminar"
+												visible="false" mold="trendy" label="Eliminar"
+												onClick="formImportador.eliminarArchivo()" />
+											<space />
+
+											<label
+												id="labelArchivo_adjunto"
+												style="font-weight:bold;font-size:medium" />
+
+											<space />
+
+											<button id="buttonImportar"
+												autodisable="self,buttonEliminar,buttonDeshabilitar" disabled="true"
+												mold="trendy" label="Importar Datos"
+												onClick="formImportador.importarDatos();" />
+
+											<space />
+											<button
+												id="buttonDeshabilitar"
+												autodisable="self,buttonEliminar,buttonImportar"
+												disabled="true" mold="trendy" label="Deshabilitar Pacientes"
+												onClick="formImportador.onDeshabilitarPacientes()" />
+											<space />
+											
+											<button style="float:right" mold="trendy" label="Demo archivo" onClick="formImportador.descargarDemoArchivo()" />
+											
+										</hlayout>
+									</cell>
+								</row>
+								<row>
+									<cell colspan="2">
+										<vlayout id="result"
+											sclass="fileList">
+										</vlayout>
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</panelchildren>
+				</panel>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

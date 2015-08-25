@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.reporte_procedimiento_ordenadosModel">
+	<select id="select" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+		SELECT
+		fr.codigo,
+		(usr.apellidos || ' ' || usr.nombres) AS medico,
+		ps.descripcion,
+		fr.cantidad
+		FROM
+		"public".frecuencia_ordenamiento AS fr
+		LEFT JOIN "public".procedimientos AS ps ON ps.codigo_empresa=
+		fr.codigo_empresa AND ps.codigo_sucursal = fr.codigo_sucursal AND
+		cast(ps.id_procedimiento as varchar) = fr.codigo 
+		INNER JOIN "public".usuarios AS usr ON usr.codigo_empresa =
+		fr.codigo_empresa AND usr.codigo_sucursal = fr.codigo_sucursal AND
+		usr.codigo = fr.codigo_med
+		WHERE EXISTS (SELECT 1 FROM roles_usuarios AS ru WHERE ru.codigo_empresa =
+		usr.codigo_empresa AND ru.codigo_sucursal = usr.codigo_sucursal AND
+		ru.codigo_usuario = usr.codigo AND ru.rol = '12' 
+		AND fr.codigo_empresa = #{codigo_empresa}
+		AND fr.codigo_sucursal = #{codigo_sucursal}
+		<foreach open="AND to_char(fr.creacion_date, 'yyyy-MM') IN ("
+				separator="," close=")" item="mes" collection="meses">
+				#{mes}
+		</foreach>)
+		<foreach open="AND usr.codigo IN (" separator=","
+			close=")" collection="medicos" item="m">
+			#{m.value.codigo}
+		</foreach>
+    </select>
+
+</mapper>

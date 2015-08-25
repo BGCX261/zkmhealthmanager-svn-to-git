@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Datos_servicioDao">
+
+	<!--<typeAlias alias="datos_servicio" type="healthmanager.modelo.bean.Datos_servicio" />-->
+
+	<!--<mapper resource="healthmanager/modelo/dao/xml/datos_servicioSQL.xml" />-->
+
+	<resultMap id="datos_servicioMap" type="datos_servicio">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="nro_factura" property="nro_factura" />
+		<result column="consecutivo" property="consecutivo" />
+		<result column="codigo_servicio" property="codigo_servicio" />
+		<result column="unidades" property="unidades" />
+		<result column="valor_unitario" property="valor_unitario" />
+		<result column="valor_total" property="valor_total" />
+		<result column="cancelo_copago" property="cancelo_copago" />
+		<result column="creacion_date" property="creacion_date" />
+		<result column="ultimo_update" property="ultimo_update" />
+		<result column="delete_date" property="delete_date" />
+		<result column="creacion_user" property="creacion_user" />
+		<result column="ultimo_user" property="ultimo_user" />
+		<result column="delete_user" property="delete_user" />
+		<result column="valor_real" property="valor_real" />
+		<result column="descuento" property="descuento" />
+		<result column="incremento" property="incremento" />
+		<result column="referencia_pyp" property="referencia_pyp" />
+		<result column="tipo_servicio" property="tipo_servicio" />
+		<result column="numero_autorizacion" property="numero_autorizacion" />
+		
+		<association column="{codigo_empresa=codigo_empresa,codigo_sucursal=codigo_sucursal,nro_factura=nro_factura}" property="facturacion_servicio" select="healthmanager.modelo.dao.Facturacion_servicioDao.consultar" />
+		<association column="{codigo_empresa=codigo_empresa,codigo_sucursal=codigo_sucursal,codigo_articulo=codigo_servicio}" property="articulo" select="contaweb.modelo.dao.ArticuloDao.consultar" />
+		
+	</resultMap>
+
+	<insert id="crear" parameterType="datos_servicio">
+		insert into public.datos_servicio (codigo_empresa,codigo_sucursal,
+		nro_factura,consecutivo,codigo_servicio,
+		unidades,valor_unitario,valor_total,
+		cancelo_copago,creacion_date,ultimo_update,
+		delete_date,creacion_user,ultimo_user,
+		delete_user,valor_real,descuento,
+		incremento,referencia_pyp,tipo_servicio,numero_autorizacion)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{nro_factura},#{consecutivo},#{codigo_servicio},
+		#{unidades},#{valor_unitario},#{valor_total},
+		#{cancelo_copago},#{creacion_date},#{ultimo_update},
+		#{delete_date},#{creacion_user},#{ultimo_user},
+		#{delete_user},#{valor_real},#{descuento},
+		#{incremento},#{referencia_pyp},#{tipo_servicio},
+		#{numero_autorizacion})
+	</insert>
+
+	<update id="actualizar" parameterType="datos_servicio">
+		update public.datos_servicio set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},nro_factura = #{nro_factura},
+		consecutivo = #{consecutivo},codigo_servicio = #{codigo_servicio},
+		unidades = #{unidades},valor_unitario = #{valor_unitario},
+		valor_total = #{valor_total},cancelo_copago = #{cancelo_copago},
+		creacion_date = #{creacion_date},ultimo_update = #{ultimo_update},
+		delete_date = #{delete_date},creacion_user = #{creacion_user},
+		ultimo_user = #{ultimo_user},delete_user = #{delete_user},
+		valor_real = #{valor_real},descuento = #{descuento},
+		incremento = #{incremento},referencia_pyp = #{referencia_pyp},
+		tipo_servicio = #{tipo_servicio},numero_autorizacion = #{numero_autorizacion}
+		where 		codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and nro_factura = #{nro_factura}
+		and consecutivo = #{consecutivo}
+	</update>
+
+	<select id="consultar" parameterType="datos_servicio" resultMap="datos_servicioMap">
+		select codigo_empresa,codigo_sucursal,
+		nro_factura,consecutivo,codigo_servicio,unidades,
+		valor_unitario,valor_total,cancelo_copago,creacion_date,
+		ultimo_update,delete_date,creacion_user,ultimo_user,
+		delete_user,valor_real,descuento,incremento,
+		referencia_pyp,tipo_servicio, numero_autorizacion
+		FROM public.datos_servicio WHERE codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} 
+		<if test="nro_factura != null">AND nro_factura = #{nro_factura}</if>
+		<if test="consecutivo != null">AND consecutivo = #{consecutivo}</if>
+		<if test="codigo_servicio != null">AND codigo_servicio = #{codigo_servicio}</if>
+	</select>
+
+	<delete id="eliminar" parameterType="datos_servicio">
+		delete from public.datos_servicio
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} 
+		and nro_factura = #{nro_factura}
+		<if test="consecutivo != null">
+		AND consecutivo = #{consecutivo}
+		</if>
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="datos_servicioMap">
+		select ds.codigo_empresa,ds.codigo_sucursal,
+		ds.nro_factura,ds.consecutivo,ds.codigo_servicio,ds.unidades,
+		ds.valor_unitario,ds.valor_total,ds.cancelo_copago,ds.creacion_date,
+		ds.ultimo_update,ds.delete_date,ds.creacion_user,ds.ultimo_user,
+		ds.delete_user,ds.valor_real,ds.descuento,ds.incremento,
+		ds.referencia_pyp,ds.tipo_servicio,ds.numero_autorizacion
+		from public.datos_servicio ds
+		inner join facturacion_servicio fs on (
+		fs.codigo_empresa = ds.codigo_empresa
+        and fs.codigo_sucursal = ds.codigo_sucursal
+        and fs.nro_factura = ds.nro_factura)
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND ds.codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND ds.codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="nro_factura != null">
+			AND ds.nro_factura = #{nro_factura}
+			</if>
+			<if test="nro_identificacion != null">
+			AND fs.nro_identificacion = #{nro_identificacion}
+			</if>
+			<if test="nro_ingreso != null">
+			AND fs.nro_ingreso = #{nro_ingreso}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		order by consecutivo::int
+		<if test="limit != null">
+			${limit}
+		</if>
+	</select>
+	
+	<select id="listar_factura" parameterType="java.util.Map" resultMap="datos_servicioMap">
+		select ds.codigo_empresa,ds.codigo_sucursal,
+		ds.nro_factura,ds.consecutivo,ds.codigo_servicio,ds.unidades,
+		ds.valor_unitario,ds.valor_total,ds.cancelo_copago,ds.creacion_date,
+		ds.ultimo_update,ds.delete_date,ds.creacion_user,ds.ultimo_user,
+		ds.delete_user,ds.valor_real,ds.descuento,ds.incremento,
+		ds.referencia_pyp,ds.tipo_servicio,ds.numero_autorizacion
+		from public.datos_servicio ds 
+		inner join public.facturacion_servicio fs 
+		ON (ds.codigo_empresa = fs.codigo_empresa AND 
+		ds.codigo_sucursal = fs.codigo_sucursal AND 
+		ds.nro_factura = fs.nro_factura)
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND ds.codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND ds.codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="nro_factura != null">
+			AND ds.nro_factura = #{nro_factura}
+			</if>
+			<if test="tipo_reg != null">AND fs.tipo = #{tipo_reg}</if>
+			<if test="nro_identificacion != null">AND fs.nro_identificacion = #{nro_identificacion}</if>
+			<if test="codigo_administradora != null">AND fs.codigo_administradora = #{codigo_administradora}</if>
+			<if test="id_plan != null">AND fs.id_plan = #{id_plan}</if>
+			<if test="facturacion != null">AND fs.facturacion = #{facturacion}</if>
+			<if test="nro_ingreso != null"> and fs.nro_ingreso = #{nro_ingreso}</if>
+		</trim>
+		order by ds.consecutivo::int
+		<if test="limit != null">
+			${limit}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from public.datos_servicio 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+	
+	<select id="servicios_hoja_gastos" parameterType="java.util.Map" resultType="java.util.Map" >
+		SELECT
+		fs.codigo_empresa,
+		fs.codigo_sucursal,
+		fs.nro_ingreso,
+		fs.nro_identificacion,
+		fs.codigo_administradora,
+		ds.codigo_servicio,
+		cast(SUM(ds.unidades) as varchar) AS unidades,
+		'MEDICAMENTO' AS tipo,
+		pa.nombre1 AS nombre1_pct,
+		pa.nombre2 AS nombre2_pct,
+		pa.apellido1 AS apellido1_pct,
+		pa.apellido2 AS apellido2_pct,
+		ad.fecha_atencion,
+		ad.fecha_ingreso,
+		ad.diagnostico_ingreso,
+		dx.nombre AS nombre_diagnostico,
+		ad.codigo_medico,
+		pr.nombres AS nombres_medico,
+		pr.apellidos AS apellidos_medico,
+		ad.urgencias,
+		ad.hospitalizacion,
+		ad.admision_parto,
+		am.codigo AS codigo_administradora,
+		am.nombre AS nombre_administradora,
+		cap.nombre_centro,
+		pa.documento AS codigo_historia
+	FROM
+		datos_servicio ds
+	LEFT JOIN facturacion_servicio fs ON(
+		fs.codigo_empresa = ds.codigo_empresa
+		AND fs.codigo_sucursal = ds.codigo_sucursal
+		AND fs.nro_factura = ds.nro_factura
+	)
+	LEFT JOIN admision ad ON(
+		ad.codigo_empresa = fs.codigo_empresa
+		AND ad.codigo_sucursal = fs.codigo_sucursal
+		AND ad.nro_ingreso = fs.nro_ingreso
+		AND ad.nro_identificacion = fs.nro_identificacion
+	)	
+	LEFT JOIN cie dx ON(dx.codigo = ad.diagnostico_ingreso)
+	LEFT JOIN prestadores pr ON(
+		ad.codigo_empresa = pr.codigo_empresa
+		AND ad.codigo_sucursal = pr.codigo_sucursal
+		AND ad.codigo_medico = pr.nro_identificacion
+	)
+	LEFT JOIN paciente pa ON(
+		pa.codigo_empresa = fs.codigo_empresa
+		AND pa.codigo_sucursal = fs.codigo_sucursal
+		AND pa.nro_identificacion = fs.nro_identificacion
+	)
+	LEFT JOIN administradora am ON(
+		am.codigo_empresa = fs.codigo_empresa
+		AND am.codigo_sucursal = fs.codigo_sucursal
+		AND am.codigo = fs.codigo_administradora
+	)
+	LEFT JOIN centro_atencion cap ON(
+		ad.codigo_empresa = cap.codigo_empresa
+		AND ad.codigo_sucursal = cap.codigo_sucursal
+		AND ad.codigo_centro = cap.codigo_centro
+	)
+	LEFT JOIN historia_clinica hc ON(
+		ad.codigo_empresa = hc.codigo_empresa
+		AND ad.codigo_sucursal = hc.codigo_sucursal
+		AND ad.nro_ingreso = hc.nro_ingreso
+		AND ad.nro_identificacion = hc.nro_identificacion
+		AND ad.via_ingreso = hc.via_ingreso
+	)
+	WHERE
+		fs.codigo_empresa = #{codigo_empresa}
+	AND fs.codigo_sucursal = #{codigo_sucursal} 
+	AND fs.nro_ingreso = #{nro_ingreso} 
+	AND fs.nro_identificacion = #{nro_identificacion}
+	AND fs.codigo_administradora = #{codigo_administradora}
+	GROUP BY
+		fs.codigo_empresa,
+		fs.codigo_sucursal,
+		fs.nro_ingreso,
+		fs.nro_identificacion,
+		fs.codigo_administradora,
+		ds.codigo_servicio,
+		pa.nombre1,
+		pa.nombre2,
+		pa.apellido1,
+		pa.apellido2,
+		ad.fecha_atencion,
+		ad.fecha_ingreso,
+		ad.diagnostico_ingreso,
+		dx.nombre,
+		ad.codigo_medico,
+		pr.nombres,
+		pr.apellidos,
+		ad.urgencias,
+		ad.hospitalizacion,
+		ad.admision_parto,
+		am.codigo,
+		am.nombre,
+		cap.nombre_centro,
+		pa.documento
+	
+	</select>
+	
+	 <select id="getFechaRealizacion" resultType="java.util.HashMap" parameterType="java.util.Map">
+		SELECT fs.fecha_servicio  AS fecha, ds.numero_autorizacion,fs.numero_autorizacion AS nro_autorizacion_fact  
+		FROM public.datos_servicio ds  
+		inner join public.facturacion_servicio fs 
+		ON (ds.codigo_empresa = fs.codigo_empresa AND 
+		ds.codigo_sucursal = fs.codigo_sucursal AND 
+		ds.nro_factura = fs.nro_factura)
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">AND fs.codigo_empresa = #{codigo_empresa}</if>
+			<if test="codigo_sucursal != null">AND fs.codigo_sucursal = #{codigo_sucursal}</if>
+			<if test="nro_factura != null">AND fs.nro_factura = #{nro_factura}</if>
+			<if test="nro_identificacion != null">AND fs.nro_identificacion = #{nro_identificacion}</if>
+			<if test="nro_ingreso != null">AND fs.nro_ingreso = #{nro_ingreso}</if>
+			<if test="codigo_servicio != null">AND ds.codigo_servicio = #{codigo_servicio}</if>
+		</trim>
+		limit 1 offset 0
+	</select>
+
+</mapper>

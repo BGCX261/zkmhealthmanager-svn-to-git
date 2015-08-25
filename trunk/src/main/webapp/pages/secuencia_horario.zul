@@ -1,0 +1,231 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<zk>
+	<window title="Secuencia de Horario" border="normal" id="formaCrear"
+		mode="popup" visible="true" closable="true"
+		onCreate="formaCrear.onChangeHoraInicial();"
+		use="healthmanager.controller.SecuenciaHorarioController">
+
+		<borderlayout height="390px" width="710px">
+			<north>
+				<toolbar>
+					<hbox>
+						<toolbarbutton id="okBtn"
+							image="/images/generar.png"
+							onClick="formaCrear.generarSecuenciaHorario()" label="Generar" />
+						<space orient="vertical" bar="true" />
+						<toolbarbutton id="cancelBtn"
+							image="/images/quit.png" label="Cancelar"
+							onClick="formaCrear.onClose()" />
+						<space orient="vertical" bar="true" />
+						<toolbarbutton id="btnFiltro_dias"
+								image="/images/filtro.png" label="Dias"
+								onClick='popupDias.open(self,"end_before")' />
+					</hbox>
+				</toolbar>
+			</north>
+			<center autoscroll="true">
+				<div align="center">
+					<grid fixedLayout="true" width="370px">
+						<columns>
+							<column width="130px" />
+							<column />
+						</columns>
+						<rows>
+							<row>
+								<label value="Fecha Inicio:" />
+								<div>
+									<datebox id="dateboxInit"
+										width="170px" mold="rounded" format="dd-MM-yyyy" />
+								</div>
+							</row>
+							<row>
+								<label value="Fecha fin:" />
+								<div>
+									<datebox id="dateboxEnd"
+										width="170px" mold="rounded" format="dd-MM-yyyy" />
+								</div>
+							</row>
+							<row>
+								<label value="Rol:" />
+								<cell>
+									<listbox mold="select" id="lbxRoles"
+										width="170px" onSelect="formaCrear.onSeleccionarRolMedico()" />
+								</cell>
+							</row>
+							<row id="rowRolEspecifico"
+								visible="false">
+								<cell visible="false">
+									<listbox mold="select"
+										id="lbxRolesExcepciones" width="170px" />
+								</cell>
+							</row>
+							<row>
+								<label value="Hora Inicio:" />
+								<div>
+									<hbox id="dtbinit" width_="170"
+										use="com.framework.macros.HoraTextBox" />
+								</div>
+							</row>
+							<row>
+								<label value="Rango de(Min):" />
+								<div>
+									<spinner id="ibxSecuencia"
+										width="170px" mold="rounded" constraint="min 0" value="15"
+										step="5"
+										tooltiptext="Tiempo inicial que se tiene entre una cita y otra" />
+									<space />
+									<label value="Min" />
+								</div>
+							</row>
+							<row id="rowEnd">
+								<label value="Hora fin:" />
+								<div>
+									<!-- 								<timebox id="dtbend" width="170px" -->
+									<!-- 									mold="rounded" onCreate="self.setValue(new Date())" -->
+									<!-- 									format="hh:mm a"   /> -->
+									<hbox id="dtbend" width_="170"
+										use="com.framework.macros.HoraTextBox" />
+								</div>
+							</row>
+							<row id="rowcolor" visible="false">
+								<label value="Color:" />
+								<combobox id="cbbcolor" readonly="true"
+									mold="rounded" style="color:#D96666;font-weight: bold;"
+									onCreate="self.selectedIndex = 0">
+									<attribute name="onSelect">
+	switch (self.getSelectedIndex()) {
+	case 0:
+		self.style = "color:#D96666;font-weight: bold;";
+		break;
+	case 1:
+		self.style = "color:#668CD9;font-weight: bold;";
+		break;
+	case 2:
+		self.style = "color:#4CB052;font-weight: bold;";
+		break;
+	case 3:
+		self.style = "color:#B373B3;font-weight: bold;";
+		break;
+	}
+</attribute>
+									<comboitem sclass="red" label="Rojo"
+										value="#A32929,#D96666" />
+									<comboitem sclass="blue"
+										label="Azul" value="#3467CE,#668CD9" />
+									<comboitem sclass="green"
+										label="Verde" value="#0D7813,#4CB052" />
+									<comboitem sclass="purple"
+										label="Púrpura" value="#7A367A,#B373B3" />
+								</combobox>
+							</row>
+							<row>
+								<label value="Cita:" />
+								<checkbox id="ckbcitas" checked="true"
+									onCheck="rowDescripcion.visible = rowUbicacion.visible  = rowcolor.visible =  !self.checked;rowCodigoCentro.visible = rowCodigoSalud.visible = self.checked" />
+							</row>
+
+							<row id="rowCodigoCentro">
+								<label value="Centro de Salud:" />
+								<cell>
+									<bandboxRegistros
+										id="tbxCodigo_centro" widthBandbox="170px"
+										widthListbox="600px" heightListbox="300px"
+										columnas="Codigo#65px|Nombre" />
+									<toolbarbutton id="btnLimpiarCentro"
+										image="/images/borrar.gif" />
+								</cell>
+							</row>
+
+							<row id="rowCodigoSalud">
+								<label value="Consultorio:" />
+								<cell>
+									<bandboxRegistros
+										id="tbxCodigo_consultorio" widthBandbox="170px"
+										widthListbox="600px" heightListbox="300px"
+										columnas="Codigo#65px|Nombre" />
+									<toolbarbutton
+										id="btnLimpiarConsultorio" image="/images/borrar.gif" />
+								</cell>
+							</row>
+							<row id="rowDescripcion" visible="false">
+								<label value="Descripción:" />
+								<textbox multiline="true" rows="3"
+									width="200px" id="txbDescripcion" />
+							</row>
+							<row id="rowUbicacion" visible="false">
+								<label value="Ubicacion:" />
+								<textbox multiline="true" rows="3"
+									width="200px" id="txbUbicacion" />
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+
+									</div>
+								</cell>
+							</row>
+						</rows>
+					</grid>
+				</div>
+			</center>
+			<east id="visualizadorHora" width="290px"
+				autoscroll="true">
+				<iframe id="ifmVisualizador" height="100%" hflex="1" />
+			</east>
+		</borderlayout>
+		<popup id="popupDias">
+			<listbox id="lbxDias" width="130px" rows="8">
+				<custom-attributes org.zkoss.zul.listbox.rod="true" />
+				<listitem>
+					<listcell>
+						<checkbox id="chkLunes" label="Lunes"
+							checked="true" onCheck="formaCrear.aplicarIndicadorr(self)" />
+					</listcell>
+				</listitem>
+				<listitem>
+					<listcell>
+						<checkbox id="chkMartes" label="Martes"
+							checked="true" onCheck="formaCrear.aplicarIndicadorr(self)" />
+					</listcell>
+				</listitem>
+				<listitem>
+					<listcell>
+						<checkbox id="chkMiercoles" label="Miercoles"
+							checked="true" onCheck="formaCrear.aplicarIndicadorr(self)" />
+					</listcell>
+				</listitem>
+				<listitem>
+					<listcell>
+						<checkbox id="chkJueves" label="Jueves"
+							checked="true" onCheck="formaCrear.aplicarIndicadorr(self)" />
+					</listcell>
+				</listitem>
+				<listitem>
+					<listcell>
+						<checkbox id="chkViernes" label="Viernes"
+							checked="true" onCheck="formaCrear.aplicarIndicadorr(self)" />
+					</listcell>
+				</listitem>
+				<listitem>
+					<listcell>
+						<checkbox id="chkSabado" label="Sabado"
+							onCheck="formaCrear.aplicarIndicadorr(self)" />
+					</listcell>
+				</listitem>
+				<listitem>
+					<listcell>
+						<checkbox id="chkDomingo" label="Domingo"
+							onCheck="formaCrear.aplicarIndicadorr(self)" />
+					</listcell>
+				</listitem>
+				<listitem>
+					<listcell>
+						<checkbox id="chkFestivos" label="Festivos"
+							onCheck="formaCrear.aplicarIndicadorr(self)" />
+					</listcell>
+				</listitem>
+			</listbox>
+		</popup>
+	</window>
+</zk>

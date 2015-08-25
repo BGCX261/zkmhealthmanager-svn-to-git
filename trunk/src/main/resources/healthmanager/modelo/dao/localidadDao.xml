@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.LocalidadDao">
+
+	<!--<typeAlias alias="localidad" type="healthmanager.modelo.bean.Localidad" />-->
+
+	<!--<mapper resource="healthmanager/modelo/dao/xml/localidadSQL.xml" />-->
+
+	<resultMap id="localidadMap" type="localidad">
+		<result column="codigo_localidad" property="codigo_localidad" />
+		<result column="localidad" property="localidad" />
+		<result column="codigo" property="codigo" />
+		<result column="coddep" property="coddep" />
+	</resultMap>
+
+	<insert id="crear" parameterType="localidad">
+		insert into public.localidad (codigo_localidad,localidad,
+		codigo,coddep)
+
+		values (#{codigo_localidad},#{localidad},
+		#{codigo},#{coddep})
+	</insert>
+
+	<update id="actualizar" parameterType="localidad">
+		update public.localidad set codigo_localidad = #{codigo_localidad},
+		localidad = #{localidad},codigo = #{codigo},
+		coddep = #{coddep}
+		where 		codigo_localidad = #{codigo_localidad}
+	</update>
+
+	<select id="consultar" parameterType="localidad" resultMap="localidadMap">
+		select codigo_localidad,localidad,
+		codigo,coddep
+		from public.localidad where codigo_localidad = #{codigo_localidad}
+	</select>
+
+	<delete id="eliminar" parameterType="localidad">
+		delete from public.localidad
+		where codigo_localidad = #{codigo_localidad}
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="localidadMap">
+		select codigo_localidad,localidad,
+		codigo,coddep
+		from public.localidad 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from public.localidad 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

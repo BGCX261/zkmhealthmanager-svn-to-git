@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.reporte_trasladoModel">
+	<select id="select" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+		SELECT
+		solicitud.tipo_identificacion,
+		solicitud.nro_identificacion,
+		solicitud.apellido1,
+		solicitud.apellido2,
+		solicitud.nombre1,
+		solicitud.nombre2,
+		solicitud.codigo_entidad,
+		eps.codigo,
+		eps.nombre AS administradora
+		FROM
+		public.solicitud_e1 AS solicitud
+		LEFT JOIN "public".administradora AS eps ON eps.codigo_empresa =
+		solicitud.codigo_empresa AND eps.codigo_sucursal =
+		solicitud.codigo_sucursal AND eps.codigo =
+		solicitud.codigo_administradora
+		where solicitud.codigo_empresa =
+		#{codigo_empresa}
+		and solicitud.codigo_sucursal = #{codigo_sucursal}
+		and solicitud.codigo_administradora = #{codigo_eps}
+		AND CAST(solicitud.creacion_date
+		AS DATE) BETWEEN #{fecha_inicio} AND #{fecha_fin}
+		<if test="solicitudes != null">
+			AND solicitud.nro_identificacion IN
+			<foreach collection="solicitudes" item="i" open="("
+				separator="," close=")">
+				#{i.nro_identificacion}
+			</foreach>
+		</if>
+	</select>
+</mapper>

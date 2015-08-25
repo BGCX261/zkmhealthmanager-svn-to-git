@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Discapacidades_lepraDao">
+
+	<resultMap id="discapacidades_lepraMap" type="discapacidades_lepra">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="codigo_historia" property="codigo_historia" />
+		<result column="identificacion" property="identificacion" />
+		<result column="tipo" property="tipo" />
+		<result column="anio" property="anio" />
+		<result column="fecha" property="fecha" />
+		<result column="ojo_derecha" property="ojo_derecha" />
+		<result column="ojo_izquierda" property="ojo_izquierda" />
+		<result column="mano_derecha" property="mano_derecha" />
+		<result column="mano_izquierda" property="mano_izquierda" />
+		<result column="pie_derecha" property="pie_derecha" />
+		<result column="pie_izquierda" property="pie_izquierda" />
+		<result column="grado_maximo" property="grado_maximo" />
+		<result column="nro_ingreso" property="nro_ingreso" />
+	</resultMap>
+
+	<insert id="crear" parameterType="discapacidades_lepra">
+		insert into public.discapacidades_lepra (codigo_empresa,codigo_sucursal,
+		codigo_historia,identificacion,tipo,
+		anio,fecha,ojo_derecha,
+		ojo_izquierda,mano_derecha,mano_izquierda,
+		pie_derecha,pie_izquierda,grado_maximo,nro_ingreso)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{codigo_historia},#{identificacion},#{tipo},
+		#{anio},#{fecha},#{ojo_derecha},
+		#{ojo_izquierda},#{mano_derecha},#{mano_izquierda},
+		#{pie_derecha},#{pie_izquierda},#{grado_maximo},#{nro_ingreso})
+	</insert>
+
+	<update id="actualizar" parameterType="discapacidades_lepra">
+		update public.discapacidades_lepra set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},codigo_historia = #{codigo_historia},
+		identificacion = #{identificacion},tipo = #{tipo},
+		anio = #{anio},fecha = #{fecha},
+		ojo_derecha = #{ojo_derecha},ojo_izquierda = #{ojo_izquierda},
+		mano_derecha = #{mano_derecha},mano_izquierda = #{mano_izquierda},
+		pie_derecha = #{pie_derecha},pie_izquierda = #{pie_izquierda},
+		grado_maximo = #{grado_maximo}, nro_ingreso = #{nro_ingreso}
+		where 		codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and codigo_historia = #{codigo_historia}
+	</update>
+
+	<select id="consultar" parameterType="discapacidades_lepra" resultMap="discapacidades_lepraMap">
+		select codigo_empresa,codigo_sucursal,
+		codigo_historia,identificacion,tipo,anio,
+		fecha,ojo_derecha,ojo_izquierda,mano_derecha,
+		mano_izquierda,pie_derecha,pie_izquierda,grado_maximo,nro_ingreso
+		from public.discapacidades_lepra where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and identificacion = #{identificacion} and nro_ingreso = #{nro_ingreso}
+	</select>
+
+	<delete id="eliminar" parameterType="discapacidades_lepra">
+		delete from public.discapacidades_lepra
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and identificacion = #{identificacion}
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="discapacidades_lepraMap">
+		select codigo_empresa,codigo_sucursal,
+		codigo_historia,identificacion,tipo,anio,
+		fecha,ojo_derecha,ojo_izquierda,mano_derecha,
+		mano_izquierda,pie_derecha,pie_izquierda,grado_maximo,nro_ingreso
+		from public.discapacidades_lepra 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="identificacion != null">
+			AND identificacion = #{identificacion}
+			</if>
+		</trim>
+		<if test="order_desc" >
+			order by cast(codigo_historia as integer) asc
+		</if>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+	<select id="listar_pacientes_lepra" parameterType="java.util.Map" resultMap="discapacidades_lepraMap">
+		select identificacion
+		from public.discapacidades_lepra 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			
+			<if test="identificacion != null">
+			AND identificacion = #{identificacion}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		group by identificacion
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+	
+	
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from public.discapacidades_lepra 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="identificacion != null">
+			AND identificacion = #{identificacion}
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

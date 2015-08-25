@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Totales_registrosDao">
+
+	<!--<typeAlias alias="admin" type="resolucion4505.modelo.bean.Admin" /> -->
+
+	<!--<mapper resource="resolucion4505/modelo/dao/xml/adminSQL.xml" /> -->
+
+	<resultMap id="totales_registrosMap" type="totales_registros">
+		<result column="id_totales" property="id_totales" />
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="esquema" property="esquema" />
+		<result column="objeto" property="objeto" />
+		<result column="cantidad_registros" property="cantidad_registros" />
+		<result column="ultimo_user" property="ultimo_user" />
+		<result column="ultimo_update" property="ultimo_update" />
+	</resultMap>
+
+	<insert id="crear" parameterType="totales_registros">
+		<selectKey keyProperty="id_totales" resultType="java.lang.Long" >
+			insert into
+		public.totales_registros (codigo_empresa,
+		codigo_sucursal,esquema,objeto,
+		cantidad_registros,ultimo_user,ultimo_update)
+
+		values (#{codigo_empresa},
+		#{codigo_sucursal},#{esquema},#{objeto},
+		#{cantidad_registros},#{ultimo_user},#{ultimo_update})
+		RETURNING id_totales;
+		</selectKey>
+		
+	</insert>
+
+	<update id="actualizar" parameterType="totales_registros">
+		update
+		public.totales_registros set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},esquema =
+		#{esquema},
+		objeto = #{objeto},cantidad_registros = #{cantidad_registros},
+		ultimo_user = #{ultimo_user},
+		ultimo_update = #{ultimo_update}
+		where id_totales = #{id_totales}
+	</update>
+
+	<select id="consultar" parameterType="totales_registros" resultMap="totales_registrosMap">
+		select id_totales,codigo_empresa,
+		codigo_sucursal,esquema,objeto,
+		cantidad_registros,ultimo_user,ultimo_update 
+		from
+		public.totales_registros 
+		where id_totales = #{id_totales}
+	</select>
+	
+	<select id="consultar_informacion" parameterType="totales_registros" resultMap="totales_registrosMap">
+		select id_totales,codigo_empresa,
+		codigo_sucursal,esquema,objeto,
+		cantidad_registros,ultimo_user,ultimo_update 
+		from
+		public.totales_registros 
+		where codigo_empresa = #{codigo_empresa} and 
+		codigo_sucursal = #{codigo_sucursal} and 
+		esquema = #{esquema} and 
+		objeto = #{objeto}
+	</select>
+
+	<delete id="eliminar" parameterType="totales_registros">
+		delete from
+		public.totales_registros 
+		where id_totales = #{id_totales}
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="totales_registrosMap">
+		select id_totales,codigo_empresa,
+		codigo_sucursal,esquema,objeto,
+		cantidad_registros,ultimo_user,ultimo_update 
+		from
+		public.totales_registros 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null"  >
+				AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null"  >
+				AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="esquema != null"  >
+				AND esquema = #{esquema}
+			</if>
+			<if test="objeto != null"  >
+				AND objeto = #{objeto}
+			</if>
+		</trim>
+		<if test="limit != null">
+			${limit}
+		</if>
+	</select>
+	
+	<select id="listar_esquemas" parameterType="java.util.Map" resultType="java.lang.String"  >
+		select DISTINCT SCHEMANAME from pg_tables where  SCHEMANAME not in ('pg_catalog', 'information_schema');
+	</select>
+	
+	<select id="listar_tablas" parameterType="java.util.Map" resultType="java.lang.String"  >
+		select TABLENAME from pg_tables where SCHEMANAME = #{nombre_esquema} order by TABLENAME
+	</select>
+
+</mapper>

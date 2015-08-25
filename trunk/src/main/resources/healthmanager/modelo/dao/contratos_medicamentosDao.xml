@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Contratos_medicamentosDao">
+
+	<resultMap id="contratos_medicamentosMap" type="contratos_medicamentos">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="codigo_administradora" property="codigo_administradora" />
+		<result column="id_plan" property="id_plan" />
+		<result column="codigo_unidad" property="codigo_unidad" />
+		<result column="codigo_medicamento" property="codigo_medicamento" />
+		<result column="requiere_prescripcion" property="requiere_prescripcion" />
+		<result column="creacion_user" property="creacion_user" />
+		<result column="creacion_date" property="creacion_date" />
+	</resultMap>
+
+	<insert id="crear" parameterType="contratos_medicamentos">
+		insert into public.contratos_medicamentos (codigo_empresa,codigo_sucursal,
+		codigo_administradora,id_plan,codigo_unidad,
+		codigo_medicamento,requiere_prescripcion,creacion_user,
+		creacion_date)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{codigo_administradora},#{id_plan},#{codigo_unidad},
+		#{codigo_medicamento},#{requiere_prescripcion},#{creacion_user},
+		#{creacion_date})
+	</insert>
+
+	<update id="actualizar" parameterType="contratos_medicamentos">
+		update public.contratos_medicamentos set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},codigo_administradora = #{codigo_administradora},
+		id_plan = #{id_plan},codigo_unidad = #{codigo_unidad},
+		codigo_medicamento = #{codigo_medicamento},requiere_prescripcion = #{requiere_prescripcion},
+		creacion_user = #{creacion_user},creacion_date = #{creacion_date}
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and codigo_administradora = #{codigo_administradora}
+		and id_plan = #{id_plan}
+		and codigo_unidad = #{codigo_unidad}
+		and codigo_medicamento = #{codigo_medicamento}
+	</update>
+
+	<select id="consultar" parameterType="contratos_medicamentos" resultMap="contratos_medicamentosMap">
+		select codigo_empresa,codigo_sucursal,
+		codigo_administradora,id_plan,codigo_unidad,codigo_medicamento,
+		requiere_prescripcion,creacion_user,creacion_date
+		from public.contratos_medicamentos where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_administradora = #{codigo_administradora}
+		and id_plan = #{id_plan} and codigo_unidad = #{codigo_unidad}
+		and codigo_medicamento = #{codigo_medicamento}
+	</select>
+
+	<delete id="eliminar" parameterType="contratos_medicamentos">
+		delete from public.contratos_medicamentos
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_administradora = #{codigo_administradora}
+		and id_plan = #{id_plan} 
+		<if test="codigo_unidad != null">
+			and codigo_unidad = #{codigo_unidad}	
+		</if>
+		<if test="codigo_medicamento != null">
+			and codigo_medicamento = #{codigo_medicamento}	
+		</if>
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="contratos_medicamentosMap">
+		select codigo_empresa,codigo_sucursal,
+		codigo_administradora,id_plan,codigo_unidad,codigo_medicamento,
+		requiere_prescripcion,creacion_user,creacion_date
+		from public.contratos_medicamentos 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="id_plan != null">
+			AND id_plan = #{id_plan}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from public.contratos_medicamentos 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

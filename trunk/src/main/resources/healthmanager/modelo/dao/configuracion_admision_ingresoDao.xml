@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Configuracion_admision_ingresoDao">
+
+	<resultMap id="configuracion_admision_ingresoMap" type="configuracion_admision_ingreso">
+		<result column="codigo_configuracion" property="codigo_configuracion" />
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="via_ingreso" property="via_ingreso" />
+		<result column="solicitar_informacion" property="solicitar_informacion" />
+		<result column="solicitar_prestador" property="solicitar_prestador" />
+		<result column="creacion_user" property="creacion_user" />
+		<result column="creacion_date" property="creacion_date" />
+		<result column="solicitar_marca" property="solicitar_marca" />
+		<result column="fac_automatica_particular" property="fac_automatica_particular" />
+		<result column="mostrar_cita" property="mostrar_cita" />
+		<result column="obligatorio_cita" property="obligatorio_cita" />
+		<result column="es_pyp" property="es_pyp" />
+		<result column="laboratorio_pyp" property="laboratorio_pyp" />
+		<result column="programa_lab_pyp" property="programa_lab_pyp" />
+		<result column="ambito_realizacion" property="ambito_realizacion" />
+		<result column="habilitar_certificado" property="habilitar_certificado" />
+		<result column="aplica_cualquier_servicio" property="aplica_cualquier_servicio" />
+	</resultMap>
+
+	<insert id="crear" parameterType="configuracion_admision_ingreso">
+		insert into public.configuracion_admision_ingreso (codigo_empresa,
+		codigo_sucursal,via_ingreso,solicitar_informacion,
+		solicitar_prestador,creacion_user,creacion_date,solicitar_marca,
+		fac_automatica_particular,mostrar_cita,obligatorio_cita,es_pyp,
+		laboratorio_pyp, programa_lab_pyp,ambito_realizacion,habilitar_certificado, aplica_cualquier_servicio)
+
+		values (#{codigo_empresa},
+		#{codigo_sucursal},#{via_ingreso},#{solicitar_informacion},
+		#{solicitar_prestador},#{creacion_user},#{creacion_date},#{solicitar_marca},
+		#{fac_automatica_particular},#{mostrar_cita},#{obligatorio_cita},#{es_pyp}, 
+		#{laboratorio_pyp}, #{programa_lab_pyp}, #{ambito_realizacion}, #{habilitar_certificado}, #{aplica_cualquier_servicio});
+		
+		<selectKey keyProperty="codigo_configuracion" resultType="java.lang.Long" >
+			select last_value as codigo_configuracion from configuracion_admision_ingreso_codigo_configuracion_seq
+		</selectKey>
+	</insert>
+
+	<update id="actualizar" parameterType="configuracion_admision_ingreso">
+		update public.configuracion_admision_ingreso set codigo_configuracion = #{codigo_configuracion},
+		codigo_empresa = #{codigo_empresa},codigo_sucursal = #{codigo_sucursal},
+		via_ingreso = #{via_ingreso},solicitar_informacion = #{solicitar_informacion},
+		solicitar_prestador = #{solicitar_prestador},creacion_user = #{creacion_user},
+		creacion_date = #{creacion_date}, solicitar_marca = #{solicitar_marca},
+		fac_automatica_particular = #{fac_automatica_particular},
+		mostrar_cita = #{mostrar_cita}, obligatorio_cita = #{obligatorio_cita},
+		es_pyp = #{es_pyp}, laboratorio_pyp = #{laboratorio_pyp}, programa_lab_pyp = #{programa_lab_pyp},
+		ambito_realizacion = #{ambito_realizacion}, habilitar_certificado = #{habilitar_certificado},
+		aplica_cualquier_servicio = #{aplica_cualquier_servicio}    
+		where codigo_configuracion = #{codigo_configuracion}
+	</update>
+
+	<select id="consultar" parameterType="configuracion_admision_ingreso" resultMap="configuracion_admision_ingresoMap">
+		select cai.codigo_configuracion,cai.codigo_empresa,
+		cai.codigo_sucursal,cai.via_ingreso,cai.solicitar_informacion,cai.solicitar_prestador,
+		cai.creacion_user,cai.creacion_date, cai.solicitar_marca,
+		cai.fac_automatica_particular,cai.mostrar_cita,cai.obligatorio_cita,
+		cai.es_pyp, cai.laboratorio_pyp, cai.programa_lab_pyp, cai.ambito_realizacion, 
+		cai.habilitar_certificado, aplica_cualquier_servicio       
+		from public.configuracion_admision_ingreso cai
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_configuracion != null">
+			AND cai.codigo_configuracion = #{codigo_configuracion}
+			</if>
+			<if test="codigo_empresa != null">
+			AND cai.codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND cai.codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="via_ingreso != null">
+			AND cai.via_ingreso = #{via_ingreso} 
+			</if>
+		</trim>
+		  
+	</select>
+
+	<delete id="eliminar" parameterType="configuracion_admision_ingreso">
+		delete from public.configuracion_admision_ingreso
+		where codigo_configuracion = #{codigo_configuracion}
+	</delete>
+	
+	<delete id="eliminar_via" parameterType="configuracion_admision_ingreso">
+		delete from public.configuracion_admision_ingreso
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		<if test="via_ingreso != null">
+			AND via_ingreso = #{via_ingreso}
+		</if>
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="configuracion_admision_ingresoMap">
+		select  cai.codigo_configuracion, cai.codigo_empresa,
+		 cai.codigo_sucursal, cai.via_ingreso, cai.solicitar_informacion, cai.solicitar_prestador,
+		 cai.creacion_user, cai.creacion_date, cai.solicitar_marca,
+		 cai.fac_automatica_particular,cai.mostrar_cita,cai.obligatorio_cita,
+		 cai.es_pyp, cai.laboratorio_pyp, cai.programa_lab_pyp, cai.ambito_realizacion,
+		 cai.habilitar_certificado, cai.aplica_cualquier_servicio       
+		from public.configuracion_admision_ingreso cai  
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND cai.codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND cai.codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="laboratorio_pyp != null">
+			AND cai.laboratorio_pyp = #{laboratorio_pyp}
+			</if>
+			<if test="es_pyp != null">
+			AND cai.es_pyp = #{es_pyp}
+			</if>
+			<if test="filtro_consulta != null">
+			${filtro_consulta}
+			</if>
+		</trim>
+		<if test="limite_paginado != null">
+		${limite_paginado}
+		</if>
+	</select>
+	
+	<select id="listar_vias" parameterType="java.util.Map" resultType="java.lang.String">
+		select  cai.via_ingreso      
+		from public.configuracion_admision_ingreso cai  
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND cai.codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND cai.codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="laboratorio_pyp != null">
+			AND cai.laboratorio_pyp = #{laboratorio_pyp}
+			</if>
+			<if test="es_pyp != null">
+			AND cai.es_pyp = #{es_pyp}
+			</if>
+			<if test="aplica_cualquier_servicio != null">
+			AND cai.aplica_cualquier_servicio = #{aplica_cualquier_servicio}
+			</if>
+			<if test="filtro_consulta != null">
+			${filtro_consulta}
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from public.configuracion_admision_ingreso 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

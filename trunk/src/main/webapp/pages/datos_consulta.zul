@@ -1,0 +1,683 @@
+<?page title="Datos_consulta" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formDatos_consulta" width="100%" height="100%"
+		use="healthmanager.controller.Datos_consultaAction" border="none">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+		<!-- **************** -->
+		<!-- Zona de Objetivo -->
+		<!-- **************** -->
+		<groupbox id="groupboxObjetivo" closable="false" mold="3d"
+			visible="false">
+			<caption label="Modulo de Datos_consulta"
+				style="color: blue;font-weight: bold" visible="false" />
+			<label
+				value="Esta pagina permite gestionar los Datos consulta."
+				visible="false" />
+		</groupbox>
+
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="false" closable="false"
+			mold="3d" height="100%">
+			<caption label="Consultar"
+				style="color: blue;font-weight: bold" visible="false" />
+
+			<separator />
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" vflex="1">
+				<auxhead>
+					<auxheader colspan="7">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<separator />
+							<textbox id="tbxValue" width="200px"
+								onOK="formDatos_consulta.buscarDatos();"
+								style="text-transform:uppercase" />
+							<space />
+							<toolbarbutton id="btnFiltro_centros"
+								image="/images/filtro.png" label="Centros de atencion"
+								onClick='popupCentros_atencion.open(self,"end_after")' />
+							<space />
+							<toolbarbutton 
+								image="/images/Magnifier.gif"
+								onClick="formDatos_consulta.buscarDatos();" label="Consultar consultas"
+								tooltiptext="Consultar Datos consulta" />
+							<separator />
+							<toolbarbutton 
+								image="/images/New16.gif"
+								onClick='formDatos_consulta.accionForm(true,"registrar");'
+								tooltiptext="Nuevo Datos consulta" label="Nueva consulta" />
+							<popup id="popupCentros_atencion">
+								<listbox id="lbxCentros_atencion"
+									multiple="true" checkmark="true" width="250px" rows="8">
+									<custom-attributes
+										org.zkoss.zul.listbox.rod="true" />
+									<listhead>
+										<listheader width="30px" />
+										<listheader>
+											<hlayout>
+												<label value="Centros"
+													style="font-weight:bold" />
+												<space />
+												<bandbox hflex="1"
+													id="bandboxBuscar_centros"
+													onOK="formDatos_consulta.buscarCentro()" />
+											</hlayout>
+										</listheader>
+									</listhead>
+									<listfoot>
+										<listfooter align="middle"
+											span="2">
+											<toolbarbutton
+												label="Consultar por centros de atencion"
+												image="/images/Magnifier.gif"
+												onClick="formDatos_consulta.buscarDatos()"
+												tooltiptext="Consultar por centros de atencion" />
+										</listfooter>
+									</listfoot>
+								</listbox>
+							</popup>
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Nro factura" width="100px" />
+					<column label="Tipo identificacion" width="120px" />
+					<column label="Nro identificacion" width="120px" />
+					<column label="Fecha consulta" width="120px" />
+					<column label="Apellidos" />
+					<column label="Nombres" />
+					<column label="Acciones" align="center"
+						width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<borderlayout width="100%" height="100%" id="groupboxEditar"
+			visible="true">
+			<north border="none">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<toolbarbutton image="/images/Save16.gif"
+						label="Guardar Datos consulta"
+						onClick="formDatos_consulta.guardarDatos_consulta();"
+						id="btGuardar" />
+					<toolbarbutton image="/images/New16.gif"
+						label="Nueva Datos consulta"
+						onClick='formDatos_consulta.nuevoRegistro()' id="btNew" />
+					<space />
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Cancelar"
+						onClick='formDatos_consulta.accionForm(false,tbxAccion.getText());'
+						id="btCancel" />
+
+					<label value="Formato impresión: " visible="false" />
+					<listbox id="lbxFormato" mold="select" width="150px"
+						visible="false" sclass="combobox">
+						<listitem value="pdf" label="PDF"
+							selected="true" />
+						<listitem value="rtf" label="WORD" />
+					</listbox>
+				</toolbar>
+			</north>
+
+
+			<center autoscroll="true" border="none">
+				<div align="center" height="100%">
+
+					<!-- *************************** -->
+					<!-- *** Insertar/Actualizar *** -->
+					<!-- *************************** -->
+					<groupbox closable="false" width="690px" mold="3d"
+						id="groupboxForm">
+						<textbox id="tbxNro_factura" visible="false" />
+						<textbox id="tbxTipo_identificacion"
+							visible="false" />
+						<textbox id="tbxCodigo_administradora"
+							visible="false" />
+						<textbox id="tbxId_plan" visible="false" />
+
+						<textbox id="tbxSexo_pct" visible="false" />
+						<textbox id="tbxFecha_nac" visible="false" />
+						<textbox id="tbxPyp_plan" visible="false" />
+
+						<textbox id="tbxSexo_pcd" visible="false" />
+						<textbox id="tbxLimite_inferior_pcd"
+							visible="false" />
+						<textbox id="tbxLimite_superior_pcd"
+							visible="false" />
+						<textbox id="tbxEs_pyp" visible="false" />
+
+						<textbox id="tbxSexo_dxpp" visible="false" />
+						<textbox id="tbxLimite_inferior_dxpp"
+							visible="false" />
+						<textbox id="tbxLimite_superior_dxpp"
+							visible="false" />
+
+						<textbox id="tbxSexo_dx1" visible="false" />
+						<textbox id="tbxLimite_inferior_dx1"
+							visible="false" />
+						<textbox id="tbxLimite_superior_dx1"
+							visible="false" />
+
+						<textbox id="tbxSexo_dx2" visible="false" />
+						<textbox id="tbxLimite_inferior_dx2"
+							visible="false" />
+						<textbox id="tbxLimite_superior_dx2"
+							visible="false" />
+
+						<textbox id="tbxSexo_dx3" visible="false" />
+						<textbox id="tbxLimite_inferior_dx3"
+							visible="false" />
+						<textbox id="tbxLimite_superior_dx3"
+							visible="false" />
+
+						<doublebox id="dbxValor_real" format="#,##0.00"
+							value="0.00" visible="false" />
+						<doublebox id="dbxDescuento" format="#,##0.00"
+							value="0.00" visible="false" />
+						<doublebox id="dbxIncremento" format="#,##0.00"
+							value="0.00" visible="false" />
+
+						<textbox id="tbxManual" visible="false" />
+						<textbox id="tbxAnio" visible="false" />
+
+						<textbox id="tbxPor_lote" visible="false" />
+
+						<textbox id="tbxConsecutivo" visible="false" />
+
+						<groupbox closable="false" mold="3d"
+							height="90%" width="100%">
+							<caption label="DATOS DE LA CONSULTA" />
+							<grid sclass="GridSinBorde">
+								<columns>
+									<column value="" width="121px" />
+									<column value="" width="171px" />
+									<column value="" width="120px" />
+									<column value="" width="250px" />
+								</columns>
+								<rows>
+									<row>
+										<cell align="left">
+											<label value="* "
+												style="color: red" tooltiptext="Campo obligatorio" />
+											<label
+												id="lbNro_identificacion" value="Paciente: " />
+										</cell>
+										<cell colspan="3"
+											align="left">
+											<hlayout>
+												<bandbox
+													id="tbxNro_identificacion" autodrop="true" readonly="true"
+													width="150px"
+													onOpen='formDatos_consulta.buscarPaciente(tbxNro_identificacion.getValue(),lbxPaciente)'>
+													<bandpopup>
+														<vbox>
+															<toolbar>
+																<label
+																	value="Buscar: " />
+																<textbox
+																	id="tbxValuePaciente"
+																	onOK='formDatos_consulta.buscarPaciente(tbxValuePaciente.getValue(),lbxPaciente)'
+																	style="text-transform:uppercase;" />
+
+															</toolbar>
+															<listbox
+																height="300px" width="600px" mold="paging" pageSize="8"
+																id="lbxPaciente"
+																onSelect='formDatos_consulta.selectedPaciente(self.getSelectedItem());'>
+																<listhead>
+																	<listheader
+																		label="Tipo Ident." width="65px" />
+																	<listheader
+																		label="Identificación" />
+																	<listheader
+																		label="Nombres" />
+																	<listheader
+																		label="Apellidos" />
+																</listhead>
+															</listbox>
+														</vbox>
+													</bandpopup>
+												</bandbox>
+												<space />
+
+												<textbox
+													id="tbxNomPaciente" width="350px"
+													style="text-transform:uppercase" readonly="true" />
+												<toolbarbutton
+													image="/images/borrar.gif" tooltiptext="Quitar registro"
+													onClick="formDatos_consulta.selectedPaciente(new Listitem());"
+													id="imgQuitar_pct" />
+											</hlayout>
+										</cell>
+									</row>
+									<row>
+										<cell align="left">
+											<label value="* "
+												style="color: red" tooltiptext="Campo obligatorio" />
+											<label
+												id="lbCodigo_prestador" value="Medico: " />
+										</cell>
+										<cell align="left"
+											colspan="3">
+											<hlayout>
+												<bandboxRegistros
+													id="tbxCodigo_prestador" widthBandbox="150px"
+													widthListbox="600px" heightListbox="300px"
+													columnas="Identificación|Nombres|Apellidos|Especialidad" />
+												<space width="5px" />
+												<textbox
+													id="tbxNomMedico" width="350px"
+													style="text-transform:uppercase" />
+												<toolbarbutton
+													id="btnLimpiarPrestador" image="/images/borrar.gif" />
+											</hlayout>
+										</cell>
+									</row>
+									<row>
+										<cell align="left">
+											<label value="* "
+												style="color: red" tooltiptext="Campo obligatorio" />
+											<label
+												value="Nro ingreso: " />
+										</cell>
+										<cell align="left">
+											<listbox id="lbxNro_ingreso"
+												mold="select" width="155px" sclass="combobox"
+												onSelect="formDatos_consulta.selectedAdmision(self.getSelectedItem())" />
+										</cell>
+										<cell align="left">
+											<label
+												value="Aseguradora: " />
+										</cell>
+										<cell align="left">
+											<textbox id="tbxAseguradora"
+												width="230px" style="text-transform:uppercase"
+												readonly="true" />
+										</cell>
+									</row>
+									<row>
+										<cell align="left">
+											<label
+												value="Autorización: " />
+										</cell>
+										<cell align="left">
+											<textbox
+												id="tbxNumero_autorizacion" width="150px"
+												style="text-transform:uppercase" maxlength="15"
+												readonly="true" />
+										</cell>
+										<cell align="left">
+											<label value="Fecha: " />
+										</cell>
+										<cell align="left">
+											<datebox
+												id="dtbxFecha_consulta" onCreate="" format="dd/MM/yyyy"
+												width="150px" />
+										</cell>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+
+						<!-- Para consultas por lotes -->
+						<listbox id="listboxProcedimientos"
+							width="680px" height="200px" checkmark="true"
+							onSelect="formDatos_consulta.onSeleccionarListboxProcedimientos()"
+							nonselectableTags="*">
+							<auxhead>
+								<auxheader colspan="6">
+									<hlayout>
+										<toolbarbutton
+											image="/images/add.png" label="Agregar Registro"
+											onClick="formDatos_consulta.openPcd();" />
+										<space />
+										<spinner id="spinnerFilas"
+											visible="false" readonly="true" value="1" width="40px"
+											constraint="no empty,min 1 max 100" />
+										<space />
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label value="Diag Ppal:" />
+										<space />
+										<bandbox
+											id="tbxCodigo_diagnostico_principal" autodrop="true"
+											readonly="false" width="110px"
+											onOpen="formDatos_consulta.buscarDx(tbxValueDx.getValue(),lbxDxpp)">
+											<bandpopup>
+												<vbox>
+													<toolbar>
+														<label
+															value="Buscar: " />
+														<textbox
+															id="tbxValueDx"
+															onOK='formDatos_consulta.buscarDx(tbxValueDx.getValue(),lbxDxpp)'
+															style="text-transform:uppercase;" />
+
+													</toolbar>
+													<listbox
+														height="300px" width="600px" mold="paging" pageSize="8"
+														id="lbxDxpp"
+														onSelect='formDatos_consulta.selectedDx(self.getSelectedItem(), tbxCodigo_diagnostico_principal, tbxNomDxpp,
+																	tbxSexo_dxpp,tbxLimite_inferior_dxpp,tbxLimite_superior_dxpp)'>
+														<listhead>
+															<listheader
+																label="Código" width="65px" />
+															<listheader
+																label="Nombre" />
+															<listheader
+																label="Sexo" width="65px" />
+															<listheader
+																label="Limite inf" width="75px" />
+															<listheader
+																label="Limite sup" width="75px" />
+														</listhead>
+													</listbox>
+												</vbox>
+											</bandpopup>
+										</bandbox>
+										<textbox id="tbxNomDxpp"
+											hflex="1" style="text-transform:uppercase" readonly="true" />
+										<toolbarbutton
+											image="/images/borrar.gif" tooltiptext="Quitar registro"
+											onClick="formDatos_consulta.selectedDx(new Listitem(), tbxCodigo_diagnostico_principal, tbxNomDxpp,
+														tbxSexo_dxpp,tbxLimite_inferior_dxpp,tbxLimite_superior_dxpp);"
+											id="imgQuitar_dxpp" />
+
+									</hlayout>
+								</auxheader>
+							</auxhead>
+							<listhead>
+								<listheader label="" value=""
+									width="30px" />
+								<listheader label="Codigo"
+									align="center" width="90px" />
+								<listheader label="Procedimiento"
+									align="center" />
+								<listheader label="Fecha" align="center"
+									width="100px" />
+								<listheader label="DX P" align="center"
+									width="80px" />
+								<listheader label="" align="center"
+									width="58px" />
+								<!-- 
+									<rows id="rowsProcedimientos" width="100%" />
+								-->
+							</listhead>
+						</listbox>
+
+
+
+					</groupbox>
+
+
+				</div>
+			</center>
+
+			<east width="500px" collapsible="true" splittable="true">
+				<groupbox closable="false" mold="3d" height="100%"
+					width="100%">
+					<caption label="DETALLE DE LA CONSULTA" />
+					<grid sclass="GridSinBorde">
+						<columns>
+							<column />
+							<column />
+							<column />
+							<column />
+						</columns>
+						<rows>
+							<row>
+								<cell align="left">
+									<label value="Consulta: " />
+								</cell>
+								<cell colspan="4" valign="middle">
+									<textbox id="tbxCodigo_consulta"
+										width="100px" style="text-transform:uppercase" maxlength="8"
+										readonly="true" />
+									<button label="..." mold="trendy"
+										onClick="formDatos_consulta.openPcd();" visible="false" />
+									<textbox id="tbxNomPcd" hflex="1"
+										style="text-transform:uppercase;margin-left:5px"
+										readonly="true" />
+
+								</cell>
+							</row>
+							<row>
+								<cell align="left">
+									<label value="Finalidad consulta: " />
+								</cell>
+								<cell align="left">
+									<listbox id="lbxFinalidad_consulta"
+										name="finalidad_cons" mold="select" hflex="1"
+										sclass="combobox" />
+								</cell>
+								<cell align="left">
+									<label value="Causa Externa: " />
+								</cell>
+								<cell align="left">
+									<listbox id="lbxCausa_externa"
+										name="causa_externa" mold="select" hflex="1"
+										sclass="combobox" />
+								</cell>
+							</row>
+							<row>
+								<cell align="left">
+									<label value="Valor: " />
+								</cell>
+								<cell align="left">
+									<doublebox id="dbxValor_consulta"
+										format="#,##0.00" hflex="1" value="0.00" readonly="true" />
+								</cell>
+								<cell align="left">
+									<label value="Total consulta: " />
+								</cell>
+								<cell align="left">
+									<doublebox id="dbxValor_neto"
+										format="#,##0.00" hflex="1" value="0.00" readonly="true" />
+								</cell>
+							</row>
+
+
+							<row>
+								<cell align="left">
+									<label value="Cuota moderadora: " />
+								</cell>
+								<cell align="left">
+									<doublebox id="dbxValor_cuota"
+										format="#,##0.00" hflex="1" value="0.00" />
+								</cell>
+								<cell align="left">
+									<label value="Diag Ingreso: " />
+								</cell>
+								<cell align="left">
+									<listbox id="lbxTipo_diagnostico"
+										name="tipo_diagnostico" mold="select" hflex="1"
+										sclass="combobox" />
+								</cell>
+							</row>
+
+							<row>
+								<cell align="left">
+									<label value="Diag R. No 1: " />
+								</cell>
+								<cell align="left" colspan="3">
+									<hlayout>
+										<bandbox
+											id="tbxCodigo_diagnostico1" autodrop="true" readonly="false"
+											width="110px"
+											onOpen="formDatos_consulta.buscarDx(tbxValueDx1.getValue(),lbxDx1)">
+											<bandpopup>
+												<vbox>
+													<toolbar>
+														<label
+															value="Buscar: " />
+														<textbox
+															id="tbxValueDx1"
+															onOK='formDatos_consulta.buscarDx(tbxValueDx1.getValue(),lbxDx1)'
+															style="text-transform:uppercase;" />
+
+													</toolbar>
+													<listbox
+														height="300px" width="600px" mold="paging" pageSize="8"
+														id="lbxDx1"
+														onSelect='formDatos_consulta.selectedDx(self.getSelectedItem(), tbxCodigo_diagnostico1, tbxNomDx1,
+																	tbxSexo_dx1,tbxLimite_inferior_dx1,tbxLimite_superior_dx1)'>
+														<listhead>
+															<listheader
+																label="Código" width="65px" />
+															<listheader
+																label="Nombre" />
+															<listheader
+																label="Sexo" width="65px" />
+															<listheader
+																label="Limite inf" width="75px" />
+															<listheader
+																label="Limite sup" width="75px" />
+														</listhead>
+													</listbox>
+												</vbox>
+											</bandpopup>
+										</bandbox>
+										<textbox id="tbxNomDx1"
+											hflex="1" style="text-transform:uppercase" readonly="true" />
+										<toolbarbutton
+											image="/images/borrar.gif" tooltiptext="Quitar registro"
+											onClick="formDatos_consulta.selectedDx(new Listitem(), tbxCodigo_diagnostico1, tbxNomDx1,
+														tbxSexo_dx1,tbxLimite_inferior_dx1,tbxLimite_superior_dx1);"
+											id="imgQuitar_dx1" />
+									</hlayout>
+								</cell>
+							</row>
+							<row>
+								<cell align="left">
+									<label value="Diag R. No 2: " />
+								</cell>
+								<cell align="left" colspan="3">
+									<hlayout>
+										<bandbox
+											id="tbxCodigo_diagnostico2" autodrop="true" readonly="false"
+											width="110px"
+											onOpen="formDatos_consulta.buscarDx(tbxValueDx2.getValue(),lbxDx2)">
+											<bandpopup>
+												<vbox>
+													<toolbar>
+														<label
+															value="Buscar: " />
+														<textbox
+															id="tbxValueDx2"
+															onOK='formDatos_consulta.buscarDx(tbxValueDx2.getValue(),lbxDx2)'
+															style="text-transform:uppercase;" />
+
+													</toolbar>
+													<listbox
+														height="300px" width="600px" mold="paging" pageSize="8"
+														id="lbxDx2"
+														onSelect='formDatos_consulta.selectedDx(self.getSelectedItem(), tbxCodigo_diagnostico2, tbxNomDx2,
+																	tbxSexo_dx2,tbxLimite_inferior_dx2,tbxLimite_superior_dx2)'>
+														<listhead>
+															<listheader
+																label="Código" width="65px" />
+															<listheader
+																label="Nombre" />
+															<listheader
+																label="Sexo" width="65px" />
+															<listheader
+																label="Limite inf" width="75px" />
+															<listheader
+																label="Limite sup" width="75px" />
+														</listhead>
+													</listbox>
+												</vbox>
+											</bandpopup>
+										</bandbox>
+										<textbox id="tbxNomDx2"
+											hflex="1" style="text-transform:uppercase" readonly="true" />
+										<toolbarbutton
+											image="/images/borrar.gif" tooltiptext="Quitar registro"
+											onClick="formDatos_consulta.selectedDx(new Listitem(), tbxCodigo_diagnostico2, tbxNomDx2,
+														tbxSexo_dx2,tbxLimite_inferior_dx2,tbxLimite_superior_dx2);"
+											id="imgQuitar_dx2" />
+									</hlayout>
+								</cell>
+							</row>
+							<row>
+								<cell align="left">
+									<label value="Diag R. No 3: " />
+								</cell>
+								<cell align="left" colspan="3">
+									<hlayout>
+										<bandbox
+											id="tbxCodigo_diagnostico3" autodrop="true" readonly="false"
+											width="110px"
+											onOpen="formDatos_consulta.buscarDx(tbxValueDx3.getValue(),lbxDx3)">
+											<bandpopup>
+												<vbox>
+													<toolbar>
+														<label
+															value="Buscar: " />
+														<textbox
+															id="tbxValueDx3"
+															onOK='formDatos_consulta.buscarDx(tbxValueDx3.getValue(),lbxDx3)'
+															style="text-transform:uppercase;" />
+
+													</toolbar>
+													<listbox
+														height="300px" width="600px" mold="paging" pageSize="8"
+														id="lbxDx3"
+														onSelect='formDatos_consulta.selectedDx(self.getSelectedItem(), tbxCodigo_diagnostico3, tbxNomDx3,
+																	tbxSexo_dx3,tbxLimite_inferior_dx3,tbxLimite_superior_dx3)'>
+														<listhead>
+															<listheader
+																label="Código" width="65px" />
+															<listheader
+																label="Nombre" />
+															<listheader
+																label="Sexo" width="65px" />
+															<listheader
+																label="Limite inf" width="75px" />
+															<listheader
+																label="Limite sup" width="75px" />
+														</listhead>
+													</listbox>
+												</vbox>
+											</bandpopup>
+										</bandbox>
+										<textbox id="tbxNomDx3"
+											hflex="1" style="text-transform:uppercase" readonly="true" />
+										<toolbarbutton
+											image="/images/borrar.gif" tooltiptext="Quitar registro"
+											onClick="formDatos_consulta.selectedDx(new Listitem(), tbxCodigo_diagnostico3, tbxNomDx3,
+														tbxSexo_dx3,tbxLimite_inferior_dx3,tbxLimite_superior_dx3);"
+											id="imgQuitar_dx3" />
+									</hlayout>
+								</cell>
+							</row>
+						</rows>
+					</grid>
+				</groupbox>
+			</east>
+		</borderlayout>
+	</window>
+</zk>

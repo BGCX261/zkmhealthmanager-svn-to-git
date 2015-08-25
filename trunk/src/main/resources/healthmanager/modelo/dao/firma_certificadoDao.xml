@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.Firma_certificadoDao">
+
+	
+
+	<resultMap id="firma_certificadoMap" type="firma_certificado">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="codigo_firma" property="codigo_firma" />
+		<result column="codigo_certificado" property="codigo_certificado" />
+	</resultMap>
+
+	<insert id="crear">
+		insert into public.firma_certificado (codigo_empresa,codigo_sucursal,
+		codigo_firma,codigo_certificado)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{codigo_firma},#{codigo_certificado})
+	</insert>
+
+	<update id="actualizar">
+		update public.firma_certificado set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},codigo_firma = #{codigo_firma},
+		codigo_certificado = #{codigo_certificado}
+		where 		codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and codigo_firma = #{codigo_firma}
+		and codigo_certificado = #{codigo_certificado}
+	</update>
+
+	<select id="consultar" resultMap="firma_certificadoMap" parameterType="java.util.Map">
+		select codigo_empresa,codigo_sucursal,
+		codigo_firma,codigo_certificado
+		from public.firma_certificado where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_firma = #{codigo_firma}
+		and codigo_certificado = #{codigo_certificado}
+	</select>
+
+	<delete id="eliminar">
+		delete from public.firma_certificado
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_firma = #{codigo_firma}
+		and codigo_certificado = #{codigo_certificado}
+	</delete>
+
+	<select id="listar" resultMap="firma_certificadoMap" parameterType="java.util.Map">
+		select codigo_empresa,codigo_sucursal,
+		codigo_firma,codigo_certificado
+		from public.firma_certificado 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+			$parameter$ like '$value$'
+			</if>
+		</trim>   
+		<if test="limit != null">
+		$limit$
+		</if>
+	</select>
+
+</mapper>

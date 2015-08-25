@@ -1,0 +1,1462 @@
+<?page title="Ficha_epidemiologia_n33" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formFicha_epidemiologia_n33" width="890px" height="450px"
+		border="normal"
+		use="healthmanager.controller.Ficha_epidemiologia_n33Action">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="false" closable="false"
+			mold="3d" height="90%">
+			<caption label="Consultar"
+				style="color: blue;font-weight: bold" />
+
+			<separator />
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" height="90%" mold="paging"
+				pageSize="20" vflex="1">
+				<auxhead>
+					<auxheader colspan="4">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<separator />
+							<textbox id="tbxValue" width="200px"
+								onOK="formFicha_epidemiologia_n33.buscarDatos();"
+								style="text-transform:uppercase" />
+							<separator />
+							<button mold="trendy"
+								image="/images/Magnifier.gif"
+								onClick="formFicha_epidemiologia_n33.buscarDatos();"
+								tooltiptext="Consultar Ficha epidemiologia n33" />
+							<separator />
+							<button mold="trendy"
+								image="/images/New16.gif"
+								onClick='formFicha_epidemiologia_n33.accionForm(true,"registrar");'
+								tooltiptext="Nuevo Ficha epidemiologia n33" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Codigo ficha" />
+					<column label="Fecha inicial" />
+					<column label="Identificacion" />
+					<column label="Acciones" align="center"
+						width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<borderlayout width="100%" height="98%" id="groupboxEditar"
+			visible="true">
+			<north border="none" visible="false">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<toolbarbutton image="/images/Save16.gif"
+						label="Guardar Ficha"
+						onClick="formFicha_epidemiologia_n33.guardarDatos();"
+						id="btGuardar" />
+					<toolbarbutton image="/images/New16.gif"
+						label="Nueva Ficha"
+						onClick='formFicha_epidemiologia_n33.accionForm(true,"registrar");'
+						id="btNew" />
+					<space />
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Cancelar"
+						onClick='formFicha_epidemiologia_n33.accionForm(false,tbxAccion.getText());'
+						id="btCancel" />
+					<toolbarbutton image="/images/print_ico.gif"
+						label="Imprimir Ficha"
+						onClick="formFicha_epidemiologia_n33.imprimir();" id="btImprimir"
+						visible="false" />
+					<space />
+					<label value="Formato impresión: " visible="false" />
+					<listbox id="lbxFormato" mold="select" width="150px"
+						visible="false" sclass="combobox">
+						<listitem value="pdf" label="PDF"
+							selected="true" />
+						<listitem value="rtf" label="WORD" />
+					</listbox>
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center">
+
+					<!-- *************************** -->
+					<!-- *** Insertar/Actualizar *** -->
+					<!-- *************************** -->
+					<groupbox closable="false" width="845px"
+						mold="3d">
+
+						<groupbox mold="3d" closable="false">
+							<caption label="DATOS DE LA FICHA"
+								style="font-weight:bold" />
+							<grid>
+								<columns>
+									<column />
+								</columns>
+								<rows>
+									<row visible="false">
+										<cell></cell>
+										<cell height="30px">
+											<label
+												id="lbCodigo_diagnostico" value="Codigo diagnostico: " />
+										</cell>
+										<cell>
+											<textbox
+												id="tbxCodigo_diagnostico" width="170px"
+												style="text-transform:uppercase" maxlength="20" />
+										</cell>
+										<cell></cell>
+									</row>
+									<row>
+									<cell>
+										<hlayout>
+											<space width="130px" />
+											<label value="* "
+												style="color: red" tooltiptext="Campo obligatorio" />
+											<label id="lbFecha_inicial"
+												value="Fecha: " />
+											<datebox
+												id="dtbxFecha_inicial" onCreate="self.value = new Date();"
+												format="dd-MM-yyyy" width="170px" readonly="true" buttonVisible="false"/>
+											<space width="70px" />
+											<label value="* "
+												style="color: red" tooltiptext="Campo obligatorio" />
+											<label id="lbCodigo_ficha"
+												value="Codigo ficha: " />
+											<textbox readonly="true"
+												id="tbxCodigo_ficha" width="170px"
+												style="text-transform:uppercase" maxlength="20" />
+										</hlayout>
+									</cell>
+								</row>
+								</rows>
+							</grid>
+						</groupbox>
+
+						<groupbox mold="3d" closable="false">
+							<caption label="RELACIÓN CON DATOS BÁSICOS"
+								style="font-weight:bold" />
+							<grid>
+							<columns visible="false">
+									<column width="100px" />
+									<column />
+									<column />
+									<column />
+									<column />
+									<column width="220px" />
+								</columns>
+								<rows>
+									
+									<row>
+										<cell>
+											<label value="* " style="color: red"
+												tooltiptext="Campo obligatorio" />
+											<label value="Paciente: " />
+										</cell>
+										<cell colspan="4">
+											<textbox id="tbxIdentificacion" width="27%" readonly="true" disabled="true"/>
+												<!--  -->
+											<space width="1%" />
+											<textbox id="tbxNombres_y_apellidos" width="65%"
+												style="text-transform:uppercase" readonly="true" />
+										</cell>
+										<cell>
+											<space width="15px" />
+											<label value="Tipo: " />
+											<space width="23px" />
+											<textbox id="tbxTipo_identidad" width="135px" style="text-transform:uppercase" readonly="true"/>
+										</cell>
+											
+									</row>
+									<row>
+										<cell>
+											<label value="* " style="color: red"
+												tooltiptext="Campo obligatorio" />
+											<label value="Aseguradora: " />
+										</cell>
+										<cell colspan="4">
+											<textbox id="tbxAseguradora" width="27%" readonly="true" disabled="true"/>
+												<!--  -->
+											<space width="1%" />
+											<textbox id="tbxNombre_aseguradora" width="65%"
+												style="text-transform:uppercase" readonly="true" />
+										</cell>
+										<cell></cell>
+											
+									</row>
+		
+								</rows>
+							</grid>
+						</groupbox>
+						<groupbox mold="3d" closable="false">
+							<caption label="NATURALEZA DE LA VIOLENCIA"
+								style="font-weight:bold" />
+							<grid>
+								<columns>
+									<column width="90px" />
+									<column label="" width="30px" />
+									<column width="130px" />
+									<column label="" width="30px" />
+									<column width="100px" />
+									<column label="" width="30px" />
+									<column width="180px" />
+									<column label="" width="30px" />
+									<column width="170px" />
+									<column label="" width="30px" />
+								</columns>
+								<rows>
+									<row>
+										<cell>
+											<label
+												id="lbViolecia_fisica" value="Violecia física: " />
+										</cell>
+										<cell>
+											<checkbox
+												id="chbViolecia_fisica" />
+										</cell>
+										<cell>
+											<label
+												id="lbPrivacion_negligencia"
+												value="Privación negligencia: " />
+										</cell>
+										<cell>
+											<checkbox
+												id="chbPrivacion_negligencia" />
+										</cell>
+										<cell>
+											<label id="lbAcoso_sexual"
+												value="Acoso sexual: " />
+										</cell>
+										<cell>
+											<checkbox
+												id="chbAcoso_sexual" />
+										</cell>
+										<cell>
+											<label
+												id="lbEplotacion_sexual"
+												value="Eplotación sexual comercial de niños, niñas y adolescentes: " />
+										</cell>
+										<cell>
+											<checkbox
+												id="chbEplotacion_sexual" />
+										</cell>
+										<cell>
+											<label
+												id="lbPornografia_nna"
+												value="Pornografía con NNA (niños, niñas y adolescentes) : " />
+										</cell>
+										<cell>
+											<checkbox
+												id="chbPornografia_nna" />
+										</cell>
+									</row>
+									<row>
+										<cell>
+											<label id="lbAbuso_sexual"
+												value="Abuso sexual: " />
+										</cell>
+										<cell>
+											<checkbox
+												id="chbAbuso_sexual" />
+										</cell>
+										<cell>
+											<label id="lbAsalto_sexual"
+												value="Asalto sexual: " />
+										</cell>
+										<cell>
+											<checkbox
+												id="chbAsalto_sexual" />
+										</cell>
+										<cell>
+											<label id="lbTurismo_sexual"
+												value="Turismo sexual: " />
+										</cell>
+										<cell>
+											<checkbox
+												id="chbTurismo_sexual" />
+										</cell>
+										<cell>
+											<label
+												id="lbTrata_de_persona"
+												value="Trata de personas para explotación sexual: " />
+										</cell>
+										<cell>
+											<checkbox
+												id="chbTrata_de_persona" />
+										</cell>
+										<cell>
+											<label
+												id="lbViolencia_psicologia" value="Violencia psicológica: " />
+										</cell>
+										<cell>
+											<checkbox
+												id="chbViolencia_psicologia" />
+										</cell>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+						<groupbox mold="3d" closable="false">
+							<caption label="NATURALEZA DE LA VIOLENCIA"
+								style="font-weight:bold" />
+							<grid>
+								<columns>
+									<column width="26%" />
+									<column width="20%" />
+									<column width="" />
+									<column width="17%" />
+
+								</columns>
+								<rows>
+									<row>
+										<cell />
+										<cell colspan="4">
+											<label
+												value="Escolaridad de la victima" />
+											<space width="30px" />
+											<listbox
+												id="lbxEscolaridad_de_victima" mold="select" width="240px"
+												sclass="combobox" />
+										</cell>
+									</row>
+									<row>
+										<cell colspan="5">
+											<label
+												style="font-weight:bold"
+												value="Factor de vulneorabilidad de la víctima que influyó
+										en la ocurrencia del hecho violento" />
+											<radiogroup
+											onCheck="formFicha_epidemiologia_n33.deshabilitar_conRadio(self,new AbstractComponent[]{tbxCual_factor})"
+												id="rdbFactor_de_vulnerabilidad" />
+										</cell>
+									</row>
+
+									<row>
+										<cell>
+											<radio
+												label="Población LGTBI" value="1"
+												radiogroup="rdbFactor_de_vulnerabilidad" />
+
+										</cell>
+										<cell>
+											<radio checked="true"
+												label="Líderes civicos" value="1"
+												radiogroup="rdbFactor_de_vulnerabilidad" />
+
+										</cell>
+										<cell>
+											<radio
+												label="Actividades sindicales o gremiales" value="1"
+												radiogroup="rdbFactor_de_vulnerabilidad" />
+
+										</cell>
+										<cell>
+											<radio label="Misión médica"
+												value="1" radiogroup="rdbFactor_de_vulnerabilidad" />
+
+										</cell>
+									</row>
+
+									<row>
+										<cell>
+											<radio
+												label="Mujer cabeza de familia" value="1"
+												radiogroup="rdbFactor_de_vulnerabilidad" />
+
+										</cell>
+										<cell>
+											<radio
+												label="Acrividad política" value="1"
+												radiogroup="rdbFactor_de_vulnerabilidad" />
+
+										</cell>
+										<cell>
+											<radio
+												label="Persona bajo protección sanitaria" value="1"
+												radiogroup="rdbFactor_de_vulnerabilidad" />
+
+										</cell>
+										<cell>
+											<radio label="Religiosos"
+												value="1" radiogroup="rdbFactor_de_vulnerabilidad" />
+
+										</cell>
+									</row>
+
+
+									<row>
+										<cell>
+											<radio
+												label="Funcionarios(as) judiciales" value="1"
+												radiogroup="rdbFactor_de_vulnerabilidad" />
+
+										</cell>
+										<cell>
+											<radio label="Campesino(a)"
+												value="1" radiogroup="rdbFactor_de_vulnerabilidad" />
+
+										</cell>
+										<cell>
+											<radio
+												label="Consumidor de sustancias psicoactivas" value="1"
+												radiogroup="rdbFactor_de_vulnerabilidad" />
+
+										</cell>
+										<cell>
+											<radio label="Maestro"
+												value="1" radiogroup="rdbFactor_de_vulnerabilidad" />
+
+										</cell>
+									</row>
+									<row>
+										<cell>
+											<radio
+												label="Tribus urbanas" value="1"
+												radiogroup="rdbFactor_de_vulnerabilidad" />
+
+										</cell>
+										<cell>
+											<radio label="Reciclador"
+												value="1" radiogroup="rdbFactor_de_vulnerabilidad" />
+
+										</cell>
+										<cell>
+											<radio
+												label="Defensor(a) de los derechos humanos" value="1"
+												radiogroup="rdbFactor_de_vulnerabilidad" />
+
+										</cell>
+										<cell>
+											<radio
+												label="Servidor público" value="1"
+												radiogroup="rdbFactor_de_vulnerabilidad" />
+
+										</cell>
+									</row>
+
+									<row>
+										<cell>
+											<radio
+												label="Trabajador (a) sexual" value="1"
+												radiogroup="rdbFactor_de_vulnerabilidad" />
+
+										</cell>
+										<cell>
+											<radio
+												label="Habitante de calle" value="1"
+												radiogroup="rdbFactor_de_vulnerabilidad" />
+
+										</cell>
+										<cell>
+											<radio
+												label="Presunto colaborador (a) grupo ilegal" value="1"
+												radiogroup="rdbFactor_de_vulnerabilidad" />
+
+										</cell>
+										<cell>
+											<radio
+												label="Fuerza pública" value="1"
+												radiogroup="rdbFactor_de_vulnerabilidad" />
+
+										</cell>
+									</row>
+									<row>
+										<cell>
+											<radio label="Periodista"
+												value="1" radiogroup="rdbFactor_de_vulnerabilidad" />
+
+										</cell>
+										<cell>
+											<radio label="consejales"
+												value="1" radiogroup="rdbFactor_de_vulnerabilidad" />
+
+										</cell>
+										<cell>
+											<radio
+												label="Desmovilizados (as) y reinsertados(as)" value="1"
+												radiogroup="rdbFactor_de_vulnerabilidad" />
+
+										</cell>
+										<cell>
+											<radio label="Exconvictos"
+												value="1" radiogroup="rdbFactor_de_vulnerabilidad" />
+
+										</cell>
+									</row>
+									<row>
+										<cell>
+											<radio label="Estudiantes"
+												value="1" radiogroup="rdbFactor_de_vulnerabilidad" />
+
+										</cell>
+										<cell colspan="3">
+											<radio label="Otros"
+											onFocus="tbxCual_factor.focus()"
+												value="S" radiogroup="rdbFactor_de_vulnerabilidad" />
+											<space width="25px" />
+											<label id="lbCual_factor"
+												value="¿Cuál factor de vulnerabilidad?: " />
+											<space />
+											<textbox id="tbxCual_factor" readonly="true"
+												width="300px" style="text-transform:uppercase"
+												maxlength="20" />
+										</cell>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+
+						<groupbox mold="3d" closable="false">
+							<grid>
+								<columns>
+									<column width="57%" />
+									<column width="" />
+								</columns>
+								<rows>
+									<row
+										style="border: 1px solid #aaaaaa">
+										<cell>
+											<label
+												style="font-weight:bold"
+												value="Antecedentes de hecho similar (en los
+									últimos tres meses, que requirió atención médica)" />
+										</cell>
+										<cell>
+											<label
+												style="font-weight:bold"
+												value="¿Presencia de alcohol u otras sustancias en víctima?" />
+										</cell>
+									</row>
+
+									<row
+										style="border: 1px solid #aaaaaa">
+										<cell>
+											<space width="160px" />
+											<radiogroup
+												id="rdbAntecedentes_hecho" />
+											<radio label="SÍ" value="1"
+												radiogroup="rdbAntecedentes_hecho" />
+											<space width="50px" />
+											<radio label="NO" value="1"
+												radiogroup="rdbAntecedentes_hecho" checked="true" />
+										</cell>
+										<cell>
+											<space width="110px" />
+											<radiogroup
+												id="rdbPresencia_de_alcohol" />
+											<radio label="SÍ" value="1"
+												radiogroup="rdbPresencia_de_alcohol" />
+											<space width="50px" />
+											<radio label="NO" value="1"
+												radiogroup="rdbPresencia_de_alcohol" checked="true" />
+										</cell>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+
+						<groupbox mold="3d" closable="false">
+							<caption label="NATURALEZA DE LA VIOLENCIA"
+								style="font-weight:bold" />
+							<grid>
+								<columns>
+									<column width="24%"
+										label="Edad aparente del agresor(a)" />
+									<column width="20%"
+										label="Sexo del agresor" />
+									<column width=""
+										label="Escolaridad del agresor" />
+									<column width="22%"
+										label="Ocupación del agresor" />
+
+								</columns>
+								<rows>
+									<row>
+										<cell>
+											<space width="68px" />
+											<textbox
+												id="tbxEdad_aparente" width="50px"
+												style="text-transform:uppercase" maxlength="20" />
+										</cell>
+										<cell>
+											<space />
+											<radiogroup
+												id="rdbSexo_agresor">
+												<radio label="Hombre"
+													value="1" />
+												<space />
+												<radio label="Mujer"
+													value="2" checked="true" />
+											</radiogroup>
+										</cell>
+
+										<cell>
+											<listbox
+												id="lbxEscolaridad_del_agresor" mold="select" width="250px"
+												sclass="combobox" />
+										</cell>
+										<cell>
+											<bandbox
+												id="tbxOcupacion_del_agresor" autodrop="true"
+												readonly="true" width="170px"
+												onOpen='formFicha_epidemiologia_n33.buscarOcupacion(tbxValuePrestador.getValue(),lbxOcupacion)'>
+												<bandpopup>
+													<vbox>
+														<toolbar>
+															<label
+																value="Buscar: " />
+															<textbox
+																id="tbxValuePrestador"
+																onChanging='formFicha_epidemiologia_n33.buscarOcupacion(event.getValue(),lbxOcupacion)'
+																style="text-transform:uppercase;" />
+															<toolbarbutton
+																image="/images/borrar.gif" tooltiptext="Quitar"
+																onClick='formFicha_epidemiologia_n33.selectedOcupaciones(new Listitem())' />
+														</toolbar>
+														<listbox
+															height="300px" width="300px" mold="paging" pageSize="4"
+															id="lbxOcupacion"
+															onSelect='formFicha_epidemiologia_n33.selectedOcupaciones(self.getSelectedItem())'>
+															<listhead>
+																<listheader
+																	label="Codigo" />
+																<listheader
+																	label="Nombres" />
+															</listhead>
+														</listbox>
+													</vbox>
+												</bandpopup>
+											</bandbox>
+										</cell>
+
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+						<groupbox mold="3d" closable="false">
+							<grid>
+								<columns>
+									<column width="24%" />
+									<column width="25%" />
+									<column width="" />
+									<column width="22%" />
+								</columns>
+								<rows>
+									<row>
+										<cell colspan="4">
+											<label
+												style="font-weight:bold" value="Familiaridad o parentesco" />
+											<radiogroup
+											onCheck="formFicha_epidemiologia_n33.deshabilitar_conRadio(self,new AbstractComponent[]{tbxCual_otro_fami})"
+												id="rdbFamiliaridad_o_parent" />
+										</cell>
+									</row>
+
+									<row>
+										<cell>
+											<radio label="Esposo"
+												value="1" checked="true"
+												radiogroup="rdbFamiliaridad_o_parent" />
+										</cell>
+										<cell>
+											<space />
+											<radio label="Padre"
+												value="2" radiogroup="rdbFamiliaridad_o_parent"
+												checked="true" />
+										</cell>
+										<cell>
+											<radio label="Madrastra"
+												value="1" radiogroup="rdbFamiliaridad_o_parent" />
+										</cell>
+										<cell>
+											<radio
+												label="Compañero (a) permanente" value="1"
+												radiogroup="rdbFamiliaridad_o_parent" />
+										</cell>
+									</row>
+									<row>
+										<cell>
+											<radio label="Madre"
+												value="1" radiogroup="rdbFamiliaridad_o_parent" />
+										</cell>
+										<cell>
+											<space />
+											<radio label="Tío" value="2"
+												radiogroup="rdbFamiliaridad_o_parent" />
+										</cell>
+										<cell>
+											<radio label="Novio"
+												value="1" radiogroup="rdbFamiliaridad_o_parent" />
+										</cell>
+										<cell>
+											<radio label="Hijo"
+												value="1" radiogroup="rdbFamiliaridad_o_parent" />
+										</cell>
+									</row>
+									<row>
+										<cell>
+											<radio label="Primo"
+												value="1" radiogroup="rdbFamiliaridad_o_parent" />
+										</cell>
+										<cell>
+											<space />
+											<radio label="Amante"
+												value="2" radiogroup="rdbFamiliaridad_o_parent" />
+										</cell>
+										<cell>
+											<radio
+												label="Encargado(a) del NNA" value="1"
+												radiogroup="rdbFamiliaridad_o_parent" />
+										</cell>
+										<cell>
+											<radio label="Cuñado"
+												value="1" radiogroup="rdbFamiliaridad_o_parent" />
+										</cell>
+									</row>
+									<row>
+										<cell>
+											<radio label="Ex-esposo(a)"
+												value="1" radiogroup="rdbFamiliaridad_o_parent" />
+										</cell>
+										<cell>
+											<space />
+											<radio label="Hermano"
+												value="2" radiogroup="rdbFamiliaridad_o_parent" />
+										</cell>
+										<cell>
+											<radio label="Suegro"
+												value="1" radiogroup="rdbFamiliaridad_o_parent" />
+										</cell>
+										<cell>
+											<radio label="Ex-novio(a)"
+												value="1" radiogroup="rdbFamiliaridad_o_parent" />
+										</cell>
+									</row>
+									<row>
+										<cell>
+											<radio label="Abuelo"
+												value="1" radiogroup="rdbFamiliaridad_o_parent" />
+										</cell>
+										<cell>
+											<space />
+											<radio
+												label="Otros familiares" value="2"
+												radiogroup="rdbFamiliaridad_o_parent" />
+										</cell>
+										<cell>
+											<radio label="Ex-amante"
+												value="1" radiogroup="rdbFamiliaridad_o_parent" />
+										</cell>
+										<cell>
+											<radio label="Padrastro"
+												value="1" radiogroup="rdbFamiliaridad_o_parent" />
+										</cell>
+									</row>
+									<row>
+										<cell>
+											<radio
+												label="Sin información" value="1"
+												radiogroup="rdbFamiliaridad_o_parent" />
+										</cell>
+										<cell colspan="3">
+											<space />
+											<radio label="Otro"
+											onFocus="tbxCual_otro_fami.focus()"
+												value="S" radiogroup="rdbFamiliaridad_o_parent" />
+											<space />
+											<label id="lbCual_otro_fami"
+												value="¿Cuál otro familiar?: " />
+											<space />
+											<textbox readonly="true"
+												id="tbxCual_otro_fami" width="170px"
+												style="text-transform:uppercase" maxlength="20" />
+											<space />
+											<label
+												value="Convive con el agresor(a):" />
+											<radiogroup
+												id="rdbConvive_con_el_agresor" />
+											<radio label="SÍ" value="1"
+												radiogroup="rdbConvive_con_el_agresor" />
+											<space />
+											<radio label="NO" value="2"
+												radiogroup="rdbConvive_con_el_agresor" checked="true" />
+										</cell>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+						<groupbox mold="3d" closable="false">
+							<grid>
+								<columns>
+									<column width="24%" />
+									<column width="25%" />
+									<column width="" />
+									<column width="22%" />
+								</columns>
+								<rows>
+									<row>
+										<cell colspan="4">
+											<label
+												style="font-weight:bold" value="No familiar" />
+											<radiogroup
+											 	onCheck="formFicha_epidemiologia_n33.deshabilitar_conRadio(self,new AbstractComponent[]{tbxConvive_con_el_agresor2})"
+												id="rdbNo_familiar" />
+										</cell>
+									</row>
+									<row>
+										<cell>
+											<radio label="Profesor"
+												value="1" radiogroup="rdbNo_familiar" />
+										</cell>
+										<cell>
+											<space />
+											<radio checked="true"
+												label="Compañero(a) de estudio" value="2"
+												radiogroup="rdbNo_familiar" />
+										</cell>
+										<cell>
+											<radio label="Vecino(a)"
+												value="1" radiogroup="rdbNo_familiar" />
+										</cell>
+										<cell>
+											<radio label="Amigo(a)"
+												value="1" radiogroup="rdbNo_familiar" />
+										</cell>
+									</row>
+									<row>
+										<cell>
+											<radio label="Custodio(a)"
+												value="1" radiogroup="rdbNo_familiar" />
+										</cell>
+										<cell>
+											<space />
+											<radio
+												label="Conocido(a) sin ningún trato" value="2"
+												radiogroup="rdbNo_familiar" />
+										</cell>
+										<cell>
+											<radio
+												label="Compañero(a) de trabajo" value="1"
+												radiogroup="rdbNo_familiar" />
+										</cell>
+										<cell>
+											<radio
+												label="Desconocido(a)" value="1"
+												radiogroup="rdbNo_familiar" />
+										</cell>
+									</row>
+									<row>
+										<cell>
+											<radio
+												label="Sin información" value="1"
+												radiogroup="rdbNo_familiar" />
+										</cell>
+										<cell>
+											<space />
+											<radio label="Otros"
+											onFocus="tbxConvive_con_el_agresor2.focus()"
+												value="S" radiogroup="rdbNo_familiar" />
+										</cell>
+										<cell colspan="2">
+											<label
+												id="lbConvive_con_el_agresor2"
+												value="¿Cual otro agresor no familiar?: " />
+											<space />
+											<textbox readonly="true"
+												id="tbxConvive_con_el_agresor2" width="210px"
+												style="text-transform:uppercase" maxlength="20" />
+										</cell>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+						<groupbox mold="3d" closable="false">
+							<grid>
+								<columns>
+									<column width="24%" />
+									<column width="25%" />
+									<column width="" />
+									<column width="22%" />
+								</columns>
+								<rows>
+									<row>
+										<cell colspan="4">
+											<label
+												style="font-weight:bold" value="Grupos" />
+											<radiogroup id="rdbGrupos" 
+											onCheck="formFicha_epidemiologia_n33.deshabilitar_conRadio(self,new AbstractComponent[]{tbxCual_otro_grupo})"/>
+										</cell>
+									</row>
+									<row>
+										<cell>
+											<radio label="Ejército"
+												checked="true" value="1" radiogroup="rdbGrupos" />
+										</cell>
+										<cell>
+											<space />
+											<radio label="Armada"
+												value="2" radiogroup="rdbGrupos" />
+										</cell>
+										<cell>
+											<radio label="Narcotráfico"
+												value="1" radiogroup="rdbGrupos" />
+										</cell>
+										<cell>
+											<radio
+												label="Pandillas y tribus urbanas" value="1"
+												radiogroup="rdbGrupos" />
+										</cell>
+									</row>
+									<row>
+										<cell>
+											<radio label="Guerrillero"
+												value="1" radiogroup="rdbGrupos" />
+										</cell>
+										<cell>
+											<space />
+											<radio label="Fuerza aérea"
+												value="2" radiogroup="rdbGrupos" />
+										</cell>
+										<cell>
+											<radio label="Polícia"
+												value="1" radiogroup="rdbGrupos" />
+										</cell>
+										<cell>
+											<radio
+												label="Bandas criminales" value="1" radiogroup="rdbGrupos" />
+										</cell>
+									</row>
+									<row>
+										<cell>
+											<radio label="Religioso"
+												value="1" radiogroup="rdbGrupos" />
+										</cell>
+										<cell>
+											<space />
+											<radio
+												label="No sabe no responde" value="2"
+												radiogroup="rdbGrupos" />
+										</cell>
+										<cell>
+											<radio
+												label="Sin Informacion" value="1" radiogroup="rdbGrupos" />
+										</cell>
+										<cell>
+											<radio label="Paramilitar"
+												value="1" radiogroup="rdbGrupos" />
+										</cell>
+									</row>
+									<row>
+										<cell colspan="4">
+											<radio label="Otro" onFocus="tbxCual_otro_grupo.focus()"
+												value="S" radiogroup="rdbGrupos" />
+											<space />
+											<label
+												id="lbCual_otro_grupo" value="¿Cuál otro grupo?: " />
+											<space />
+											<textbox readonly="true"
+												id="tbxCual_otro_grupo" width="200px"
+												style="text-transform:uppercase" maxlength="100" />
+
+											<space width="50px" />
+											<label
+												value="¿Presencia de alcohol y otras sustancias en egrsor(a)?" />
+											<radiogroup
+												id="rdbPresencia_de_alcohol2" />
+											<radio label="SÍ" value="S"
+												radiogroup="rdbPresencia_de_alcohol2" />
+											<space />
+											<radio label="NO" value="N"
+												radiogroup="rdbPresencia_de_alcohol2" checked="true" />
+										</cell>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+
+
+						<groupbox mold="3d" closable="false">
+							<caption label="DATOS DEL HECHO"
+								style="font-weight:bold" />
+							<grid>
+								<columns>
+									<column width="150px" />
+									<column label="" width="50px" />
+									<column width="160px" />
+									<column label="" width="50px" />
+									<column width="150px" />
+									<column label="" width="50px" />
+									<column width="160px" />
+									<column label="" width="50px" />
+								</columns>
+								<rows>
+									<row>
+										<cell colspan="8">
+											<label
+												style="font-weight:bold"
+												value="Armas y otros mecanismos utilizados para la agresión" />
+										</cell>
+									</row>
+									<row>
+										<cell>
+											<label id="lbAhorcamiento"
+												value="Ahorcamiento: " />
+										</cell>
+										<cell>
+											<checkbox
+												id="chbAhorcamiento" />
+										</cell>
+										<cell>
+											<label id="lbCortante"
+												value="Cortante: " />
+										</cell>
+										<cell>
+											<checkbox id="chbCortante" />
+										</cell>
+										<cell>
+											<label id="lbInmersion"
+												value="Inmersion: " />
+										</cell>
+										<cell>
+											<checkbox id="chbInmersion" />
+										</cell>
+										<cell>
+											<label id="lbMordedura"
+												value="Mordedura: " />
+										</cell>
+										<cell>
+											<checkbox id="chbMordedura" />
+										</cell>
+									</row>
+									<row>
+										<cell>
+											<label id="lbCadidas"
+												value="Cadidas: " />
+										</cell>
+										<cell>
+											<checkbox id="chbCadidas" />
+										</cell>
+										<cell>
+											<label id="lbElectrocucion"
+												value="Electrocucion: " />
+										</cell>
+										<cell>
+											<checkbox
+												id="chbElectrocucion" />
+										</cell>
+										<cell>
+											<label id="lbOtra"
+												value="Otra: " />
+										</cell>
+										<cell>
+											<checkbox id="chbOtra" />
+										</cell>
+										<cell>
+											<label id="lbProyectil_arma"
+												value="Proyectil arma: " />
+										</cell>
+										<cell>
+											<checkbox
+												id="chbProyectil_arma" />
+										</cell>
+									</row>
+									<row>
+										<cell>
+											<label id="lbContundente"
+												value="Contundente: " />
+										</cell>
+										<cell>
+											<checkbox
+												id="chbContundente" />
+										</cell>
+										<cell>
+											<label id="lbExplosivo"
+												value="Explosivo: " />
+										</cell>
+										<cell>
+											<checkbox id="chbExplosivo" />
+										</cell>
+										<cell>
+											<label
+												id="lbMinas_antipersona" value="Minas antipersona: " />
+										</cell>
+										<cell>
+											<checkbox
+												id="chbMinas_antipersona" />
+										</cell>
+										<cell>
+											<label id="lbQuemadura"
+												value="Quemadura: " />
+										</cell>
+										<cell>
+											<checkbox id="chbQuemadura" />
+										</cell>
+									</row>
+									<row>
+										<cell>
+											<label id="lbIntoxicacion"
+												value="Intoxicacion: " />
+										</cell>
+										<cell colspan="8">
+											<checkbox
+												id="chbIntoxicacion" />
+											<space />
+											<label
+												id="lbNombre_sustancia"
+												value="Nombre de la sustancia que produjo intoxicación: " />
+											<space />
+											<textbox
+												id="tbxNombre_sustancia" width="330px" readonly="true"
+												style="text-transform:uppercase" maxlength="500" />
+											<space width="40px" />
+											<label id="lbCual_otra_arma"
+												value="¿Cuál otra arma o mecanismo utilizado?: " />
+											<space />
+											<textbox readonly="true"
+												id="tbxCual_otra_arma" width="370px"
+												style="text-transform:uppercase" maxlength="500" />
+										</cell>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+						<groupbox mold="3d" closable="false">
+							<grid>
+								<columns>
+									<column width="" />
+								</columns>
+								<rows>
+									<row>
+										<cell>
+											<label
+												value="Otros mecanismos:" style="font-weight:bold" />
+										</cell>
+									</row>
+									<row>
+										<cell>
+											<radiogroup
+												id="rdbOtros_mecanismos" />
+											<radio label="Insultos"
+												value="1" radiogroup="rdbOtros_mecanismos" />
+											<space />
+											<radio label="Amenazas"
+												value="2" radiogroup="rdbOtros_mecanismos" checked="true" />
+											<space />
+											<radio label="Humillaciones"
+												value="1" radiogroup="rdbOtros_mecanismos" />
+											<space />
+											<radio label="Otro"
+												value="1" radiogroup="rdbOtros_mecanismos" />
+											<space />
+											<label id="lbCual_otro_meca"
+												value="¿Cuál otro mecanismo utilizado para la agresión?: " />
+											<space />
+											<textbox
+												id="tbxCual_otro_meca" width="187px"
+												style="text-transform:uppercase" maxlength="20" />
+										</cell>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+						<groupbox mold="3d" closable="false">
+							<grid>
+								<columns>
+									<column width="" />
+									<column width="" />
+									<column width="" />
+									<column width="" />
+								</columns>
+								<rows>
+									<row>
+										<cell colspan="4">
+											<label value="Escenario:"
+												style="font-weight:bold" />
+											<radiogroup
+												id="rdbEscenario" />
+										</cell>
+									</row>
+									<row>
+										<cell>
+											<radio label="Vía pública"
+												value="1" radiogroup="rdbEscenario" />
+										</cell>
+										<cell>
+											<radio label="Escuela"
+												value="2" radiogroup="rdbEscenario" checked="true" />
+										</cell>
+										<cell>
+											<radio
+												label="Sitio de diversión" value="3"
+												radiogroup="rdbEscenario" />
+										</cell>
+										<cell>
+											<radio label="Deportivo"
+												value="4" radiogroup="rdbEscenario" />
+										</cell>
+									</row>
+									<row>
+										<cell>
+											<radio label="Casa"
+												value="5" radiogroup="rdbEscenario" />
+										</cell>
+
+										<cell>
+											<radio
+												label="Lugar de trabajo" value="6"
+												radiogroup="rdbEscenario" />
+										</cell>
+										<cell colspan="2">
+											<radio label="Otro"
+												value="7" radiogroup="rdbEscenario" />
+											<space />
+											<label id="lbCual_otro_esc"
+												value="¿Cuál otro escenario?: " />
+											<space />
+											<textbox
+												id="tbxCual_otro_esc" width="200px"
+												style="text-transform:uppercase" maxlength="200" />
+										</cell>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+						<groupbox mold="3d" closable="false">
+							<grid>
+								<columns>
+									<column width=""
+										label="Fecha del hecho" />
+									<column width=""
+										label="Hora del hecho" />
+									<column width=""
+										label="Zona de conflicto" />
+								</columns>
+								<rows>
+									<row>
+										<cell>
+											<space width="70px" />
+											<datebox
+												id="dtbxFecha_del_hecho" onCreate="self.value = new Date();"
+												format="yyyy-MM-dd" width="170px" />
+										</cell>
+										<cell>
+											<space width="70px" />
+											<timebox width="100px"
+												id="tbHora_del_hecho" cols="7" format="medium"
+												onCreate="self.value = new Date()" readonly="true"
+												mold="rounded" />
+										</cell>
+										<cell>
+											<space width="70px" />
+											<radiogroup
+												id="rdbZona_de_conflicto" />
+											<radio label="SÍ" value="1"
+												radiogroup="rdbZona_de_conflicto" />
+											<space width="30px" />
+											<radio label="NO" value="2"
+												radiogroup="rdbZona_de_conflicto" checked="true" />
+										</cell>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+						<groupbox mold="3d" closable="false">
+							<grid>
+								<columns>
+									<column width=""
+										label="Sector que notifica" />
+								</columns>
+								<rows>
+									<row>
+										<cell>
+											<radiogroup
+												id="rdbSector_que_notifica" />
+											<radio label="Salud"
+												radiogroup="rdbSector_que_notifica" value="1" />
+											<space width="35px" />
+											<radio label="Justicia"
+												radiogroup="rdbSector_que_notifica" value="2"
+												checked="true" />
+											<space width="35px" />
+											<radio label="Educación"
+												radiogroup="rdbSector_que_notifica" value="1" />
+											<space width="35px" />
+											<radio label="Protección"
+												radiogroup="rdbSector_que_notifica" value="1" />
+											<space width="35px" />
+											<radio label="Otro"
+												radiogroup="rdbSector_que_notifica" value="1" />
+											<space width="35px" />
+											<label id="lbCual_sector"
+												value="¿Cuál sector?: " />
+											<space />
+											<textbox id="tbxCual_sector"
+												width="210px" style="text-transform:uppercase"
+												maxlength="300" />
+										</cell>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+						<groupbox mold="3d" closable="false">
+							<caption label="ACCIONES EN SALUD PÚBLICA"
+								style="font-weight:bold" />
+							<grid>
+								<columns>
+									<column width="200px" />
+									<column label="" width="50px" />
+									<column width="260px" />
+									<column label="" width="50px" />
+									<column width="190px" />
+									<column label="" width="50px" />
+								</columns>
+								<rows>
+									<row>
+										<cell>
+											<label
+												id="lbAtencion_psicosocial" value="Atención psicosocial: " />
+										</cell>
+										<cell>
+											<checkbox
+												id="chbAtencion_psicosocial" />
+										</cell>
+										<cell>
+											<label id="lbProfilaxis"
+												value="Profilaxis ITS: " />
+										</cell>
+										<cell>
+											<checkbox
+												id="chbProfilaxis" />
+										</cell>
+										<cell>
+											<label
+												id="lbAnticoncepcion_de_emerg"
+												value="Anticoncepción de emergencia: " />
+										</cell>
+										<cell>
+											<checkbox
+												id="chbAnticoncepcion_de_emerg" />
+										</cell>
+									</row>
+									<row>
+										<cell>
+											<label
+												id="lbOrientacion_ive" value="Orientación IVE: " />
+										</cell>
+										<cell>
+											<checkbox
+												id="chbOrientacion_ive" />
+										</cell>
+										<cell>
+											<label
+												id="lbAtencion_en_salud"
+												value="Atención en salud mental especializada: " />
+										</cell>
+										<cell>
+											<checkbox
+												id="chbAtencion_en_salud" />
+										</cell>
+										<cell>
+											<label
+												id="lbInforme_autoridad" value="Informe a la autoridad: " />
+										</cell>
+										<cell>
+											<checkbox
+												id="chbInforme_autoridad" />
+										</cell>
+									</row>
+									<row>
+										<cell colspan="6">
+											<label id="lbOtro2"
+												value="Otro: " />
+											<space />
+											<checkbox id="chbOtro2" />
+											<space width="30px" />
+											<label
+												id="lbCual_otra_accion"
+												value="¿Cuál otra acción en salud pública?: " />
+											<space />
+											<textbox
+												id="tbxCual_otra_accion" width="170px"
+												style="text-transform:uppercase" maxlength="300" />
+											<space width="30px" />
+											<label id="lbCual_autoridad"
+												value="¿Cuál autoridad?: " />
+											<space />
+											<textbox
+												id="tbxCual_autoridad" width="170px"
+												style="text-transform:uppercase" maxlength="20" />
+										</cell>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+						<groupbox mold="3d" closable="false">
+							<caption label="ACCIONES EN SALUD PÚBLICA"
+								style="font-weight:bold" />
+							<grid>
+								<columns>
+									<column width="70%" />
+									<column width="" />
+								</columns>
+								<rows>
+									<row>
+										<cell>
+											<label id="lbRecomendacion"
+												value="Recomendación de protección: " />
+											<space />
+											<radiogroup
+												id="rdbRecomendacion" />
+											<radio label="SÍ" value="1"
+												radiogroup="rdbRecomendacion" />
+											<space />
+											<radio label="NO" value="2"
+												radiogroup="rdbRecomendacion" checked="true" />
+										</cell>
+
+										<cell>
+											<label
+												id="lbAmerita_trabajo" value="Amerita trabajo de campo: " />
+											<space />
+											<radiogroup
+												id="rdbAmerita_trabajo" />
+											<radio label="SÍ" value="1"
+												radiogroup="rdbAmerita_trabajo" />
+											<space />
+											<radio label="NO" value="2"
+												radiogroup="rdbAmerita_trabajo" checked="true" />
+										</cell>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+
+
+
+					</groupbox>
+				</div>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

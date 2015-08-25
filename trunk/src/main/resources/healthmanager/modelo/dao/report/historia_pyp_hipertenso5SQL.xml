@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="healthmanager.modelo.dao.report.historia_pyp_hipertenso5Model">
+	<select id="select" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+
+	select tratamiento_farmacologico,hemograma_parac,perfil_lipidico_parac,
+		glicemia_ayunas_parac,glicemia_postcarga_parac,glicemia_postpandrial_parac,creatinina_parac,
+		uroanalisis_parac,hba1c_parac,microalbuminuria_parac,potasio_parac,
+		ekg_parac,nutricion_inter,medicina_interna_inter,oftalmologia_inter,
+		cx_general_inter,fecha_inicial,av_cercana_oi1,av_cercana_oi2,observaciones_paraclinico,hisc_hipertenso_diabetico.ultimo_update,
+		
+		impresion_diagnostica."cie_principal" AS impresion_diagnostica_cie_principal,
+		impresion_diagnostica."tipo_principal" AS
+		impresion_diagnostica_tipo_principal,
+		impresion_diagnostica."cie_relacionado1" AS
+		impresion_diagnostica_cie_relacionado1,
+		impresion_diagnostica."tipo_relacionado1" AS
+		impresion_diagnostica_tipo_relacionado1,
+		impresion_diagnostica."cie_relacionado2" AS
+		impresion_diagnostica_cie_relacionado2,
+		impresion_diagnostica."tipo_relacionado2" AS
+		impresion_diagnostica_tipo_relacionado2,
+		impresion_diagnostica."cie_relacionado3" AS
+		impresion_diagnostica_cie_relacionado3,
+		impresion_diagnostica."tipo_relacionado3" AS
+		impresion_diagnostica_tipo_relacionado3,
+		impresion_diagnostica."finalidad_consulta" AS
+		impresion_diagnostica_finalidad_consulta,
+		impresion_diagnostica."causas_externas" AS
+		impresion_diagnostica_causas_externas,
+		impresion_diagnostica."cie_relacionado4" AS
+		impresion_diagnostica_cie_relacionado4,
+		impresion_diagnostica."tipo_relacionado4" AS
+		impresion_diagnostica_tipo_relacionado4,
+		elemento.descripcion AS finalidad_consulta,
+		cie."nombre" AS principal,
+		cie1."nombre" AS relacionado1,
+		cie2."nombre" AS relacionado2,
+		cie3."nombre" AS relacionado3,
+		elemento1.descripcion AS causas_externa,
+		med.nombres,med.apellidos,med.firma,med.registro_medico,
+		med.codigo as codigo_medico,
+		paciente.sexo
+		from public.hisc_hipertenso_diabetico hisc_hipertenso_diabetico
+
+		INNER JOIN "public"."impresion_diagnostica"
+		impresion_diagnostica ON 
+		hisc_hipertenso_diabetico."codigo_historia" = impresion_diagnostica."codigo_historia"
+
+		INNER JOIN "public"."cie" cie ON 
+		impresion_diagnostica."cie_principal" = cie."codigo"
+
+		LEFT JOIN "public".elemento elemento on elemento.codigo =
+		impresion_diagnostica.finalidad_consulta
+		AND elemento.tipo = 'finalidad_cons'
+
+		LEFT JOIN "public".elemento elemento1 on elemento1.codigo =
+		impresion_diagnostica.causas_externas
+		AND elemento1.tipo='causa_externa'
+
+		INNER
+		JOIN "public"."paciente" paciente ON 
+		paciente."codigo_empresa" = hisc_hipertenso_diabetico."codigo_empresa"
+		AND paciente."nro_identificacion" = hisc_hipertenso_diabetico."identificacion"
+		AND paciente.codigo_sucursal = hisc_hipertenso_diabetico.codigo_sucursal
+		AND paciente."codigo_sucursal" = hisc_hipertenso_diabetico."codigo_sucursal"
+
+		
+		LEFT JOIN "public"."cie" AS cie1 ON
+		impresion_diagnostica."cie_relacionado1" = cie1."codigo"
+		LEFT JOIN "public"."cie" AS cie2 ON
+		impresion_diagnostica."cie_relacionado2" = cie2."codigo"
+		LEFT JOIN "public"."cie" AS cie3 ON
+		impresion_diagnostica."cie_relacionado3" = cie3."codigo"
+		
+		LEFT JOIN usuarios med on (med.codigo_empresa =
+		hisc_hipertenso_diabetico.codigo_empresa
+		and med.codigo_sucursal = hisc_hipertenso_diabetico.codigo_sucursal
+		and med.codigo = #{codigo_medico})
+
+		where
+		hisc_hipertenso_diabetico.codigo_empresa = #{codigo_empresa}
+		and
+		hisc_hipertenso_diabetico.codigo_sucursal = #{codigo_sucursal}
+		and
+		hisc_hipertenso_diabetico.codigo_historia = #{nro_historia}
+		
+	</select>
+
+</mapper>

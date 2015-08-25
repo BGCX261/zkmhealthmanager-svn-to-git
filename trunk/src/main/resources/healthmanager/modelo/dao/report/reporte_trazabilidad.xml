@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.reporte_trazabilidadModel">
+	<select id="select" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+		SELECT
+		traz_pac.tipo_evento,
+		traz_pac.fecha_evento,
+		traz_pac.campo_actualizar,
+		traz_pac.valor_anterior,
+		traz_pac.valor_nuevo,
+		traz_pac.codigo_usuario,
+		CASE WHEN
+		elm_campo_actualizar.descripcion IS NULL THEN '' ELSE
+		elm_campo_actualizar.descripcion END AS descipcion_campo_actualizar,
+		pac.tipo_identificacion,
+		(pac.apellido1 || ' ' || pac.apellido2 || ' '
+		|| pac.nombre1 || ' ' || pac.nombre2)
+		AS nombre_paciente,
+		pac.documento,
+		eps.codigo AS codigo_eps,
+		eps.nombre AS nombre_eps,
+		elm_tipo_evento.descripcion AS descripcion_tipo_evento,
+		(usuario.apellidos || ' ' || usuario.nombres) AS nombre_usuario
+		FROM
+		"public".trazabilidad_paciente AS traz_pac
+		LEFT JOIN "public".elemento
+		AS elm_campo_actualizar ON
+		elm_campo_actualizar.codigo =
+		traz_pac.campo_actualizar AND
+		elm_campo_actualizar.tipo =
+		'campos_trazabilidad'
+		INNER JOIN "public".paciente AS pac ON
+		pac.codigo_empresa =
+		traz_pac.codigo_empresa AND pac.codigo_sucursal =
+		traz_pac.codigo_sucursal AND pac.nro_identificacion =
+		traz_pac.identificacion
+		INNER JOIN "public".administradora AS eps ON
+		eps.codigo_empresa =
+		pac.codigo_empresa AND eps.codigo_sucursal =
+		pac.codigo_sucursal AND
+		eps.codigo = pac.codigo_administradora
+		INNER
+		JOIN "public".elemento AS elm_tipo_evento ON elm_tipo_evento.codigo =
+		traz_pac.tipo_evento AND elm_tipo_evento.tipo = 'tipo_trazabilidad'
+		LEFT JOIN "public".usuarios AS usuario ON usuario.codigo_empresa =
+		traz_pac.codigo_empresa AND usuario.codigo_sucursal =
+		traz_pac.codigo_sucursal AND usuario.codigo = traz_pac.codigo_usuario
+
+		where traz_pac.codigo_empresa = #{codigo_empresa}
+		AND
+		traz_pac.codigo_sucursal = #{codigo_sucursal}
+		<if test="pacientes != null">
+			AND pac.nro_identificacion IN
+			<foreach collection="pacientes" open="(" item="i" separator=","
+				close=")">
+				#{i.nro_identificacion}
+			</foreach>
+		</if>
+
+		<if test="fecha_inicio != null and fecha_final != null">
+			AND CAST(traz_pac.fecha_evento AS DATE) BETWEEN #{fecha_inicio} AND
+			#{fecha_final}
+		</if>
+		<if test="fecha_inicio != null and fecha_final == null">
+		    <![CDATA[AND CAST(traz_pac.fecha_evento AS DATE) >= #{fecha_inicio}]]>
+		</if>
+		<if test="fecha_inicio == null and fecha_final != null">
+			<![CDATA[AND CAST(traz_pac.fecha_evento AS DATE) <= #{fecha_final}]]>
+		</if>
+		ORDER BY
+		traz_pac.identificacion ASC,
+		traz_pac.tipo_evento ASC,
+		traz_pac.fecha_evento ASC,
+		traz_pac.campo_actualizar ASC
+	</select>
+</mapper>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Elm_ihcDao">
+
+	<!--<typeAlias alias="elm_ihc" type="healthmanager.modelo.bean.Elm_ihc" 
+		/> -->
+
+	<!--<mapper resource="healthmanager/modelo/dao/xml/elm_ihcSQL.xml" /> -->
+
+	<resultMap id="elm_ihcMap" type="elm_ihc">
+		<result column="cod_elm_ihc" property="cod_elm_ihc" />
+		<result column="sub_elm_ihc" property="sub_elm_ihc" />
+		<result column="csc_elm_ihc" property="csc_elm_ihc" />
+		<result column="tpo_elm_ihc" property="tpo_elm_ihc" />
+		<result column="dsp_elm_ihc" property="dsp_elm_ihc" />
+	</resultMap>
+
+	<insert id="crear" parameterType="elm_ihc">
+		insert into public.elm_ihc
+		(cod_elm_ihc,sub_elm_ihc,
+		csc_elm_ihc,tpo_elm_ihc,dsp_elm_ihc)
+
+		values
+		(#{cod_elm_ihc},#{sub_elm_ihc},
+		#{csc_elm_ihc},#{tpo_elm_ihc},#{dsp_elm_ihc})
+	</insert>
+
+	<update id="actualizar" parameterType="elm_ihc">
+		update public.elm_ihc set
+		cod_elm_ihc = #{cod_elm_ihc},
+		sub_elm_ihc = #{sub_elm_ihc},csc_elm_ihc
+		= #{csc_elm_ihc},
+		tpo_elm_ihc = #{tpo_elm_ihc},dsp_elm_ihc =
+		#{dsp_elm_ihc}
+		where cod_elm_ihc = #{cod_elm_ihc}
+		and sub_elm_ihc =
+		#{sub_elm_ihc}
+		and csc_elm_ihc = #{csc_elm_ihc}
+	</update>
+
+	<select id="consultar" parameterType="elm_ihc" resultMap="elm_ihcMap">
+		select
+		cod_elm_ihc,sub_elm_ihc,
+		csc_elm_ihc,tpo_elm_ihc,dsp_elm_ihc
+		from
+		public.elm_ihc where cod_elm_ihc = #{cod_elm_ihc}
+		and sub_elm_ihc =
+		#{sub_elm_ihc} and csc_elm_ihc = #{csc_elm_ihc}
+	</select>
+
+	<delete id="eliminar" parameterType="elm_ihc">
+		delete from public.elm_ihc
+		where cod_elm_ihc = #{cod_elm_ihc}
+		and sub_elm_ihc = #{sub_elm_ihc} and
+		csc_elm_ihc = #{csc_elm_ihc}
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="elm_ihcMap">
+		SELECT cod_elm_ihc, sub_elm_ihc, csc_elm_ihc, tpo_elm_ihc,
+		dsp_elm_ihc FROM elm_ihc
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="ROOT != null">
+				AND length(sub_elm_ihc) = 1
+			</if>
+			<if test="child != null">
+				AND upper(sub_elm_ihc) = #{child}
+			</if>
+			<if test="TYPE != null">
+				AND cod_elm_ihc = #{TYPE}
+			</if>
+		</trim>
+		ORDER BY sub_elm_ihc ASC, csc_elm_ihc ASC
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist from public.elm_ihc
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="parameter != null">
+				AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+			${limit}
+		</if>
+	</select>
+
+</mapper>

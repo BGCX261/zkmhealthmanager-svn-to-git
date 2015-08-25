@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.epicrisisHV4Model">
+    <select id="select" resultType="java.util.HashMap" parameterType="java.util.Map">
+    SELECT e.fecha_egreso,cond.descripcion as condicion_egreso,e.ingreso_otro_servicio,
+	e.recomendaciones,e.dias_incapacidad,e.incapacidad_desde,e.incapacidad_hasta,
+	e.destino_final,e.codigo_ips_rem as codigo_ips,
+	ip.nombre as nombre_ips,pres.apellidos,pres.nombres,pres.registro_medico,h.nro_historia,
+    dx.nombre as nombre_causa_muerte,e.causa_muerte
+	from historia_clinica_uci h
+	LEFT JOIN epicrisis_hv e on (e.codigo_empresa = h.codigo_empresa
+	and e.codigo_sucursal = h.codigo_sucursal
+	and e.nro_identificacion = h.nro_identificacion and e.nro_ingreso = h.nro_ingreso
+	and e.tipo_hc = h.tipo_hc)
+	LEFT JOIN elemento cond on (cond.tipo = 'estado_salida' and cond.codigo = e.condicion_egreso)
+	LEFT JOIN elemento dest on (dest.tipo = 'destino_final' and dest.codigo = e.destino_final)
+	LEFT JOIN ips ip on (ip.codigo_ips = e.codigo_ips_rem)
+	LEFT JOIN cie dx on (dx.codigo = e.causa_muerte)
+	left join prestadores pres on(pres.codigo_empresa=h.codigo_empresa
+	and pres.codigo_sucursal=h.codigo_sucursal and pres.nro_identificacion = h.codigo_prestador)
+	where h.codigo_empresa = #{codigo_empresa}
+	and h.codigo_sucursal = #{codigo_sucursal}
+	and h.nro_historia = #{nro_historia}
+    </select>
+   
+</mapper>

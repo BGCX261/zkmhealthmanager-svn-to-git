@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="reporte_consulta_externa5" pageWidth="612" pageHeight="792" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="ab058de0-f948-498f-a323-ac9b09a9f632">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="99"/>
+	<queryString>
+		<![CDATA[SELECT
+     impresion_diagnostica."cie_principal" AS impresion_diagnostica_cie_principal,
+     impresion_diagnostica."tipo_principal" AS impresion_diagnostica_tipo_principal,
+     impresion_diagnostica."cie_relacionado1" AS impresion_diagnostica_cie_relacionado1,
+     impresion_diagnostica."tipo_relacionado1" AS impresion_diagnostica_tipo_relacionado1,
+     impresion_diagnostica."cie_relacionado2" AS impresion_diagnostica_cie_relacionado2,
+     impresion_diagnostica."tipo_relacionado2" AS impresion_diagnostica_tipo_relacionado2,
+     impresion_diagnostica."cie_relacionado3" AS impresion_diagnostica_cie_relacionado3,
+     impresion_diagnostica."tipo_relacionado3" AS impresion_diagnostica_tipo_relacionado3,
+     impresion_diagnostica."finalidad_consulta" AS impresion_diagnostica_finalidad_consulta,
+     impresion_diagnostica."causas_externas" AS impresion_diagnostica_causas_externas,
+     impresion_diagnostica."cie_relacionado4" AS impresion_diagnostica_cie_relacionado4,
+     impresion_diagnostica."tipo_relacionado4" AS impresion_diagnostica_tipo_relacionado4,
+     hisc_consulta_externa.no_farmacologicos AS farmacologico,
+     hisc_consulta_externa.educacion_paciente AS educacion_paciente,
+     hisc_consulta_externa.plan_seguimiento AS plan_seguimiento,
+     elemento.descripcion AS finalidad_consulta,
+     cie."nombre" AS principal,
+     cie1."nombre" AS relacionado1,
+     cie2."nombre" AS relacionado2,
+     cie3."nombre" AS relacionado3,
+     elemento1.descripcion AS causas_externa,
+		 med.nombres,med.apellidos,med.firma,hisc_consulta_externa.codigo_prestador,med.registro_medico
+FROM
+     "public"."hisc_consulta_externa" hisc_consulta_externa INNER JOIN "public"."impresion_diagnostica"  impresion_diagnostica ON           hisc_consulta_externa."codigo_historia" = impresion_diagnostica."codigo_historia"
+     INNER JOIN "public"."cie" cie ON impresion_diagnostica."cie_principal" = cie."codigo"
+     LEFT JOIN "public".elemento elemento on elemento.codigo = impresion_diagnostica.finalidad_consulta
+     AND elemento.tipo = 'finalidad_cons'
+     LEFT JOIN "public".elemento elemento1 on elemento1.codigo = impresion_diagnostica.causas_externas
+     AND elemento1.tipo='causa_externa'
+      LEFT JOIN "public"."cie" AS  cie1 ON impresion_diagnostica."cie_relacionado1" = cie1."codigo"
+      LEFT JOIN "public"."cie" AS  cie2 ON impresion_diagnostica."cie_relacionado2" = cie2."codigo"
+      LEFT JOIN "public"."cie" AS  cie3 ON impresion_diagnostica."cie_relacionado3" = cie3."codigo"
+
+			LEFT JOIN usuarios med on (med.codigo_empresa = hisc_consulta_externa.codigo_empresa
+			and med.codigo_sucursal = hisc_consulta_externa.codigo_sucursal
+			and med.codigo = hisc_consulta_externa.codigo_prestador)
+
+
+WHERE
+     hisc_consulta_externa.codigo_empresa = '1300102067'
+     and hisc_consulta_externa.codigo_sucursal = '130010206701'
+     and hisc_consulta_externa.codigo_historia = '0000000004']]>
+	</queryString>
+	<field name="impresion_diagnostica_cie_principal" class="java.lang.String"/>
+	<field name="impresion_diagnostica_tipo_principal" class="java.lang.String"/>
+	<field name="impresion_diagnostica_cie_relacionado1" class="java.lang.String"/>
+	<field name="impresion_diagnostica_tipo_relacionado1" class="java.lang.String"/>
+	<field name="impresion_diagnostica_cie_relacionado2" class="java.lang.String"/>
+	<field name="impresion_diagnostica_tipo_relacionado2" class="java.lang.String"/>
+	<field name="impresion_diagnostica_cie_relacionado3" class="java.lang.String"/>
+	<field name="impresion_diagnostica_tipo_relacionado3" class="java.lang.String"/>
+	<field name="impresion_diagnostica_finalidad_consulta" class="java.lang.String"/>
+	<field name="impresion_diagnostica_causas_externas" class="java.lang.String"/>
+	<field name="impresion_diagnostica_cie_relacionado4" class="java.lang.String"/>
+	<field name="impresion_diagnostica_tipo_relacionado4" class="java.lang.String"/>
+	<field name="farmacologico" class="java.lang.String"/>
+	<field name="educacion_paciente" class="java.lang.String"/>
+	<field name="plan_seguimiento" class="java.lang.String"/>
+	<field name="finalidad_consulta" class="java.lang.String"/>
+	<field name="principal" class="java.lang.String"/>
+	<field name="relacionado1" class="java.lang.String"/>
+	<field name="relacionado2" class="java.lang.String"/>
+	<field name="relacionado3" class="java.lang.String"/>
+	<field name="causas_externa" class="java.lang.String"/>
+	<field name="nombres" class="java.lang.String"/>
+	<field name="apellidos" class="java.lang.String"/>
+	<field name="firma" class="java.lang.Object">
+		<fieldDescription><![CDATA[Esta es la firma del usuario]]></fieldDescription>
+	</field>
+	<field name="codigo_prestador" class="java.lang.String"/>
+	<field name="registro_medico" class="java.lang.String"/>
+	<detail>
+		<band height="695" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="2" width="572" height="25" uuid="f821cf78-c085-4057-b29a-a679232b4b31"/>
+			</rectangle>
+			<staticText>
+				<reportElement mode="Opaque" x="1" y="3" width="571" height="24" backcolor="#CCCCCC" uuid="21bbe16d-e6f5-4207-ab29-39a63a67e90d"/>
+				<box leftPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[IMPRESION DIAGNÓSTICA]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="0" y="27" width="572" height="17" uuid="ec70d15d-8bd8-4d44-94e5-de7c9a6e2d73"/>
+			</rectangle>
+			<staticText>
+				<reportElement mode="Opaque" x="1" y="26" width="571" height="18" backcolor="#CCCCCC" uuid="8df4ccfe-9766-412e-a0e6-dd1169a342de"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[    Diagnóstico          Código                Nombre                                                                                                 Tipo]]></text>
+			</staticText>
+			<line>
+				<reportElement x="89" y="27" width="1" height="17" uuid="29e69149-3a12-47ec-b01e-7f07d0492b57"/>
+			</line>
+			<line>
+				<reportElement x="164" y="27" width="1" height="17" uuid="62bdaf83-0398-4e17-a650-88ff88d6039f"/>
+			</line>
+			<line>
+				<reportElement x="461" y="27" width="1" height="17" uuid="9c1badbb-eaad-428c-8db3-61dc82978529"/>
+			</line>
+			<rectangle>
+				<reportElement x="0" y="44" width="572" height="132" uuid="dd5cd830-3088-44ae-a8a7-44298438e02a"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="7" y="48" width="73" height="17" uuid="1719bf99-e49f-435e-9263-722379476c65"/>
+				<text><![CDATA[Principal:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="7" y="88" width="73" height="17" uuid="9279450d-6def-47c9-b3e8-4b60624476b0"/>
+				<text><![CDATA[Relacionado 2:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="7" y="68" width="73" height="17" uuid="77cfbf1f-2339-4610-bfd7-2aee9765d9ca"/>
+				<text><![CDATA[Relacionado 1:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="7" y="108" width="73" height="17" uuid="126b1e78-a18e-4fff-a556-ddff2ddc505f"/>
+				<text><![CDATA[Relacionado 3:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="7" y="129" width="123" height="20" uuid="1cbc6947-72d9-4235-8de3-1fc4e0011813"/>
+				<text><![CDATA[Finalidad de consulta:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="7" y="149" width="123" height="17" uuid="2155f1d7-10ae-468e-97e5-e7143e61b9ce"/>
+				<text><![CDATA[Causa Externa:
+]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="92" y="48" width="64" height="17" uuid="769c8dc4-221a-46d8-9931-7aef55ec0e47"/>
+				<textFieldExpression><![CDATA[$F{impresion_diagnostica_cie_principal}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="92" y="68" width="64" height="17" uuid="732b20a3-8018-4f26-b769-2a4f1bf0a9d3"/>
+				<textFieldExpression><![CDATA[$F{impresion_diagnostica_cie_relacionado1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="92" y="88" width="65" height="17" uuid="6496aa7e-e877-4a13-b9e4-02dff7ebc62a"/>
+				<textFieldExpression><![CDATA[$F{impresion_diagnostica_cie_relacionado2}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="92" y="108" width="65" height="17" uuid="dfad500b-20ba-4de3-9e35-e4cf39dcc95e"/>
+				<textFieldExpression><![CDATA[$F{impresion_diagnostica_cie_relacionado3}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="464" y="48" width="98" height="17" uuid="7afcec5a-7d08-40bd-aa85-8d44a53d1d10"/>
+				<textFieldExpression><![CDATA[$F{impresion_diagnostica_tipo_principal}.toString().equals("1")?"Impresión diagnóstica":
+$F{impresion_diagnostica_tipo_principal}.toString().equals("2")?"Confirmado nuevo":
+$F{impresion_diagnostica_tipo_principal}.toString().equals("3")?"Confirmado repetido":""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="465" y="68" width="97" height="17" uuid="bc12c271-daee-47bf-ac33-84455dde4f55"/>
+				<textFieldExpression><![CDATA[$F{impresion_diagnostica_tipo_relacionado1}.toString().equals("1")?"Impresión diagnóstica":
+$F{impresion_diagnostica_tipo_relacionado1}.toString().equals("2")?"Confirmado nuevo":
+$F{impresion_diagnostica_tipo_relacionado1}.toString().equals("3")?"Confirmado repetido":""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="465" y="88" width="97" height="17" uuid="fd563ad9-4b01-49a7-8fa0-1abece4a61c2"/>
+				<textFieldExpression><![CDATA[$F{impresion_diagnostica_tipo_relacionado2}.toString().equals("1")?"Impresión diagnóstica":
+$F{impresion_diagnostica_tipo_relacionado2}.toString().equals("2")?"Confirmado nuevo":
+$F{impresion_diagnostica_tipo_relacionado2}.toString().equals("3")?"Confirmado repetido":""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="465" y="108" width="97" height="17" uuid="65851f06-01e8-400b-ac3e-48062da4a80f"/>
+				<textFieldExpression><![CDATA[$F{impresion_diagnostica_tipo_relacionado3}.toString().equals("1")?"Impresión diagnóstica":
+$F{impresion_diagnostica_tipo_relacionado3}.toString().equals("2")?"Confirmado nuevo":
+$F{impresion_diagnostica_tipo_relacionado3}.toString().equals("3")?"Confirmado repetido":""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="167" y="48" width="289" height="17" uuid="9eed58ac-4947-4779-ac38-17c20a70eb6e"/>
+				<textFieldExpression><![CDATA[$F{principal}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="1" y="26" width="571" height="1" uuid="6fbb204f-38f2-4930-9274-b979ddf69506"/>
+			</line>
+			<rectangle>
+				<reportElement x="0" y="212" width="572" height="19" uuid="427a58b0-28bd-49dc-a586-2890c15e309d"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="1" y="231" width="571" height="65" uuid="bdf6ebb7-e6b6-4ebe-8cdb-6672d1f6644a"/>
+			</rectangle>
+			<staticText>
+				<reportElement mode="Opaque" x="1" y="213" width="571" height="18" backcolor="#CCCCCC" uuid="0223d384-00a4-4cd6-9a90-bb3986a2ce2a"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[  * NO FARMACOLÓGICOS/RECOMENDACIONES]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="7" y="231" width="566" height="65" uuid="eadf62ce-e390-4457-9c2c-23d2e7702992"/>
+				<textFieldExpression><![CDATA[$F{farmacologico}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="2" y="301" width="570" height="16" backcolor="#CCCCCC" uuid="9e9e36f9-b8e1-4d0e-87e7-94ee204ec85f"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[  * EDUCACIONAL AL PACIENTE Y LA FAMILIA]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement mode="Transparent" x="1" y="300" width="571" height="17" uuid="adab0fa5-31e7-401d-bec6-263989382d5c"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="1" y="317" width="571" height="74" uuid="d19c23a0-7af1-4845-a526-235eb5a3bbc8"/>
+			</rectangle>
+			<textField isBlankWhenNull="true">
+				<reportElement x="7" y="317" width="565" height="74" uuid="2033c0a6-0da4-4b72-9499-f6d2230162f8"/>
+				<textFieldExpression><![CDATA[$F{educacion_paciente}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="1" y="395" width="572" height="17" uuid="fa1e2408-b048-4d0f-bedb-95532f512f72"/>
+			</rectangle>
+			<staticText>
+				<reportElement mode="Opaque" x="2" y="396" width="570" height="15" backcolor="#CCCCCC" uuid="d1a5468a-7227-4b8b-b96b-0d4a03907d04"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[   * PLAN DE SEGUIMIENTO Y CONTROL]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="1" y="412" width="572" height="85" uuid="b27620af-900b-4257-bcc9-babdaff1564c"/>
+			</rectangle>
+			<textField isBlankWhenNull="true">
+				<reportElement x="7" y="412" width="566" height="85" uuid="f6917afe-eb05-4855-97de-b5703caff44b"/>
+				<textFieldExpression><![CDATA[$F{plan_seguimiento}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="130" y="129" width="326" height="17" uuid="36cd3b8e-ec71-43a3-81ad-1721a3356919"/>
+				<textFieldExpression><![CDATA[$F{finalidad_consulta}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="130" y="149" width="326" height="17" uuid="8d4d2c4b-40ae-49b9-945a-3d6977e838a9"/>
+				<textFieldExpression><![CDATA[$F{causas_externa}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="167" y="68" width="289" height="17" uuid="c2945b52-09a1-4104-8c2c-48777e1e6f19"/>
+				<textFieldExpression><![CDATA[$F{relacionado1}.toString().equals("null")?"":$F{relacionado1}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="167" y="88" width="289" height="17" uuid="5823592a-2f0e-4271-95c6-5bb6cd8442f9"/>
+				<textFieldExpression><![CDATA[$F{relacionado2}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="167" y="108" width="290" height="17" uuid="e1bcccaa-9e97-4979-a870-f738a5e3049a"/>
+				<textFieldExpression><![CDATA[$F{relacionado3}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="206" y="680" width="175" height="1" uuid="b56c887d-6673-4fe6-8391-c0b7d5f6338f"/>
+			</line>
+			<line>
+				<reportElement x="6" y="675" width="175" height="1" uuid="f1f49230-8917-4f4f-992e-6ef3778214a8"/>
+			</line>
+			<textField>
+				<reportElement x="204" y="680" width="175" height="11" uuid="c81b6315-a6e1-471b-b00f-d6673f55c14a"/>
+				<box leftPadding="20">
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Registro Médico No"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="6" y="678" width="175" height="11" uuid="89619e87-8b10-4416-88d3-40ffea372123"/>
+				<box leftPadding="10">
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Nombre del médico tratante"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="204" y="667" width="175" height="12" uuid="04f540d6-29c7-4740-b392-a567a3d19e28"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{registro_medico}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="6" y="661" width="175" height="12" uuid="f5aaaf9b-fc44-4ae5-8020-6b1867ef3b8e"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{nombres}!=null?$F{apellidos}+
+    " "+$F{nombres}:"")]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame" isUsingCache="true" onErrorType="Blank">
+				<reportElement x="7" y="606" width="175" height="48" uuid="0f2f025c-9d96-4626-ab6e-bb1278f24906"/>
+				<imageExpression><![CDATA[$F{firma}]]></imageExpression>
+			</image>
+		</band>
+	</detail>
+</jasperReport>

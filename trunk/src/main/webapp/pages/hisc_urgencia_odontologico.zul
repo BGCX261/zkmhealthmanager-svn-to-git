@@ -1,0 +1,1356 @@
+<?page title="Hisc_urgencia_odontologico" contentType="text/html;charset=UTF-8"?>
+<?component name="informacionPacientes" macroURI="/WEB-INF/macros/informacionPacientes.zul"?>
+<?component name="signosVitales" macroURI="/WEB-INF/macros/signosVitales.zul"?>
+<?component name="impresionDiagnostica" macroURI="/WEB-INF/macros/impresionDiagnostica.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formHisc_urgencia_odontologico" width="100%"
+		height="97%"
+		use="healthmanager.controller.Hisc_urgencia_odontologicoAction">
+		<style> 
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="true" closable="false"
+			mold="3d" height="90%">
+			<caption label="Consultar Historias Clinicas "
+				style="font-weight: bold">
+				<toolbarbutton image="/images/add_perfil.png"
+					style="font-weight:bold;float:right;margin-right:50px"
+					label="PACIENTE ADMISIONADO"
+					id="toolbarbuttonPaciente_admisionado1" />
+			</caption>
+
+			<separator />
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" height="90%" mold="paging"
+				pageSize="20" vflex="1">
+				<auxhead>
+					<auxheader colspan="6">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="120px" />
+							<space width="5px" />
+							<textbox id="tbxValue" width="120px"
+								onOK="formHisc_urgencia_odontologico.buscarDatos();"
+								style="text-transform:uppercase" />
+							<space />
+							<toolbarbutton label="Consultar"
+								image="/images/Magnifier.gif"
+								onClick="formHisc_urgencia_odontologico.buscarDatos();"
+								tooltiptext="Consultar Hisc Urgencia Odontologico" />
+							<space width="5px" />
+							<toolbarbutton label="Nueva" visible="false"
+								image="/images/New16.gif"
+								onClick='formHisc_urgencia_odontologico.accionForm(true,"registrar");'
+								tooltiptext="Nueva Hisc Urgencia Odontologico" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Codigo historia" width="150px" />
+					<column label="Identificacion" width="200px" />
+					<column label="Nombre" />
+					<column label="Fecha" width="150px" />
+					<column label="Acciones" align="center"
+						width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<groupbox id="groupboxEditar" visible="true" closable="false"
+			mold="3d" height="100%">
+			<caption label="Registrar/Modificar Historias Clinicas"
+				style="font-weight: bold">
+				<toolbarbutton image="/images/add_perfil.png"
+					style="font-weight:bold;float:right;margin-right:50px"
+					label="PACIENTE ADMISIONADO"
+					id="toolbarbuttonPaciente_admisionado2" />
+			</caption>
+
+			<borderlayout width="100%" height="90%"
+				id="borderlayoutEditar" visible="true">
+				<north border="none" id="northEditar">
+					<div height="50px">
+						<toolbar width="100%" align="start">
+							<textbox id="tbxAccion" value="registrar"
+								visible="false" />
+							<toolbarbutton image="/images/Save16.gif"
+								label="Guardar Hisc Urgencia Odontologico"
+								onClick="formHisc_urgencia_odontologico.guardarDatos();"
+								id="btGuardar" />
+							<toolbarbutton image="/images/New16.gif"
+								label="Nueva Hisc Urgencia Odontologico"
+								onClick='formHisc_urgencia_odontologico.accionForm(true,"registrar");'
+								id="btNew" visible="false" />
+							<space />
+							<toolbarbutton image="/images/trasladar.gif"
+								label="Cancelar"
+								onClick='formHisc_urgencia_odontologico.accionForm(false,"mostrar");'
+								id="btnCancelar" />
+							<toolbarbutton image="/images/print_ico.gif"
+								label="Imprimir Hisc Urgencia Odontologico"
+								onClick="formHisc_urgencia_odontologico.imprimir();"
+								id="btImprimir" visible="false" />
+							<space />
+							<label value="Formato impresión: "
+								visible="false" />
+							<listbox id="lbxFormato" mold="select"
+								width="150px" visible="false" sclass="combobox">
+								<listitem value="pdf" label="PDF"
+									selected="true" />
+								<listitem value="rtf" label="WORD" />
+							</listbox>
+						</toolbar>
+						<toolbarbutton image="/images/info_icon.png"
+							style="font-weight:bold;float:right;margin-right:50px"
+							label="Historia Clinica de Urgencia"
+							id="toolbarbuttonTipo_historia" visible="true" />
+					</div>
+				</north>
+				<center autoscroll="true" border="none">
+					<div align="center">
+
+						<!-- *************************** -->
+						<!-- *** Insertar/Actualizar *** -->
+						<!-- *************************** -->
+						<groupbox closable="false" width="843px"
+							mold="3d">
+							<grid sclass="GridSinBorde" hflex="1">
+								<columns>
+									<column label="" width="82px" />
+									<column label="" width="180px" />
+									<column label="" width="82px" />
+									<column label="" width="225px" />
+									<column label="" width="79px" />
+									<column label="" width="180px" />
+								</columns>
+								<rows>
+
+									<row>
+										<cell colspan="15">
+											<groupbox mold="3d"
+												closable="false" visible="true" id="gbxIdentificacion">
+												<caption
+													label="IDENTIFICACIÓN" style="font-weight:bold" />
+												<informacionPacientes
+													id="infoPacientes" />
+												<space />
+												<label
+													id="lbNro_inscripcion" value="Nro inscripción: " />
+												<space width="3px" />
+												<textbox
+													id="tbxNro_inscripcion" value="1" width="110px"
+													style="text-transform:uppercase" maxlength="10" />
+											</groupbox>
+										</cell>
+									</row>
+
+									<row>
+										<cell colspan="7">
+											<groupbox closable="false"
+												visible="true" id="gbxDatosPaciente">
+												<caption
+													label="DATOS DEL PACIENTE" style="font-weight:bold" />
+												<grid>
+													<columns>
+														<column label=""
+															width="100px" />
+														<column label=""
+															width="300px" />
+														<column label=""
+															width="80px" />
+														<column label=""
+															width="105px" />
+														<column label=""
+															width="80px" />
+														<column label=""
+															width="140px" />
+													</columns>
+													<rows>
+														<row>
+															<cell>
+																<label
+																	value="* " style="color: red"
+																	tooltiptext="Campo obligatorio" />
+																<label
+																	id="lbAcompaniante" value="Acompañante: " />
+															</cell>
+															<cell>
+																<textbox
+																	id="tbxAcompaniante" width="280px"
+																	style="text-transform:uppercase" />
+															</cell>
+															<cell>
+																<label
+																	value="* " style="color: red"
+																	tooltiptext="Campo obligatorio" />
+																<label
+																	id="lbRelacion" value="Relación: " />
+															</cell>
+															<cell>
+																<listbox
+																	id="lbxRelacion" name="relacion_acomp" mold="select"
+																	width="100px" sclass="combobox" />
+															</cell>
+															<cell>
+																<label
+																	value="* " style="color: red"
+																	tooltiptext="Campo obligatorio" />
+																<label
+																	id="lbTel_acompaniante" value="Teléfono: " />
+															</cell>
+															<cell>
+																<textbox
+																	id="tbxTel_acompaniante" width="120px"
+																	style="text-transform:uppercase" />
+															</cell>
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+
+									<row visible="false"> 
+										<cell colspan="6">
+											<groupbox closable="false"
+												visible="true">
+												<caption
+													label="DATOS DEL PRESTADOR" style="font-weight:bold" />
+												<grid>
+													<columns>
+														<column label=""
+															width="80px" />
+														<column label=""
+															width="110px" />
+														<column label=""
+															width="150px" />
+														<column label=""
+															width="390px" />
+													</columns>
+													<rows>
+														<row>
+															<cell />
+															<cell>
+																<label
+																	value="* " style="color: red"
+																	tooltiptext="Campo obligatorio" />
+																<label
+																	id="lbCodigo_prestador" value="Prestador: " />
+															</cell>
+															<cell>
+																<bandbox
+																	id="tbxCodigo_prestador" autodrop="true"
+																	readonly="true" width="100px"
+																	onOpen='formHisc_urgencia_odontologico.buscarPrestador(tbxValuePrestador.getValue(),lbxPrestador)'>
+																	<bandpopup>
+																		<vbox>
+																			<toolbar>
+																				<label
+																					value="Buscar: " />
+																				<textbox
+																					id="tbxValuePrestador"
+																					onChanging='formHisc_urgencia_odontologico.buscarPrestador(event.getValue(),lbxPrestador)'
+																					style="text-transform:uppercase;" />
+																				<toolbarbutton
+																					image="/images/borrar.gif" tooltiptext="Quitar"
+																					onClick='formHisc_urgencia_odontologico.selectedPrestador(new Listitem())' />
+																			</toolbar>
+																			<listbox
+																				height="300px" width="600px" mold="paging"
+																				pageSize="8" id="lbxPrestador"
+																				onSelect='formHisc_urgencia_odontologico.selectedPrestador(self.getSelectedItem())'>
+																				<listhead>
+																					<listheader
+																						label="Tipo Ident." width="65px" />
+																					<listheader
+																						label="Identificación" />
+																					<listheader
+																						label="Nombres" />
+																					<listheader
+																						label="Apellidos" />
+																					<listheader
+																						label="Especialidad" />
+																				</listhead>
+																			</listbox>
+																		</vbox>
+																	</bandpopup>
+																</bandbox>
+															</cell>
+															<cell>
+																<textbox
+																	id="tbxNomPrestador" width="360px"
+																	style="text-transform:uppercase" readonly="true" />
+															</cell>
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+
+
+									<row>
+										<cell colspan="6">
+											<groupbox mold="3d"
+												width="100%" closable="false">
+												<caption
+													label="MOTIVO DE CONSULTA Y ENFERMEDAD ACTUAL" />
+												<grid
+													sclass="GridSinBorde" style="border:none">
+													<columns>
+														<column label=""
+															width="" />
+													</columns>
+													<rows>
+
+														<!-- fila 6.3.1.2 -->
+														<row>
+															<cell>
+																<label
+																	value="* " style="color: red"
+																	tooltiptext="Campo obligatorio" />
+																<label
+																	id="lbMotivo_consulta" value="Motivo de consulta: " />
+															</cell>
+														</row>
+														<!-- fila 6.3.1.3 -->
+														<row>
+															<cell>
+																<textbox
+																	id="tbxMotivo_consulta" width="99%"
+																	style="text-transform:uppercase" height="50px"
+																	rows="5" />
+															</cell>
+														</row>
+														<!-- fila 6.3.1.6 -->
+														<row>
+															<cell>
+																<label
+																	value="* " style="color: red"
+																	tooltiptext="Campo obligatorio" />
+																<label
+																	id="lbEnfermedad_actual" value="Enfermedad Actual: " />
+															</cell>
+														</row>
+														<!-- fila 6.3.1.5 -->
+														<row>
+															<cell>
+																<textbox
+																	id="tbxEnfermedad_actual" width="99%"
+																	style="text-transform:uppercase" height="50px"
+																	rows="5" />
+															</cell>
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+
+									<row>
+										<cell colspan="6">
+											<groupbox mold="3d"
+												width="100%" closable="false">
+												<caption
+													label="ANAMNESIS" />
+												<grid
+													sclass="GridSinBorde" style="border:none">
+													<columns>
+														<column label=""
+															width="100px" />
+														<column label=""
+															width="80px" />
+														<column label=""
+															width="210px" />
+														<column label=""
+															width="10px" />
+														<column label=""
+															width="80px" />
+														<column label=""
+															width="180px" />
+													</columns>
+													<rows>
+														<row>
+															<cell
+																colspan="4">
+																<groupbox
+																	mold="3d" width="390px" closable="false">
+																	<grid
+																		sclass="GridSinBorde" style="border:none">
+
+																		<columns>
+																			<column
+																				label="Antecedente" width="135px" />
+																			<column
+																				label="SÍ" width="35px" />
+																			<column
+																				label="NO" width="35px" />
+																			<column
+																				label="Observaciones" width="172px" />
+
+																		</columns>
+																		<rows>
+
+																			<!-- fila 12 -->
+																			<row>
+																				<cell>
+																					<label
+																						id="lbAnam_tratamiento"
+																						value="1. Tratamiento Médico Actual: " />
+																				</cell>
+																				<cell
+																					colspan="2">
+																					<radiogroup
+																						id="rdbAnam_tratamiento"
+																						onCheck="formHisc_urgencia_odontologico.seleccion_radio(self, new AbstractComponent[]{tbxAnam_cual_tratamiento})">
+																						<radio
+																							id="Anam_tratamiento1" value="1" />
+																						<space></space>
+																						<radio
+																							id="Anam_tratamiento2" checked="true" value="2" />
+																					</radiogroup>
+																				</cell>
+																				<cell>
+																					<textbox
+																						id="tbxAnam_cual_tratamiento" width="150px"
+																						style="text-transform:uppercase" visible="false" />
+																				</cell>
+																			</row>
+
+																			<!-- fila 14 -->
+																			<row>
+																				<cell>
+																					<label
+																						id="lbAnam_toma_medicamentos"
+																						value="2. Toma de Medicamentos: " />
+																				</cell>
+																				<cell
+																					colspan="2">
+																					<radiogroup
+																						id="rdbAnam_toma_medicamentos"
+																						onCheck="formHisc_urgencia_odontologico.seleccion_radio(self, new AbstractComponent[]{tbxAnam_cual_toma_medicamentos})">
+																						<radio
+																							id="Anam_toma_medicamentos1" value="1" />
+																						<space></space>
+																						<radio
+																							id="Anam_toma_medicamentos2" checked="true"
+																							value="2" />
+																						<space></space>
+																					</radiogroup>
+																				</cell>
+																				<cell>
+																					<textbox
+																						id="tbxAnam_cual_toma_medicamentos" width="150px"
+																						style="text-transform:uppercase" visible="false" />
+																				</cell>
+																			</row>
+
+																			<!-- fila 16 -->
+																			<row>
+																				<cell>
+																					<label
+																						id="lbAnam_alergias" value="3. Alergias: " />
+																				</cell>
+																				<cell
+																					colspan="2">
+																					<radiogroup
+																						id="rdbAnam_alergias"
+																						onCheck="formHisc_urgencia_odontologico.seleccion_radio(self, new AbstractComponent[]{tbxAnam_cual_alergias})">
+																						<radio
+																							id="Anam_alergias1" value="1" />
+																						<space></space>
+																						<radio
+																							id="Anam_alergias2" checked="true" value="2" />
+																					</radiogroup>
+																				</cell>
+																				<cell>
+																					<textbox
+																						id="tbxAnam_cual_alergias" width="150px"
+																						style="text-transform:uppercase" visible="false" />
+																				</cell>
+																			</row>
+
+																			<!-- fila 18 -->
+																			<row>
+																				<cell>
+																					<label
+																						id="lbAnam_cardiopatias"
+																						value="4. Cardiopatías: " />
+																				</cell>
+																				<cell
+																					colspan="2">
+																					<radiogroup
+																						id="rdbAnam_cardiopatias"
+																						onCheck="formHisc_urgencia_odontologico.seleccion_radio(self, new AbstractComponent[]{tbxAnam_cual_cardiopatias})">
+																						<radio
+																							id="Anam_cardiopatias1" value="1" />
+																						<space></space>
+																						<radio
+																							id="Anam_cardiopatias2" checked="true" value="2" />
+																					</radiogroup>
+																				</cell>
+																				<cell>
+																					<textbox
+																						id="tbxAnam_cual_cardiopatias" width="150px"
+																						style="text-transform:uppercase" visible="false" />
+																				</cell>
+																			</row>
+
+																			<!-- fila 20 -->
+																			<row>
+																				<cell>
+																					<label
+																						id="lbAnam_alteracion_presion"
+																						value="5. Alteración Presión Arterial: " />
+																				</cell>
+																				<cell
+																					colspan="2">
+																					<radiogroup
+																						id="rdbAnam_alteracion_presion"
+																						onCheck="formHisc_urgencia_odontologico.seleccion_radio(self, new AbstractComponent[]{tbxAnam_cual_alteracion_presion})">
+																						<radio
+																							id="Anam_alteracion_presion1" value="1" />
+																						<space></space>
+																						<radio
+																							id="Anam_alteracion_presion2" checked="true"
+																							value="2" />
+																					</radiogroup>
+																				</cell>
+																				<cell>
+																					<textbox
+																						id="tbxAnam_cual_alteracion_presion" width="150px"
+																						style="text-transform:uppercase" visible="false" />
+																				</cell>
+																			</row>
+																		</rows>
+																	</grid>
+																</groupbox>
+															</cell>
+															<cell
+																colspan="4">
+																<groupbox
+																	mold="3d" width="390px" closable="false">
+																	<grid
+																		sclass="GridSinBorde" style="border:none">
+
+																		<columns>
+																			<column
+																				label="Antecedente" width="135px" />
+																			<column
+																				label="SÍ" width="35px" />
+																			<column
+																				label="NO" width="35px" />
+																			<column
+																				label="Observaciones" width="172px" />
+
+																		</columns>
+																		<rows>
+
+																			<!-- fila 22 -->
+																			<row>
+																				<cell>
+																					<label
+																						id="lbAnam_embarazo" value="6. Embarazo: " />
+																				</cell>
+																				<cell
+																					colspan="2">
+																					<radiogroup
+																						id="rdbAnam_embarazo"
+																						onCheck="formHisc_urgencia_odontologico.seleccion_radio(self, new AbstractComponent[]{tbxAnam_cual_embarazo, lbsemanas})">
+																						<radio
+																							id="Anam_embarazo1" value="1" />
+																						<space></space>
+																						<radio
+																							id="Anam_embarazo2" checked="true" value="2" />
+																					</radiogroup>
+																				</cell>
+																				<cell>
+																					<label
+																						id="lbsemanas" value="Semanas: " visible="false" />
+																					<space></space>
+																					<textbox
+																						id="tbxAnam_cual_embarazo" width="70px"
+																						style="text-transform:uppercase" visible="false" />
+
+																				</cell>
+																			</row>
+
+																			<!-- fila 24 -->
+																			<row>
+																				<cell>
+																					<label
+																						id="lbAnam_diabetes" value="7. Diabetes: " />
+																				</cell>
+																				<cell
+																					colspan="2">
+																					<radiogroup
+																						id="rdbAnam_diabetes"
+																						onCheck="formHisc_urgencia_odontologico.seleccion_radio(self, new AbstractComponent[]{lbxAnam_cual_diabetes})">
+																						<radio
+																							id="Anam_diabetes1" value="1" />
+																						<space></space>
+																						<radio
+																							id="Anam_diabetes2" checked="true" value="2" />
+																					</radiogroup>
+																				</cell>
+																				<cell>
+																					<listbox
+																						id="lbxAnam_cual_diabetes" name="diabetes"
+																						mold="select" width="150px" sclass="combobox"
+																						visible="false" />
+																				</cell>
+																			</row>
+
+																			<!-- fila 26 -->
+																			<row>
+																				<cell>
+																					<label
+																						id="lbAnam_hepatitis" value="8. Hepatitis: " />
+																				</cell>
+																				<cell
+																					colspan="2">
+																					<radiogroup
+																						id="rdbAnam_hepatitis"
+																						onCheck="formHisc_urgencia_odontologico.seleccion_radio(self, new AbstractComponent[]{lbxAnam_cual_hepatitis})">
+																						<radio
+																							id="Anam_hepatitis1" value="1" />
+																						<space></space>
+																						<radio
+																							id="Anam_hepatitis2" checked="true" value="2" />
+																					</radiogroup>
+																				</cell>
+																				<cell>
+																					<listbox
+																						id="lbxAnam_cual_hepatitis" name="hepatitis"
+																						mold="select" width="150px" sclass="combobox"
+																						visible="false" />
+																				</cell>
+																			</row>
+
+																			<!-- fila 28 -->
+																			<row>
+																				<cell>
+																					<label
+																						id="lbAnam_irradiaciones"
+																						value="9. Irradiaciones: " />
+																				</cell>
+																				<cell
+																					colspan="2">
+																					<radiogroup
+																						id="rdbAnam_irradiaciones"
+																						onCheck="formHisc_urgencia_odontologico.seleccion_radio(self, new AbstractComponent[]{tbxAnam_cual_irradiaciones})">
+																						<radio
+																							id="Anam_irradiaciones1" value="1" />
+																						<space></space>
+																						<radio
+																							id="Anam_irradiaciones2" checked="true"
+																							value="2" />
+																					</radiogroup>
+																				</cell>
+																				<cell>
+																					<textbox
+																						id="tbxAnam_cual_irradiaciones" width="150px"
+																						style="text-transform:uppercase" visible="false" />
+																				</cell>
+																			</row>
+
+																			<!-- fila 30 -->
+																			<row>
+																				<cell>
+																					<label
+																						id="lbAnam_discracias"
+																						value="10. Discrasias Sanguíneas: " />
+																				</cell>
+																				<cell
+																					colspan="2">
+																					<radiogroup
+																						id="rdbAnam_discracias"
+																						onCheck="formHisc_urgencia_odontologico.seleccion_radio(self, new AbstractComponent[]{tbxAnam_cual_discracias})">
+																						<radio
+																							id="Anam_discracias1" value="1" />
+																						<space></space>
+																						<radio
+																							id="Anam_discracias2" checked="true" value="2" />
+																					</radiogroup>
+																				</cell>
+																				<cell>
+																					<textbox
+																						id="tbxAnam_cual_discracias" width="150px"
+																						style="text-transform:uppercase" visible="false" />
+																				</cell>
+																			</row>
+																			<row>
+																				<cell></cell>
+																				<cell></cell>
+																				<cell
+																					colspan="3">
+																				</cell>
+
+																			</row>
+																			<row>
+																				<cell></cell>
+																				<cell></cell>
+																				<cell
+																					colspan="3">
+																				</cell>
+
+																			</row>
+																			<row>
+																				<cell></cell>
+																				<cell></cell>
+																				<cell
+																					colspan="3">
+																				</cell>
+
+																			</row>
+																			<row>
+																				<cell></cell>
+																				<cell></cell>
+																				<cell
+																					colspan="3">
+																				</cell>
+
+																			</row>
+																		</rows>
+																	</grid>
+																</groupbox>
+															</cell>
+														</row>
+														<row>
+															<cell
+																colspan="4">
+																<groupbox
+																	mold="3d" width="390px" closable="false">
+																	<grid
+																		sclass="GridSinBorde" style="border:none">
+
+																		<columns>
+																			<column
+																				label="Antecedente" width="135px" />
+																			<column
+																				label="SÍ" width="35px" />
+																			<column
+																				label="NO" width="35px" />
+																			<column
+																				label="Observaciones" width="172px" />
+
+																		</columns>
+																		<rows>
+																			<!-- fila 32 -->
+																			<row>
+																				<cell>
+																					<label
+																						id="lbAnam_fiebre_reumatica"
+																						value="11. Fiebre Reumática: " />
+																				</cell>
+																				<cell
+																					colspan="2">
+																					<radiogroup
+																						id="rdbAnam_fiebre_reumatica"
+																						onCheck="formHisc_urgencia_odontologico.seleccion_radio(self, new AbstractComponent[]{tbxAnam_cual_fiebre_reumatica})">
+																						<radio
+																							id="Anam_fiebre_reumatica1" value="1" />
+																						<space></space>
+																						<radio
+																							id="Anam_fiebre_reumatica2" checked="true"
+																							value="2" />
+																					</radiogroup>
+																				</cell>
+																				<cell>
+																					<textbox
+																						id="tbxAnam_cual_fiebre_reumatica" width="150px"
+																						style="text-transform:uppercase" visible="false" />
+																				</cell>
+																			</row>
+
+																			<!-- fila 34 -->
+																			<row>
+																				<cell>
+																					<label
+																						id="lbAnam_enfermedad_renal"
+																						value="12. Enfermedades Renales: " />
+																				</cell>
+																				<cell
+																					colspan="2">
+																					<radiogroup
+																						id="rdbAnam_enfermedad_renal"
+																						onCheck="formHisc_urgencia_odontologico.seleccion_radio(self, new AbstractComponent[]{tbxAnam_cual_enfermedad_renal})">
+																						<radio
+																							id="Anam_enfermedad_renal1" value="1" />
+																						<space></space>
+																						<radio
+																							id="Anam_enfermedad_renal2" checked="true"
+																							value="2" />
+																					</radiogroup>
+																				</cell>
+																				<cell>
+																					<textbox
+																						id="tbxAnam_cual_enfermedad_renal" width="150px"
+																						style="text-transform:uppercase" visible="false" />
+																				</cell>
+																			</row>
+
+																			<!-- fila 36 -->
+																			<row>
+																				<cell>
+																					<label
+																						id="lbAnam_inmunosupresion"
+																						value="13. Inmunosupresión: " />
+																				</cell>
+																				<cell
+																					colspan="2">
+																					<radiogroup
+																						id="rdbAnam_inmunosupresion"
+																						onCheck="formHisc_urgencia_odontologico.seleccion_radio(self, new AbstractComponent[]{tbxAnam_cual_inmunosupresion})">
+																						<radio
+																							id="Anam_inmunosupresion1" value="1" />
+																						<space></space>
+																						<radio
+																							id="Anam_inmunosupresion2" checked="true"
+																							value="2" />
+																					</radiogroup>
+																				</cell>
+																				<cell>
+																					<textbox
+																						id="tbxAnam_cual_inmunosupresion" width="150px"
+																						style="text-transform:uppercase" visible="false" />
+																				</cell>
+																			</row>
+
+																			<!-- fila 38 -->
+																			<row>
+																				<cell>
+																					<label
+																						id="lbAnam_trastornos"
+																						value="14. Trastornos Emocionales: " />
+																				</cell>
+																				<cell
+																					colspan="2">
+																					<radiogroup
+																						id="rdbAnam_trastornos"
+																						onCheck="formHisc_urgencia_odontologico.seleccion_radio(self, new AbstractComponent[]{tbxAnam_cual_trastornos})">
+																						<radio
+																							id="Anam_trastornos1" value="1" />
+																						<space></space>
+																						<radio
+																							id="Anam_trastornos2" checked="true" value="2" />
+																					</radiogroup>
+																				</cell>
+																				<cell>
+																					<textbox
+																						id="tbxAnam_cual_trastornos" width="150px"
+																						style="text-transform:uppercase" visible="false" />
+																				</cell>
+																			</row>
+
+																			<!-- fila 40 -->
+																			<row>
+																				<cell>
+																					<label
+																						id="lbAnam_patologia"
+																						value="15. Patología Respiratoria: " />
+																				</cell>
+																				<cell
+																					colspan="2">
+																					<radiogroup
+																						id="rdbAnam_patologia"
+																						onCheck="formHisc_urgencia_odontologico.seleccion_radio(self, new AbstractComponent[]{tbxAnam_cual_patologia})">
+																						<radio
+																							id="Anam_patologia1" value="1" />
+																						<space></space>
+																						<radio
+																							id="Anam_patologia2" checked="true" value="2" />
+																					</radiogroup>
+																				</cell>
+																				<cell>
+																					<textbox
+																						id="tbxAnam_cual_patologia" width="150px"
+																						style="text-transform:uppercase" visible="false" />
+																				</cell>
+																			</row>
+																		</rows>
+																	</grid>
+																</groupbox>
+															</cell>
+															<cell
+																colspan="4">
+																<groupbox
+																	mold="3d" width="390px" closable="false">
+																	<grid
+																		sclass="GridSinBorde" style="border:none">
+
+																		<columns>
+																			<column
+																				label="Antecedente" width="135px" />
+																			<column
+																				label="SÍ" width="35px" />
+																			<column
+																				label="NO" width="35px" />
+																			<column
+																				label="Observaciones" width="172px" />
+
+																		</columns>
+																		<rows>
+																			<!-- fila 42 -->
+																			<row>
+																				<cell>
+																					<label
+																						id="lbAnam_trastornos_gastricos"
+																						value="16. Trastornos Gástricos: " />
+																				</cell>
+																				<cell
+																					colspan="2">
+																					<radiogroup
+																						id="rdbAnam_trastornos_gastricos"
+																						onCheck="formHisc_urgencia_odontologico.seleccion_radio(self, new AbstractComponent[]{tbxAnam_cual_trastornos_gastricos})">
+																						<radio
+																							id="Anam_trastornos_gastricos1" value="1" />
+																						<space></space>
+																						<radio
+																							id="Anam_trastornos_gastricos2" checked="true"
+																							value="2" />
+																					</radiogroup>
+																				</cell>
+																				<cell>
+																					<textbox
+																						id="tbxAnam_cual_trastornos_gastricos"
+																						width="150px" style="text-transform:uppercase"
+																						visible="false" />
+																				</cell>
+																			</row>
+
+																			<!-- fila 44 -->
+																			<row>
+																				<cell>
+																					<label
+																						id="lbAnam_epilepsia" value="17. Epilepsia: " />
+																				</cell>
+																				<cell
+																					colspan="2">
+																					<radiogroup
+																						id="rdbAnam_epilepsia"
+																						onCheck="formHisc_urgencia_odontologico.seleccion_radio(self, new AbstractComponent[]{tbxAnam_cual_epilepsia})">
+																						<radio
+																							id="Anam_epilepsia1" value="1" />
+																						<space></space>
+																						<radio
+																							id="Anam_epilepsia2" checked="true" value="2" />
+																					</radiogroup>
+																				</cell>
+																				<cell>
+																					<textbox
+																						id="tbxAnam_cual_epilepsia" width="150px"
+																						style="text-transform:uppercase" visible="false" />
+																				</cell>
+																			</row>
+
+																			<!-- fila 46 -->
+																			<row>
+																				<cell>
+																					<label
+																						id="lbAnam_cirugias"
+																						value="18. Cirugías (Incluso Orales): " />
+																				</cell>
+																				<cell
+																					colspan="2">
+																					<radiogroup
+																						id="rdbAnam_cirugias"
+																						onCheck="formHisc_urgencia_odontologico.seleccion_radio(self, new AbstractComponent[]{tbxAnam_cual_cirugias})">
+																						<radio
+																							id="Anam_cirugias1" value="1" />
+																						<space></space>
+																						<radio
+																							id="Anam_cirugias2" checked="true" value="2" />
+																					</radiogroup>
+																				</cell>
+																				<cell>
+																					<textbox
+																						id="tbxAnam_cual_cirugias" width="150px"
+																						style="text-transform:uppercase" visible="false" />
+																				</cell>
+																			</row>
+
+																			<!-- fila 48 -->
+																			<row>
+																				<cell>
+																					<label
+																						id="lbAnam_protasis"
+																						value="19. Usa Prótesis (Incluso oral): " />
+																				</cell>
+																				<cell
+																					colspan="2">
+																					<radiogroup
+																						id="rdbAnam_protasis"
+																						onCheck="formHisc_urgencia_odontologico.seleccion_radio(self, new AbstractComponent[]{lbxAnam_cual_protasis})">
+																						<radio
+																							id="Anam_protasis1" value="1" />
+																						<space></space>
+																						<radio
+																							id="Anam_protasis2" checked="true" value="2" />
+																					</radiogroup>
+																				</cell>
+																				<cell>
+																					<listbox
+																						id="lbxAnam_cual_protasis" name="protesis"
+																						mold="select" width="150px" sclass="combobox"
+																						visible="false" />
+																				</cell>
+																			</row>
+
+																			<!-- fila 50 -->
+																			<row>
+																				<cell>
+																					<label
+																						id="lbAnam_otro" value="20. Otro: " />
+																				</cell>
+																				<cell
+																					colspan="2">
+																					<radiogroup
+																						id="rdbAnam_otro"
+																						onCheck="formHisc_urgencia_odontologico.seleccion_radio(self, new AbstractComponent[]{tbxAnam_cual_otros})">
+																						<radio
+																							id="Anam_otro1" value="1" />
+																						<space></space>
+																						<radio
+																							id="Anam_otro2" checked="true" value="2" />
+																					</radiogroup>
+																				</cell>
+																				<cell>
+																					<textbox
+																						id="tbxAnam_cual_otros" width="150px"
+																						style="text-transform:uppercase" visible="false" />
+																				</cell>
+																			</row>
+
+																		</rows>
+																	</grid>
+																</groupbox>
+															</cell>
+														</row>
+
+														<row>
+															<cell
+																colspan="8">
+																<groupbox
+																	mold="3d" width="100%" closable="false">
+																	<grid
+																		sclass="GridSinBorde" style="border:none">
+
+																		<columns>
+																			<column
+																				label="" width="250px" />
+																			<column
+																				label="" width="180px" />
+																			<column
+																				label="" width="250px" />
+																			<column
+																				label="" width="90px" />
+
+																		</columns>
+																		<rows>
+
+																			<!-- fila 52 -->
+																			<row>
+																				<cell>
+																					<label
+																						id="lbSintoma_respiratorio"
+																						value="Sintomático Respiratorio: " />
+																				</cell>
+																				<cell>
+																					<radiogroup
+																						id="rdbSintoma_respiratorio">
+																						<radio
+																							id="Sintoma_respiratorio1" label="SÍ" value="1" />
+																						<space />
+																						<radio
+																							id="Sintoma_respiratorio2" label="NO"
+																							checked="true" value="2" />
+
+																					</radiogroup>
+																				</cell>
+
+																				<cell>
+																					<label
+																						id="lbSintoma_piel" value="Sintomático de Piel: " />
+																				</cell>
+																				<cell
+																					colspan="10">
+																					<radiogroup
+																						id="rdbSintoma_piel">
+																						<radio
+																							id="Sintoma_piel1" label="SÍ" value="1" />
+																						<space />
+																						<radio
+																							id="Sintoma_piel2" label="NO" checked="true"
+																							value="2" />
+																					</radiogroup>
+																				</cell>
+																			</row>
+																		</rows>
+																	</grid>
+																</groupbox>
+															</cell>
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+
+									<row>
+										<cell colspan="6">
+											<groupbox mold="3d"
+												width="990px" closable="false">
+												<caption label="" />
+												<grid
+													sclass="GridSinBorde" style="border:none">
+													<columns>
+														<column label=""
+															width="60px" />
+														<column label=""
+															width="110px" />
+														<column label=""
+															width="200px" />
+														<column label=""
+															width="30px" />
+														<column label=""
+															width="110px" />
+														<column label=""
+															width="200px" />
+														<column label=""
+															width="30px" />
+													</columns>
+													<rows>
+														<row>
+															<cell></cell>
+															<cell>
+																<label
+																	id="lbTipo_disnostico" value="Tipo Diagnostico: " />
+															</cell>
+															<cell>
+																<listbox
+																	id="lbxTipo_disnostico" name="tipo_disnostico"
+																	mold="select" width="170px" sclass="combobox" />
+															</cell>
+															<cell></cell>
+															<cell>
+																<label
+																	id="lbCausas_externas" value="Causas Externas: " />
+															</cell>
+															<cell>
+																<listbox
+																	id="lbxCausas_externas" name="causas_externas"
+																	mold="select" width="170px" sclass="combobox"
+																	onSelect="formHisc_urgencia_odontologico.seleccion(self, 15,new AbstractComponent[]{tbxOtro_causas_externas})" />
+																<space />
+																<space />
+																<textbox
+																	id="tbxOtro_causas_externas" width="360px"
+																	style="text-transform:uppercase" visible="false" />
+															</cell>
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+									<row>
+										<cell colspan="7">
+											<impresionDiagnostica
+												id="macroImpresion_diagnostica" />
+										</cell>
+									</row>
+
+									<row>
+										<cell colspan="6">
+											<groupbox width="100%"
+												closable="false">
+												<caption
+													label="Pregunta red de buen trato" />
+												<grid
+													sclass="GridSinBorde" style="border:none">
+													<columns>
+														<column label=""
+															width="10px" />
+														<column label=""
+															width="150px" />
+														<column label=""
+															width="159px" />
+														<column label=""
+															width="100px" />
+														<column label=""
+															width="159px" />
+														<column label=""
+															width="150px" />
+														<column label=""
+															width="75px" />
+													</columns>
+													<rows>
+
+														<row>
+															<cell
+																height="30px" colspan="8">
+																<label
+																	id="lbTratamiento" value="Tratamiento: " />
+																<textbox
+																	id="tbxTratamiento" width="98%" rows="4"
+																	style="text-transform:uppercase" maxlength="800" />
+															</cell>
+														</row>
+														<row>
+															<cell />
+															<cell
+																height="30px">
+																<label
+																	id="lbHa_sufrido_violencia"
+																	value="Ha sufrido violencia: " />
+															</cell>
+															<cell>
+																<radiogroup
+																	id="rdbHa_sufrido_violencia">
+																	<radio
+																		label="" value="S" />
+																	<space />
+																	<radio
+																		label="" value="N" checked="true" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbFisico" value="Físico: " />
+															</cell>
+															<cell>
+																<radiogroup
+																	id="rdbFisico">
+																	<radio
+																		label="" value="S" />
+																	<space />
+																	<radio
+																		label="" value="N" checked="true" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbSexual" value="Sexual: " />
+															</cell>
+															<cell>
+																<radiogroup
+																	id="rdbSexual">
+																	<radio
+																		label="" value="S" />
+																	<space />
+																	<radio
+																		label="" value="N" checked="true" />
+																</radiogroup>
+															</cell>
+														</row>
+
+														<!-- fila 42 -->
+														<row>
+															<cell></cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbEmocional" value="Emocional: " />
+															</cell>
+															<cell>
+																<radiogroup
+																	id="rdbEmocional">
+																	<radio
+																		label="" value="S" />
+																	<space />
+																	<radio
+																		label="" value="N" checked="true" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbSiente_riesgo" value="Siente riesgo: " />
+															</cell>
+															<cell>
+																<radiogroup
+																	id="rdbSiente_riesgo">
+																	<radio
+																		label="" value="S" />
+																	<space />
+																	<radio
+																		label="" value="N" checked="true" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbQuiere_hablar_del_tema"
+																	value="Quiere hablar del tema: " />
+															</cell>
+															<cell>
+																<radiogroup
+																	id="rdbQuiere_hablar_del_tema">
+																	<radio
+																		label="" value="S" />
+																	<space />
+																	<radio
+																		label="" value="N" checked="true" />
+																</radiogroup>
+															</cell>
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+									<row>
+										<cell colspan="6">
+											<listbox height="200px"
+												hflex="1" id="lbxProcedimientoPorRealizar" 
+												checkmark="true" multiple="true">
+												<auxhead>
+													<auxheader
+														colspan="4" label="PROCEDIMIENTOS REALIZADOS">
+														<toolbarbutton
+															label="Adicionar" image="/images/generar.png"
+															onClick="formHisc_urgencia_odontologico.openPcd()" />
+													</auxheader>
+												</auxhead>
+												<listhead>
+													<listheader
+														label="Código" width="110px" align="left" />
+													<listheader
+														label="Procedimiento" align="left" />
+													<listheader
+														label="Realizado" width="100px" align="left" />
+												</listhead>
+											</listbox>
+										</cell>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+					</div>
+				</center>
+			</borderlayout>
+		</groupbox>
+	</window>
+</zk>

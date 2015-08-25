@@ -1,0 +1,485 @@
+<?page title="Modulo de monitoreo del sistema" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formIndex" width="100%" height="100%"
+		use="healthmanager.controller.admin.IndexAction">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+		<groupbox height="170px" width="250px"
+			style="margin-bottom:10px" id="groupboxInicio" closable="false"
+			mold="3d">
+			<caption label="Inciar sesion" style="font-weight:bold" />
+			<grid>
+				<columns visible="false">
+					<column width="80px" />
+					<column />
+				</columns>
+				<rows>
+					<row>
+						<cell>
+							<label value="Login" />
+						</cell>
+						<cell>
+							<textbox id="tbxLogin" hflex="1" />
+						</cell>
+					</row>
+
+					<row>
+						<cell>
+							<label value="Password" />
+						</cell>
+						<cell>
+							<textbox id="tbxPassword" hflex="1"
+								type="password" onOK="formIndex.ingresar()" />
+						</cell>
+					</row>
+
+					<row>
+						<cell colspan="2">
+							<button label="Iniciar"
+								onClick="formIndex.ingresar()" />
+						</cell>
+					</row>
+
+				</rows>
+			</grid>
+		</groupbox>
+
+		<borderlayout id="borderlayoutContenido" width="100%"
+			height="100%" visible="false">
+			<north>
+				<div>
+					<label value="Usted esta en el sistema como : "
+						style="font-weight:bold;color:green" />
+					<space />
+					<label id="labelUsuario"
+						style="font-weight:bold;color:blue" />
+					<label value="Cerrar sesion"
+						style="font-weight:bold;color:red;float:right;cursor:pointer"
+						onClick="formIndex.cerrarSesion()" />
+				</div>
+			</north>
+			<center>
+				<groupbox height="100%" mold="3d" closable="false">
+					<tabbox mold="accordion" height="100%">
+						<tabs>
+							<tab
+								label="Monitoreo de conexiones de usuarios" />
+							<tab
+								label="Monitoreo de conexiones postgres" />
+							<tab label="Monitoreo de Querys" />
+							<tab
+								label="Cantidad de registros en las tablas" />
+							<tab
+								label="Monitoreo de conexiones de usuarios por meses" />
+						</tabs>
+
+						<tabpanels>
+							<tabpanel>
+								<groupbox mold="3d" closable="false"
+									height="100%">
+									<caption
+										label="Informacion de ingresos" />
+									<grid>
+										<columns visible="false">
+											<column width="200px" />
+											<column />
+										</columns>
+										<rows>
+											<row>
+												<cell>
+													<label
+														value="Fecha-Hora de inicio" />
+												</cell>
+												<cell>
+													<datebox
+														id="dtbxFecha_inicio" width="170px"
+														format="yyyy-MM-dd hh:mm:ss a"
+														onCreate="self.setValue(new Date())" />
+												</cell>
+											</row>
+											<row>
+												<cell>
+													<label
+														value="Fecha-Hora final" />
+												</cell>
+												<cell>
+													<datebox
+														id="dtbxFecha_final" width="170px"
+														format="yyyy-MM-dd hh:mm:ss a"
+														onCreate="self.setValue(new Date())" />
+												</cell>
+											</row>
+											<row>
+												<cell>
+													<toolbarbutton
+														label="Consultar informacion"
+														image="/images/fecha_derecha.png"
+														onClick="formIndex.consultarInformacion()" />
+												</cell>
+												<cell />
+											</row>
+											<row>
+												<cell>
+													<label
+														value="Cant. usuarios que iniciaron sesion" />
+												</cell>
+												<cell>
+													<intbox
+														id="ibxCantidad_usuarios" readonly="true" width="100px" />
+													<space />
+													<label
+														value="usuarios" />
+												</cell>
+											</row>
+											<row>
+												<cell>
+													<label
+														value="Promedio tiempo de estancia" />
+												</cell>
+												<cell>
+													<doublebox
+														id="dbxPromedio_estancia" width="100px" readonly="true" />
+													<space />
+													<label
+														value="minutos" />
+												</cell>
+											</row>
+											<row>
+												<cell>
+													<label
+														value="Iniciar verificacion de concurrencia" />
+												</cell>
+												<cell>
+													<listbox
+														mold="select" id="lbxRangos" width="100px">
+														<listitem
+															value="1" label="1 minutos" />
+														<listitem
+															value="2" label="2 minutos" />
+														<listitem
+															value="3" label="3 minutos" />
+														<listitem
+															value="4" label="4 minutos" />
+														<listitem
+															value="5" label="5 minutos" selected="true" />
+														<listitem
+															value="10" label="10 minutos" />
+														<listitem
+															value="15" label="15 minutos" />
+														<listitem
+															value="20" label="20 minutos" />
+														<listitem
+															value="25" label="25 minutos" />
+														<listitem
+															value="30" label="30 minutos" />
+														<listitem
+															value="60" label="60 minutos" />
+													</listbox>
+													<space />
+													<toolbarbutton
+														label="Iniciar" image="/images/fecha_derecha.png"
+														id="btnIniciar" onClick="formIndex.iniciarVerificacion()" />
+													<space />
+													<toolbarbutton
+														image="/images/mostrar_info.png" label="Mostrar grafico"
+														onClick="formIndex.mostrarGrafico()" />
+												</cell>
+											</row>
+										</rows>
+									</grid>
+
+									<listbox id="listboxConcurrencia"
+										vflex="1">
+										<listhead>
+											<listheader label="N°"
+												width="70px" />
+											<listheader label="Fecha" />
+											<listheader label="Hora"
+												width="100px" />
+											<listheader
+												label="Cantidad de usuarios" width="150px" />
+										</listhead>
+										<listfoot>
+											<listfooter span="3"
+												align="right">
+												<label
+													value="Promedio de concurrencia de los usuarios" />
+											</listfooter>
+											<listfooter>
+												<doublebox
+													readonly="true" id="dbxPromedio_concurrencia" hflex="1" />
+											</listfooter>
+										</listfoot>
+									</listbox>
+									<separator />
+								</groupbox>
+							</tabpanel>
+							<tabpanel>
+								<groupbox mold="3d" closable="false"
+									height="100%">
+									<hlayout valign="middle">
+										<label value="Verificar por" />
+										<spinner id="spinnerMinutos"
+											width="50px" step="1" value="5" />
+										<label value="minutos" />
+										<space />
+										<label
+											value="con iteraciones de " />
+										<listbox mold="select"
+											id="lbxMinutos" width="100px">
+											<listitem value="0.1"
+												label="10 segundos" selected="true" />
+											<listitem value="0.2"
+												label="20 segundos" />
+											<listitem value="0.3"
+												label="30 segundos" />
+											<listitem value="0.4"
+												label="40 sugundos" />
+											<listitem value="0.5"
+												label="50 segundos" />
+											<listitem value="1"
+												label="1 minutos" />
+											<listitem value="1.5"
+												label="1.5 minutos" />
+											<listitem value="2"
+												label="2 minutos" />
+											<listitem value="2.5"
+												label="2.5 minutos" />
+										</listbox>
+										<label value="minutos" />
+										<space />
+										<checkbox id="chkPostgres"
+											label="Incluir postgres"
+											tooltiptext="Incluir en el analisis la conexion de postgres" />
+										<space />
+										<toolbarbutton label="Iniciar"
+											id="btnIniciarAux" image="/images/fecha_derecha.png"
+											onClick="formIndex.iniciarVerificacionPostgres()" />
+										<space />
+										<toolbarbutton label="Frenar"
+											id="btnFrenar" image="/images/stop.png"
+											onClick="formIndex.frenarVerificacion()" />
+									</hlayout>
+
+									<listbox id="listboxConexiones"
+										vflex="1">
+										<listhead>
+											<listheader
+												label="Fecha hora de consulta" />
+											<listheader
+												label="Base de datos" />
+											<listheader label="Estado" />
+											<listheader
+												label="Total conectados" width="100px" />
+										</listhead>
+										<listfoot>
+											<listfooter span="4">
+												<groupbox mold="3d"
+													closable="false" width="100%">
+													<caption
+														label="Promedios de los estados de las conexiones" />
+													<textbox rows="8"
+														id="tbxPromedios" width="99%" readonly="true" />
+												</groupbox>
+											</listfooter>
+										</listfoot>
+									</listbox>
+
+								</groupbox>
+
+								<timer id="timerVerificacion"
+									onTimer="formIndex.onTimer()" repeats="true" onCreate="timerVerificacion.stop()"  />
+
+							</tabpanel>
+
+							<tabpanel>
+								<groupbox mold="3d" closable="false"
+									height="100%">
+									<hlayout valign="middle">
+										<label value="Verificar por" />
+										<spinner id="spinnerMinutos2"
+											width="50px" step="1" value="5" />
+										<label value="minutos" />
+										<space />
+										<label
+											value="con iteraciones de " />
+										<listbox mold="select"
+											id="lbxMinutos2" width="100px">
+											<listitem value="0.1"
+												label="10 segundos" selected="true" />
+											<listitem value="0.2"
+												label="20 segundos" />
+											<listitem value="0.3"
+												label="30 segundos" />
+											<listitem value="0.4"
+												label="40 sugundos" />
+											<listitem value="0.5"
+												label="50 segundos" />
+											<listitem value="1"
+												label="1 minutos" />
+											<listitem value="1.5"
+												label="1.5 minutos" />
+											<listitem value="2"
+												label="2 minutos" />
+											<listitem value="2.5"
+												label="2.5 minutos" />
+										</listbox>
+										<label value="minutos" />
+										<space />
+										<checkbox id="chkPostgres2"
+											label="Incluir postgres"
+											tooltiptext="Incluir en el analisis la conexion de postgres" />
+										<space />
+										<toolbarbutton label="Iniciar"
+											id="btnIniciar2" image="/images/fecha_derecha.png"
+											onClick="formIndex.iniciarVerificacionConsultas()" />
+										<space />
+										<toolbarbutton label="Frenar"
+											id="btnFrenar2" image="/images/stop.png"
+											onClick="formIndex.frenarVerificacionConsultas()" />
+									</hlayout>
+
+									<listbox id="listboxConsultas"
+										vflex="1">
+										<listhead>
+											<listheader
+												label="Fecha hora" />
+											<listheader
+												label="Cantidad de consultas" />
+										</listhead>
+										<listfoot>
+											<listfooter span="2">
+												<toolbarbutton
+													label="Exportar consultas" image="/images/generar.png"
+													onClick="formIndex.exportarConsultas()" />
+											</listfooter>
+										</listfoot>
+									</listbox>
+
+								</groupbox>
+
+								<timer id="timerVerificacion2"
+									onTimer="formIndex.onTimer2()" repeats="true" onCreate="timerVerificacion2.stop()" />
+
+							</tabpanel>
+
+							<tabpanel>
+								<groupbox mold="3d" closable="false"
+									height="100%">
+									<toolbarbutton
+										label="Consultar registros" image="/images/Magnifier.gif"
+										onClick="formIndex.consultarCantidadRegistros()" />
+									<listbox id="listboxTotal_registros"
+										vflex="1" width="100%" mold="paging" pageSize="25">
+										<listhead>
+											<listheader label="N°"
+												width="50px" sort="auto" />
+											<listheader label="Esquema"
+												sort="auto" />
+											<listheader
+												label="Nombre de tabla" sort="auto" />
+											<listheader
+												label="Cantidad de registros" width="150px" sort="auto" />
+										</listhead>
+									</listbox>
+									<toolbarbutton
+										label="Exportar informacion" image="/images/generar.png"
+										onClick="formIndex.exportarCantidadesRegistros()" />
+								</groupbox>
+							</tabpanel>
+
+							<tabpanel>
+								<groupbox mold="3d" closable="false"
+									height="100%">
+									<hlayout valign="middle">
+										<label value="Mes: " />
+										<listbox mold="select"
+											width="120px" id="lbxMeses">
+											<listitem value="0"
+												label="Enero" selected="true" />
+											<listitem value="1"
+												label="Febrero" />
+											<listitem value="2"
+												label="Marzo" />
+											<listitem value="3"
+												label="Abril" />
+											<listitem value="4"
+												label="Mayo" />
+											<listitem value="5"
+												label="Junio" />
+											<listitem value="6"
+												label="Julio" />
+											<listitem value="7"
+												label="Agosto" />
+											<listitem value="8"
+												label="Septiembre" />
+											<listitem value="9"
+												label="Octubre" />
+											<listitem value="10"
+												label="Noviembre" />
+											<listitem value="11"
+												label="Diciembre" />
+										</listbox>
+										<space />
+										<label
+											value="Verificacion por dia: " />
+										<listbox mold="select"
+											id="lbxRangos_dia" width="100px">
+											<listitem value="25"
+												label="25 minutos" selected="true" />
+											<listitem value="30"
+												label="30 minutos" />
+											<listitem value="60"
+												label="60 minutos" />
+											<listitem value="120"
+												label="120 minutos" />
+										</listbox>
+										<space />
+										<toolbarbutton label="Iniciar"
+											image="/images/fecha_derecha.png"
+											onClick="formIndex.iniciarVerificacionMes()" />
+									</hlayout>
+									<listbox
+										id="listboxConcurrencia_dias" vflex="1" width="100%"
+										mold="paging" pageSize="31">
+										<listhead>
+											<listheader label="Fecha" />
+											<listheader
+												label="Cantidad de ingresos" />
+											<listheader
+												label="Promedio estancia" />
+											<listheader
+												label="Hora mas concurrente" />
+											<listheader
+												label="Cantidad usuarios concurrente" />
+											<listheader
+												label="Promedio de usuarios concurrentes" />
+
+										</listhead>
+									</listbox>
+									<toolbarbutton
+										label="Exportar informacion" image="/images/generar.png"
+										onClick="formIndex.exportarInformacionMes()" />
+								</groupbox>
+							</tabpanel>
+
+						</tabpanels>
+
+					</tabbox>
+				</groupbox>
+			</center>
+		</borderlayout>
+
+
+	</window>
+</zk>

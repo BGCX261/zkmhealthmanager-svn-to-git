@@ -1,0 +1,210 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<listbox id="formReceta" style="" mold="paging" pageSize="20"
+		use="healthmanager.controller.Receta_rips_internoAction" hflex="1">
+		<auxhead>
+			<auxheader colspan="8">
+				<div>
+					<div id="dvContenedornoPametrizado">
+						<toolbar width="100%" align="start">
+							<label value="Modulo Farmacológico"
+								style="font-weight:bold" />
+							<space width="20px" />
+							<textbox id="tbxAccionReceta"
+								value="registrar" visible="false" />
+							<textbox id="tbxNro_identificacionReceta"
+								value="" visible="false" />
+							<textbox id="tbxSexo_pct" value=""
+								visible="false" />
+							<textbox id="tbxFecha_nac" value=""
+								visible="false" />
+							<textbox id="tbxCodigo_administradora"
+								value="" visible="false" />
+							<textbox id="tbxId_plan" value=""
+								visible="false" />
+							<textbox id="tbxNro_ingresoReceta" value=""
+								visible="false" />
+							<textbox id="tbxTipo_hcReceta" value=""
+								visible="false" />
+
+							<toolbarbutton image="/images/Save16.gif"
+								label="Guardar Receta" onClick="formReceta.guardarDatos();"
+								id="btGuardarReceta" />
+							<toolbarbutton image="/images/eliminar.gif"
+								label="Eliminar Receta"
+								onClick='formReceta.eliminarDatos(tbxCodigo_receta.getValue());'
+								id="btEliminarReceta" />
+							<toolbarbutton image="/images/print_ico.gif"
+								label="Imprimir Receta"
+								onClick="formReceta.imprimir(tbxCodigo_receta.getValue());"
+								id="btImprimirReceta" />
+							<space />
+
+							<label value="Formato impresión: " />
+							<listbox id="lbxFormatoReceta" mold="select"
+								width="150px" sclass="combobox">
+								<listitem value="pdf" label="PDF"
+									selected="true" />
+								<listitem value="rtf" label="WORD" />
+							</listbox>
+							<space />
+							<toolbarbutton image="/images/generar.png"
+								label="Historial de Recetas" id="btnHistorialRecetas"
+								onClick="formReceta.mostrarHistoriaRecetas()" />
+
+						</toolbar>
+
+						<grid sclass="GridSinBorde" style="border:none"
+							visible="false">
+							<columns visible="false">
+								<column label="" width="10%" />
+								<column label="" width="" />
+								<column label="" width="" />
+								<column label="" width="" />
+								<column label="" width="50px" />
+								<column label="" />
+							</columns>
+
+							<rows>
+								<row>
+									<cell>
+										<label id="lbCodigo_prestador"
+											value="Prestador: " />
+									</cell>
+									<cell>
+										<bandbox
+											id="tbxCodigo_prestador" autodrop="true" readonly="true"
+											width="98%"
+											onOpen='formReceta.buscarPrestador(tbxValuePrestador.getValue(),lbxPrestador)'>
+											<bandpopup>
+												<vbox>
+													<toolbar>
+														<label
+															value="Buscar: " />
+														<textbox
+															id="tbxValuePrestador"
+															onChanging='formReceta.buscarPrestador(event.getValue(),lbxPrestador)'
+															style="text-transform:uppercase;" />
+														<toolbarbutton
+															image="/images/borrar.gif" tooltiptext="Quitar"
+															onClick='formReceta.selectedPrestador(new Listitem())' />
+													</toolbar>
+													<listbox
+														height="300px" width="600px" mold="paging" pageSize="8"
+														id="lbxPrestador"
+														onSelect='formReceta.selectedPrestador(self.getSelectedItem())'>
+														<listhead>
+															<listheader
+																label="Tipo Ident." width="65px" />
+															<listheader
+																label="Identificación" />
+															<listheader
+																label="Nombres" />
+															<listheader
+																label="Apellidos" />
+															<listheader
+																label="Especialidad" />
+														</listhead>
+													</listbox>
+												</vbox>
+											</bandpopup>
+										</bandbox>
+									</cell>
+									<cell colspan="2">
+										<textbox
+											id="tbxNomPrestadorReceta" width="98%"
+											style="text-transform:uppercase" readonly="true" />
+									</cell>
+									<cell>
+										<label id="lbCodigo_receta"
+											value="Nro: " />
+									</cell>
+									<cell>
+										<textbox id="tbxCodigo_receta"
+											width="" style="text-transform:uppercase" readonly="true" />
+									</cell>
+								</row>
+
+								<row>
+									<cell>
+										<label id="lbFecha_orden"
+											value="Fecha: " />
+									</cell>
+									<cell>
+										<datebox id="dtbxFecha"
+											onCreate="" format="yyyy-MM-dd" width="98%" />
+									</cell>
+									<cell colspan="2">
+										<button mold="trendy"
+											label="Adicionar Registro"
+											onClick="formReceta.openArticulo();" id="btAdicionar" />
+									</cell>
+									<cell colspan="2" />
+								</row>
+							</rows>
+						</grid>
+					</div>
+					<div id="divContenedorPametrizado" visible="false"
+						style="border:0px">
+						<hbox align="center">
+							<label value="Modulo Farmacológico"
+								style="font-weight:bold" />
+							<space width="20px" />
+							<toolbarbutton label="Adicionar Registro"
+								image="/images/generar.png" onClick="formReceta.openArticulo();"
+								id="btAdicionar2" />
+
+							<toolbarbutton image="/images/print_ico.gif"
+								label="Imprimir Receta"
+								onClick="formReceta.imprimir(tbxCodigo_receta.getValue());"
+								id="btImprimir2" disabled="true" />
+
+							<toolbarbutton image="/images/informe.png"
+								label="Abrir solicitud" id="btSolicitud" visible="false" />
+						</hbox>
+					</div>
+				</div>
+
+			</auxheader>
+		</auxhead>
+
+		<listhead sizable="true">
+			<listheader label="" id="listheaderEstado" width="10px" />
+			<listheader label="Código" width="68px" />
+			<listheader label="Medicamento" align="center" hflex="1" />
+			<listheader label="Via admon" width="120px"
+				tooltiptext="Via de administración" align="center"
+				id="colViaAdministracion" />
+			<listheader label="Dosis y frecuencia" align="center"
+				width="" tooltiptext="Dosis y frecuencia de administracion"
+				id="colDosis" />
+			<listheader label="Dur/días."
+				tooltiptext="Periodo de duracion de tratamiento" width="60px"
+				id="colPeriodo" />
+			<listheader label="Cantidad"
+				tooltiptext="Cantidad total de unidades requeridas" width="60px"
+				id="colCantidad" />
+			<listheader label="Valor unit" align="center" width=""
+				id="colValor_unitario" />
+			<listheader label="Valor total" align="center" width=""
+				id="colValor_total" />
+			<listheader label="" align="left" width="120px"
+				id="colEstado_cobro" />
+			<listheader label="Estado" visible="false" align="center"
+				width="40px" id="colEstado_entregado" />
+			<listheader label="" align="center" width="40px" />
+		</listhead>
+		<listfoot id="footIndicacionRecomendaciones">
+			<listfooter span="1" id="listfooterEstado" />
+			<listfooter span="12" align="left">
+				<hlayout>
+					<groupbox mold="3d" id="gbxIndicaciones" hflex="1">
+						<caption label="INDICACIONES Y/O RECOMENDACION" />
+						<textbox id="tbxObservaciones" rows="4"
+							hflex="1" />
+					</groupbox>
+				</hlayout>
+			</listfooter>
+		</listfoot>
+	</listbox>
+</zk>

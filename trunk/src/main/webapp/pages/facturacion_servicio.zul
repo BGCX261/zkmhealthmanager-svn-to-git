@@ -1,0 +1,247 @@
+<?page title="Facturacion_servicio" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formFacturacion_servicio" width="100%" height="100%"
+		use="healthmanager.controller.Facturacion_servicioAction">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="false" closable="false"
+			mold="3d" height="100%">
+
+			<separator />
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" height="100%" mold="paging"
+				pageSize="20" vflex="1">
+				<auxhead>
+					<auxheader colspan="6">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<separator />
+							<textbox id="tbxValue" width="200px"
+								onOK="formFacturacion_servicio.buscarDatos();"
+								style="text-transform:uppercase" />
+							<separator />
+							<button mold="trendy"
+								image="/images/Magnifier.gif"
+								onClick="formFacturacion_servicio.buscarDatos();"
+								tooltiptext="Consultar Facturacion servicio" />
+							<separator />
+							<button mold="trendy"
+								image="/images/New16.gif"
+								onClick='formFacturacion_servicio.accionForm(true,"registrar");'
+								tooltiptext="Nuevo Facturacion servicio" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Nro factura" />
+					<column label="Tipo identificacion" />
+					<column label="Nro identificacion" />
+					<column label="Nro ingreso" />
+					<column label="Fecha" />
+					<column label="Apellidos" />
+					<column label="Nombres" />
+					<column label="Acciones" align="center"	width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<borderlayout width="100%" height="100%" id="groupboxEditar"
+			visible="true">
+			<north border="none">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<toolbarbutton image="/images/Save16.gif"
+						label="Guardar"
+						onClick="formFacturacion_servicio.guardarDatos();" id="btGuardar" />
+					<toolbarbutton image="/images/New16.gif"
+						label="Nuevo"
+						onClick='formFacturacion_servicio.nuevoRegistro();'
+						id="btNew" />
+					<space />
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Cancelar"
+						onClick='formFacturacion_servicio.accionForm(false,tbxAccion.getText());'
+						id="btCancel" />
+					<toolbarbutton image="/images/print_ico.gif"
+						label="Imprimir"
+						onClick="formFacturacion_servicio.imprimir(tbxNro_factura.getValue());" id="btImprimir"
+						visible="true" />
+					<space />
+					<label value="Formato impresión: " visible="false" />
+					<listbox id="lbxFormato" mold="select" width="150px"
+						visible="true" sclass="combobox">
+						<listitem value="pdf" label="PDF"
+							selected="true" />
+						<listitem value="rtf" label="WORD" />
+					</listbox>
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center">
+
+					<!-- *************************** -->
+					<!-- *** Insertar/Actualizar *** -->
+					<!-- *************************** -->
+					<groupbox closable="false" width="710px"
+						mold="3d">
+						<textbox id="tbxNro_factura" visible="false" />
+						<textbox id="tbxTipo" value="01"
+							visible="false" />
+						<grid>
+							<auxhead>
+								<auxheader colspan="4"
+									label="REGISTRAR FACTURACION DE SERVICIOS"
+									style="font-weight:bold" align="center" />
+							</auxhead>
+							<columns visible="false">
+								<column width="100px" />
+								<column width="180px" />
+								<column />
+								<column width="170px" />
+							</columns>
+
+							<rows>
+								<!-- Fila 1 -->
+								<row>
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label value="Paciente:" />
+									</cell>
+									<cell>
+										<bandboxRegistros
+											id="tbxNro_identificacion" widthBandbox="170px" 
+											widthListbox="600px" heightListbox="300px"
+											columnas="Tipo Ident#65px|Identificación|Nombres|Apellidos" />
+									</cell>
+									<cell colspan="2">
+										<textbox id="tbxNomPaciente"
+											width="330px" style="text-transform:uppercase"
+											readonly="true" />
+										<space />
+										<toolbarbutton
+											id="btnLimpiarPaciente" image="/images/borrar.gif" />
+									</cell>
+								</row>
+
+								<!-- Fila 2 -->
+								<row>
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label value="Nro Ingreso:" />
+									</cell>
+									<cell colspan="3">
+										<listbox id="lbxNro_ingreso"
+											mold="select" width="100px" sclass="combobox"
+											onSelect="formFacturacion_servicio.selectedAdmision(self.getSelectedItem())" />
+										<space />
+										<label value="Autorización:" />
+										<space />
+										<textbox
+											id="tbxNumero_autorizacion" width="210px"
+											style="text-transform:uppercase" maxlength="15" />
+										<space />
+										<label value="Fecha:" />
+										<datebox id="dtbxFecha_servicio"
+											onCreate="self.value = new Date();" format="dd/MM/yyyy"
+											width="100px" />
+									</cell>
+
+
+								</row>
+
+								<!-- Fila 3 -->
+								<row>
+									<cell valign="top">
+										<label value="Observaciones:" />
+									</cell>
+									<cell colspan="3">
+										<textbox id="tbxObservacion"
+											width="548px" rows="3" style="text-transform:uppercase" />
+									</cell>
+								</row>
+
+								<!-- Fila 3 -->
+								<row>
+									<cell valign="top" colspan="4">
+										<!-- Para consultas por lotes -->
+										<grid id="gridReceta"
+											width="100%" height="250px" style="margin-top:3px"
+											mold="paging" pageSize="20">
+											<auxhead>
+												<auxheader
+													colspan="6">
+													<hlayout>
+														<toolbarbutton
+															image="/images/add.png" label="Agregar Registro"
+															onClick="formFacturacion_servicio.openArticulo();" />
+
+													</hlayout>
+												</auxheader>
+											</auxhead>
+											<columns sizable="true">
+												<column label="Codigo"
+													align="center" width="100px" />
+												<column label="Servicio"
+													align="center" />
+												<column label="Cant"
+													align="center" width="50px" />
+												<column
+													label="Valor unit" align="center" width="110px" />
+												<column
+													label="Valor total" align="center" width="110px" />
+												<column label=""
+													align="center" width="25px" />
+											</columns>
+											<rows
+												id="rowsReceta" width="100%" />
+											<foot>
+												<footer span="6" style="text-align: right;">
+													<hlayout>
+														<label
+															value="Total:" />
+														<doublebox
+															id="dbxTotal" format="#,##0.00" width="170px"
+															readonly="true" value="0.0"/>
+													</hlayout>
+
+												</footer>
+											</foot>
+										</grid>
+									</cell>
+
+								</row>
+							</rows>
+
+						</grid>
+
+
+					</groupbox>
+				</div>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

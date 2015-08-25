@@ -1,0 +1,517 @@
+<?page title="Usuarios" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml" xmlns:c="client">
+	<window id="formUsuarios" width="100%" height="100%"
+		use="healthmanager.controller.UsuariosAction">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="true" closable="false"
+			mold="3d" height="100%">
+			<caption label="Consultar listado de usuarios"
+				style="color: blue;font-weight: bold" />
+
+			<grid id="gridResultado" vflex="1">
+				<auxhead>
+					<auxheader colspan="8">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="120px" />
+							<space />
+							<textbox id="tbxValue" width="200px"
+								onOK="formUsuarios.buscarDatos();"
+								style="text-transform:uppercase" />
+							<space />
+							<toolbarbutton label="Consultar usuarios"
+								image="/images/Magnifier.gif"
+								onClick="formUsuarios.buscarDatos();"
+								tooltiptext="Consultar Usuarios" />
+							<space />
+							<toolbarbutton label="Nuevo usuario"
+								image="/images/New16.gif"
+								onClick='formUsuarios.accionForm(true,"registrar");'
+								tooltiptext="Nuevo Usuarios" />
+							<space />
+							<checkbox id="chkTodos_centros"
+								label="Todos los centros" onCheck="formUsuarios.buscarDatos()" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Codigo" width="83px" />
+					<column label="Nombres" width="327px" />
+					<column label="Login" width="111px" />
+					<column label="password" width="100px"
+						visible="false" />
+					<column label="Direccion"  />
+					<column label="Telefono" width="119px" />
+					<column label="Rol" />
+					<column label="Acciones" width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<borderlayout width="100%" height="100%" id="groupboxEditar"
+			visible="false">
+			<north border="none">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<toolbarbutton image="/images/Save16.gif"
+						label="Guardar Usuarios" onClick="formUsuarios.guardarDatos();"
+						id="btGuardar" />
+					<toolbarbutton image="/images/New16.gif"
+						label="Nuevo Usuario"
+						onClick='formUsuarios.accionForm(true,"registrar");' id="btNew" />
+					<space />
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Regresar"
+						onClick='formUsuarios.accionForm(false,tbxAccion.getText());'
+						id="btCancel" />
+					<toolbarbutton image="/images/print_ico.gif"
+						label="Imprimir Usuarios" onClick="" id="btImprimir"
+						visible="false" />
+					<space />
+					<label value="Formato impresión: " visible="false" />
+					<listbox id="lbxFormato" mold="select" width="150px"
+						visible="false" sclass="combobox">
+						<listitem value="pdf" label="PDF"
+							selected="true" />
+						<listitem value="rtf" label="WORD" />
+					</listbox>
+				</toolbar>
+			</north>
+
+			<center autoscroll="true" border="none">
+				<h:center>
+					<space height="20px" />
+					<groupbox width="700px">
+						<grid sclass="GridSinBorde">
+							<columns>
+								<column width="120px" />
+								<column />
+								<column width="150px" />
+								<column />
+							</columns>
+							<rows>
+								<row>
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbCodigo"
+											value="Código / Nro. Id: "
+											tooltiptext="Código o Número de identificación" />
+									</cell>
+									<cell>
+										<textbox id="tbxCodigo"
+											width="170px" maxlength="12" />
+									</cell>
+
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbLogin"
+											value="Usuario: " />
+									</cell>
+									<cell>
+										<textbox id="tbxLogin"
+											width="170px" style="text-transform:uppercase"
+											maxlength="18" />
+									</cell>
+
+								</row>
+
+								<row>
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbNombres"
+											value="Nombres: " />
+									</cell>
+									<cell>
+										<textbox id="tbxNombres"
+											width="170px" style="text-transform:uppercase"
+											onChanging="formUsuarios.cambiarLabelUsuario(event.getValue(),tbxApellidos.getValue())" />
+									</cell>
+
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbApellidos"
+											value="Apellidos: " />
+									</cell>
+
+									<cell>
+										<textbox id="tbxApellidos"
+											width="170px" style="text-transform:uppercase"
+											onChanging="formUsuarios.cambiarLabelUsuario(tbxNombres.getValue(),event.getValue())" />
+									</cell>
+
+								</row>
+
+								<row visible="false">
+									<cell height="30px">
+										<space width="8px" />
+										<label id="lbNivel"
+											value="Nivel: " />
+									</cell>
+									<cell>
+										<listbox id="lbxNivel"
+											name="nivel" mold="select" width="170px" sclass="combobox"
+											onSelect="">
+											<listitem
+												label="ADMINISTRADOR" value="1" selected="true"
+												id="listItemAdmin" />
+											<listitem label="USUARIO"
+												value="2" />
+										</listbox>
+									</cell>
+								</row>
+
+								<row>
+									<cell height="30px">
+										<space width="8px" />
+										<label id="lbEmail"
+											value="Email: " />
+									</cell>
+									<cell>
+										<textbox id="tbxEmail"
+											width="170px" />
+									</cell>
+
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbTel_res"
+											value="Tel. Residencia: " tooltiptext="Teléfono residencia" />
+									</cell>
+									<cell>
+										<doublebox id="dbxTel_res"
+											width="170px" locale="en" format="####0" />
+									</cell>
+								</row>
+
+								<row>
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbTel_oficina"
+											value="Tel. Oficina: " tooltiptext="Teléfono oficina" />
+									</cell>
+									<cell>
+										<doublebox id="dbxTel_oficina"
+											width="170px" locale="en" format="####0" />
+									</cell>
+
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbCelular"
+											value="Tel. Celular: " tooltiptext="Teléfono celular" />
+									</cell>
+									<cell>
+										<doublebox id="dbxCelular"
+											width="170px" locale="en" format="####0" />
+									</cell>
+								</row>
+
+								<row>
+
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbPassword"
+											value="Password: " />
+									</cell>
+									<cell>
+										<textbox id="tbxPassword"
+											width="170px" maxlength="18" type="password" />
+									</cell>
+
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label
+											value="Repetir Password: " />
+									</cell>
+									<cell>
+										<textbox id="tbxRepetirPassword"
+											width="170px" maxlength="18" type="password" />
+									</cell>
+								</row>
+
+								<row>
+
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label
+											id="lbDepartamento_lugar_parto" value="Departamento: " />
+									</cell>
+									<cell>
+										<listbox name="departamentos"
+											id="lbxDepartamento" width="170px" mold="select"
+											onSelect="formUsuarios.listarMunicipios2(lbxMunicipio,lbxDepartamento);"
+											style="text-transform:uppercase" maxlength="20" />
+									</cell>
+
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label
+											id="lbMunicipio_lugar_parto" value="Municipio: " />
+									</cell>
+									<cell>
+										<listbox mold="select"
+											id="lbxMunicipio" width="170px"
+											style="text-transform:uppercase" maxlength="20"
+											name="municipios" />
+									</cell>
+								</row>
+
+								<row>
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbDireccion"
+											value="Dirección: " />
+									</cell>
+									<cell>
+										<textbox id="tbxDireccion"
+											width="170px" style="text-transform:uppercase"
+											maxlength="60" />
+									</cell>
+
+									<cell>
+										<space width="8px" />
+										<label id="lbActivo"
+											value="Activo: " />
+									</cell>
+									<cell>
+										<checkbox id="chbActivo"
+											checked="true" />
+									</cell>
+
+								</row>
+
+								<row>
+									<cell>
+										<space width="8px" />
+										<label value="Firma: " />
+									</cell>
+									<cell colspan="3">
+
+										<hlayout>
+											<button id="upLoad"
+												label="Cargar Imagen" upload="true,maxsize=300"
+												style="font-size:9px;"
+												onUpload="formUsuarios.guardarImagen(event.getMedia());" />
+											<button id="quitar"
+												label="Quitar Imagen" style="font-size:9px;"
+												onClick="formUsuarios.borrarImagen();" mold="trendy" />
+											<button label="Vista previa"
+												popup="popupImagen_firma" mold="trendy" />
+										</hlayout>
+
+									</cell>
+
+								</row>
+
+								<row>
+									<cell colspan="4">
+										<groupbox mold="3d"
+											closable="false" visible="false" id="groupMedico"
+											hflex="1">
+											<caption
+												label="Datos del médico" />
+
+											<grid sclass="GridSinBorde"
+												hflex="1">
+												<columns>
+													<column label=""
+														width="20px" />
+													<column label=""
+														width="130px" align="left" />
+													<column label=""
+														width="182px" align="left" />
+													<column label=""
+														width="130px" align="left" />
+													<column label=""
+														width="182px" align="left" />
+													<column label=""
+														width="20px" align="left" />
+												</columns>
+												<rows>
+													<row>
+														<cell></cell>
+														<cell
+															height="30px">
+															<space
+																width="8px" />
+															<label
+																id="lbRegistro_medico"
+																value="Registro Médico o Tarjeta Profesional: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxRegistro_medico" width="170px"
+																style="text-transform:uppercase" maxlength="10" />
+														</cell>
+
+														<cell
+															height="30px">
+															<label
+																value="* " style="color: red"
+																tooltiptext="Campo obligatorio" />
+															<label
+																id="lbTipo_med" value="Tipo medicina: " />
+														</cell>
+														<cell>
+															<listbox
+																id="lbxTipo_med" mold="select" sclass="combobox"
+																width="175px" name="rol" />
+														</cell>
+														<cell></cell>
+													</row>
+
+													<!-- fila 21 -->
+													<row>
+														<cell></cell>
+														<cell
+															height="30px">
+															<label
+																value="* " style="color: red"
+																tooltiptext="Campo obligatorio" />
+															<label
+																id="lbCodigo_especialidad" value="Especialidad: " />
+														</cell>
+														<cell>
+															<listbox
+																id="lbxCodigo_especialidad" mold="select"
+																sclass="combobox" width="175px" name="rol" />
+														</cell>
+
+														<cell
+															height="30px">
+															<label
+																value="* " style="color: red"
+																tooltiptext="Campo obligatorio" />
+															<label
+																id="lbTipo_prestador" value="Tipo prestador: " />
+
+														</cell>
+														<cell>
+															<listbox
+																id="lbxTipo_prestador" mold="select" sclass="combobox"
+																width="175px" name="personal_atiende" />
+														</cell>
+														<cell></cell>
+													</row>
+												</rows>
+											</grid>
+										</groupbox>
+
+									</cell>
+
+								</row>
+
+							</rows>
+						</grid>
+
+						<popup id="popupImagen_firma">
+							<groupbox mold="3d">
+								<caption label="Imagen de firma" />
+								<image width="168px" height="100px"
+									id="imageUsuario" />
+							</groupbox>
+
+						</popup>
+
+					</groupbox>
+
+				</h:center>
+
+			</center>
+
+			<east>
+				<groupbox closable="false" width="450px" mold="3d"
+					vflex="1">
+					<textbox id="textboxAux" value="" visible="false" />
+					<grid>
+						<columns>
+							<column width="100px" />
+							<column />
+						</columns>
+						<rows>
+							<row>
+								<cell>
+									<label style="font-weight:bold"
+										value="Rol " />
+								</cell>
+								<cell>
+									<listbox id="listboxRol"
+										mold="select" sclass="combobox" hflex="1" name="rol" />
+								</cell>
+							</row>
+							<row>
+								<cell>
+									<label style="font-weight:bold"
+										value="Sucursal " />
+								</cell>
+								<cell>
+									<listbox id="listboxSucursal"
+										mold="select" sclass="combobox" hflex="1" />
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2">
+									<button disabled="true"
+										label="Adicionar Rol" mold="trendy" id="btn_addRol"
+										autodisable="true" onClick="formUsuarios.adicionarRoles();" />
+									<space />
+									<button label="Quitar Rol"
+										mold="trendy" onClick="formUsuarios.eliminarRoles();" />
+								</cell>
+							</row>
+						</rows>
+					</grid>
+
+					<grid id="gridRoles" vflex="1">
+						<auxhead>
+							<auxheader label="Roles del usuario "
+								colspan="5" />
+						</auxhead>
+						<columns>
+							<column label="Caps" width="60px" />
+							<column label="Sucursal" />
+							<column label="Rol" />
+							<column label="Horas" width="60px" />
+							<column width="30px" />
+						</columns>
+
+						<rows id="rowsRoles" />
+
+					</grid>
+
+				</groupbox>
+
+			</east>
+
+		</borderlayout>
+	</window>
+
+</zk>

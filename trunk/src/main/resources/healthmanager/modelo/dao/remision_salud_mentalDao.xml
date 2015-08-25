@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.Remision_salud_mentalDao">
+
+	
+
+	<resultMap id="remision_salud_mentalMap" type="remision_salud_mental">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="codigo_historia" property="codigo_historia" />
+		<result column="identificacion" property="identificacion" />
+		<result column="fecha_inicial" property="fecha_inicial" />
+		<result column="nro_ingreso" property="nro_ingreso" />
+		<result column="centro_atencion" property="centro_atencion" />
+		<result column="remitido" property="remitido" />
+		<result column="cual_remitido" property="cual_remitido" />
+		<result column="motivo" property="motivo" />
+		<result column="finalidad_cons" property="finalidad_cons" />
+		<result column="causas_externas" property="causas_externas" />
+		<result column="tipo_disnostico" property="tipo_disnostico" />
+		<result column="tipo_principal" property="tipo_principal" />
+		<result column="tipo_relacionado_1" property="tipo_relacionado_1" />
+		<result column="tipo_relacionado_2" property="tipo_relacionado_2" />
+		<result column="tipo_relacionado_3" property="tipo_relacionado_3" />
+		<result column="otros_consulta_externa" property="otros_consulta_externa" />
+	</resultMap>
+
+	<insert id="crear" parameterType="remision_salud_mental">
+		insert into public.remision_salud_mental (codigo_empresa,codigo_sucursal,
+		codigo_historia,identificacion,fecha_inicial,
+		nro_ingreso,centro_atencion,remitido,
+		cual_remitido,motivo,finalidad_cons,
+		causas_externas,tipo_disnostico,tipo_principal,
+		tipo_relacionado_1,tipo_relacionado_2,tipo_relacionado_3,
+		otros_consulta_externa)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{codigo_historia},#{identificacion},#{fecha_inicial},
+		#{nro_ingreso},#{centro_atencion},#{remitido},
+		#{cual_remitido},#{motivo},#{finalidad_cons},
+		#{causas_externas},#{tipo_disnostico},#{tipo_principal},
+		#{tipo_relacionado_1},#{tipo_relacionado_2},#{tipo_relacionado_3},
+		#{otros_consulta_externa})
+	</insert>
+
+	<update id="actualizar" parameterType="remision_salud_mental">
+		update public.remision_salud_mental set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},codigo_historia = #{codigo_historia},
+		identificacion = #{identificacion},fecha_inicial = #{fecha_inicial},
+		nro_ingreso = #{nro_ingreso},centro_atencion = #{centro_atencion},
+		remitido = #{remitido},cual_remitido = #{cual_remitido},
+		motivo = #{motivo},finalidad_cons = #{finalidad_cons},
+		causas_externas = #{causas_externas},tipo_disnostico = #{tipo_disnostico},
+		tipo_principal = #{tipo_principal},tipo_relacionado_1 = #{tipo_relacionado_1},
+		tipo_relacionado_2 = #{tipo_relacionado_2},tipo_relacionado_3 = #{tipo_relacionado_3},
+		otros_consulta_externa = #{otros_consulta_externa}
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and codigo_historia = #{codigo_historia}
+	</update>
+
+	<select id="consultar" resultMap="remision_salud_mentalMap" parameterType="remision_salud_mental">
+		select codigo_empresa,codigo_sucursal,
+		codigo_historia,identificacion,fecha_inicial,nro_ingreso,
+		centro_atencion,remitido,cual_remitido,motivo,
+		finalidad_cons,causas_externas,tipo_disnostico,tipo_principal,
+		tipo_relacionado_1,tipo_relacionado_2,tipo_relacionado_3,otros_consulta_externa
+		from public.remision_salud_mental where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_historia = #{codigo_historia}
+	</select>
+
+	<delete id="eliminar" parameterType="remision_salud_mental">
+		delete from public.remision_salud_mental
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_historia = #{codigo_historia}
+	</delete>
+
+	<select id="listar" resultMap="remision_salud_mentalMap" parameterType="java.util.Map">
+		select codigo_empresa,codigo_sucursal,
+		codigo_historia,identificacion,fecha_inicial,nro_ingreso,
+		centro_atencion,remitido,cual_remitido,motivo,
+		finalidad_cons,causas_externas,tipo_disnostico,tipo_principal,
+		tipo_relacionado_1,tipo_relacionado_2,tipo_relacionado_3,otros_consulta_externa
+		from public.remision_salud_mental 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">AND codigo_empresa = #{codigo_empresa}</if>
+			<if test="codigo_sucursal != null">AND codigo_sucursal = #{codigo_sucursal}</if>
+			<if test="parameter != null">AND ${parameter} like '${value}'</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

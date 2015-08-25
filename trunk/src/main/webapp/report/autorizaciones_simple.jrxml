@@ -1,0 +1,491 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="autorizaciones_simple" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="1161e929-d265-4e32-8b44-a309194a6ef3">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="codigo_empresa" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="codigo_sucursal" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="empresa" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="id" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="direccion" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="telefono" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="imagen" class="java.io.InputStream">
+		<defaultValueExpression><![CDATA[null]]></defaultValueExpression>
+	</parameter>
+	<parameter name="resolucion" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="valor_total" class="java.lang.String"/>
+	<parameter name="cuota_moderadora" class="java.lang.String"/>
+	<parameter name="firma_medico" class="java.io.InputStream"/>
+	<parameter name="nro_autorizacion" class="java.lang.String"/>
+	<parameter name="prestador" class="java.lang.String"/>
+	<parameter name="afiliado" class="java.lang.String"/>
+	<parameter name="diagnostico" class="java.lang.String"/>
+	<parameter name="fecha" class="java.lang.String"/>
+	<parameter name="direccion_prestador" class="java.lang.String"/>
+	<parameter name="telefono_prestador" class="java.lang.String"/>
+	<parameter name="tipo_afiliado" class="java.lang.String"/>
+	<parameter name="estado" class="java.lang.String"/>
+	<parameter name="nombre_medico" class="java.lang.String"/>
+	<parameter name="mostrar_prestador" class="java.lang.Boolean"/>
+	<queryString>
+		<![CDATA[SELECT
+			dtt_servicio.codigo_procedimiento,
+			dtt_servicio.codigo_cups,
+			dtt_servicio.nombre_pcd,
+			dtt_servicio.unidades,
+			dtt_servicio.valor_procedimiento,
+			dtt_servicio.unidades * dtt_servicio.valor_procedimiento AS valor_total_procedimiento,
+			prestador.nit,
+			prestador.nombre AS nombre_prestador,
+			prestador.direccion AS direccion_prestador,
+			pac.tipo_identificacion,
+			pac.nro_identificacion,
+			pac.apellido1,
+			pac.apellido2,
+			pac.nombre1,
+			pac.nombre2,
+			anexo4.estado,
+			orden.codigo_cie_principal,
+			diagnostico.nombre AS nompre_diagnostico,
+			usuario.codigo AS codigo_usuario,
+			usuario.nombres,
+			usuario.apellidos,
+			prestador.telefono AS telefono_administradora,
+			getzerofill(anexo4.codigo, 10) AS codigo_orden,
+			anexo4.codigo_solicitud,
+			to_char(anexo4.fecha, 'dd-MM-yyyy') AS fecha_autorizacion,
+			usuario.firma,
+			public.unidad_funcional.nombre AS nombre_servicio,
+			upper(elms.descripcion) AS tipo_afiliado,
+			anexo4.tipo_procedimientos,
+			elms_cirugia.descripcion AS tipo_cirugia,
+			anexo4.observaciones,
+      elms_estado_pago.descripcion AS estado_cobro
+			FROM
+			public.detalle_anexo4 AS dtt_servicio
+			INNER JOIN public.anexo4_entidad AS anexo4 ON anexo4.codigo_empresa = dtt_servicio.codigo_empresa AND anexo4.codigo_sucursal = dtt_servicio.codigo_sucursal AND anexo4.codigo = dtt_servicio.codigo_orden
+			INNER JOIN public.administradora AS prestador ON prestador.codigo_empresa = anexo4.codigo_empresa AND prestador.codigo_sucursal = anexo4.codigo_sucursal AND prestador.codigo = anexo4.codigo_prestador
+			INNER JOIN public.paciente AS pac ON pac.codigo_empresa = anexo4.codigo_empresa AND pac.codigo_sucursal = anexo4.codigo_sucursal AND pac.nro_identificacion = anexo4.nro_identificacion_paciente
+			INNER JOIN public.orden_autorizacion AS orden ON orden.codigo_empresa = anexo4.codigo_empresa AND orden.codigo_sucursal = anexo4.codigo_sucursal AND orden.codigo_orden = anexo4.codigo_solicitud
+			INNER JOIN public.cie AS diagnostico ON orden.codigo_cie_principal = diagnostico.codigo
+			INNER JOIN public.usuarios AS usuario ON usuario.codigo_empresa = anexo4.codigo_empresa AND usuario.codigo_sucursal = anexo4.codigo_sucursal AND usuario.codigo = anexo4.nro_identificacion_reporta
+			LEFT JOIN public.unidad_funcional ON public.unidad_funcional.codigo = anexo4.tipo_procedimientos
+			LEFT JOIN public.elemento AS elms ON  elms.codigo = pac.tipo_afiliado AND elms.tipo = 'tipo_afiliado'
+			LEFT JOIN public.elemento AS elms_cirugia ON  elms_cirugia.codigo = anexo4.tipo_cirugia AND elms_cirugia.tipo = 'forma_realizacion'
+      LEFT JOIN public.elemento AS elms_estado_pago ON  elms_estado_pago.codigo = anexo4.estado_cobro AND elms_estado_pago.tipo = 'estado_pago']]>
+	</queryString>
+	<field name="codigo_procedimiento" class="java.lang.String"/>
+	<field name="codigo_cups" class="java.lang.String"/>
+	<field name="nombre_pcd" class="java.lang.String"/>
+	<field name="unidades" class="java.lang.Integer"/>
+	<field name="valor_procedimiento" class="java.math.BigDecimal"/>
+	<field name="valor_total_procedimiento" class="java.math.BigDecimal"/>
+	<field name="nit" class="java.lang.String"/>
+	<field name="nombre_prestador" class="java.lang.String"/>
+	<field name="direccion_prestador" class="java.lang.String"/>
+	<field name="tipo_identificacion" class="java.lang.String">
+		<fieldDescription><![CDATA[tipo identificacion del aportante]]></fieldDescription>
+	</field>
+	<field name="nro_identificacion" class="java.lang.String"/>
+	<field name="apellido1" class="java.lang.String"/>
+	<field name="apellido2" class="java.lang.String"/>
+	<field name="nombre1" class="java.lang.String"/>
+	<field name="nombre2" class="java.lang.String"/>
+	<field name="estado" class="java.lang.String">
+		<fieldDescription><![CDATA[1=Activa
+2=Terminada]]></fieldDescription>
+	</field>
+	<field name="codigo_cie_principal" class="java.lang.String"/>
+	<field name="nompre_diagnostico" class="java.lang.String"/>
+	<field name="codigo_usuario" class="java.lang.String"/>
+	<field name="nombres" class="java.lang.String"/>
+	<field name="apellidos" class="java.lang.String"/>
+	<field name="telefono_administradora" class="java.lang.String"/>
+	<field name="codigo_orden" class="java.lang.String"/>
+	<field name="codigo_solicitud" class="java.lang.String"/>
+	<field name="fecha_autorizacion" class="java.lang.String"/>
+	<field name="firma" class="java.lang.Object">
+		<fieldDescription><![CDATA[Esta es la firma del generente, la cual va a salir en los reportes]]></fieldDescription>
+	</field>
+	<field name="nombre_servicio" class="java.lang.String"/>
+	<field name="tipo_afiliado" class="java.lang.String">
+		<fieldDescription><![CDATA[C - cotizante
+B - Beneficiario
+T - Translado]]></fieldDescription>
+	</field>
+	<field name="mostrar_tipo_pcd" class="java.lang.Boolean"/>
+	<field name="tipo_cirugia" class="java.lang.String"/>
+	<field name="observaciones" class="java.lang.String"/>
+	<field name="estado_cobro" class="java.lang.String">
+		<fieldDescription><![CDATA[01 - medicina general
+02 - pyp
+03 - Alto costo]]></fieldDescription>
+	</field>
+	<variable name="valor_total" class="java.math.BigDecimal" resetType="Group" resetGroup="autorizacion" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_total_procedimiento}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<group name="autorizacion">
+		<groupExpression><![CDATA[$F{codigo_orden} + "" + $F{codigo_solicitud}]]></groupExpression>
+		<groupHeader>
+			<band height="61">
+				<printWhenExpression><![CDATA[$P{mostrar_prestador}]]></printWhenExpression>
+				<rectangle>
+					<reportElement x="0" y="0" width="555" height="58" uuid="173f83cc-d1a2-422c-80c0-a7e37b47036e"/>
+				</rectangle>
+				<rectangle>
+					<reportElement x="0" y="-1" width="555" height="18" backcolor="#E7E6E6" uuid="15291b61-368a-4b48-9383-1f97ad7190d7"/>
+				</rectangle>
+				<textField>
+					<reportElement x="6" y="19" width="539" height="20" uuid="5eed8205-563a-4687-87e6-098eb0114469"/>
+					<textElement>
+						<font size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Prestador: "  + $F{nombre_prestador}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="6" y="34" width="367" height="20" uuid="fbab114d-2962-4848-be63-638af4822305"/>
+					<textElement>
+						<font size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Dirección: " + $F{direccion_prestador}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="373" y="34" width="172" height="20" uuid="6f05dd1b-a90d-4977-9059-0ca7399b983c"/>
+					<textFieldExpression><![CDATA["Teléfono: " + $F{telefono_administradora}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="1" y="0" width="552" height="17" uuid="52c9d837-ad9a-43bf-bdad-4f5c28cf47f3"/>
+					<box leftPadding="3" rightPadding="2"/>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[Datos del Prestador]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="167">
+				<rectangle>
+					<reportElement x="379" y="0" width="176" height="21" uuid="6715e907-4247-4f98-87c7-f4871cd69e15"/>
+				</rectangle>
+				<staticText>
+					<reportElement x="379" y="1" width="88" height="20" uuid="0b81fc5c-4184-48a8-bd52-34b88877ccc9"/>
+					<box leftPadding="2" rightPadding="3"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<text><![CDATA[Valor total:]]></text>
+				</staticText>
+				<textField pattern="$ #,##0.00">
+					<reportElement x="467" y="1" width="87" height="20" uuid="08cf514e-4b11-4dec-9cc9-53bdc0f50f05"/>
+					<box leftPadding="2" rightPadding="3"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{mostrar_tipo_pcd} ? "--" : $V{valor_total}]]></textFieldExpression>
+				</textField>
+				<image hAlign="Center" onErrorType="Blank">
+					<reportElement x="8" y="87" width="212" height="53" uuid="d44f60da-cecf-4038-ace0-1e71c3d74592"/>
+					<imageExpression><![CDATA[$F{firma}]]></imageExpression>
+				</image>
+				<textField>
+					<reportElement x="8" y="142" width="212" height="20" uuid="6d7e95b4-59b8-4a19-9fa7-b84cc31aac39"/>
+					<textElement textAlignment="Center">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Autorizado por " + $F{nombres} + " " + $F{apellidos}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="8" y="140" width="214" height="1" uuid="f58eb017-0d26-4940-a1bb-a62dc72ac54c"/>
+				</line>
+				<line>
+					<reportElement x="304" y="141" width="222" height="1" uuid="0a78fb3e-cbee-402e-99e3-5c164584b008"/>
+				</line>
+				<staticText>
+					<reportElement x="359" y="143" width="100" height="20" uuid="c3bea290-f01e-403e-9018-645966873d1c"/>
+					<text><![CDATA[Firma Afiliado]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToTallestObject" x="0" y="1" width="351" height="15" uuid="0030411a-30f7-4d48-9bd7-b331bc179668"/>
+					<box leftPadding="4"/>
+					<textElement verticalAlignment="Middle">
+						<font size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{tipo_cirugia} != null ? "Tipo cirugía: " + $F{tipo_cirugia} + " - Facturar a tarifas pactadas" : ""]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="0" y="37" width="555" height="36" uuid="ada70f62-32de-43ce-a695-bec6327cb3f4"/>
+					<box leftPadding="3" rightPadding="2"/>
+					<textElement>
+						<font size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{observaciones} != null && !$F{observaciones}.trim().isEmpty() ? "Observaciones: " + $F{observaciones} : ""]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="0" y="21" width="379" height="16" uuid="2c47e220-1eff-4ece-841b-4332e2f36b1f"/>
+					<box leftPadding="4"/>
+					<textFieldExpression><![CDATA[$F{estado_cobro} != null ? "Tipo solicitud: " +  $F{estado_cobro} : ""]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="prestador">
+		<groupExpression><![CDATA[$F{codigo_orden} + "" + $F{codigo_solicitud}]]></groupExpression>
+		<groupHeader>
+			<band height="80">
+				<rectangle>
+					<reportElement x="0" y="21" width="555" height="38" uuid="7178ef3f-bc53-4ba4-acf6-7c246d710867"/>
+				</rectangle>
+				<rectangle>
+					<reportElement x="0" y="1" width="555" height="20" backcolor="#E7E6E6" uuid="34a94a91-33b0-4baa-a59b-91c46fdc11d3"/>
+				</rectangle>
+				<staticText>
+					<reportElement mode="Opaque" x="0" y="63" width="68" height="17" backcolor="#E7E6E6" uuid="be763680-dbe4-4824-9dda-e99241156293"/>
+					<box leftPadding="4" rightPadding="4">
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[CÓDIGO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="320" y="63" width="59" height="17" backcolor="#E7E6E6" uuid="399f302a-36b7-4e02-8ca5-500e45736479"/>
+					<box leftPadding="4" rightPadding="4">
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[CANTIDAD]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="379" y="63" width="88" height="17" backcolor="#E7E6E6" uuid="4c9e8daf-cf24-4f30-9e2a-cc136aa28566"/>
+					<box leftPadding="4" rightPadding="4">
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[VALOR UNT]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="467" y="63" width="88" height="17" backcolor="#E7E6E6" uuid="c96ee7b9-8d85-43eb-bd12-68613251249b"/>
+					<box leftPadding="4" rightPadding="4">
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[TOTAL]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="68" y="63" width="252" height="17" backcolor="#E7E6E6" uuid="4bef8b5c-8443-46a2-b9e7-6d200d38dda7"/>
+					<box leftPadding="4" rightPadding="4">
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[DESCRIPCIÓN]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="8" y="24" width="539" height="20" uuid="98941ceb-58d1-4617-b907-ae318f7c4387"/>
+					<textFieldExpression><![CDATA["Afiliados: (" + $F{tipo_identificacion} + ") " + $F{nro_identificacion}
++ " - " + $F{apellido1} + " " + $F{apellido2} + " " + $F{nombre1}+ " " +$F{nombre2}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="8" y="39" width="367" height="20" uuid="d0c89004-89e0-4e3e-b20f-9d73b9e18b87"/>
+					<textFieldExpression><![CDATA["Diagnostico: " + $F{codigo_cie_principal} + " " + $F{nompre_diagnostico}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="1" y="0" width="554" height="20" uuid="26db9fe4-1c10-4464-9288-4eef3d99aceb"/>
+					<box leftPadding="4"/>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[Datos del Paciente]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="3" y="4" width="517" height="72" uuid="b66f588b-4004-4a3e-9658-5326322d1f21">
+						<printWhenExpression><![CDATA[$F{estado}.equals("02")]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None">
+						<font size="50"/>
+					</textElement>
+					<text><![CDATA[ANULADO]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="373" y="40" width="172" height="20" uuid="18ca0e24-4bc4-4421-a705-9e5aa9f2f816"/>
+					<textFieldExpression><![CDATA["Tipo AFL: " + $F{tipo_afiliado}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<title>
+		<band height="81">
+			<rectangle>
+				<reportElement mode="Transparent" x="0" y="65" width="555" height="15" backcolor="#CCCCCC" uuid="cc375c8a-34a9-4452-8d22-2eb630bba4c3"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="131" y="65" width="300" height="15" backcolor="#E7E6E6" uuid="6e65c57d-c279-48e7-8670-cddf4b59c553"/>
+			</rectangle>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="101" y="34" width="424" height="14" uuid="4d2e916a-8e2b-46f6-b296-ea6591c3ee50"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Dirección: "+$P{direccion}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="101" y="20" width="424" height="14" uuid="0600a886-aaa9-4f0c-9b3f-062072b62705"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{id}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="101" y="0" width="424" height="20" uuid="6bb1a465-e7dc-4484-a18f-0f2f07aedd2c"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{empresa}]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame" isUsingCache="true" onErrorType="Icon">
+				<reportElement x="0" y="0" width="101" height="62" uuid="c46873d2-262c-438a-84d1-f011e86030f7"/>
+				<imageExpression><![CDATA[$P{imagen}]]></imageExpression>
+			</image>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="101" y="48" width="424" height="14" uuid="a25d66de-0ed8-402e-bce6-c6c9e70db557"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Telefono: "+$P{telefono}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="435" y="65" width="118" height="15" uuid="b6d78e99-8121-4a8c-83b3-e0ed55df2905"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Nro: " + $F{codigo_orden}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="3" y="68" width="128" height="12" uuid="f01d4194-69e2-42d1-be16-da7c1fe3af50"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Fecha: " + $F{fecha_autorizacion}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="131" y="65" width="300" height="13" uuid="38586da0-264e-470e-800b-00c3ff955373"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["AUTORIZACIÓN DE " +  $F{nombre_servicio} != null ? $F{nombre_servicio}.toUpperCase() : ""]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="68" height="20" uuid="4e241e7c-5dc9-4ddd-b37e-137f70ff03bb"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{codigo_cups}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="68" y="0" width="252" height="20" uuid="0bd36f8c-dfe6-4f4f-bbed-1c2ce9515f28"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombre_pcd}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="320" y="0" width="59" height="20" uuid="8b3cb653-bd24-42a9-9e88-fc53afe184cb"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{unidades} + ""]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="$ #,##0.00" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="379" y="0" width="88" height="20" uuid="c29cfab7-7d17-4dad-85fd-65097c31e964"/>
+				<box leftPadding="3" rightPadding="3">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{mostrar_tipo_pcd} ? "--" :  $F{valor_procedimiento}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="$ #,##0.00" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="467" y="0" width="88" height="20" uuid="6db3d362-c19d-4ad5-a05c-2cb0bd0fa6ba"/>
+				<box leftPadding="3" rightPadding="3">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{mostrar_tipo_pcd} ? "--" : $F{valor_total_procedimiento}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

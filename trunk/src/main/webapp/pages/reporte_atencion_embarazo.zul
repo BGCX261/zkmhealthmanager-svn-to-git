@@ -1,0 +1,318 @@
+<?page title="Consulta Historias Clínica" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formReporte_atencion_embarazo" width="100%"
+		height="100%"
+		use="healthmanager.controller.Reporte_atencion_embarazoAction">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsultar" visible="true" closable="false"
+			mold="3d" height="100%">
+			<caption
+				label="Modulo que permite a los coordinadores consultar las diferentes historias"
+				style="color: blue;font-weight: bold" />
+
+			<borderlayout height="100%">
+				<west title="Selecionar parametros" size="300px"
+					flex="true" maxsize="250" splittable="true" collapsible="true"
+					visible="false">
+					<hbox>
+						<listbox id="lbxVia_ingreso" multiple="true"
+							vflex="1" hflex="1" checkmark="true" mold="paging"
+							name="via_ingreso">
+
+							<listfoot>
+								<listfooter align="middle">
+									<toolbarbutton
+										label="Consultar por via de ingreso"
+										image="/images/Magnifier.gif"
+										onClick="formReporte_atencion_embarazo.buscarDatos()"
+										tooltiptext="Consultar por via de ingreso" />
+								</listfooter>
+							</listfoot>
+						</listbox>
+					</hbox>
+				</west>
+
+				<center>
+					<listbox id="listboxResultado" vflex="1" hflex="1"
+						multiple="false" mold="paging">
+						<auxhead hflex="1">
+							<auxheader colspan="8">
+								<hbox align="center" hflex="1">
+									<label value="Fecha" />
+									<space width="5px" />
+									<datebox id="dtbxFecha_inicial"
+										format="yyyy-MM-dd" />
+									<space width="5px" />
+									<label value="-" />
+									<space width="5px" />
+									<datebox id="dtbxFecha_final"
+										format="yyyy-MM-dd" />
+									<space />
+									<toolbarbutton label="Consultar"
+										image="/images/Magnifier.gif"
+										onClick="formReporte_atencion_embarazo.buscarDatos();"
+										tooltiptext="Consultar Historia" />
+									<space />
+									<space />
+									<toolbarbutton
+										id="btnFiltro_ingreso" image="/images/filtro.png"
+										label="Vias de ingreso"
+										onClick='popupViasIngreso.open(self,"end_after")'
+										visible="false" />
+									<space />
+									<label
+										value="Criterios de B&#250;squeda" visible="false" />
+									<space width="5px" />
+									<textbox id="tbxValue" hflex="1"
+										onOK="formReporte_atencion_embarazo.buscarDatos();"
+										style="text-transform:uppercase" visible="false" />
+									<checkbox id="chkFiltro_atendidas"
+										label="Atendidas" checked="true" visible="false" />
+									<toolbarbutton
+										label="Consultar Historias" image="/images/Magnifier.gif"
+										onClick="formReporte_atencion_embarazo.buscarDatos();"
+										tooltiptext="Consultar Historia" visible="false" />
+
+								</hbox>
+
+							</auxheader>
+						</auxhead>
+
+						<auxhead hflex="1">
+							<auxheader colspan="8">
+								<hbox align="center" hflex="1">
+									<label value="Prestador" />
+									<space width="5px" />
+									<bandboxRegistros
+										id="tbxCodigo_medico" widthBandbox="100px"
+										widthListbox="450px" heightListbox="300px"
+										columnas="Identificación#100px|Nombres|Apellidos" />
+									<textbox id="tbxNomPrestador"
+										width="210px" style="text-transform:uppercase"
+										readonly="true" />
+									<toolbarbutton
+										id="btnLimpiarPrestador" image="/images/borrar.gif" />
+
+									<space width="80px" />
+									<label value="CAPS" visible="false" />
+									<space width="5px" />
+
+									<label value="ESTADO"
+										visible="false" />
+									<space />
+									<listbox id="lbxAtendidas"
+										visible="false" mold="select" width="100px" sclass="combobox"
+										onSelect="formReporte_atencion_embarazo.buscarDatos()">
+										<listitem value="1"
+											label="Atendidos" selected="true" />
+									</listbox>
+								</hbox>
+
+							</auxheader>
+						</auxhead>
+
+						<listhead>
+							<listheader label="" width="2px"
+								align="center" />
+							<listheader label="Estado" width="100px" />
+							<listheader label="Paciente" width="300px" />
+							<listheader label="Servicio" width="220px" />
+							<listheader label="Prestador" width="350px" />
+							<listheader label="Fecha admision"
+								width="190px" />
+							<listheader label="Fecha atención"
+								width="150px" visible="false" />
+							<listheader label="Semanas de embarazo"
+								width="150px" />
+						</listhead>
+					</listbox>
+				</center>
+
+
+			</borderlayout>
+		</groupbox>
+
+
+
+
+		<borderlayout id="borderlayoutEditar" width="100%" height="100%"
+			visible="true">
+			<west title="Información del Paciente" collapsible="true"
+				width="370px" autoscroll="true">
+				<vbox>
+					<groupbox
+						style="margin-right:5px;margin-left:5px;margin-top:5px" mold="3d"
+						closable="false" width="360px">
+						<caption>
+							<hlayout>
+								<toolbarbutton label=""
+									id="toolbarbuttonInformacion_paciente"
+									image="/images/add_perfil.png"
+									style="float:right;margin-right:10px;font-weight:bold;font-size:x-small" />
+								<toolbarbutton label="ATRAS"
+									image="/images/quit.png"
+									style="float:right;margin-right:10px;font-weight:bold;font-size:x-small"
+									onClick='formReporte_atencion_embarazo.accionForm2("buscar")' />
+							</hlayout>
+						</caption>
+						<grid>
+							<columns>
+								<column width="105px" />
+								<column />
+							</columns>
+							<rows>
+								<row height="20px" visible="false">
+									<cell>
+										<label value="Ingreso"
+											style="font-size:x-small;font-weight:bold" />
+									</cell>
+									<cell>
+										<textbox id="tbxIngreso"
+											readonly="true" inplace="false" width="97%" />
+									</cell>
+								</row>
+
+								<row height="20px">
+									<cell>
+										<label value="Fecha de Ingreso"
+											style="font-size:x-small;font-weight:bold" />
+									</cell>
+									<cell>
+										<textbox id="tbxFecha_ingreso"
+											readonly="true" inplace="false" width="97%" />
+									</cell>
+								</row>
+								<row height="20px">
+									<cell>
+										<label
+											value="Nro Identificación"
+											style="font-size:x-small;font-weight:bold" />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxNro_identificacion" readonly="true" inplace="false"
+											width="97%" />
+									</cell>
+								</row>
+								<row height="20px">
+									<cell>
+										<label
+											value="Tipo Identificación"
+											style="font-size:x-small;font-weight:bold" />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxTipo_identificacion" readonly="true" inplace="false"
+											width="97%" />
+									</cell>
+								</row>
+								<row height="20px">
+									<cell>
+										<label value="Edad"
+											style="font-size:x-small;font-weight:bold" />
+									</cell>
+									<cell>
+										<textbox id="tbxEdad"
+											readonly="true" inplace="false" width="97%" />
+									</cell>
+								</row>
+								<row height="20px">
+									<cell>
+										<label value="Sexo"
+											style="font-size:x-small;font-weight:bold" />
+									</cell>
+									<cell>
+										<textbox id="tbxSexo"
+											readonly="true" inplace="false" width="97%" />
+									</cell>
+								</row>
+								<row height="20px">
+									<cell>
+										<label
+											value="Pertenencia étnica"
+											style="font-size:x-small;font-weight:bold" />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxPertencia_etnica" readonly="true" inplace="false"
+											width="97%" popup="popupPertenencia" />
+									</cell>
+								</row>
+								<row height="20px">
+									<cell>
+										<label value="Nivel Educativo"
+											style="font-size:x-small;font-weight:bold" />
+									</cell>
+									<cell>
+										<textbox id="tbxNivel_educativo"
+											readonly="true" inplace="false" width="97%"
+											popup="popupNiveleducativo" />
+									</cell>
+								</row>
+
+								<row height="20px">
+									<cell>
+										<label value="Aseguradora"
+											style="font-size:x-small;font-weight:bold" />
+									</cell>
+									<cell>
+										<textbox id="tbxAseguradora"
+											readonly="true" inplace="false" width="97%"
+											popup="popupAseguradora" />
+									</cell>
+								</row>
+								<row height="20px">
+									<cell>
+										<label value="Contrato"
+											style="font-size:x-small;font-weight:bold" />
+									</cell>
+									<cell>
+										<textbox id="tbxContrato"
+											readonly="true" inplace="false" width="97%" />
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+				</vbox>
+			</west>
+			<center>
+				<div height="100%">
+					<tabbox id="tabboxContendor" width="100%"
+						height="100%" use="com.framework.macros.ContenedorPaginasMacro" />
+				</div>
+			</center>
+		</borderlayout>
+
+		<popup id="popupViasIngreso">
+			<listbox id="lbxVias_ingreso" multiple="true"
+				checkmark="true" height="300px" width="300px" name="via_ingreso"
+				rows="5">
+				<custom-attributes org.zkoss.zul.listbox.rod="true" />
+				<auxhead>
+					<auxheader valign="middle">
+						<label style="font-weight:bold" value="Estados" />
+						<toolbarbutton label="X"
+							style="color:red;float:right;font-weight:bold"
+							tooltiptext="Cerrar" onClick="popupViasIngreso.close()" />
+					</auxheader>
+				</auxhead>
+
+			</listbox>
+		</popup>
+	</window>
+</zk>

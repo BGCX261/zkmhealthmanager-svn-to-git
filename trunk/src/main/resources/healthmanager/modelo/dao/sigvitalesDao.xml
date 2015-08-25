@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.SigvitalesDao">
+
+	<!--<typeAlias alias="sigvitales" type="healthmanager.modelo.bean.Sigvitales" />-->
+
+	<!--<mapper resource="healthmanager/modelo/dao/xml/sigvitalesSQL.xml" />-->
+
+	<resultMap id="sigvitalesMap" type="sigvitales">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="codigo_historia" property="codigo_historia" />
+		<result column="edad" property="edad" />
+		<result column="frecuencia_cardiaca" property="frecuencia_cardiaca" />
+		<result column="frecuencia_respiratoria" property="frecuencia_respiratoria" />
+		<result column="temparatura" property="temparatura" />
+		<result column="ta_sistolica" property="ta_sistolica" />
+		<result column="ta_diastolica" property="ta_diastolica" />
+		<result column="ta_media" property="ta_media" />
+		<result column="superficie_corporal" property="superficie_corporal" />
+		<result column="peso" property="peso" />
+		<result column="talla" property="talla" />
+		<result column="imc" property="imc" />
+		<result column="creatinina_cerica" property="creatinina_cerica" />
+		<result column="tfg" property="tfg" />
+		<result column="perimetro_cefalico" property="perimetro_cefalico" />
+		<result column="perimetro_toraxico" property="perimetro_toraxico" />
+		<result column="nro_identificacion" property="nro_identificacion" />
+		<result column="creacion_date" property="creacion_date" />
+	</resultMap>
+
+	<insert id="crear" parameterType="sigvitales">
+		insert into public.sigvitales (codigo_empresa,codigo_sucursal,
+		codigo_historia,edad,frecuencia_cardiaca,
+		frecuencia_respiratoria,temparatura,ta_sistolica,
+		ta_diastolica,ta_media,superficie_corporal,
+		peso,talla,imc,
+		creatinina_cerica,tfg,perimetro_cefalico,
+		perimetro_toraxico,nro_identificacion,
+		creacion_date)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{codigo_historia},#{edad},#{frecuencia_cardiaca},
+		#{frecuencia_respiratoria},#{temparatura},#{ta_sistolica},
+		#{ta_diastolica},#{ta_media},#{superficie_corporal},
+		#{peso},#{talla},#{imc},
+		#{creatinina_cerica},#{tfg},#{perimetro_cefalico},
+		#{perimetro_toraxico},#{nro_identificacion},
+		#{creacion_date})
+	</insert>
+
+	<update id="actualizar" parameterType="sigvitales">
+		update public.sigvitales set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},codigo_historia = #{codigo_historia},
+		edad = #{edad},frecuencia_cardiaca = #{frecuencia_cardiaca},
+		frecuencia_respiratoria = #{frecuencia_respiratoria},temparatura = #{temparatura},
+		ta_sistolica = #{ta_sistolica},ta_diastolica = #{ta_diastolica},
+		ta_media = #{ta_media},superficie_corporal = #{superficie_corporal},
+		peso = #{peso},talla = #{talla},
+		imc = #{imc},creatinina_cerica = #{creatinina_cerica},
+		tfg = #{tfg},perimetro_cefalico = #{perimetro_cefalico},
+		perimetro_toraxico = #{perimetro_toraxico},
+		nro_identificacion = #{nro_identificacion},creacion_date = #{creacion_date}
+		where 		codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and codigo_historia = #{codigo_historia}
+	</update>
+
+	<select id="consultar" parameterType="sigvitales" resultMap="sigvitalesMap">
+		select codigo_empresa,codigo_sucursal,
+		codigo_historia,edad,frecuencia_cardiaca,frecuencia_respiratoria,
+		temparatura,ta_sistolica,ta_diastolica,ta_media,
+		superficie_corporal,peso,talla,imc,
+		creatinina_cerica,tfg,perimetro_cefalico,perimetro_toraxico,
+		nro_identificacion,creacion_date
+		from public.sigvitales where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_historia = #{codigo_historia}
+
+	</select>
+
+	<delete id="eliminar" parameterType="sigvitales">
+		delete from public.sigvitales
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_historia = #{codigo_historia}  
+
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="sigvitalesMap">
+		select codigo_empresa,codigo_sucursal,
+		codigo_historia,edad,frecuencia_cardiaca,frecuencia_respiratoria,
+		temparatura,ta_sistolica,ta_diastolica,ta_media,
+		superficie_corporal,peso,talla,imc,
+		creatinina_cerica,tfg,perimetro_cefalico,perimetro_toraxico,
+		nro_identificacion,creacion_date
+		from public.sigvitales 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from public.sigvitales 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

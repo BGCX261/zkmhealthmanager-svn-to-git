@@ -1,0 +1,245 @@
+<?page title="Imagen_diagnostica" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formImagen_diagnostica" width="100%" height="97%"
+		use="imagen_diagnostica.controller.Imagen_diagnosticaAction">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="true" closable="false"
+			mold="3d" height="90%">
+			<caption label="Consultar"
+				style="color: blue;font-weight: bold" />
+
+			<separator />
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" height="90%" mold="paging"
+				pageSize="20" vflex="1">
+				<auxhead>
+					<auxheader colspan="3">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<separator />
+							<textbox id="tbxValue" width="200px"
+								onOK="formImagen_diagnostica.buscarDatos();"
+								style="text-transform:uppercase" />
+							<separator />
+							<button mold="trendy"
+								image="/images/Magnifier.gif"
+								onClick="formImagen_diagnostica.buscarDatos();"
+								tooltiptext="Consultar Imagen diagnostica" />
+							<separator />
+							<button mold="trendy" visible="false"
+								image="/images/New16.gif"
+								onClick='formImagen_diagnostica.accionForm(true,"registrar");'
+								tooltiptext="Nuevo Imagen diagnostica" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Fecha realizacion" visible="false"/> 
+					<column label="Lugar" />
+					<column label="Acciones" align="center"
+						width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<borderlayout width="100%" height="90%" id="groupboxEditar"
+			visible="false">
+			<north border="none">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<toolbarbutton image="/images/Save16.gif"
+						label="Guardar Imagen diagnostica"
+						onClick="formImagen_diagnostica.guardarDatos();" id="btGuardar" />
+					<toolbarbutton image="/images/New16.gif"
+						label="Nueva Imagen diagnostica"
+						onClick='formImagen_diagnostica.accionForm(true,"registrar");'
+						id="btNew" />
+					<space />
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Cancelar"
+						onClick='formImagen_diagnostica.accionForm(false,tbxAccion.getText());'
+						id="btCancel" />
+					<toolbarbutton image="/images/print_ico.gif"
+						label="Imprimir Imagen diagnostica"
+						onClick="formImagen_diagnostica.imprimir();" id="btImprimir"
+						visible="false" />
+					<space />
+					<label value="Formato impresión: " visible="false" />
+					<listbox id="lbxFormato" mold="select" width="150px"
+						visible="false" sclass="combobox">
+						<listitem value="pdf" label="PDF"
+							selected="true" />
+						<listitem value="rtf" label="WORD" />
+					</listbox>
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center">
+
+					<!-- *************************** -->
+					<!-- *** Insertar/Actualizar *** -->
+					<!-- *************************** -->
+					<groupbox closable="false" width="905px"
+						mold="3d">
+						<grid sclass="GridSinBorde" hflex="1">
+							<columns>
+								<column label="" width="276px" />
+								<column label="" width="170px"
+									align="left" />
+								<column label="" width="182px" />
+								<column label="" width="276px" />
+							</columns>
+							<rows>
+
+								<!-- fila 1 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbCodigo_sucuesal"
+											value="Codigo sucuesal: " />
+									</cell>
+									<cell>
+										<textbox id="tbxCodigo_sucuesal"
+											width="170px" style="text-transform:uppercase"
+											maxlength="14" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 2 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbNro_identificacion"
+											value="Nro identificacion: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxNro_identificacion" width="170px"
+											style="text-transform:uppercase" maxlength="30" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 3 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbFecha_realizacion"
+											value="Fecha realizacion: " />
+									</cell>
+									<cell>
+										<datebox
+											id="dtbxFecha_realizacion"
+											onCreate="self.value = new Date();" format="yyyy-MM-dd"
+											width="170px" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 4 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbLugar"
+											value="Lugar: " />
+									</cell>
+									<cell>
+										<textbox id="tbxLugar"
+											width="170px" style="text-transform:uppercase"
+											maxlength="100" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 5 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbId_cliente"
+											value="Id cliente: " />
+									</cell>
+									<cell>
+										<intbox
+											constraint="no negative:Este valor no puede ser negativo"
+											id="ibxId_cliente" width="170px"
+											style="text-transform:uppercase" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 6 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbId" value="Id: " />
+									</cell>
+									<cell>
+										<intbox
+											constraint="no negative:Este valor no puede ser negativo"
+											id="ibxId" width="170px" style="text-transform:uppercase" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 7 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbDireccion_archivo"
+											value="Direccion archivo: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxDireccion_archivo" width="170px" rows="4"
+											style="text-transform:uppercase" maxlength="-1" />
+									</cell>
+									<cell></cell>
+								</row>
+
+							</rows>
+						</grid>
+
+					</groupbox>
+				</div>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

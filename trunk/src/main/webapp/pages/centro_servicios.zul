@@ -1,0 +1,215 @@
+<?page title="Centro_servicios" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formCentro_servicios" width="100%" height="100%"
+		use="healthmanager.controller.Centro_serviciosAction" ctrlKeys="@s@a"
+		onCreate="formCentro_servicios.focus()">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="false" closable="false"
+			mold="3d" height="100%">
+			<caption label="Consultar"
+				style="color: blue;font-weight: bold" />
+
+			<separator />
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" height="90%" mold="paging"
+				pageSize="20" vflex="1">
+				<auxhead>
+					<auxheader colspan="1">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<separator />
+							<textbox id="tbxValue" width="200px"
+								onOK="formCentro_servicios.buscarDatos();"
+								style="text-transform:uppercase" />
+							<separator />
+							<button mold="trendy"
+								image="/images/Magnifier.gif"
+								onClick="formCentro_servicios.buscarDatos();"
+								tooltiptext="Consultar Centro servicios" />
+							<separator />
+							<button mold="trendy"
+								image="/images/New16.gif"
+								onClick='formCentro_servicios.accionForm(true,"registrar");'
+								tooltiptext="Nuevo Centro servicios" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Acciones" align="center"
+						width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<borderlayout width="100%" height="100%" id="groupboxEditar"
+			visible="true">
+			<north border="none">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<toolbarbutton image="/images/Save16.gif"
+						label="Asignar servicios"
+						onClick="formCentro_servicios.guardarDatos();" id="btGuardar" />
+					<toolbarbutton image="/images/New16.gif"
+						label="Limpiar"
+						onClick='formCentro_servicios.accionForm(true,"registrar");'
+						id="btNew" />
+					<space />
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Cancelar"
+						onClick='formCentro_servicios.accionForm(false,tbxAccion.getText());'
+						id="btCancel" visible="false" />
+					<toolbarbutton image="/images/print_ico.gif"
+						label="Imprimir Centro servicios"
+						onClick="formCentro_servicios.imprimir();" id="btImprimir"
+						visible="false" />
+					<space />
+					<label value="Modo de selección: " />
+					<listbox id="lbxModo" mold="select" width="150px"
+						sclass="combobox">
+						<listitem value="01" label="Individual"
+							selected="true" />
+						<listitem value="02" label="Agrupado" />
+					</listbox>
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center">
+					<space />
+					<!-- *************************** -->
+					<!-- *** Insertar/Actualizar *** -->
+					<!-- *************************** -->
+
+					<!-- SELECCION DE CENTRO DE SALUD -->
+					<groupbox closable="false" width="690px" mold="3d"
+						id="grbIndividual">
+
+						<caption label="SERVICIOS CENTRO DE ATENCIÓN " />
+
+						<grid sclass="GridSinBorde" hflex="1">
+							<columns visible="false">
+								<column label="" width="20px" />
+								<column label="" width="130px"
+									align="left" />
+								<column label="" width="182px"
+									align="left" />
+								<column label="" width="110px"
+									align="left" />
+								<column label="" width="182px"
+									align="left" />
+								<column label="" width="30px"
+									align="left" />
+							</columns>
+							<rows>
+
+								<!-- fila 1 -->
+
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label id="lbCodigo_centro"
+											value="Centro de Salud: " />
+									</cell>
+									<cell>
+										<bandboxRegistros
+											id="tbxCodigo_centro" widthBandbox="170px"
+											widthListbox="800px" heightListbox="300px"
+											columnas="Codigo#65px|Nombre|Dirección#100px|Telefono#100px" />
+									</cell>
+									<cell colspan="2">
+										<textbox id="tbxNombreCentro"
+											hflex="1" style="text-transform:uppercase" />
+									</cell>
+									<cell>
+										<toolbarbutton
+											id="btnLimpiarCentroAtencion" image="/images/borrar.gif" />
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+
+					<!-- CENTROS DE SALUD HA APLICAR SERVICIOS SELECCIONADOS  -->
+					<space height="5px" />
+					<groupbox closable="false" width="690px" mold="3d"
+						id="grbAgrupado" visible="false">
+
+						<caption
+							label="CENTROS DE SALUD HA APLICAR SERVICIOS SELECCIONADOS" />
+
+						<toolbar>
+							<toolbarbutton image="/images/add.png"
+								label="Agregar Registro(Alt+A)"
+								onClick="formCentro_servicios.abrirWindowCentrosSalud()" />
+
+							<space bar="true" />
+
+							<toolbarbutton image="/images/borrar.gif"
+								id="tbbuttonEliminar" label="Eliminar Registro"
+								onClick="formCentro_servicios.eliminarCentrosSaludSeleccionados()"
+								disabled="true" />
+						</toolbar>
+						<listbox id="listboxCentros"
+							multiple="true" checkmark="true" height="200px">
+							<listhead>
+								<listheader label="Centro Salud" />
+								<listheader label="Dirección" />
+							</listhead>
+						</listbox>
+					</groupbox>
+
+					<!-- SERVICIOS QUE SE PUEDEN PRESTAR EN ESE CENTRO DE SALUD -->
+					<space height="5px" />
+					<groupbox closable="false" width="690px"
+						mold="3d">
+
+						<caption label="SERVICIOS" />
+
+						<toolbar>
+							<toolbarbutton image="/images/add.png"
+								label="Agregar Registro(Alt+S)"
+								onClick="formCentro_servicios.abrirWindowServiciosDisponibles()" />
+
+							<space bar="true" />
+
+							<toolbarbutton image="/images/borrar.gif"
+								id="tbbuttonServiciosEliminar" label="Eliminar Registro"
+								onClick="formCentro_servicios.eliminarCentrosServicios()"
+								disabled="true" />
+						</toolbar>
+						<listbox id="listboxServicios"
+							multiple="true" checkmark="true" height="200px">
+							<listhead>
+								<listheader label="Servicio" />
+								<listheader label="Via de ingreso" />
+							</listhead>
+						</listbox>
+					</groupbox>
+				</div>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

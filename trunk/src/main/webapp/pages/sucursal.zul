@@ -1,0 +1,253 @@
+<?page title="Sucursal" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formSucursal" width="100%" height="97%"
+		use="healthmanager.controller.SucursalAction">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="true" closable="false"
+			mold="3d" height="90%">
+			<caption label="Consultar"
+				style="color: blue;font-weight: bold" />
+
+			<separator />
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" height="90%" mold="paging"
+				pageSize="20" vflex="1">
+				<auxhead>
+					<auxheader colspan="5">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<separator />
+							<textbox id="tbxValue" width="200px"
+								onOK="formSucursal.buscarDatos();"
+								style="text-transform:uppercase" />
+							<separator />
+							<button mold="trendy"
+								image="/images/Magnifier.gif"
+								onClick="formSucursal.buscarDatos();"
+								tooltiptext="Consultar Sucursal" />
+							<separator />
+							<button mold="trendy"
+								image="/images/New16.gif"
+								onClick='formSucursal.accionForm(true,"registrar");'
+								tooltiptext="Nuevo Sucursal" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Código" width="100px" />
+					<column label="Nombre sucursal" />
+					<column label="Direccion sucursal" />
+					<column label="Tipo" width="210px" />
+					<column label="Email" width="120px" />
+					<column label="Acciones" align="center"
+						width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<borderlayout width="100%" height="90%" id="groupboxEditar"
+			visible="false">
+			<north border="none">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<toolbarbutton image="/images/Save16.gif"
+						label="Guardar Sucursal" onClick="formSucursal.guardarDatos();"
+						id="btGuardar" />
+					<toolbarbutton image="/images/New16.gif"
+						label="Nueva Sucursal"
+						onClick='formSucursal.accionForm(true,"registrar");' id="btNew" />
+					<space />
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Cancelar"
+						onClick='formSucursal.accionForm(false,tbxAccion.getText());'
+						id="btCancel" />
+					<toolbarbutton image="/images/print_ico.gif"
+						label="Imprimir Sucursal" onClick="formSucursal.imprimir();"
+						id="btImprimir" visible="false" />
+					<space />
+					<label value="Formato impresión: " visible="false" />
+					<listbox id="lbxFormato" mold="select" width="150px"
+						visible="false" sclass="combobox">
+						<listitem value="pdf" label="PDF"
+							selected="true" />
+						<listitem value="rtf" label="WORD" />
+					</listbox>
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center">
+					<space />
+					<!-- *************************** -->
+					<!-- *** Insertar/Actualizar *** -->
+					<!-- *************************** -->
+					<groupbox closable="false" width="390px"
+						mold="3d">
+						<grid sclass="GridSinBorde" hflex="1">
+							<columns>
+								<column label="" width="10px" />
+								<column label="" width="170px"
+									align="left" />
+								<column label="" width="182px" />
+								<column label="" width="10px" />
+							</columns>
+							<rows>
+
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label
+											value="Código sucursal: " />
+									</cell>
+									<cell>
+										<textbox id="tbxCodigo_sucursal"
+											width="170px" style="text-transform:uppercase"
+											maxlength="60" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 1 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbNombre_sucursal"
+											value="Nombre sucursal: " />
+									</cell>
+									<cell>
+										<textbox id="tbxNombre_sucursal"
+											width="170px" style="text-transform:uppercase"
+											maxlength="60" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 2 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label id="lbDireccion_sucursal"
+											value="Dirección: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxDireccion_sucursal" width="170px"
+											style="text-transform:uppercase" maxlength="60" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 3 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label id="lbTelefono_sucursal"
+											value="Teléfono: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxTelefono_sucursal" width="170px"
+											style="text-transform:uppercase" maxlength="30" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 4 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbTipo"
+											value="Tipo: " />
+									</cell>
+									<cell>
+										<listbox id="lbxTipo"
+											name="tipo_sucursal" mold="select" width="170px"
+											sclass="combobox" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 5 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label id="lbEmail"
+											value="Email: " />
+									</cell>
+									<cell>
+										<textbox id="tbxEmail"
+											width="170px" style="text-transform:uppercase"
+											maxlength="100" />
+									</cell>
+									<cell></cell>
+								</row>
+								<row id="rowAseguradora" visible="false"> 
+									<cell />
+									<cell height="30px">
+										<label value="Aseguradora: " />
+										<toolbarbutton
+											id="btnLimpiarAseguradora" image="/images/borrar.gif" />
+									</cell>
+									<cell>
+										<hlayout>
+											<bandboxRegistros
+												id="tbxCodigo_administradora" widthBandbox="177px"
+												widthListbox="600px" heightListbox="300px"
+												columnas="Codigo#65px|Nombres|Nit#100px" />
+										</hlayout>
+									</cell>
+									<cell />
+								</row>
+								<row id="rowConfiguracion" visible="false"> 
+									<cell />
+									<cell height="30px">
+										<label value="Config. Odontologia: " />
+										<toolbarbutton
+											id="btnLimpiarConfiguracion" image="/images/borrar.gif" />
+									</cell>
+									<cell>
+										<hlayout>
+											<bandboxRegistros
+												id="tbxConfiguracionOdontologia" widthBandbox="177px"
+												widthListbox="600px" heightListbox="300px"
+												columnas="Descripción" />
+										</hlayout>
+									</cell>
+									<cell />
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+				</div>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

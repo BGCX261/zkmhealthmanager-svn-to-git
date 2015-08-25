@@ -1,0 +1,1132 @@
+<?page title="Parametros_empresa" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+    <window id="formParametros_empresa" width="100%" height="97%"
+                use="healthmanager.controller.Parametros_empresaAction">
+        <style>
+            body ,table{ margin:0; padding:0; } .z-fieldset{
+            -moz-border-radius:5px; border-radius: 5px;
+            -webkit-border-radius: 5px; } .combobox{ font-size:12px;
+            border: 1px solid silver; } tr.z-row .z-cell{
+            background-image:none; } tr.z-row td.z-row-hover{
+            background-image:none; } .GridSinBorde tr.z-row
+            td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+            overflow: hidden; zoom: 1; border-top: none; border-left:
+            none; border-right: none; border-bottom: none; }
+        </style>
+
+        <!-- **************** -->
+        <!-- Zona de Consulta -->
+        <!-- **************** -->
+        <groupbox id="groupboxConsulta" visible="false" closable="false"
+                          mold="3d" height="90%">
+            <caption label="Consultar"
+                                 style="color: blue;font-weight: bold" />
+
+            <separator />
+
+            <!-- ***************************** -->
+            <!--  Resultado Consulta Maestros  -->
+            <!-- ***************************** -->
+            <grid id="gridResultado" height="90%" mold="paging"
+                              pageSize="20" vflex="1">
+                <auxhead>
+                    <auxheader colspan="22">
+                        <hbox align="center">
+                            <label value="Criterios de B&#250;squeda :" />
+                            <space />
+                            <listbox id="lbxParameter" mold="select"
+                                                                 sclass="combobox" width="150px" />
+                            <separator />
+                            <textbox id="tbxValue" width="200px"
+                                                                 onOK="formParametros_empresa.buscarDatos();"
+                                                                 style="text-transform:uppercase" />
+                            <separator />
+                            <button mold="trendy"
+                                                                image="/images/Magnifier.gif"
+                                                                onClick="formParametros_empresa.buscarDatos();"
+                                                                tooltiptext="Consultar Parametros empresa" />
+                            <separator />
+                            <button mold="trendy"
+                                                                image="/images/New16.gif"
+                                                                onClick='formParametros_empresa.accionForm(true,"registrar");'
+                                                                tooltiptext="Nuevo Parametros empresa" />
+                        </hbox>
+                    </auxheader>
+                </auxhead>
+                <columns sizable="true">
+                    <column label="Tipo historia clinica" />
+                    <column label="Cobrar cuota moderadora cita" />
+                    <column label="Seleccionar cita medica admision" />
+                    <column label="Trabaja autorizacion" />
+                    <column label="Trabaja ordenes" />
+                    <column label="Solo afiliados" />
+                    <column label="Código ministerio" />
+                    <column label="Código super salud" />
+                    <column label="Print receta caja" />
+                    <column label="Print receta consulta ext" />
+                    <column label="Modo contrato" />
+                    <column label="Pagar copago medicamentos" />
+                    <column label="Pagar copago remisiones" />
+                    <column label="Pagar cuota moderadora medicamentos" />
+                    <column
+                        label="Pagar cuota moderadora procedimientos" />
+                    <column label="Entrega r caja" />
+                    <column label="Trabaja hopt" />
+                    <column label="Trabaja uci" />
+                    <column label="Trabaja consltaext" />
+                    <column label="Trabaja urg" />
+                    <column label="Pagar copago procedimientos" />
+                    <column label="Acciones" align="center"
+                                                width="80px" />
+                </columns>
+                <rows id="rowsResultado" width="100%" />
+            </grid>
+        </groupbox>
+
+        <borderlayout width="100%" height="90%" id="groupboxEditar"
+                              visible="true">
+            <north border="none">
+                <toolbar width="100%" align="start">
+                    <textbox id="tbxAccion" value="registrar"
+                                                 visible="false" />
+                    <toolbarbutton image="/images/Save16.gif"
+                                                       label="Guardar Parametros empresa"
+                                                       onClick="formParametros_empresa.guardarDatos();" id="btGuardar" />
+                    <toolbarbutton image="/images/New16.gif"
+                                                       label="Nueva Parametros empresa" visible="false"
+                                                       onClick='formParametros_empresa.accionForm(true,"registrar");'
+                                                       id="btNew" />
+                    <space />
+                    <toolbarbutton image="/images/trasladar.gif"
+                                                       visible="false" label="Cancelar"
+                                                       onClick='formParametros_empresa.accionForm(false,tbxAccion.getText());'
+                                                       id="btCancel" />
+                    <toolbarbutton image="/images/print_ico.gif"
+                                                       label="Imprimir Parametros empresa"
+                                                       onClick="formParametros_empresa.imprimir();" id="btImprimir"
+                                                       visible="false" />
+                    <space />
+                    <label value="Formato impresión: " visible="false" />
+                    <listbox id="lbxFormato" mold="select" width="150px"
+                                                 visible="false" sclass="combobox">
+                        <listitem value="pdf" label="PDF"
+                                                          selected="true" />
+                        <listitem value="rtf" label="WORD" />
+                    </listbox>
+                </toolbar>
+            </north>
+            <center autoscroll="true" border="none">
+                <div align="center">
+
+                    <!-- *************************** -->
+                    <!-- *** Insertar/Actualizar *** -->
+                    <!-- *************************** -->
+                    <groupbox closable="false" width="445px"
+                                                  mold="3d">
+                        <grid sclass="GridSinBorde" hflex="1">
+                            <columns>
+                                <column label="" width="10px" />
+                                <column label="" width="230px"
+                                                                        align="left" />
+                                <column label="" width="182px" />
+                                <column label="" width="10px" />
+                            </columns>
+                            <rows>
+
+                                <row>
+                                    <cell />
+                                    <cell colspan="2" align="center">
+                                        <vbox>
+                                            <image width="168px"
+                                                                                               height="168px" src="/images/empresa.gif" id="imageUsuario" />
+                                            <hlayout>
+                                                <button id="upLoad"
+                                                                                                        label="Cargar Imagen" upload="true,maxsize=300"
+                                                                                                        style="font-size:9px;"
+                                                                                                        onUpload="formParametros_empresa.guardarImagen(event.getMedia());" />
+                                                <button id="quitar"
+                                                                                                        label="Quitar Imagen" style="font-size:9px;"
+                                                                                                        onClick="formParametros_empresa.borrarImagen();"
+                                                                                                        mold="trendy" />
+                                            </hlayout>
+                                            <space height="20px" />
+                                        </vbox>
+                                    </cell>
+                                    <cell />
+                                </row>
+
+                                <row>
+                                    <cell></cell>
+                                    <cell height="30px">
+                                        <label
+                                            value="Año predeterminado: " />
+                                    </cell>
+                                    <cell>
+                                        <listbox id="lbxAnio"
+                                                                                         name="anio" mold="select" width="170px" sclass="combobox" />
+                                    </cell>
+                                    <cell></cell>
+                                </row>
+
+                                <row>
+                                    <cell></cell>
+                                    <cell height="30px">
+                                        <label
+                                            value="Mes predeterminado: " />
+                                    </cell>
+                                    <cell>
+                                        <listbox id="lbxMes" name="mes"
+                                                                                         mold="select" width="170px" sclass="combobox">
+                                            <listitem
+                                                forEach="Mes del sistema,ENERO,FEBRERO,MARZO,ABRIL,MAYO,JUNIO,JULIO,AGOSTO,SEPTIEMBRE,OCTUBRE,NOVIEMBRE,DICIEMBRE"
+                                                value="${each}" label="${each}">
+                                            </listitem>
+                                        </listbox>
+                                    </cell>
+                                    <cell></cell>
+                                </row>
+
+                                <row>
+                                    <cell></cell>
+                                    <cell height="30px">
+                                        <label
+                                            id="lbTipo_historia_clinica" value="Tipo Historia Clinica: " />
+                                    </cell>
+                                    <cell>
+                                        <listbox
+                                            id="lbxTipo_historia_clinica" name="tipo_historia_clinica"
+                                            mold="select" width="170px" sclass="combobox" />
+                                    </cell>
+                                    <cell></cell>
+                                </row>
+
+
+                                <row>
+                                    <cell></cell>
+                                    <cell height="30px">
+                                        <label
+                                            id="lbCobrar_cuota_moderadora_cita"
+                                            value="Cobrar cuota moderadora en cita: " />
+                                    </cell>
+                                    <cell>
+                                        <listbox
+                                            id="lbxCobrar_cuota_moderadora_cita"
+                                            name="cobrar_cuota_moderadora_cita" mold="select"
+                                            width="170px" sclass="combobox" />
+                                    </cell>
+                                    <cell></cell>
+                                </row>
+
+                                <!-- fila 3 -->
+                                <row>
+                                    <cell></cell>
+                                    <cell height="30px">
+                                        <label
+                                            id="lbSeleccionar_cita_medica_admision"
+                                            value="Obligar cumplir cita desde admisión: " />
+                                    </cell>
+                                    <cell>
+                                        <listbox
+                                            id="lbxSeleccionar_cita_medica_admision"
+                                            name="seleccionar_cita_medica_admision" mold="select"
+                                            width="170px" sclass="combobox" />
+                                    </cell>
+                                    <cell></cell>
+                                </row>
+
+                                <row>
+                                    <cell></cell>
+                                    <cell height="30px">
+                                        <label
+                                            value="Rango edad no receta: " />
+                                    </cell>
+                                    <cell>
+                                        <listbox
+                                            id="lbxRangoEdadNoRecetada" name="edad_no_receta"
+                                            mold="select" width="170px" sclass="combobox" />
+                                    </cell>
+                                    <cell></cell>
+                                </row>
+
+                                <row>
+                                    <cell></cell>
+                                    <cell height="30px">
+                                        <label
+                                            value="Cobrar procedimiento despues de la tercera cirugía (ISS 2001): " />
+                                    </cell>
+                                    <cell>
+                                        <listbox
+                                            id="lbxCobrarProcedimientosDespuesTerceraCitugia"
+                                            name="edad_no_receta" mold="select" width="170px"
+                                            sclass="combobox" />
+                                    </cell>
+                                    <cell></cell>
+                                </row>
+
+                                <row>
+                                    <cell></cell>
+                                    <cell height="30px">
+                                        <label
+                                            value="Cobrar procedimiento despues de la segunda cirugía (SOAT): " />
+                                    </cell>
+                                    <cell>
+                                        <listbox
+                                            id="lbxCobrarProcedimientosDespuesTerceraSegunda"
+                                            name="edad_no_receta" mold="select" width="170px"
+                                            sclass="combobox" />
+                                    </cell>
+                                    <cell></cell>
+                                </row>
+
+                                <row>
+                                    <cell></cell>
+                                    <cell height="30px">
+                                        <label
+                                            value="Cobrar materiales despues del grupo 20 (Soat): " />
+                                    </cell>
+                                    <cell>
+                                        <listbox
+                                            id="lbxCobrarMaterialesGrupo20" name="edad_no_receta"
+                                            mold="select" width="170px" sclass="combobox" />
+                                    </cell>
+                                    <cell></cell>
+                                </row>
+
+                                <row>
+                                    <cell></cell>
+                                    <cell height="30px">
+                                        <label
+                                            value="Usar modulo entrega medicamento: " />
+                                    </cell>
+                                    <cell>
+                                        <listbox
+                                            id="lbxModuloEntregaMedicamentos" name="edad_no_receta"
+                                            mold="select" width="170px" sclass="combobox" />
+                                    </cell>
+                                    <cell></cell>
+                                </row>
+
+                                <row>
+                                    <cell></cell>
+                                    <cell height="30px">
+                                        <label
+                                            value="Afectar Inventario desde facturación: " />
+                                    </cell>
+                                    <cell>
+                                        <listbox
+                                            id="lbxAfectarInventarioFactura" name="edad_no_receta"
+                                            mold="select" width="170px" sclass="combobox" />
+                                    </cell>
+                                    <cell></cell>
+                                </row>
+
+
+                                <row>
+                                    <cell></cell>
+                                    <cell height="30px">
+                                        <label
+                                            id="lbTrabaja_autorizacion" value="Trabaja autorizaciones: " />
+                                    </cell>
+                                    <cell>
+                                        <listbox
+                                            id="lbxTrabaja_autorizacion" name="trabaja_autorizacion"
+                                            mold="select" width="170px" sclass="combobox"
+                                            onSelect="formParametros_empresa.verificartrabajaAutorizaciones()" />
+                                    </cell>
+                                    <cell></cell>
+                                </row>
+
+                                <!-- fila 5 -->
+                                <row>
+                                    <cell></cell>
+                                    <cell height="30px">
+                                        <label id="lbTrabaja_ordenes"
+                                                                                       value="Trabaja ordenes: " />
+                                    </cell>
+                                    <cell>
+                                        <listbox id="lbxTrabaja_ordenes"
+                                                                                         name="trabaja_ordenes" mold="select" width="170px"
+                                                                                         sclass="combobox" />
+                                    </cell>
+                                    <cell></cell>
+                                </row>
+
+                                <row>
+                                    <cell></cell>
+                                    <cell height="30px">
+                                        <label id="lbPrint_receta_caja"
+                                                                                       value="Imprimir Receta Medica desde: " />
+                                    </cell>
+                                    <cell>
+                                        <checkbox
+                                            id="chbPrint_receta_caja" label="Caja" />
+                                        <checkbox
+                                            id="chbPrint_receta_consulta_ext" label="Consulta Externa" />
+                                    </cell>
+                                    <cell></cell>
+                                </row>
+
+
+                                <row>
+                                    <cell></cell>
+                                    <cell height="30px">
+                                        <label id="lbSolo_afiliados"
+                                                                                       value="Trabajar por afiliaciones:  " />
+                                    </cell>
+                                    <cell>
+                                        <listbox id="lbxSolo_afiliados"
+                                                                                         name="solo_afiliados" mold="select" width="170px"
+                                                                                         sclass="combobox" />
+                                    </cell>
+                                    <cell></cell>
+                                </row>
+
+                                <!-- fila 7 -->
+
+                                <row>
+                                    <cell></cell>
+                                    <cell height="30px">
+                                        <label
+                                            id="lbPagar_copago_medicamentos"
+                                            value="Cobrar copago medicamentos: " />
+                                    </cell>
+                                    <cell>
+                                        <listbox
+                                            id="lbxPagar_copago_medicamentos"
+                                            name="pagar_copago_medicamentos" mold="select" width="170px"
+                                            sclass="combobox" />
+                                    </cell>
+                                    <cell></cell>
+                                </row>
+
+                                <!-- fila 13 -->
+                                <row>
+                                    <cell></cell>
+                                    <cell height="30px">
+                                        <label
+                                            id="lbPagar_copago_remisiones"
+                                            value="Cobrar copago en remisiones: " />
+                                    </cell>
+                                    <cell>
+                                        <listbox
+                                            id="lbxPagar_copago_remisiones"
+                                            name="pagar_copago_remisiones" mold="select" width="170px"
+                                            sclass="combobox" />
+                                    </cell>
+                                    <cell></cell>
+                                </row>
+
+                                <!-- fila 14 -->
+                                <row>
+                                    <cell></cell>
+                                    <cell height="30px">
+                                        <label
+                                            id="lbPagar_cuota_moderadora_medicamentos"
+                                            value="Pagar cuota moderadora medicamentos: " />
+                                    </cell>
+                                    <cell>
+                                        <listbox
+                                            id="lbxPagar_cuota_moderadora_medicamentos"
+                                            name="pagar_cuota_moderadora_medicamentos" mold="select"
+                                            width="170px" sclass="combobox" />
+                                    </cell>
+                                    <cell></cell>
+                                </row>
+
+                                <!-- fila 15 -->
+                                <row>
+                                    <cell></cell>
+                                    <cell height="30px">
+                                        <label
+                                            id="lbPagar_cuota_moderadora_procedimientos"
+                                            value="Pagar cuota moderadora procedimientos: " />
+                                    </cell>
+                                    <cell>
+                                        <listbox
+                                            id="lbxPagar_cuota_moderadora_procedimientos"
+                                            name="pagar_cuota_moderadora_procedimientos" mold="select"
+                                            width="170px" sclass="combobox" />
+                                    </cell>
+                                    <cell></cell>
+                                </row>
+
+                                <!-- fila 16 -->
+                                <row>
+                                    <cell></cell>
+                                    <cell height="30px">
+                                        <label id="lbEntrega_r_caja"
+                                                                                       value="Entregar recibo de Caja: " />
+                                    </cell>
+                                    <cell>
+                                        <listbox id="lbxEntrega_r_caja"
+                                                                                         name="entrega_r_caja" mold="select" width="170px"
+                                                                                         sclass="combobox" />
+                                    </cell>
+                                    <cell></cell>
+                                </row>
+
+                                <!-- fila 17 -->
+                                <row>
+                                    <cell></cell>
+                                    <cell height="30px">
+                                        <label id="lbTrabaja_hopt"
+                                                                                       value="Hospitalizacion: " />
+                                    </cell>
+                                    <cell>
+                                        <listbox id="lbxTrabaja_hopt"
+                                                                                         name="trabaja_hopt" mold="select" width="170px"
+                                                                                         sclass="combobox" />
+                                    </cell>
+                                    <cell></cell>
+                                </row>
+
+                                <!-- fila 18 -->
+                                <row>
+                                    <cell></cell>
+                                    <cell height="30px">
+                                        <label id="lbTrabaja_uci"
+                                                                                       value="UCI: " />
+                                    </cell>
+                                    <cell>
+                                        <listbox id="lbxTrabaja_uci"
+                                                                                         name="trabaja_uci" mold="select" width="170px"
+                                                                                         sclass="combobox" />
+                                    </cell>
+                                    <cell></cell>
+                                </row>
+
+                                <!-- fila 19 -->
+                                <row>
+                                    <cell></cell>
+                                    <cell height="30px">
+                                        <label id="lbTrabaja_consltaext"
+                                                                                       value="Consulta Externa: " />
+                                    </cell>
+                                    <cell>
+                                        <listbox
+                                            id="lbxTrabaja_consltaext" name="trabaja_consltaext"
+                                            mold="select" width="170px" sclass="combobox" />
+                                    </cell>
+                                    <cell></cell>
+                                </row>
+
+                                <!-- fila 20 -->
+                                <row>
+                                    <cell></cell>
+                                    <cell height="30px">
+                                        <label id="lbTrabaja_urg"
+                                                                                       value="Urgencia: " />
+                                    </cell>
+                                    <cell>
+                                        <listbox id="lbxTrabaja_urg"
+                                                                                         name="trabaja_urg" mold="select" width="170px"
+                                                                                         sclass="combobox" />
+                                    </cell>
+                                    <cell></cell>
+                                </row>
+
+                                <!-- fila 21 -->
+                                <row>
+                                    <cell></cell>
+                                    <cell height="30px">
+                                        <label
+                                            id="lbPagar_copago_procedimientos"
+                                            value="Pagar copago procedimientos: " />
+                                    </cell>
+                                    <cell>
+                                        <listbox
+                                            id="lbxPagar_copago_procedimientos"
+                                            name="pagar_copago_procedimientos" mold="select"
+                                            width="170px" sclass="combobox" />
+                                    </cell>
+                                    <cell></cell>
+                                </row>
+
+                                <row>
+                                    <cell></cell>
+                                    <cell height="30px">
+                                        <label id="lbCodigo_ministerio"
+                                                                                       value="Código Ministerio: " />
+                                    </cell>
+                                    <cell>
+                                        <textbox
+                                            id="tbxCodigo_ministerio" width="170px"
+                                            style="text-transform:uppercase" maxlength="20" />
+                                    </cell>
+                                    <cell></cell>
+                                </row>
+
+                                <!-- fila 8 -->
+                                <row>
+                                    <cell></cell>
+                                    <cell height="30px">
+                                        <label id="lbCodigo_super_salud"
+                                                                                       value="Código Supersalud: " />
+                                    </cell>
+                                    <cell>
+                                        <textbox
+                                            id="tbxCodigo_super_salud" width="170px"
+                                            style="text-transform:uppercase" maxlength="20" />
+                                    </cell>
+                                    <cell></cell>
+                                </row>
+
+                                <row>
+                                    <cell></cell>
+                                    <cell height="30px">
+                                        <label
+                                            id="lbSelect_prestador_medico_adutorizacion"
+                                            value="Permitir seleccionar el prestador, por medico en las autorizaciones: " />
+                                    </cell>
+                                    <cell>
+                                        <listbox
+                                            id="lbxSelect_prestador_medico_adutorizacion"
+                                            name="select_prestador_medico_adutorizacion" mold="select"
+                                            width="170px" sclass="combobox" />
+                                    </cell>
+                                    <cell></cell>
+                                </row>
+
+                                <!-- fila 23 -->
+                                <row>
+                                    <cell></cell>
+                                    <cell height="30px">
+                                        <label
+                                            id="lbSelect_prestador_medico_remisiones"
+                                            value="Permitir seleccionar el prestador, por medico en las remisiones: " />
+                                    </cell>
+                                    <cell>
+                                        <listbox
+                                            id="lbxSelect_prestador_medico_remisiones"
+                                            name="select_prestador_medico_remisiones" mold="select"
+                                            width="170px" sclass="combobox" />
+                                    </cell>
+                                    <cell></cell>
+                                </row>
+
+                                <row id="rowReporteAutorizaciones">
+                                    <cell></cell>
+                                    <cell height="30px">
+                                        <label
+                                            id="lbTipo_reporte_autorizaciones"
+                                            value="Tipo reporte autorizaciones: " />
+                                    </cell>
+                                    <cell>
+                                        <listbox
+                                            id="lbxTipo_reporte_autorizaciones"
+                                            name="tipo_reporte_autorizaciones" mold="select"
+                                            width="170px" sclass="combobox" />
+                                    </cell>
+                                    <cell></cell>
+                                </row>
+
+                                <!-- fila 25 -->
+                                <row>
+                                    <cell></cell>
+                                    <cell height="30px">
+                                        <label
+                                            id="lbTipo_reporte_remisiones"
+                                            value="Tipo reporte remisiones: " />
+                                    </cell>
+                                    <cell>
+                                        <listbox
+                                            id="lbxTipo_reporte_remisiones"
+                                            name="tipo_reporte_remisiones" mold="select" width="170px"
+                                            sclass="combobox" />
+                                    </cell>
+                                    <cell></cell>
+                                </row>
+
+                                <row>
+                                    <cell></cell>
+                                    <cell height="30px">
+                                        <label id="lbVigencia_recetas"
+                                                                                       value="Vigencia recetas (Horas): " />
+                                    </cell>
+                                    <cell>
+                                        <intbox
+                                            constraint="no negative:Este valor no puede ser negativo"
+                                            id="ibxVigencia_recetas" width="170px"
+                                            style="text-transform:uppercase" />
+                                    </cell>
+                                    <cell></cell>
+                                </row>
+
+                                <row>
+                                    <cell></cell>
+                                    <cell height="30px">
+                                        <label
+                                            id="lbTipo_reporte_receta" value="Tipo reporte receta: " />
+                                    </cell>
+                                    <cell>
+                                        <listbox
+                                            id="lbxTipo_reporte_receta" name="tipo_reporte_receta"
+                                            mold="select" width="170px" sclass="combobox" />
+                                    </cell>
+                                    <cell></cell>
+                                </row>
+
+                                <row>
+                                    <cell></cell>
+                                    <cell height="30px">
+                                        <label
+                                            id="lbTrabaja_centro_atencion"
+                                            value="Tiene centros atención: " />
+                                    </cell>
+                                    <cell>
+                                        <listbox
+                                            id="lbxTrabaja_centro_atencion"
+                                            name="trabaja_centro_atencion" mold="select" width="170px"
+                                            sclass="combobox" />
+                                    </cell>
+                                    <cell></cell>
+                                </row>
+
+                                <row>
+                                    <cell></cell>
+                                    <cell height="30px">
+                                        <label
+                                            id="lbTipo_solicitud_tecnica"
+                                            value="Tipo solicitud tecnica: " />
+                                    </cell>
+                                    <cell>
+                                        <listbox
+                                            id="lbxTipo_solicitud_tecnica" name="tipo_solicitud_tecnica"
+                                            mold="select" width="170px" sclass="combobox" />
+                                    </cell>
+                                    <cell></cell>
+                                </row>
+
+                                <row>
+                                    <cell></cell>
+                                    <cell height="30px">
+                                        <label
+                                            id="lbFacturar_auto_asistencial"
+                                            value="Facturar automaticamente en asistencial: " />
+                                    </cell>
+                                    <cell>
+                                        <checkbox
+                                            id="chbFacturar_auto_asistencial" />
+                                    </cell>
+                                    <cell></cell>
+                                </row>
+
+                                <row>
+                                    <cell></cell>
+                                    <cell height="30px">
+                                        <label
+                                            id="lbPermitir_cambiar_result_lab"
+                                            value="Permitir modificar resultados de laboratorio: " />
+                                    </cell>
+                                    <cell>
+                                        <checkbox
+                                            id="chbPermitir_cambiar_result_lab" />
+                                    </cell>
+                                    <cell></cell>
+                                </row>
+                                <row>
+                                    <cell></cell>
+                                    <cell height="30px">
+                                        <label
+                                            id="lbAfectar_hoja_gato_automatica"
+                                            value="Afectar Hoja Gasto desde la historia de Urgencia: " />
+                                    </cell>
+                                    <cell>
+                                        <checkbox
+                                            id="chbAfectar_hoja_gato_automatica" />
+                                    </cell>
+                                    <cell></cell>
+                                </row>
+
+                                <row>
+                                    <cell></cell>
+                                    <cell height="30px">
+                                        <label
+                                            id="lbHabilitar_ordenes_sin_admision"
+                                            value="Habilitar ordenes sin admisión: " />
+                                    </cell>
+                                    <cell>
+                                        <checkbox
+                                            id="chbHabilitar_ordenes_sin_admision" />
+                                    </cell>
+                                    <cell></cell>
+                                </row>
+
+                                <row>
+                                    <cell></cell>
+                                    <cell height="30px">
+                                        <label
+                                            id="lbApartar_cita_toma_laboratorios"
+                                            value="Permitir Apartar cita en la toma de muestra de laboratorios: " />
+                                    </cell>
+                                    <cell>
+                                        <checkbox
+                                            id="chbApartar_cita_toma_laboratorios" />
+                                    </cell>
+                                    <cell></cell>
+                                </row>
+
+                                <row>
+                                    <cell></cell>
+                                    <cell height="30px">
+                                        <label id="lbHabilitar_triage4"
+                                                                                       value="Habilitar triage 4: " />
+                                    </cell>
+                                    <cell>
+                                        <listbox
+                                            id="lbxHabilitar_triage4" name="trabaja_centro_atencion"
+                                            mold="select" width="170px" sclass="combobox" />
+                                    </cell>
+                                    <cell></cell>
+                                </row>
+
+                                <row>
+                                    <cell></cell>
+                                    <cell height="30px">
+                                        <label
+                                            id="lblMaximo_lab_fuera_rango"
+                                            value="Tiempo máximo para alertar laboratorios fuera de rango o positivos: " />
+                                    </cell>
+                                    <cell>
+                                        <intbox
+                                            constraint="no negative:Este valor no puede ser negativo"
+                                            id="ibxMaximo_lab_fuera_rango_valor" width="70px"
+                                            style="text-transform:uppercase" />
+                                        <space />
+                                        <listbox
+                                            id="lbxMaximo_lab_fuera_rango_unidad" name="unidad_medida2"
+                                            mold="select" width="70px" sclass="combobox" />
+                                    </cell>
+                                    <cell></cell>
+                                </row>
+
+                                <row>
+                                    <cell></cell>
+                                    <cell height="30px">
+                                        <label
+                                            id="lbPermitir_apartar_citas_medico"
+                                            value="Permitir apartar citas a los medico: " />
+                                    </cell>
+                                    <cell>
+                                        <checkbox
+                                            id="chbPermitir_apartar_citas_medico" />
+                                    </cell>
+                                </row>
+
+                                <row>
+                                    <cell></cell>
+                                    <cell height="30px">
+                                        <label
+                                            id="lbSalud_oral_recuperacion"
+                                            value="Facturar consulta de PYP salud oral en el contrato de recuperacion: " />
+                                    </cell>
+                                    <cell>
+                                        <checkbox
+                                            id="chbSalud_oral_recuperacion" />
+                                    </cell>
+                                </row>
+                                <row>
+                                    <cell></cell>
+                                    <cell height="30px">
+                                        <label
+                                            id="lbPermitir_vacunar_sin_contratacion"
+                                            value="Permitir vacunar sin haber contratado el servicio: " />
+                                    </cell>
+                                    <cell>
+                                        <checkbox
+                                            id="chbPermitir_vacunar_sin_contratacion" />
+                                    </cell>
+                                    <cell></cell>
+                                </row>
+
+                                <!-- fila 40 -->
+                                <row>
+                                    <cell></cell>
+                                    <cell height="30px">
+                                        <label
+                                            id="lbFiltrar_actividades_ordenamiento_programas"
+                                            value="Filtrar actividades en el ordenamiento por programas de PyP: " />
+                                    </cell>
+                                    <cell>
+                                        <checkbox
+                                            id="chbFiltrar_actividades_ordenamiento_programas" />
+                                    </cell>
+                                    <cell></cell>
+                                </row>
+                                <row>
+                                    <cell></cell>
+                                    <cell height="30px">
+                                        <label
+                                            id="lbGestion_informacion"
+                                            value="Gestionar información del paciente desde la Admisión: " />
+                                    </cell>
+                                    <cell>
+                                        <listbox
+                                            id="lbxGestion_informacion" name="gestion_informacion"
+                                            mold="select" width="170px" sclass="combobox" />
+                                    </cell>
+                                    <cell></cell>
+                                </row>
+
+                                <!-- fila 40 -->
+                                <row>
+                                    <cell></cell>
+                                    <cell height="30px">
+                                        <label id="lbSignos_enfermera"
+                                                                                       value="Gestión de signos vitales por la enfermera: " />
+                                    </cell>
+                                    <cell>
+                                        <checkbox
+                                            id="chbSignos_enfermera" />
+                                    </cell>
+                                    <cell></cell>
+                                </row>
+
+                                <row>
+                                    <cell></cell>
+                                    <cell height="30px">
+                                        <label
+                                            id="lbPermitir_cambiar_diagnosticos_datos_consulta"
+                                            value="Permitir cambiar diagnósticos en datos consulta después de facturar: " />
+                                    </cell>
+                                    <cell>
+                                        <checkbox
+                                            id="chbPermitir_cambiar_diagnosticos_datos_consulta" />
+                                    </cell>
+                                    <cell></cell>
+                                </row>
+
+                                <row>
+                                    <cell></cell>
+                                    <cell height="30px">
+                                        <label
+                                            id="lbAtender_enfermeras_gefe_primeravez"
+                                            value="Habilitar atención de pacientes de primera vez enfermera Jefe de control. " />
+                                    </cell>
+                                    <cell>
+                                        <checkbox
+                                            id="chbAtender_enfermeras_gefe_primeravez" />
+                                    </cell>
+                                    <cell></cell>
+                                </row>
+                                <row>
+                                    <cell></cell>
+                                    <cell height="30px">
+                                        <label id="lbModelo_recibo_caja"
+                                                                                       value="Modelo recibo caja: " />
+                                    </cell>
+                                    <cell>
+                                        <listbox
+                                            id="lbxModelo_recibo_caja" name="modelo_recibo_caja"
+                                            mold="select" width="170px" sclass="combobox" />
+                                    </cell>
+                                    <cell></cell>
+                                </row>
+
+                                <row>
+                                    <cell></cell>
+                                    <cell>
+                                        <label
+                                            value="Permitir facturar en fechas diferentes" />
+                                    </cell>
+                                    <cell>
+                                        <checkbox
+                                            id="chbPermitir_facturar_distfecha" />
+                                    </cell>
+                                    <cell />
+                                </row>
+                                <row>
+                                    <cell></cell>
+                                    <cell height="30px">
+                                        <label
+                                            id="lbTipo_reporte_facturacion"
+                                            value="Reporte Facturacion: " />
+                                    </cell>
+                                    <cell>
+                                        <listbox
+                                            id="lbxTipo_reporte_facturacion"
+                                            name="tipo_reporte_facturacion" mold="select" width="170px"
+                                            sclass="combobox" />
+                                    </cell>
+                                    <cell></cell>
+                                </row>
+                                <row>
+                                    <cell></cell>
+                                    <cell>
+                                        <label
+                                            value="Trabajar por paises" />
+                                    </cell>
+                                    <cell>
+                                        <checkbox
+                                            id="chbTrabajar_por_paises" />
+                                    </cell>
+                                    <cell />
+                                </row>
+                                <row>
+                                    <cell></cell>
+                                    <cell>
+                                        <label
+                                            value="Habilitar signos vitales en el triage: " />
+                                    </cell>
+                                    <cell>
+                                        <checkbox
+                                            id="chbCargar_signos_vitales_triage" />
+                                    </cell>
+                                    <cell />
+                                </row>
+                                <row>
+                                    <cell></cell>
+                                    <cell>
+                                        <label
+                                            value="Habilitar asignación de contratos capitados a facturadores: " />
+                                    </cell>
+                                    <cell>
+                                        <checkbox
+                                            id="chbhabilitar_asignacion_cont_cap_facturador" />
+                                    </cell>
+                                    <cell />
+                                </row>
+                                <row>
+                                    <cell></cell>
+                                    <cell>
+                                        <label
+                                            value="Habilitar consulta especializada: " />
+                                    </cell>
+                                    <cell>
+                                        <checkbox
+                                            id="chbhabilitar_consulta_especializada" />
+                                    </cell>
+                                    <cell />
+                                </row>
+                                <row>
+                                    <cell></cell>
+                                    <cell>
+                                        <label
+                                            value="Habilitar terapia física: " />
+                                    </cell>
+                                    <cell>
+                                        <checkbox
+                                            id="chbhabilitar_terapia_fisica" />
+                                    </cell>
+                                    <cell />
+                                </row>
+                                <row>
+                                    <cell></cell>
+                                    <cell>
+                                        <label
+                                            value="Habilitar terapia respiratoria: " />
+                                    </cell>
+                                    <cell>
+                                        <checkbox
+                                            id="chbhabilitar_terapia_respiratoria" />
+                                    </cell>
+                                    <cell />
+                                </row>
+                                <row>
+                                    <cell />
+                                    <cell>
+                                        <label
+                                            value="Habilitar configuracion de bodegas y centros de atencion" />
+                                    </cell>
+                                    <cell>
+                                        <checkbox
+                                            id="chbHabilitar_bodega_centro" />
+                                    </cell>
+                                </row>
+                                <row>
+                                    <cell />
+                                    <cell>
+                                        <label
+                                            value="Habilitar prefijo de venta FAC_CAP" />
+                                    </cell>
+                                    <cell>
+                                        <checkbox
+                                            id="chbHabilitar_prefijo_venta" />
+                                    </cell>
+                                </row>
+                                <row>
+                                    <cell />
+                                    <cell>
+                                        <label
+                                            value="Habilitar edicion de facturas particulares" />
+                                    </cell>
+                                    <cell>
+                                        <checkbox
+                                            id="chbHabilitar_edicion_fac_particulares" />
+                                    </cell>
+                                    <cell />
+                                </row>
+
+                                <row>
+                                    <cell />
+                                    <cell>
+                                        <label
+                                            value="Habilitar edicion de ordenamiento del prestador" />
+                                    </cell>
+                                    <cell>
+                                        <checkbox
+                                            id="chbEditar_ordenamiento_prestador" />
+                                    </cell>
+                                    <cell />
+                                </row>
+
+                                <row>
+                                    <cell />
+                                    <cell>
+                                        <label
+                                            value="Permitir a los facturados realizar facturas de eventos" />
+                                    </cell>
+                                    <cell>
+                                        <checkbox
+                                            id="chbPermitir_facturador_evento" />
+                                    </cell>
+                                    <cell />
+                                </row>
+
+                                <row>
+                                    <cell />
+                                    <cell>
+                                        <label
+                                            value="Habilitar restriccion en autorizaciones" />
+                                    </cell>
+                                    <cell>
+                                        <checkbox
+                                            id="chbHabilitar_restriccion_autorizacion" />
+                                    </cell>
+                                    <cell />
+                                </row>
+
+                                <row>
+                                    <cell />
+                                    <cell>
+                                        <label
+                                            value="Longitud de mascara para consecutivo de factura" />
+                                    </cell>
+                                    <cell>
+                                        <intbox
+                                            id="ibxNumero_mascara_factura"
+                                            tooltiptext="Este la longitud que pordefecto debe llevar la factura el cual rellena por ceros, no quiere decir que de ese número no se pueda pasar" 
+                                            hflex="1" maxlength="2"/> 
+                                    </cell>
+                                    <cell />
+                                </row>
+                                
+                                <row>
+                                    <cell />
+                                    <cell>
+                                        <label value="Permitir mostrar las historias en una nueva pagina" />
+                                    </cell>
+                                    <cell>
+                                        <checkbox
+                                            id="chbMostrar_historias_pag" />
+                                    </cell>
+                                </row>
+                                
+                            </rows>
+                        </grid>
+                    </groupbox>
+                </div>
+            </center>
+        </borderlayout>
+    </window>
+</zk>

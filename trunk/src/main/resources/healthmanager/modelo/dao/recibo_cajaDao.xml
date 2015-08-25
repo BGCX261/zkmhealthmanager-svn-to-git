@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Recibo_cajaDao">
+	
+	<resultMap id="recibo_cajaMap" type="recibo_caja">
+		<result column="id" property="id" />
+		<result column="codigo" property="codigo" />
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="nro_identificacion" property="nro_identificacion" />
+		<result column="nro_ingreso" property="nro_ingreso" />
+		<result column="tipo" property="tipo" />
+		<result column="fecha" property="fecha" />
+		<result column="valor_neto" property="valor_neto" />
+		<result column="valor_descuento" property="valor_descuento" />
+		<result column="aplica_descuento" property="aplica_descuento" />
+		<result column="quien_autoriza" property="quien_autoriza" />
+		<result column="observaciones" property="observaciones" />
+		<result column="estado" property="estado" />
+		<result column="efectivo" property="efectivo" />
+		<result column="cambio" property="cambio" />
+		<result column="id_cierre_caja" property="id_cierre_caja" />
+		<result column="creacion_date" property="creacion_date" />
+		<result column="creacion_user" property="creacion_user" />
+		<result column="ultimo_update" property="ultimo_update" />
+		<result column="ultimo_user" property="ultimo_user" />
+		<result column="codigo_centro" property="codigo_centro" />
+		<result column="valor_total" property="valor_total" />
+	</resultMap>
+
+	<insert id="crear" parameterType="recibo_caja">
+		<selectKey keyProperty="id" resultType="java.lang.Long" >
+		insert into public.recibo_caja (codigo,codigo_empresa,
+		codigo_sucursal,nro_identificacion,nro_ingreso,
+		tipo,fecha,valor_neto,
+		valor_descuento,aplica_descuento,quien_autoriza,
+		observaciones,estado,efectivo,
+		cambio,id_cierre_caja,creacion_date,
+		creacion_user,ultimo_update,ultimo_user,
+		codigo_centro,valor_total)
+
+		values (#{codigo},#{codigo_empresa},
+		#{codigo_sucursal},#{nro_identificacion},#{nro_ingreso},
+		#{tipo},#{fecha},#{valor_neto},
+		#{valor_descuento},#{aplica_descuento},#{quien_autoriza},
+		#{observaciones},#{estado},#{efectivo},
+		#{cambio},#{id_cierre_caja},#{creacion_date},
+		#{creacion_user},#{ultimo_update},#{ultimo_user},
+		#{codigo_centro},#{valor_total})
+		returning id;
+		</selectKey>
+	</insert>
+
+	<update id="actualizar" parameterType="recibo_caja">
+		update public.recibo_caja set id = #{id},
+		codigo = #{codigo},codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},nro_identificacion = #{nro_identificacion},
+		nro_ingreso = #{nro_ingreso},tipo = #{tipo},
+		fecha = #{fecha},valor_neto = #{valor_neto},
+		valor_descuento = #{valor_descuento},aplica_descuento = #{aplica_descuento},
+		quien_autoriza = #{quien_autoriza},observaciones = #{observaciones},
+		estado = #{estado},efectivo = #{efectivo},
+		cambio = #{cambio},id_cierre_caja = #{id_cierre_caja},
+		ultimo_update = #{ultimo_update},ultimo_user = #{ultimo_user},
+		codigo_centro = #{codigo_centro},valor_total = #{valor_total}
+		where id = #{id}
+	</update>
+
+	<select id="consultar" parameterType="recibo_caja" resultMap="recibo_cajaMap">
+		select id,codigo,
+		codigo_empresa,codigo_sucursal,nro_identificacion,nro_ingreso,
+		tipo,fecha,valor_neto,valor_descuento,
+		aplica_descuento,quien_autoriza,observaciones,estado,
+		efectivo,cambio,id_cierre_caja,creacion_date,
+		creacion_user,ultimo_update,ultimo_user,codigo_centro,
+		valor_total
+		from public.recibo_caja where id = #{id}
+	</select>
+	
+	<select id="consultar_recibo" parameterType="recibo_caja" resultMap="recibo_cajaMap">
+		select id,codigo,
+		codigo_empresa,codigo_sucursal,nro_identificacion,nro_ingreso,
+		tipo,fecha,valor_neto,valor_descuento,
+		aplica_descuento,quien_autoriza,observaciones,estado,
+		efectivo,cambio,id_cierre_caja,creacion_date,
+		creacion_user,ultimo_update,ultimo_user,codigo_centro,
+		valor_total
+		from public.recibo_caja where codigo_empresa = #{codigo_empresa} and 
+		codigo_sucursal = #{codigo_sucursal} and nro_identificacion = #{nro_identificacion} 
+		and nro_ingreso = #{nro_ingreso} 
+		limit 1 offset 0
+	</select>
+
+	<delete id="eliminar" parameterType="recibo_caja">
+		delete from public.recibo_caja
+		where id = #{id}
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="recibo_cajaMap">
+		select id,codigo,
+		codigo_empresa,codigo_sucursal,nro_identificacion,nro_ingreso,
+		tipo,fecha,valor_neto,valor_descuento,
+		aplica_descuento,quien_autoriza,observaciones,estado,
+		efectivo,cambio,id_cierre_caja,creacion_date,
+		creacion_user,ultimo_update,ultimo_user,codigo_centro,
+		valor_total
+		from public.recibo_caja 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+				AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="creacion_user != null">
+				AND creacion_user = #{creacion_user}
+			</if>
+			<if test="recibos_abiertos != null">
+				AND id_cierre_caja is null
+			</if>
+			
+			<if test="id_cierre_caja != null">
+				AND id_cierre_caja = #{id_cierre_caja} 
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(*) != 0 AS exist 		from public.recibo_caja 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+				AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+				AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="nro_identificacion != null">
+				AND nro_identificacion = #{nro_identificacion}
+			</if>
+
+		</trim>
+	</select>
+
+</mapper>

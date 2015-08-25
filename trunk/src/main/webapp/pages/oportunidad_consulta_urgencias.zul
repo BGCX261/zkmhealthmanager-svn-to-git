@@ -1,0 +1,136 @@
+<?page title="Evaluación de la oportunidad en la consulta de Urgencias" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formOportunidad_consulta_urgencias" width="100%"
+		height="100%"
+		use="healthmanager.controller.Oportunidad_consulta_urgenciasAction">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsultar" visible="true" closable="false"
+			mold="3d" height="98%" width="100%">
+			<caption
+				label="Evaluación de la oportunidad en la consulta de Urgencias"
+				style="color: blue;font-weight: bold" />
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+
+			<listbox id="listboxResultado" vflex="1" hflex="1"
+				multiple="false" checkmark="false" mold="paging">
+				<auxhead hflex="1">
+					<auxheader colspan="8">
+						<hbox align="center" hflex="1">
+							<label value="Centro de Atención" />
+							<space width="5px" />
+							<bandboxRegistros id="tbxCodigo_centro"
+								widthBandbox="100px" widthListbox="450px" heightListbox="300px"
+								columnas="Código#100px|Centro" />
+							<textbox id="tbxNomCentro" width="210px"
+								style="text-transform:uppercase" readonly="true" />
+							<toolbarbutton id="btnLimpiarCentro"
+								image="/images/borrar.gif" />
+
+							<space width="30px" />
+
+							<label value="Prestador" />
+							<space width="30px" />
+							<bandboxRegistros id="tbxCodigo_medico"
+								widthBandbox="100px" widthListbox="450px" heightListbox="300px"
+								columnas="Identificación#100px|Nombres|Apellidos" />
+							<textbox id="tbxNomPrestador" width="210px"
+								style="text-transform:uppercase" readonly="true" />
+							<toolbarbutton id="btnLimpiarPrestador"
+								image="/images/borrar.gif" />
+
+							<space width="30px" />
+
+							<label value="Fecha de Solicitud" />
+							<space width="15px" />
+							<datebox id="dtbxFecha_inicial"
+								format="yyyy-MM-dd" onCreate="self.setValue(new Date())" />
+							<space width="5px" />
+							<label value="-" />
+							<space width="5px" />
+							<datebox id="dtbxFecha_final"
+								format="yyyy-MM-dd" onCreate="self.setValue(new Date())" />
+
+						</hbox>
+						<space />
+						<hbox align="center" hflex="1">
+
+							<label value="Criterios de B&#250;squeda" />
+							<space width="35px" />
+							<textbox id="tbxValue"
+								onOK="formOportunidad_consulta_urgencias.buscarDatos();"
+								style="text-transform:uppercase" width="270px" />
+							<space width="50px" />
+
+							<toolbarbutton id="btnFiltro_ingreso"
+								visible="false" image="/images/filtro.png"
+								label="Vias de ingreso"
+								onClick='popupViasIngreso.open(self,"end_after")' />
+
+							<space width="50px" />
+
+							<toolbarbutton label="Consultar Historias"
+								image="/images/Magnifier.gif"
+								onClick="formOportunidad_consulta_urgencias.buscarDatos();"
+								tooltiptext="Consultar Historia" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+
+				<listhead>
+					<listheader label="Identificación" width="110px" />
+					<listheader label="Paciente" />
+					<listheader label="Prestador" />
+					<listheader label="Nivel de triage" width="170px" />
+					<listheader label="Solicitud de Atención"
+						width="170px" />
+					<listheader label="Fecha apertura Urgencias"
+						width="170px" />
+					<listheader label="Oportunidad (min)" width="170px" />
+				</listhead>
+			</listbox>
+			<hlayout>
+				<label width="500px" value="Oportunidad en minutos: "
+					style="color: red" />
+				<label id="lbTotal_oportunidad" style="color: red" />
+			</hlayout>
+		</groupbox>
+
+		<popup id="popupViasIngreso">
+			<listbox id="lbxVias_ingreso" multiple="true"
+				checkmark="true" width="250px" name="via_ingreso" rows="8">
+				<custom-attributes org.zkoss.zul.listbox.rod="true" />
+				<listhead>
+					<listheader label="Vias de ingreso" />
+				</listhead>
+				<listfoot>
+					<listfooter align="middle">
+						<toolbarbutton
+							label="Consultar por via de ingreso"
+							image="/images/Magnifier.gif"
+							onClick="formOportunidad_consulta_urgencias.buscarDatos()"
+							tooltiptext="Consultar por via de ingreso" />
+					</listfooter>
+				</listfoot>
+			</listbox>
+		</popup>
+
+		<div id="divPopups_traige" />
+	</window>
+</zk>

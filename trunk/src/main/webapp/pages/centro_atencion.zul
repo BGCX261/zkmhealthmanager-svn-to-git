@@ -1,0 +1,287 @@
+<?page title="Centro_atencion" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formCentro_atencion" width="100%" height="100%"
+		use="healthmanager.controller.Centro_atencionAction">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="false" closable="false"
+			mold="3d" height="100%">
+			<caption label="Consultar listado de centros de atención"
+				style="color: blue;font-weight: bold" />
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" vflex="1">
+				<auxhead>
+					<auxheader colspan="6">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<space />
+							<textbox id="tbxValue" width="200px"
+								onOK="formCentro_atencion.buscarDatos();"
+								style="text-transform:uppercase" />
+							<space />
+							<toolbarbutton label="Consultar"
+								image="/images/Magnifier.gif"
+								onClick="formCentro_atencion.buscarDatos();"
+								tooltiptext="Consultar" />
+							<space />
+							<toolbarbutton label="Nuevo"
+								image="/images/New16.gif"
+								onClick='formCentro_atencion.accionForm(true,"registrar");'
+								tooltiptext="Nuevo" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Codigo" width="80px" />
+					<column label="Nombre" />
+					<column label="Direccion" />
+					<column label="Laboratorios" width="100px" />
+					<column label="Telefonos" width="100px" />
+					<column label="Acciones" align="center"
+						width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<borderlayout width="100%" height="100%" id="groupboxEditar"
+			visible="true">
+			<north border="none">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<toolbarbutton image="/images/Save16.gif"
+						label="Guardar" onClick="formCentro_atencion.guardarDatos();"
+						id="btGuardar" />
+					<toolbarbutton image="/images/New16.gif"
+						label="Nuevo"
+						onClick='formCentro_atencion.accionForm(true,"registrar");'
+						id="btNew" />
+					<space />
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Regresar"
+						onClick='formCentro_atencion.accionForm(false,tbxAccion.getText());'
+						id="btCancel" />
+
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center">
+					<space />
+					<!-- *************************** -->
+					<!-- *** Insertar/Actualizar *** -->
+					<!-- *************************** -->
+					<groupbox closable="false" width="655px"
+						mold="3d">
+						<grid sclass="GridSinBorde">
+							<auxhead>
+								<auxheader colspan="4" align="center"
+									label="REGISTRAR CENTRO DE ATENCIÓN" />
+							</auxhead>
+							<columns visible="false">
+								<column label="" width="100px"
+									align="left" />
+								<column label="" width="140px"
+									align="left" />
+								<column label="" width="100px"
+									align="left" />
+								<column label="" align="left" />
+							</columns>
+							<rows>
+								<row>
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbCodigo_centro"
+											value="Codigo centro: " />
+									</cell>
+									<cell>
+										<textbox id="tbxCodigo_centro"
+											width="120px" style="text-transform:uppercase" maxlength="3"
+											readonly="true" />
+									</cell>
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbNombre_centro"
+											value="Nombre: " />
+									</cell>
+									<cell>
+										<textbox id="tbxNombre_centro"
+											width="270px" style="text-transform:uppercase" />
+									</cell>
+								</row>
+
+								<row>
+									<cell>
+										<label id="lbDireccion"
+											value="Dirección: " />
+									</cell>
+									<cell colspan="3">
+										<hlayout>
+											<textbox id="tbxDireccion"
+												width="303px" style="text-transform:uppercase" />
+											<space />
+											<label id="lbTelefonos"
+												value="Telefonos: " />
+											<textbox id="tbxTelefonos"
+												width="120px" style="text-transform:uppercase"
+												maxlength="50" />
+										</hlayout>
+									</cell>
+
+								</row>
+
+								<row>
+									<cell>
+										<label id="lbId_coordinador"
+											value="Identificación: " />
+									</cell>
+									<cell>
+										<textbox id="tbxId_coordinador"
+											width="120px" style="text-transform:uppercase"
+											maxlength="50" />
+									</cell>
+									<cell>
+										<label id="lbNombre_coordinador"
+											value="Coordinador: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxNombre_coordinador" width="270px"
+											style="text-transform:uppercase" maxlength="50" />
+									</cell>
+								</row>
+
+								<row>
+									<cell colspan="4">
+										<checkbox
+											id="chkTriage_enfermera"
+											label="Que las enfermeras jefes puedan realizar triage" />
+									</cell>
+								</row>
+
+								<row>
+									<cell>
+										<label id="lbObservaciones"
+											value="Observaciones: " />
+									</cell>
+									<cell colspan="3">
+										<textbox id="tbxObservaciones"
+											width="610px" style="text-transform:uppercase" />
+									</cell>
+								</row>
+
+								<row>
+									<cell>
+										<checkbox id="chkLaboratorios"
+											label="Laboratorios" />
+									</cell>
+									<cell align="right">
+										<label value="Georeferencia" />
+									</cell>
+									<cell colspan="2">
+										<bandboxRegistros
+											id="bandboxCentro_atencion" widthBandbox="100px"
+											widthListbox="600px" heightListbox="300px"
+											columnas="Codigo#65px|Nombre|Dirección" />
+
+										<textbox id="tbxInfo_centro"
+											width="250px" style="text-transform:uppercase;"
+											readonly="true" />
+										<toolbarbutton
+											id="btnLimpiarCentro" image="/images/borrar.gif" />
+									</cell>
+								</row>
+
+								<row>
+									<cell colspan="4">
+										<label id="lbCuenta_ingreso"
+											value="Cuenta de ingreso: " />
+										<space />
+										<bandboxRegistros
+											id="tbxCuenta_ingreso" widthBandbox="150px"
+											widthListbox="800px" heightListbox="300px"
+											columnas="Codigo#65px|Nombre|Sub Cta#65px|Tipo Cuenta#100px|Grupo Cuenta#100px|Oculto#65px|Inact#65px|MT#65px" />
+
+										<textbox
+											id="tbxNomCuenta_ingreso" width="325px"
+											style="text-transform:uppercase" readonly="true" />
+										<space width="2px" />
+										<toolbarbutton
+											id="btnLimpiarCuenta_ingreso" image="/images/borrar.gif" />
+									</cell>
+								</row>
+
+								<row>
+									<cell colspan="4">
+										<tabbox height="280px">
+											<tabs>
+												<tab label="BARRIOS" />
+											</tabs>
+											<tabpanels>
+												<tabpanel>
+													<grid
+														id="gridBarrios" width="100%" height="230px"
+														style="margin-top:3px" mold="paging" pageSize="20">
+														<auxhead>
+															<auxheader
+																colspan="6">
+																<hlayout>
+																	<toolbarbutton
+																		image="/images/add.png" label="Agregar Registro"
+																		onClick="formCentro_atencion.abrirWindowBarrios();" />
+
+																</hlayout>
+															</auxheader>
+														</auxhead>
+														<columns
+															sizable="true">
+															<column
+																label="Codigo" align="center" width="80px" />
+															<column
+																label="Barrio" align="center" />
+															<column
+																label="Localidad" align="center" width="180px" />
+															<column
+																label="Dpto - Mun" width="120px" />
+															<column
+																label="" align="center" width="25px" />
+														</columns>
+														<rows
+															id="rowsBarrios" width="100%" />
+
+													</grid>
+												</tabpanel>
+											</tabpanels>
+										</tabbox>
+									</cell>
+								</row>
+							</rows>
+						</grid>
+
+					</groupbox>
+				</div>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

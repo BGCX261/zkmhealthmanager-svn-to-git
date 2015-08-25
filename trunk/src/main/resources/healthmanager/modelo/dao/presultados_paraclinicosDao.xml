@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Presultados_paraclinicosDao">
+
+	<!--<typeAlias alias="presultados_paraclinicos" type="healthmanager.modelo.bean.Presultados_paraclinicos" 
+		/> -->
+
+	<!--<mapper resource="healthmanager/modelo/dao/xml/presultados_paraclinicosSQL.xml" 
+		/> -->
+
+	<resultMap id="presultados_paraclinicosMap" type="presultados_paraclinicos">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="consecutivo" property="consecutivo" />
+		<result column="nro_documento" property="nro_documento" />
+		<result column="codigo_examen" property="codigo_examen" />
+		<result column="fecha" property="fecha" />
+		<result column="resultado" property="resultado" />
+		<result column="normal_anormal" property="normal_anormal" />
+		<result column="descripcion_na" property="descripcion_na" />
+	</resultMap>
+
+	<insert id="crear" parameterType="presultados_paraclinicos">
+		insert into
+		public.presultados_paraclinicos (codigo_empresa,codigo_sucursal,
+		consecutivo,nro_documento,codigo_examen,
+		fecha,resultado,normal_anormal,descripcion_na)
+
+		values
+		(#{codigo_empresa},#{codigo_sucursal},
+		#{consecutivo},#{nro_documento},#{codigo_examen},
+		#{fecha},#{resultado},#{normal_anormal},#{descripcion_na})
+	</insert>
+
+	<update id="actualizar" parameterType="presultados_paraclinicos">
+		update
+		public.presultados_paraclinicos set codigo_empresa =
+		#{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},consecutivo =
+		#{consecutivo},
+		nro_documento = #{nro_documento},codigo_examen =
+		#{codigo_examen},
+		fecha = #{fecha},resultado = #{resultado}, 
+		normal_anormal = #{normal_anormal}, descripcion_na = #{descripcion_na} 
+		where
+		codigo_empresa = #{codigo_empresa} and
+		codigo_sucursal =
+		#{codigo_sucursal} and consecutivo = #{consecutivo}
+		</update>
+
+	<select id="consultar" parameterType="presultados_paraclinicos"
+		resultMap="presultados_paraclinicosMap">
+		select codigo_empresa,codigo_sucursal,
+		consecutivo,nro_documento,codigo_examen,fecha,
+		resultado,normal_anormal,descripcion_na 
+		from
+		public.presultados_paraclinicos where
+		codigo_empresa =
+		#{codigo_empresa} and
+		codigo_sucursal = #{codigo_sucursal} and
+		consecutivo = #{consecutivo}	
+	</select>
+	
+	<select id="mostrar_ultimo" parameterType="presultados_paraclinicos"
+		resultMap="presultados_paraclinicosMap">
+		select codigo_empresa,codigo_sucursal,
+		consecutivo,nro_documento,codigo_examen,fecha,
+		resultado,normal_anormal,descripcion_na 
+		from presultados_paraclinicos 
+		where fecha=(select fecha 
+		from presultados_paraclinicos 
+		where codigo_empresa =	#{codigo_empresa} and
+		codigo_sucursal = #{codigo_sucursal} and 
+		nro_documento= #{nro_documento}
+		order by fecha desc
+		limit 1)
+		and codigo_examen= #{codigo_examen}
+		and nro_documento= #{nro_documento} 
+		order by fecha desc limit 1
+	</select>
+
+	<delete id="eliminar" parameterType="presultados_paraclinicos">
+		delete from
+		public.presultados_paraclinicos
+		where codigo_empresa =
+		#{codigo_empresa} and
+		codigo_sucursal = #{codigo_sucursal} and
+		consecutivo = #{consecutivo}
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="presultados_paraclinicosMap" >
+		select codigo_empresa,codigo_sucursal,
+		consecutivo,nro_documento,codigo_examen,fecha,
+		resultado,normal_anormal,descripcion_na 
+		from
+		public.presultados_paraclinicos
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+				AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+				AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="nro_documento != null">
+				AND nro_documento = #{nro_documento}
+			</if>
+			<if test="codigo_examen != null">
+				AND codigo_examen = #{codigo_examen}
+			</if>
+			<if test="parameter != null">
+				AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		
+		<if test="ordenar_fecha">
+			order by fecha asc
+		</if>
+		
+		<if test="limit != null">
+			${limit}
+		</if>
+	</select>
+
+<select id="listar_validacion_paciente" parameterType="java.util.Map" resultType="java.util.HashMap" >
+		select pct.fecha_nacimiento,
+   		getedad(pct.fecha_nacimiento, to_date(pp.fecha, 'yyyy-MM-dd'), 1) as age,   
+            
+		pp.codigo_empresa,pp.codigo_sucursal,
+		pp.consecutivo,pp.nro_documento,pp.codigo_examen,pp.fecha,
+		pp.resultado,pp.normal_anormal,pp.descripcion_na 
+		from public.presultados_paraclinicos pp
+		left join paciente pct on (pct.codigo_empresa = pp.codigo_empresa
+		and pct.codigo_sucursal = pp.codigo_sucursal and pct.nro_identificacion = pp.nro_documento)
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+				AND pp.codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+				AND pp.codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="nro_documento != null">
+				AND pp.nro_documento = #{nro_documento}
+			</if>
+			<if test="codigo_examen != null">
+				AND pp.codigo_examen = #{codigo_examen}
+			</if>
+			<if test="parameter != null">
+				AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		
+		
+		<if test="limit != null">
+			${limit}
+		</if>
+	</select>
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist from public.presultados_paraclinicos
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+				AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+				AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+				AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+			${limit}
+		</if>
+	</select>
+
+</mapper>

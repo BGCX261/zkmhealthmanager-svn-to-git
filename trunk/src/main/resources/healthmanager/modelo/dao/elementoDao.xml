@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.ElementoDao">
+
+	<resultMap id="resultMapElemento" type="java.util.HashMap">
+		<result property="key" column="codigo" />
+		<result property="value" column="descripcion" />
+	</resultMap>
+
+	<resultMap id="elementoMap" type="elemento">
+		<result column="codigo" property="codigo" />
+		<result column="tipo" property="tipo" />
+		<result column="descripcion" property="descripcion" />
+	</resultMap>
+
+	<select id="listarMapElementos" resultMap="resultMapElemento"
+		parameterType="java.util.Map">
+		select codigo,descripcion
+		from
+		public.elemento where tipo = #{tipo}
+	</select>
+
+	<insert id="crear" parameterType="elemento">
+		insert into public.elemento
+		(codigo,tipo,
+		descripcion)
+
+		values (#{codigo},#{tipo},
+		#{descripcion})
+	</insert>
+
+	<update id="actualizar" parameterType="elemento">
+		update public.elemento set
+		codigo = #{codigo},
+		tipo =
+		#{tipo},descripcion = #{descripcion}
+		where
+		codigo = #{codigo}
+		and tipo =
+		#{tipo}
+	</update>
+
+	<select id="consultar" resultMap="elementoMap" parameterType="elemento">
+		select codigo,tipo,
+		descripcion
+		from public.elemento where codigo =
+		#{codigo}
+		and tipo = #{tipo}
+	</select>
+
+	<delete id="eliminar" parameterType="elemento">
+		delete from public.elemento
+		where codigo = #{codigo}
+		and tipo = #{tipo}
+	</delete>
+
+	<select id="listar" resultMap="elementoMap" parameterType="java.util.Map">
+		select codigo,tipo,
+		descripcion
+		from public.elemento
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="tipo != null">AND tipo = #{tipo}</if>
+			<if test="codigo != null">AND codigo = #{codigo}</if>
+			<if test="empieza_por != null">AND codigo like '${empieza_por}%'</if>
+			<if test="parameter != null">AND ${parameter} like '${value}'</if>
+			<if test="permitidos1 != null">AND codigo in ('NI', 'CC', 'TI', 'CE', 'RC')</if>
+			<if test="permitidos2 != null">AND codigo in ('PA', 'CC', 'TI', 'CE', 'RC')</if>
+			<if test="permitidos3 != null">AND codigo in ('NI')</if>
+			<if test="permitidos4 != null">AND codigo in ('CC', 'TI', 'CE', 'RC')</if>
+			<if test="permitidos5 != null">AND codigo in ('PA', 'CC', 'TI', 'CE', 'RC', 'AS')</if>
+			<if test="parametroTodo != null">AND (lower(codigo) || ' ' || lower(descripcion) like
+				'%${parametroTodo}%')</if>
+			<if test="codigos != null">
+				AND codigo IN
+				<foreach collection="codigos" item="i" open="(" separator=","
+					close=")">
+					#{i}
+				</foreach>
+			</if>
+		</trim>
+
+		<if test="orden_descripcion != null">
+			order by descripcion ASC
+		</if>
+
+		<if test="orden_codigo != null">
+			order by codigo ASC
+		</if>
+
+		<if test="orden_codigo_num != null">
+			ORDER BY to_char(codigo::INTEGER, 'FM909') ASC
+		</if>
+
+		<if test="limit != null">
+			${limit}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist from public.elemento
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="tipo != null">
+				AND tipo = #{tipo}
+			</if>
+			<if test="descripcion != null">
+				AND descripcion = #{descripcion}
+			</if>
+
+		</trim>
+
+	</select>
+
+</mapper>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.procedimiento_multipleModel">
+    <select id="select" resultType="java.util.HashMap" parameterType="java.util.Map">
+    select d.nro_factura,d.codigo_administradora,
+	d.id_plan,d.nro_identificacion,d.nro_ingreso,
+	p.nombre1,p.nombre2,p.apellido1,p.apellido2,
+	d.codigo_prestador||'-'||p1.nombres||' '||p1.apellidos as prestador,
+	d.codigo_anestesiologo||'-'||p2.nombres||' '||p2.apellidos as anestesiologo,
+	d.codigo_ayudante||'-'||p3.nombres||' '||p3.apellidos as ayudante,
+	d.codigo_procedimiento,d.unidades,d.valor_procedimiento,
+	d.valor_neto,d.cobra_cirujano,d.valor_cirujano,
+	d.cobra_anestesiologo,d.valor_anestesiologo,
+	d.cobra_ayudante,d.valor_ayudante,d.cobra_sala,
+	d.valor_sala,d.cobra_materiales,d.valor_materiales,
+	d.cobra_perfusionista,d.valor_perfusionista,d.grupo
+	from datos_procedimiento d 
+	left join paciente p on 
+	p.codigo_empresa = d.codigo_empresa 
+	and p.codigo_sucursal = d.codigo_sucursal 
+	and p.nro_identificacion = d.nro_identificacion 
+	left join prestadores p1 on 
+	p1.codigo_empresa = d.codigo_empresa 
+	and p1.codigo_sucursal = d.codigo_sucursal 
+	and p1.nro_identificacion = d.codigo_prestador 
+	left join prestadores p2 on 
+	p2.codigo_empresa = d.codigo_empresa 
+	and p2.codigo_sucursal = d.codigo_sucursal 
+	and p2.nro_identificacion = d.codigo_anestesiologo 
+	left join prestadores p3 on 
+	p3.codigo_empresa = d.codigo_empresa 
+	and p3.codigo_sucursal = d.codigo_sucursal 
+	and p3.nro_identificacion = d.codigo_ayudante 
+	where d.codigo_empresa = #{codigo_empresa}
+	and d.codigo_sucursal = #{codigo_sucursal} 
+	and d.nro_factura = #{nro_factura} 
+	and d.es_quirurgico = 'S' 
+	order by d.grupo desc
+    </select>
+   
+</mapper>

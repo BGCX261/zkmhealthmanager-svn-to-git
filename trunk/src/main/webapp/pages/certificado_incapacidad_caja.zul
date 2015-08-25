@@ -1,0 +1,217 @@
+<?page title="Certificado_incapacidad_caja" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formCertificado_incapacidad_caja" width="100%"
+		height="100%" use="healthmanager.controller.Certificado_incapacidad_cajaAction"> 
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+		<groupbox id="groupboxConsulta" visible="true" closable="false"
+			mold="3d" height="90%">
+			<caption label="Consultar"
+				style="color: blue;font-weight: bold" />
+
+			<separator />
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" height="90%" mold="paging"
+				pageSize="20" vflex="1">
+				<auxhead>
+					<auxheader colspan="7">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<separator />
+							<textbox id="tbxValue" width="200px"
+								onOK="formCertificado_incapacidad_caja.buscarDatos();"
+								style="text-transform:uppercase" />
+							<separator />
+							<toolbarbutton
+								label="Consultar Certificados" image="/images/Magnifier.gif"
+								onClick="formCertificado_incapacidad_caja.buscarDatos();"
+								tooltiptext="Consultar Certificados" />
+							<separator />
+							<button mold="trendy"
+								image="/images/New16.gif"
+								onClick='formCertificado_incapacidad_caja.accionForm(true,"registrar",true);'
+								tooltiptext="Nuevo Certificado incapacidad caja"
+								visible="false" />
+							<separator />
+							<label value="Periodo: " />
+							<datebox format="yyyy-MM-dd"
+								id="dtbxFecha_inicial" width="100px" />
+							<label value="-" />
+							<datebox format="yyyy-MM-dd"
+								id="dtbxFecha_final" width="100px" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Código" width="100px" />
+					<column label="Fecha" width="100px" />
+					<column label="Paciente" />
+					<column label="Fecha finaliza" width="100px" />
+					<column label="Diagnostico" />
+					<column label="Médico" />
+					<column label="Via Ingreso" />
+					<column label="Acciones" align="center"
+						width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<borderlayout width="100%" height="90%" id="groupboxEditar"
+			visible="false">
+			<north border="none">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<toolbarbutton image="/images/Save16.gif"
+						label="Guardar Certificado"
+						onClick="formCertificado_incapacidad_caja.guardarDatos();"
+						id="btGuardar" />
+					<toolbarbutton image="/images/New16.gif"
+						label="Nueva Certificado"
+						onClick='formCertificado_incapacidad_caja.accionForm(true,"registrar",true);'
+						id="btNew" visible="false" />
+					<space />
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Consultar"
+						onClick='formCertificado_incapacidad_caja.accionForm(false,tbxAccion.getText(),true);'
+						id="btCancel" visible="false" />
+					<toolbarbutton image="/images/print_ico.gif"
+						label="Imprimir Certificado"
+						onClick="formCertificado_incapacidad_caja.imprimir();" 
+						id="btImprimir" visible="false" />
+					<space />
+					<label value="Formato impresión: " visible="false" />
+					<listbox id="lbxFormato" mold="select" width="150px"
+						visible="false" sclass="combobox">
+						<listitem value="pdf" label="PDF"
+							selected="true" />
+						<listitem value="rtf" label="WORD" />
+					</listbox>
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center">
+					<space />
+					<groupbox closable="false" width="650px"
+						mold="3d">
+						<caption label="CERTIFICADO DE INCAPACIDAD">
+							<hbox>
+								<label id="lbCodigo" value="CÓDIGO: " />
+								<textbox id="tbxCodigo" width="170px"
+									readonly="true" />
+							</hbox>
+						</caption>
+						<grid sclass="GridSinBorde" hflex="1">
+							<columns>
+								<column label="" width="5px" />
+								<column label="" width="130px"
+									align="left" />
+								<column label="" width="182px"
+									align="left" />
+								<column label="" width="130px"
+									align="left" />
+								<column label="" width="182px"
+									align="left" />
+								<column label="" width="5px"
+									align="left" />
+							</columns>
+							<rows>
+								<row>
+									<cell />
+									<cell height="30px">
+										<label id="lbNro_identificacion"
+											value="Paciente: " />
+										<toolbarbutton
+											id="btnLimpiarPaciente" image="/images/borrar.gif" />
+									</cell>
+									<cell>
+										<bandboxRegistros
+											id="tbxNro_identificacion" widthBandbox="170px"
+											widthListbox="600px" heightListbox="300px"
+											columnas="Tipo Ident#65px|Identificación|Nombres|Apellidos" />
+									</cell>
+									<cell colspan="2">
+										<textbox id="tbxNomPaciente"
+											hflex="1" style="text-transform:uppercase" readonly="true" />
+									</cell>
+									<cell />
+								</row>
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label id="lbFecha"
+											value="Fecha: " />
+									</cell>
+									<cell>
+										<datebox id="dtbxFecha"
+											format="yyyy-MM-dd" width="170px" />
+									</cell>
+									<cell height="30px">
+										<label id="lbFecha_hasta"
+											value="Fecha hasta: " />
+									</cell>
+									<cell>
+										<datebox id="dtbxFecha_hasta"
+											format="yyyy-MM-dd" width="170px" constraint="no past,no empty"/> 
+									</cell>
+									<cell />
+								</row>
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label id="lbObservaciones"
+											value="Observaciones: " />
+									</cell>
+									<cell colspan="3">
+										<textbox id="tbxObservaciones"
+											hflex="1" rows="4" style="text-transform:uppercase"
+											maxlength="-1" />
+									</cell>
+									<cell></cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label id="lbCodigo_dx"
+											value="Diagnostico: " />
+										<toolbarbutton id="btnLimpiarDx"
+											image="/images/borrar.gif" />
+									</cell>
+									<cell>
+										<bandboxRegistros
+											id="tbxCodigo_dx" widthBandbox="170px" widthListbox="800px"
+											heightListbox="300px" columnas="Cóodigo#102px|Nombre" />
+
+									</cell>
+									<cell colspan="2">
+										<textbox id="tbxNomDx" hflex="1"
+											style="text-transform:uppercase" readonly="true" />
+									</cell>
+									<cell></cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+				</div>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

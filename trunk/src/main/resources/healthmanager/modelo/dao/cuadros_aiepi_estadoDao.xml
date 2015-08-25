@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Cuadros_aiepi_estadoDao">
+
+	<resultMap id="cuadros_aiepi_estadoMap" type="cuadros_aiepi_estado">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="cuadro" property="cuadro" />
+		<result column="estado" property="estado" />
+		<result column="descripcion" property="descripcion" />
+		<result column="via_ingreso" property="via_ingreso" />
+		<result column="min_seleccion" property="min_seleccion" />
+		<result column="color_fondo" property="color_fondo" />
+		<result column="color_boton" property="color_boton" />
+		<result column="titulo_descripcion" property="titulo_descripcion" />
+	</resultMap>
+	
+	<insert id="crear" parameterType="cuadros_aiepi_estado">insert into
+		public.cuadros_aiepi_estado (codigo_empresa,codigo_sucursal,
+		cuadro,estado,descripcion, via_ingreso,min_seleccion,
+		color_fondo) values (#{codigo_empresa},#{codigo_sucursal},
+		#{cuadro},#{estado},#{descripcion},
+		#{via_ingreso},#{min_seleccion}, #{color_fondo}, #{color_boton}, #{titulo_descripcion})
+	</insert>
+
+
+	<select id="consultar" parameterType="cuadros_aiepi_estado"
+		resultMap="cuadros_aiepi_estadoMap">
+		select codigo_empresa,codigo_sucursal,
+		cuadro,estado,descripcion,min_seleccion,color_fondo,color_boton,titulo_descripcion
+		from
+		public.cuadros_aiepi_estado where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and cuadro = #{cuadro}
+		and
+		estado = #{estado} and via_ingreso = #{via_ingreso}
+	</select>
+
+
+	<select id="listar" parameterType="java.util.Map" resultMap="cuadros_aiepi_estadoMap">
+		select codigo_empresa,codigo_sucursal,
+		cuadro,estado,descripcion,via_ingreso,min_seleccion,
+		color_fondo,color_boton, titulo_descripcion
+		from public.cuadros_aiepi_estado
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+				AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+				AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="cuadro != null">
+				AND cuadro = #{cuadro}
+			</if>
+			<if test="via_ingreso != null">
+				AND via_ingreso = #{via_ingreso}
+			</if>
+
+			<if test="parameter != null">
+				AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limite_paginado != null">
+			${limite_paginado}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist from public.cuadros_aiepi_estado
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+				AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+				AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+				AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+			${limit}
+		</if>
+	</select>
+
+</mapper>

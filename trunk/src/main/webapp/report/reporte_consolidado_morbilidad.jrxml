@@ -1,0 +1,401 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="reporte_consolidado_morbilidad" pageWidth="1008" pageHeight="612" orientation="Landscape" columnWidth="968" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6cca8b1e-5b2e-4081-b0ab-e39ee6987087">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Crosstab Data Text" hAlign="Center"/>
+	<parameter name="codigo_empresa" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="codigo_sucursal" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="empresa" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="id" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="direccion" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="telefono" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="imagen" class="java.io.InputStream" isForPrompting="false">
+		<defaultValueExpression><![CDATA[null]]></defaultValueExpression>
+	</parameter>
+	<parameter name="resolucion" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="codigo" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="fecha" class="java.util.Date" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="fecha_inicio" class="java.sql.Timestamp"/>
+	<parameter name="fecha_final" class="java.sql.Timestamp"/>
+	<parameter name="tipo_item" class="java.lang.String"/>
+	<parameter name="impreso_por" class="java.lang.String"/>
+	<parameter name="titulo" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+CASE WHEN '1' = '1' THEN
+     cie_principal.codigo || ' ' || cie_principal.nombre
+    ELSE
+      CASE WHEN pcd_soat.codigo_cups IS NOT NULL THEN pcd_soat.codigo_cups || ' ' || pcd_soat.descripcion ELSE pcd_iss.codigo_cups || ' ' || pcd_iss.descripcion END
+ END AS item,
+cie_principal.nombre AS nombre_cie,
+cie_principal.codigo AS codigo_cie,
+pac.nro_identificacion,
+pac.nombre1,
+cg.consecutivo,
+(cg.descripcion || CASE WHEN cg.genero = 'A' THEN '' ELSE '\n ' || (CASE WHEN cg.condicion_embarazada = 'S' THEN 'Embarazada' ELSE sexo.descripcion END) END) AS grupo_et,
+ads.codigo_administradora,
+med.nro_identificacion AS codigo_medico,
+med.apellidos || ' ' || med.nombres AS nombre_medico,
+eps.nombre,
+ads.codigo_administradora || ' ' || "upper"(eps.nombre) AS grupo_1,
+ads.id_plan || ' ' ||  "upper"(contrato.nombre) AS grupo_2,
+"upper"(elm.descripcion) AS grupo_3,
+med.nro_identificacion  || ' ' || "upper"(med.apellidos || ' ' || med.nombres) AS grupo_4,
+centro.codigo_centro || ' ' ||  centro.nombre_centro AS grupo_5,
+contrato.nombre,
+cg.genero,
+sexo.descripcion,
+cg.consecutivo
+FROM
+"public".admision AS ads
+INNER JOIN "public".paciente AS pac ON pac.codigo_empresa = ads.codigo_empresa AND pac.codigo_sucursal = ads.codigo_sucursal AND pac.nro_identificacion = ads.nro_identificacion
+INNER JOIN "public".datos_consulta AS dtt_cons ON ads.codigo_empresa = dtt_cons.codigo_empresa AND ads.codigo_sucursal = dtt_cons.codigo_sucursal AND ads.nro_ingreso = dtt_cons.nro_ingreso AND ads.nro_identificacion = dtt_cons.nro_identificacion
+INNER JOIN "public".cie AS cie_principal ON cie_principal.codigo = dtt_cons.codigo_diagnostico_principal
+LEFT JOIN "public".procedimiento_iss01 AS pcd_iss ON pcd_iss.codigo_soat = dtt_cons.codigo_consulta
+LEFT JOIN "public".procedimiento AS pcd_soat ON pcd_soat.codigo_soat = dtt_cons.codigo_consulta
+INNER JOIN "public".condiciones_grupos_etareos AS cg ON cg.id_grupo_etareo = '1' AND (getedadgruposetarios(CAST(cg.edad_inicial AS INTEGER), cg.unidad_edad_inicial)<= getedad(pac.fecha_nacimiento, ads.fecha_ingreso, 3) AND getedadgruposetarios(CAST(cg.edad_final AS INTEGER), cg.unidad_edad_final)>= getedad(pac.fecha_nacimiento, ads.fecha_ingreso, 3))
+INNER JOIN "public".prestadores AS med ON dtt_cons.codigo_empresa = med.codigo_empresa AND dtt_cons.codigo_sucursal = med.codigo_sucursal AND dtt_cons.codigo_prestador = med.nro_identificacion
+INNER JOIN "public".administradora AS eps ON ads.codigo_empresa = eps.codigo_empresa AND ads.codigo_sucursal = eps.codigo_sucursal AND ads.codigo_administradora = eps.codigo
+INNER JOIN "public".elemento AS elm ON ads.via_ingreso = elm.codigo AND elm.tipo = 'via_ingreso'
+LEFT JOIN "public".elemento AS sexo ON  sexo.codigo = cg.genero AND sexo.tipo = 'sexo'
+INNER JOIN "public".contratos AS contrato ON ads.codigo_empresa = contrato.codigo_empresa AND ads.codigo_sucursal = contrato.codigo_sucursal AND ads.codigo_administradora = contrato.codigo_administradora AND ads.id_plan = contrato.id_plan
+INNER JOIN public.centro_atencion AS centro ON centro.codigo_empresa = ads.codigo_empresa AND centro.codigo_sucursal = ads.codigo_sucursal AND centro.codigo_centro = ads.codigo_centro
+WHERE  (pac.sexo = cg.genero OR cg.genero = 'A') AND
+  CASE WHEN cg.condicion_embarazada = 'S' THEN  ads.condicion_usuaria = '001' ELSE true END
+
+ORDER BY
+grupo_1 ASC,
+grupo_2 ASC,
+grupo_3 ASC,
+grupo_4 ASC,
+grupo_5 ASC,
+cg.consecutivo ASC]]>
+	</queryString>
+	<field name="item" class="java.lang.String"/>
+	<field name="nombre_cie" class="java.lang.String"/>
+	<field name="codigo_cie" class="java.lang.String"/>
+	<field name="nro_identificacion" class="java.lang.String"/>
+	<field name="nombre1" class="java.lang.String"/>
+	<field name="consecutivo" class="java.lang.Integer"/>
+	<field name="grupo_et" class="java.lang.String"/>
+	<field name="codigo_administradora" class="java.lang.String"/>
+	<field name="codigo_medico" class="java.lang.String"/>
+	<field name="nombre_medico" class="java.lang.String">
+		<fieldDescription><![CDATA[nombre del prestador externo]]></fieldDescription>
+	</field>
+	<field name="nombre" class="java.lang.String"/>
+	<field name="grupo_1" class="java.lang.String"/>
+	<field name="grupo_2" class="java.lang.String"/>
+	<field name="grupo_3" class="java.lang.String"/>
+	<field name="grupo_4" class="java.lang.String"/>
+	<field name="genero" class="java.lang.String">
+		<fieldDescription><![CDATA[A - AMBOS
+M - MASCULINO
+F - FEMENINO]]></fieldDescription>
+	</field>
+	<field name="descripcion" class="java.lang.String"/>
+	<field name="grupo_5" class="java.lang.String"/>
+	<group name="grupo1">
+		<groupExpression><![CDATA[$F{grupo_1}]]></groupExpression>
+		<groupHeader>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band height="10"/>
+		</groupFooter>
+	</group>
+	<group name="grupo_2">
+		<groupExpression><![CDATA[$F{grupo_2}]]></groupExpression>
+		<groupFooter>
+			<band height="50">
+				<crosstab>
+					<reportElement x="0" y="0" width="968" height="50" uuid="62eaf316-3976-4cdf-9d29-57a72de7ae20"/>
+					<crosstabParameter name="titulo">
+						<parameterValueExpression><![CDATA[$F{grupo_1} + "\n" + $F{grupo_2} +"\n" +$F{grupo_3}+"\n" +$F{grupo_4}]]></parameterValueExpression>
+					</crosstabParameter>
+					<crosstabDataset>
+						<dataset resetType="Group" resetGroup="grupo_2"/>
+					</crosstabDataset>
+					<crosstabHeaderCell>
+						<cellContents>
+							<textField>
+								<reportElement style="Crosstab Data Text" mode="Opaque" x="0" y="0" width="252" height="104" backcolor="#EDECEC" uuid="d3774c01-2eb4-4839-ae8a-f4f2e0613aa5"/>
+								<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+									<pen lineWidth="0.25"/>
+									<topPen lineWidth="0.25"/>
+									<leftPen lineWidth="0.25"/>
+									<bottomPen lineWidth="0.25"/>
+									<rightPen lineWidth="0.25"/>
+								</box>
+								<textElement verticalAlignment="Middle"/>
+								<textFieldExpression><![CDATA[$P{titulo}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabHeaderCell>
+					<rowGroup name="grupo_4" width="56" totalPosition="End">
+						<bucket class="java.lang.String">
+							<bucketExpression><![CDATA[$F{grupo_5}]]></bucketExpression>
+						</bucket>
+						<crosstabRowHeader>
+							<cellContents backcolor="#F0F8FF" mode="Opaque">
+								<box>
+									<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+								</box>
+								<textField>
+									<reportElement style="Crosstab Data Text" positionType="Float" stretchType="RelativeToBandHeight" x="0" y="0" width="56" height="51" uuid="61bc8d79-775c-4306-94f5-c4858fc0b6ab"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle" rotation="Left">
+										<font size="7" isStrikeThrough="false"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$V{grupo_4}]]></textFieldExpression>
+								</textField>
+							</cellContents>
+						</crosstabRowHeader>
+						<crosstabTotalRowHeader>
+							<cellContents backcolor="#EDECEC" mode="Opaque">
+								<box>
+									<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+								</box>
+								<staticText>
+									<reportElement x="213" y="0" width="39" height="25" forecolor="#000000" uuid="03e19df9-7b47-4b55-89b9-48031448bae8"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<text><![CDATA[Total ]]></text>
+								</staticText>
+							</cellContents>
+						</crosstabTotalRowHeader>
+					</rowGroup>
+					<rowGroup name="item" width="196" totalPosition="End">
+						<bucket class="java.lang.String">
+							<bucketExpression><![CDATA[$F{item}]]></bucketExpression>
+						</bucket>
+						<crosstabRowHeader>
+							<cellContents backcolor="#F0F8FF" mode="Opaque">
+								<box>
+									<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+								</box>
+								<textField>
+									<reportElement style="Crosstab Data Text" x="0" y="0" width="196" height="25" uuid="d1241fb1-c550-40bc-a60c-8f2ff2929834"/>
+									<textElement verticalAlignment="Middle">
+										<font size="8"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$V{item}]]></textFieldExpression>
+								</textField>
+							</cellContents>
+						</crosstabRowHeader>
+						<crosstabTotalRowHeader>
+							<cellContents backcolor="#BFE1FF" mode="Opaque">
+								<box>
+									<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+								</box>
+								<staticText>
+									<reportElement x="126" y="0" width="70" height="25" uuid="77eff113-4ff3-4e97-9c97-ac6d441839db"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<text><![CDATA[Total ]]></text>
+								</staticText>
+							</cellContents>
+						</crosstabTotalRowHeader>
+					</rowGroup>
+					<columnGroup name="grupo_et" height="104" totalPosition="End">
+						<bucket class="java.lang.String">
+							<bucketExpression><![CDATA[($F{consecutivo} <= 9 ? ("0" + $F{consecutivo}) : $F{consecutivo})
++ "_" +  $F{grupo_et}]]></bucketExpression>
+						</bucket>
+						<crosstabColumnHeader>
+							<cellContents backcolor="#F0F8FF" mode="Opaque">
+								<box>
+									<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+								</box>
+								<textField>
+									<reportElement style="Crosstab Data Text" x="0" y="0" width="47" height="104" uuid="3a4c337a-0831-43b1-b138-a0f8aa42bf28"/>
+									<textElement verticalAlignment="Middle" rotation="Left">
+										<font size="9"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$V{grupo_et}.substring(3)]]></textFieldExpression>
+								</textField>
+							</cellContents>
+						</crosstabColumnHeader>
+						<crosstabTotalColumnHeader>
+							<cellContents backcolor="#BFE1FF" mode="Opaque">
+								<box>
+									<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+								</box>
+								<staticText>
+									<reportElement x="0" y="74" width="37" height="30" uuid="ae75852f-1647-4e93-a7c8-64975d4f8508"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<text><![CDATA[Total]]></text>
+								</staticText>
+							</cellContents>
+						</crosstabTotalColumnHeader>
+					</columnGroup>
+					<measure name="itemMeasure" class="java.lang.Integer" calculation="Count">
+						<measureExpression><![CDATA[$F{item}]]></measureExpression>
+					</measure>
+					<crosstabCell width="47" height="25">
+						<cellContents>
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField>
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="47" height="25" uuid="724e4e12-4b8d-4df5-829f-0f157393c991"/>
+								<textElement verticalAlignment="Middle"/>
+								<textFieldExpression><![CDATA[$V{itemMeasure}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="37" height="25" columnTotalGroup="grupo_et">
+						<cellContents backcolor="#BFE1FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField>
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="37" height="25" uuid="bd1eeb91-2eb0-4f2e-a12a-1a0566c1420d"/>
+								<textElement verticalAlignment="Middle"/>
+								<textFieldExpression><![CDATA[$V{itemMeasure}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="47" height="26" rowTotalGroup="item">
+						<cellContents backcolor="#BFE1FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField>
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="47" height="25" uuid="d79d343a-6faa-4da8-9388-3a800a1d8a9e"/>
+								<textElement verticalAlignment="Middle"/>
+								<textFieldExpression><![CDATA[$V{itemMeasure}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="37" height="26" rowTotalGroup="item" columnTotalGroup="grupo_et">
+						<cellContents backcolor="#BFE1FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField>
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="37" height="25" uuid="37d7a07b-ddca-4007-82f3-bf3bdb87fa94"/>
+								<textElement verticalAlignment="Middle"/>
+								<textFieldExpression><![CDATA[$V{itemMeasure}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="47" height="25" rowTotalGroup="grupo_4">
+						<cellContents backcolor="#005FB3" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField>
+								<reportElement style="Crosstab Data Text" mode="Opaque" x="0" y="0" width="47" height="25" forecolor="#000000" backcolor="#EDECEC" uuid="f6db53d0-6241-4ddd-8b11-08db67d683dd"/>
+								<textElement verticalAlignment="Middle"/>
+								<textFieldExpression><![CDATA[$V{itemMeasure}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="37" height="25" rowTotalGroup="grupo_4" columnTotalGroup="grupo_et">
+						<cellContents backcolor="#005FB3" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField>
+								<reportElement style="Crosstab Data Text" mode="Opaque" x="0" y="0" width="37" height="25" forecolor="#000000" backcolor="#EDECEC" uuid="c0b869b9-20cd-4056-96fa-0d7f63e89ea8"/>
+								<textElement verticalAlignment="Middle"/>
+								<textFieldExpression><![CDATA[$V{itemMeasure}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabCell>
+				</crosstab>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<image scaleImage="FillFrame" isUsingCache="true" onErrorType="Icon">
+				<reportElement x="9" y="2" width="101" height="62" uuid="000c1cb6-ce2c-4449-8636-6f36c3f52924"/>
+				<imageExpression><![CDATA[$P{imagen}]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="110" y="50" width="747" height="14" uuid="eaae52ac-f665-4c5b-8e94-8b02be6ed55f"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Telefono: "+$P{telefono}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="110" y="2" width="747" height="20" uuid="3dd91f37-02cc-4dd4-b400-d2cf1dd49956"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{empresa}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="110" y="22" width="747" height="14" uuid="9bee4427-4257-42c7-9e90-6eddc81bca5f"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{id}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="110" y="36" width="747" height="14" uuid="8d33515b-6e9c-487d-b28a-2ff337177286"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Dirección: "+$P{direccion}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="21">
+			<rectangle>
+				<reportElement x="0" y="0" width="968" height="21" backcolor="#EDECEC" uuid="5c4a516e-8f1b-40bb-9856-3551f5687d6c"/>
+			</rectangle>
+			<textField isBlankWhenNull="true">
+				<reportElement x="110" y="1" width="738" height="14" uuid="a3f61149-8a07-4241-90a0-b6ceb165a2b9"/>
+				<textElement textAlignment="Center">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{titulo} + " " + new SimpleDateFormat("dd-MM-yyyy").format($P{fecha_inicio}) + " al " + new SimpleDateFormat("dd-MM-yyyy").format($P{fecha_final})]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd-MMMMMMMMMMM-yyyy">
+				<reportElement x="9" y="1" width="122" height="20" uuid="98e31d98-7d8f-41d6-8c4a-b43204ab7001"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="848" y="1" width="80" height="20" uuid="c61054c0-9fa9-4412-850d-d23a0a492c84"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Pag. "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="928" y="1" width="40" height="20" uuid="3a4cacc7-9317-4c19-9e1a-4d4e33a6cb84"/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<pageFooter>
+		<band height="20">
+			<textField>
+				<reportElement x="0" y="0" width="413" height="20" uuid="c7ff8f66-d47a-45d1-a4f3-2e22e5c91a23"/>
+				<textFieldExpression><![CDATA["Impreso por: " + $P{impreso_por}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

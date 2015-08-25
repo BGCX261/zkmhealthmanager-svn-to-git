@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.reporte_ibcModel">
+	<select id="select" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+		select a.mes, a.anio, a.codigo_aportadores, ma.nombre as entidad,
+		a.valor_cotiza, a.ibc,
+		me.nro_identificacion_afiliado,me.tipo_afiliado, me.fecha_afiliacion,
+		p.apellido1 as apellido1_paciente,p.apellido2 as apellido2_paciente,
+		p.nombre1 as nombre1_paciente,
+		p.nombre2 as nombre2_paciente, p.estado_afiliacion
+		FROM
+		public.aportes_cotizaciones AS "a"
+		INNER JOIN "public".paciente AS "p" ON ("p".codigo_empresa = "a".codigo_empresa AND "p".codigo_sucursal = "a".codigo_sucursal AND "p".nro_identificacion = "a".nro_identificacion)
+		LEFT JOIN "public".aportantes_ma AS ma ON ma.codigo_empresa = "a".codigo_empresa AND ma.codigo_sucursal = "a".codigo_sucursal AND ma.codigo = "a".codigo_aportadores
+		LEFT JOIN "public".afiliaciones_me AS me ON (me.nro_identificacion_afiliado = "a".nro_identificacion)
+		where a.codigo_empresa = #{codigo_empresa}
+		and a.codigo_sucursal = #{codigo_sucursal}
+		and a.nro_identificacion = #{nro_identificacion}
+		AND CAST(a.fecha_ingreso AS DATE) BETWEEN  #{fecha_inicio} AND #{fecha_final}
+	</select>
+</mapper>

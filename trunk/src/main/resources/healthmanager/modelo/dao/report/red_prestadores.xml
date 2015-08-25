@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.red_prestadoresModel">
+	<select id="select" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+		SELECT
+		manueles.manual_tarifario,
+		manueles.id_contrato,
+		prest.nit,
+		prest.nombre,
+		cont.nombre AS nombre_contrato,
+		prest.codigo,
+		to_char(cont.fecha_inicio, 'yyyy-MM-dd') AS fecha_inicio,
+		to_char(cont.fecha_fin, 'yyyy-MM-dd') AS fecha_fin,
+		cont.nro_contrato,
+		cont.cerrado
+		FROM
+		public.manuales_tarifarios AS manueles
+		INNER JOIN public.contratos AS cont ON cont.codigo_empresa =
+		manueles.codigo_empresa AND cont.codigo_sucursal =
+		manueles.codigo_sucursal AND cont.codigo_administradora =
+		manueles.codigo_administradora AND cont.id_plan = manueles.id_contrato
+		INNER JOIN public.administradora AS prest ON prest.codigo_empresa =
+		cont.codigo_empresa AND prest.codigo_sucursal = cont.codigo_sucursal
+		AND prest.codigo = cont.codigo_administradora
+		and cont.codigo_empresa = #{codigo_empresa}
+		and cont.codigo_sucursal = #{codigo_sucursal}
+		<if test="rango != null">
+			AND cont.creacion_date BETWEEN #{fech_init} AND #{fech_end}
+		</if>
+		<if test="cerrado != null">
+			AND cont.cerrado::varchar = #{cerrado}
+		</if>
+	</select>
+</mapper>

@@ -1,0 +1,99 @@
+<?page title="Facturacion_rips" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<?component name="impresionDiagnostica" macroURI="/WEB-INF/macros/impresionDiagnostica.zul"?>
+<?component name="serviciosFacturacion" macroURI="/WEB-INF/macros/servicios_facturacion_macro.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formFact_abiertas" width="80%" height="80%"
+		border="normal" closable="true"
+		use="healthmanager.controller.Facturacion_rips_abiertasAction"
+		title="Verificar admisiones abiertas">
+
+		<listbox id="listboxAdmisiones" vflex="1" mold="paging"
+			pageSize="20">
+			<auxhead>
+				<auxheader colspan="8">
+					<hlayout>
+						<label value="Criterios de busqueda" />
+						<space />
+						<textbox id="tbxBusqueda" hflex="1"
+							onOK="formFact_abiertas.buscarDatos()" />
+						<space />
+
+						<toolbarbutton id="btnFiltro_ingreso"
+							image="/images/filtro.png" label="Vias de ingreso"
+							onClick='popupViasIngreso.open(self,"end_after")' />
+
+						<datebox id="dtbxFecha_inicial" width="100px"
+							tooltiptext="Fecha inicial de busqueda" format="yyyy-MM-dd"
+							onCreate="self.setValue(new Date())" />
+						<space />
+						<datebox id="dtbxFecha_final" width="100px"
+							tooltiptext="Fecha final de busqueda" format="yyyy-MM-dd"
+							onCreate="self.setValue(new Date())" />
+						<space />
+						<toolbarbutton id="btnConfiguracionTipoFactura"
+							label="Filtros tipo de Factura"
+							image="/images/configuracion_mini.png">
+							<attribute name="onClick">
+	popupTipoFact.open(btnConfiguracionTipoFactura);
+</attribute>
+						</toolbarbutton>
+						<space />
+						<toolbarbutton label="Consultar"
+							image="/images/Magnifier02.gif"
+							onClick="formFact_abiertas.buscarDatos()" />
+						<space />
+					</hlayout>
+				</auxheader>
+			</auxhead>
+			<listhead>
+				<listheader label="Nro ingreso" width="80px" />
+				<listheader label="Nro identificación" width="110px" />
+				<listheader label="Paciente" />
+				<listheader label="Prestador" />
+				<listheader label="Via de ingreso" />
+				<listheader label="Fecha ingreso" width="150px" />
+				<listheader label="Estado" width="85px" />
+				<listheader label="Acciones" align="center"
+					width="120px" />
+			</listhead>
+		</listbox>
+
+		<popup id="popupViasIngreso">
+			<listbox id="lbxVias_ingreso" multiple="true"
+				checkmark="true" width="300px" name="via_ingreso" rows="8">
+				<listhead>
+					<listheader label="Vias de ingreso" />
+				</listhead>
+				<listfoot>
+					<listfooter align="middle">
+						<toolbarbutton
+							label="Consultar por via de ingreso"
+							image="/images/Magnifier.gif"
+							onClick="formFact_abiertas.buscarDatos();popupViasIngreso.close()"
+							tooltiptext="Consultar por via de ingreso" />
+					</listfooter>
+				</listfoot>
+			</listbox>
+		</popup>
+
+		<popup id="popupTipoFact">
+			<groupbox mold="3d" closable="false">
+				<caption label="Filtros tipo de Factura">
+					<toolbarbutton label="X" />
+				</caption>
+				<vlayout>
+					<space bar="true" orient="horizontal" />
+					<checkbox id="chkConfigFacturasEventos"
+						label="Eventos" checked="true" />
+					<checkbox id="chkConfigFacturasCapitadas"
+						label="Atenciones Capitadas" checked="true" />
+					<checkbox id="chkConfigFacturasAgrupada"
+						label="Atenciones Agrupadas" checked="true" />
+				</vlayout>
+			</groupbox>
+		</popup>
+
+
+	</window>
+</zk>

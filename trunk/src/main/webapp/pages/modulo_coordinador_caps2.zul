@@ -1,0 +1,291 @@
+<?page title="Consulta Historias Clínica" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formConsulta_historias" width="100%" height="100%"
+		use="healthmanager.controller.Modulo_coordinador_caps2Action">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsultar" visible="true" closable="false"
+			mold="3d" height="100%">
+			<caption
+				label="Modulo que permite a los coordinadores consultar las diferentes historias"
+				style="color: blue;font-weight: bold" />
+
+			<borderlayout height="100%">
+				<west title="Selecionar parametros" size="300px"
+					flex="true" maxsize="250" splittable="true" collapsible="true">
+					<hbox>
+						<listbox id="lbxVias_ingreso" multiple="true"
+							vflex="1" hflex="1" checkmark="true" mold="paging"
+							name="via_ingreso">
+
+							<listfoot>
+								<listfooter align="middle">
+									<toolbarbutton
+										label="Consultar por via de ingreso"
+										image="/images/Magnifier.gif"
+										onClick="formConsulta_historias.buscarDatos()"
+										tooltiptext="Consultar por via de ingreso" />
+								</listfooter>
+							</listfoot>
+						</listbox>
+
+					</hbox>
+
+
+				</west>
+
+				<center>
+					<listbox id="listboxResultado" vflex="1" hflex="1"
+						multiple="false" mold="paging">
+						<auxhead hflex="1">
+							<auxheader colspan="8">
+								<hbox align="center" hflex="1">
+									<label value="Prestador" />
+									<space width="5px" />
+									<bandboxRegistros
+										id="tbxCodigo_medico" widthBandbox="100px"
+										widthListbox="450px" heightListbox="300px"
+										columnas="Identificación#100px|Nombres|Apellidos" />
+									<textbox id="tbxNomPrestador"
+										width="210px" style="text-transform:uppercase"
+										readonly="true" />
+									<toolbarbutton
+										id="btnLimpiarPrestador" image="/images/borrar.gif" />
+									<space />
+									<label value="Fecha" />
+									<space width="5px" />
+									<datebox id="dtbxFecha_inicial"
+										format="yyyy-MM-dd" />
+									<space width="5px" />
+									<label value="-" />
+									<space width="5px" />
+									<datebox id="dtbxFecha_final"
+										format="yyyy-MM-dd" />
+									<space />
+
+								</hbox>
+								<space />
+								<hbox align="center" hflex="1"
+									visible="false">
+									<label
+										value="Criterios de B&#250;squeda" />
+									<space width="5px" />
+									<textbox id="tbxValue" hflex="1"
+										onOK="formConsulta_historias.buscarDatos();"
+										style="text-transform:uppercase" />
+									<checkbox id="chkFiltro_atendidas"
+										label="Atendidas" checked="true" visible="false" />
+									<toolbarbutton
+										label="Consultar Historias" image="/images/Magnifier.gif"
+										onClick="formConsulta_historias.buscarDatos();"
+										tooltiptext="Consultar Historia" />
+								</hbox>
+							</auxheader>
+						</auxhead>
+
+
+
+						<listhead>
+							<listheader label="" width="2px"
+								align="center" />
+							<listheader label="Estado" width="100px" />
+							<listheader label="Paciente" />
+							<listheader label="Servicio" />
+							<listheader label="Prestador" />
+							<listheader label="Fecha admision"
+								width="150px" />
+							<listheader label="Fecha atención"
+								width="150px" />
+							<listheader label="Tiempo total de espera"
+								width="140px" />
+						</listhead>
+					</listbox>
+				</center>
+
+
+			</borderlayout>
+		</groupbox>
+
+
+
+
+		<borderlayout id="borderlayoutEditar" width="100%" height="100%"
+			visible="true">
+			<west title="Información del Paciente" collapsible="true"
+				width="370px" autoscroll="true">
+				<vbox>
+					<groupbox
+						style="margin-right:5px;margin-left:5px;margin-top:5px" mold="3d"
+						closable="false" width="360px">
+						<caption>
+							<hlayout>
+								<toolbarbutton label=""
+									id="toolbarbuttonInformacion_paciente"
+									image="/images/add_perfil.png"
+									style="float:right;margin-right:10px;font-weight:bold;font-size:x-small" />
+								<toolbarbutton label="ATRAS"
+									image="/images/quit.png"
+									style="float:right;margin-right:10px;font-weight:bold;font-size:x-small"
+									onClick='formConsulta_historias.accionForm2("buscar")' />
+							</hlayout>
+						</caption>
+						<grid>
+							<columns>
+								<column width="105px" />
+								<column />
+							</columns>
+							<rows>
+								<row height="20px" visible="false">
+									<cell>
+										<label value="Ingreso"
+											style="font-size:x-small;font-weight:bold" />
+									</cell>
+									<cell>
+										<textbox id="tbxIngreso"
+											readonly="true" inplace="false" width="97%" />
+									</cell>
+								</row>
+
+								<row height="20px">
+									<cell>
+										<label value="Fecha de Ingreso"
+											style="font-size:x-small;font-weight:bold" />
+									</cell>
+									<cell>
+										<textbox id="tbxFecha_ingreso"
+											readonly="true" inplace="false" width="97%" />
+									</cell>
+								</row>
+								<row height="20px">
+									<cell>
+										<label
+											value="Nro Identificación"
+											style="font-size:x-small;font-weight:bold" />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxNro_identificacion" readonly="true" inplace="false"
+											width="97%" />
+									</cell>
+								</row>
+								<row height="20px">
+									<cell>
+										<label
+											value="Tipo Identificación"
+											style="font-size:x-small;font-weight:bold" />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxTipo_identificacion" readonly="true" inplace="false"
+											width="97%" />
+									</cell>
+								</row>
+								<row height="20px">
+									<cell>
+										<label value="Edad"
+											style="font-size:x-small;font-weight:bold" />
+									</cell>
+									<cell>
+										<textbox id="tbxEdad"
+											readonly="true" inplace="false" width="97%" />
+									</cell>
+								</row>
+								<row height="20px">
+									<cell>
+										<label value="Sexo"
+											style="font-size:x-small;font-weight:bold" />
+									</cell>
+									<cell>
+										<textbox id="tbxSexo"
+											readonly="true" inplace="false" width="97%" />
+									</cell>
+								</row>
+								<row height="20px">
+									<cell>
+										<label
+											value="Pertenencia étnica"
+											style="font-size:x-small;font-weight:bold" />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxPertencia_etnica" readonly="true" inplace="false"
+											width="97%" popup="popupPertenencia" />
+									</cell>
+								</row>
+								<row height="20px">
+									<cell>
+										<label value="Nivel Educativo"
+											style="font-size:x-small;font-weight:bold" />
+									</cell>
+									<cell>
+										<textbox id="tbxNivel_educativo"
+											readonly="true" inplace="false" width="97%"
+											popup="popupNiveleducativo" />
+									</cell>
+								</row>
+
+								<row height="20px">
+									<cell>
+										<label value="Aseguradora"
+											style="font-size:x-small;font-weight:bold" />
+									</cell>
+									<cell>
+										<textbox id="tbxAseguradora"
+											readonly="true" inplace="false" width="97%"
+											popup="popupAseguradora" />
+									</cell>
+								</row>
+								<row height="20px">
+									<cell>
+										<label value="Contrato"
+											style="font-size:x-small;font-weight:bold" />
+									</cell>
+									<cell>
+										<textbox id="tbxContrato"
+											readonly="true" inplace="false" width="97%" />
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+				</vbox>
+			</west>
+			<center>
+				<div height="100%">
+					<tabbox id="tabboxContendor" width="100%"
+						height="100%" use="com.framework.macros.ContenedorPaginasMacro" />
+				</div>
+			</center>
+		</borderlayout>
+
+		<popup id="popupViasIngreso">
+			<listbox id="lbxVia_ingreso" multiple="true"
+				checkmark="true" height="500px" width="500px" name="via_ingreso"
+				rows="5">
+				<custom-attributes org.zkoss.zul.listbox.rod="true" />
+				<auxhead>
+					<auxheader valign="middle">
+						<label style="font-weight:bold" value="Estados" />
+						<toolbarbutton label="X"
+							style="color:red;float:right;font-weight:bold"
+							tooltiptext="Cerrar" onClick="popupViasIngreso.close()" />
+					</auxheader>
+				</auxhead>
+
+			</listbox>
+		</popup>
+	</window>
+</zk>

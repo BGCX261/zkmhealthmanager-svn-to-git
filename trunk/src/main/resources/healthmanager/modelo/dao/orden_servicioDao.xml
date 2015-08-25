@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.Orden_servicioDao">
+
+	<resultMap id="orden_servicioMap" type="orden_servicio">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="codigo_orden" property="codigo_orden" />
+		<result column="id" property="id" />
+		<result column="fecha_orden" property="fecha_orden" />
+		<result column="nro_ingreso" property="nro_ingreso" />
+		<result column="codigo_paciente" property="codigo_paciente" />
+		<result column="codigo_administradora" property="codigo_administradora" />
+		<result column="id_plan" property="id_plan" />
+		<result column="codigo_ordenador" property="codigo_ordenador" />
+		<result column="codigo_dx" property="codigo_dx" />
+		<result column="id_prestador" property="id_prestador" />
+		<result column="estado" property="estado" />
+		<result column="creacion_date" property="creacion_date" />
+		<result column="ultimo_update" property="ultimo_update" />
+		<result column="delete_date" property="delete_date" />
+		<result column="creacion_user" property="creacion_user" />
+		<result column="ultimo_user" property="ultimo_user" />
+		<result column="delete_user" property="delete_user" />
+		<result column="actualizado" property="actualizado" />
+		<result column="tipo_hc" property="tipo_hc" />
+		<result column="cumplida" property="cumplida" />
+		<result column="consentimiento" property="consentimiento" />
+		<result column="fecha_consentimiento" property="fecha_consentimiento" />
+		<result column="nombres_procedimientos" property="nombres_procedimientos" />
+		<result column="tipo_orden" property="tipo_orden" />
+		<result column="observacion" property="observacion" />
+		<association property="lista_detalle"
+			column="{codigo_empresa=codigo_empresa,codigo_sucursal=codigo_sucursal,codigo_orden=id}"
+			select="healthmanager.modelo.dao.Detalle_ordenDao.listar" />
+	</resultMap>
+
+	<insert id="crear" parameterType="orden_servicio">
+	    <selectKey keyProperty="id" resultType="java.lang.Long" >
+			insert into 
+			public.orden_servicio (codigo_empresa,codigo_sucursal,
+			codigo_orden,fecha_orden,nro_ingreso,
+			codigo_paciente,codigo_administradora,id_plan,
+			codigo_ordenador,codigo_dx,id_prestador,
+			estado,creacion_date,
+			ultimo_update,delete_date,creacion_user,
+			ultimo_user,delete_user,actualizado,
+			tipo_hc,cumplida, consentimiento, fecha_consentimiento,nombres_procedimientos,
+			tipo_orden,observacion)
+			values
+			(#{codigo_empresa},#{codigo_sucursal},
+			#{codigo_orden},#{fecha_orden},#{nro_ingreso},
+			#{codigo_paciente},#{codigo_administradora},#{id_plan},
+			#{codigo_ordenador},#{codigo_dx},#{id_prestador},
+			#{estado},#{creacion_date},
+			#{ultimo_update},#{delete_date},#{creacion_user},
+			#{ultimo_user},#{delete_user},#{actualizado},
+			#{tipo_hc},#{cumplida}, #{consentimiento}, #{fecha_consentimiento}, #{nombres_procedimientos},
+			#{tipo_orden},#{observacion})
+			RETURNING id;
+		</selectKey>
+	</insert>
+
+	<update id="actualizar" parameterType="orden_servicio">
+		update
+		public.orden_servicio set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},codigo_orden = #{codigo_orden},
+		fecha_orden = #{fecha_orden},nro_ingreso = #{nro_ingreso},
+		codigo_paciente = #{codigo_paciente},codigo_administradora =
+		#{codigo_administradora},
+		id_plan = #{id_plan},codigo_ordenador =
+		#{codigo_ordenador},
+		codigo_dx = #{codigo_dx},id_prestador =
+		#{id_prestador},
+		estado = #{estado},
+		ultimo_update = #{ultimo_update},
+		delete_date = #{delete_date},
+		ultimo_user = #{ultimo_user},delete_user = #{delete_user},
+		actualizado
+		= #{actualizado},tipo_hc = #{tipo_hc},
+		cumplida = #{cumplida}, 
+		consentimiento = #{consentimiento}, 
+		fecha_consentimiento = #{fecha_consentimiento},
+		nombres_procedimientos = #{nombres_procedimientos},
+		tipo_orden = #{tipo_orden}, observacion = #{observacion}    
+		where
+		codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal =
+		#{codigo_sucursal}
+		and codigo_orden = #{codigo_orden}
+	</update>
+
+	<select id="consultar" resultMap="orden_servicioMap"
+		parameterType="orden_servicio">
+		select codigo_empresa,codigo_sucursal,
+		codigo_orden,fecha_orden,nro_ingreso,codigo_paciente,
+		codigo_administradora,id_plan,codigo_ordenador,codigo_dx,
+		id_prestador,estado,creacion_date,
+		ultimo_update,delete_date,creacion_user,ultimo_user,
+		delete_user,actualizado,tipo_hc,cumplida, consentimiento, fecha_consentimiento,
+		nombres_procedimientos, tipo_orden, observacion, id      
+		from public.orden_servicio
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">AND codigo_empresa = #{codigo_empresa}</if>
+			<if test="codigo_sucursal != null">AND codigo_sucursal = #{codigo_sucursal}</if>
+			<if test="codigo_orden != null">AND codigo_orden = #{codigo_orden}</if>
+			<if test="id != null">AND id = #{id}</if>
+			<if test="nro_ingreso != null">AND nro_ingreso = #{nro_ingreso}</if>
+			<if test="codigo_paciente != null">AND codigo_paciente = #{codigo_paciente}</if>
+			<if test="tipo_hc != null">AND tipo_hc = #{tipo_hc}</if>
+		</trim>
+	</select>
+
+	<delete id="eliminar" parameterType="orden_servicio">
+		delete from
+		public.orden_servicio
+		where codigo_empresa = #{codigo_empresa}
+		and
+		codigo_sucursal = #{codigo_sucursal} and codigo_orden =
+		#{codigo_orden}
+	</delete>
+
+	<select id="listar" resultMap="orden_servicioMap" parameterType="java.util.Map">
+		SELECT
+		orden.codigo_empresa,
+		orden.codigo_sucursal,
+		orden.codigo_orden,
+		orden.fecha_orden,
+		orden.nro_ingreso,
+		orden.codigo_paciente,
+		orden.codigo_administradora,
+		orden.id_plan,
+		orden.codigo_ordenador,
+		orden.codigo_dx,
+		orden.id_prestador,
+		orden.estado,
+		orden.creacion_date,
+		orden.ultimo_update,
+		orden.delete_date,
+		orden.creacion_user,
+		orden.ultimo_user,
+		orden.delete_user,
+		orden.actualizado,
+		orden.tipo_hc,
+		orden.cumplida,
+		orden.consentimiento,
+		orden.fecha_consentimiento,
+		orden.nombres_procedimientos,
+		orden.tipo_orden, 
+		orden.observacion,
+		orden.id   
+		FROM
+		public.orden_servicio AS orden
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">AND orden.codigo_empresa = #{codigo_empresa}</if>
+			<if test="codigo_sucursal != null">AND orden.codigo_sucursal = #{codigo_sucursal}</if>
+			<if test="codigo_paciente != null">AND orden.codigo_paciente = #{codigo_paciente}</if>
+			<if test="nro_ingreso != null">AND orden.nro_ingreso = #{nro_ingreso}</if>
+			<if test="codigo_orden != null">AND orden.codigo_orden = #{codigo_orden}</if>
+			<if test="id != null">AND orden.id = #{id}</if>
+			<if test="cumplida != null">AND orden.cumplida = #{cumplida}</if>
+			<if test="tipo_hc != null">AND orden.tipo_hc = #{tipo_hc}</if>
+			<if test="tipo_orden != null">
+				AND orden.tipo_orden = #{tipo_orden} 
+			</if>
+			<if test="parameter != null">AND orden.${parameter} like '${value}'</if>
+			<if test="solo_lab != null">AND (
+			        SELECT count(dtt_orden.codigo_cups) FROM
+					public.detalle_orden AS dtt_orden
+					INNER JOIN public.procedimiento_iss01 AS pcd_iss ON pcd_iss.codigo_soat = dtt_orden.codigo_cups 
+			        WHERE dtt_orden.codigo_empresa = orden.codigo_empresa AND dtt_orden.codigo_sucursal = orden.codigo_sucursal AND dtt_orden.codigo_orden = orden.codigo_orden
+			    ) > 0
+			</if> 
+			<if test="solo_imagen != null">
+			    AND (
+			     SELECT count(dtt_orden.codigo_cups) FROM
+					public.detalle_orden AS dtt_orden
+					INNER JOIN public.procedimiento_iss01 AS pcd_iss ON pcd_iss.codigo_soat = dtt_orden.codigo_cups 
+			        WHERE dtt_orden.codigo_empresa = orden.codigo_empresa AND dtt_orden.codigo_sucursal = orden.codigo_sucursal AND dtt_orden.codigo_orden = orden.codigo_orden
+			     ) > 0
+			</if>
+		</trim>
+		order by orden.fecha_orden DESC
+		<if test="limit != null">
+			${limit}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist from public.orden_servicio AS orden
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+				AND orden.codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+				AND orden.codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="codigo_orden != null">
+				AND orden.codigo_orden = #{codigo_orden}
+			</if>
+			<if test="codigo_paciente != null">AND orden.codigo_paciente = #{codigo_paciente}</if>
+			<if test="nro_ingreso != null">AND orden.nro_ingreso = #{nro_ingreso}</if>
+			<if test="cumplida != null">AND orden.cumplida = #{cumplida}</if>
+			<if test="tipo_orden != null">AND orden.tipo_orden = #{tipo_orden}</if>
+			<if test="parameter != null">
+				AND ${parameter} like '${value}'
+			</if>
+			<if test="solo_lab != null">AND (
+			        SELECT count(dtt_orden.codigo_cups) FROM
+					public.detalle_orden AS dtt_orden
+					INNER JOIN public.procedimiento_iss01 AS pcd_iss ON pcd_iss.codigo_soat = dtt_orden.codigo_cups 
+			        WHERE dtt_orden.codigo_empresa = orden.codigo_empresa AND dtt_orden.codigo_sucursal = orden.codigo_sucursal AND dtt_orden.codigo_orden = orden.codigo_orden
+			    ) > 0
+			</if> 
+			<if test="solo_imagen != null">
+			    AND (
+			     SELECT count(dtt_orden.codigo_cups) FROM
+					public.detalle_orden AS dtt_orden
+					INNER JOIN public.procedimiento_iss01 AS pcd_iss ON pcd_iss.codigo_soat = dtt_orden.codigo_cups 
+			        WHERE dtt_orden.codigo_empresa = orden.codigo_empresa AND dtt_orden.codigo_sucursal = orden.codigo_sucursal AND dtt_orden.codigo_orden = orden.codigo_orden
+			     ) > 0
+			</if>
+		</trim>
+		<if test="limit != null">
+			${limit}
+		</if>
+	</select>
+
+	<update id="anularOrdenesAnteriores" parameterType="java.util.Map">
+		UPDATE orden_servicio AS o
+		SET cumplida = 'A'
+		WHERE o.cumplida = 'N' AND o.codigo_empresa = #{codigo_empresa}
+		AND o.codigo_sucursal = #{codigo_sucursal} AND o.codigo_paciente = #{codigo_paciente}
+	</update>
+</mapper>

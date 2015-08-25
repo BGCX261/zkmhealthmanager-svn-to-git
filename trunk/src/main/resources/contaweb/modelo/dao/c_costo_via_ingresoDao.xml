@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="contaweb.modelo.dao.C_costo_via_ingresoDao">
+
+	<resultMap id="c_costo_via_ingresoMap" type="c_costo_via_ingreso">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="codigo_cc" property="codigo_cc" />
+		<result column="via_ingreso" property="via_ingreso" />
+		<result column="codigo_centro" property="codigo_centro" />
+	</resultMap>
+
+	<insert id="crear" parameterType="c_costo_via_ingreso">
+		insert into contaweb.c_costo_via_ingreso (codigo_empresa,codigo_sucursal,
+		codigo_cc,via_ingreso,codigo_centro)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{codigo_cc},#{via_ingreso},#{codigo_centro})
+	</insert>
+
+	<update id="actualizar" parameterType="c_costo_via_ingreso">
+		update contaweb.c_costo_via_ingreso set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},codigo_cc = #{codigo_cc},
+		via_ingreso = #{via_ingreso},codigo_centro = #{codigo_centro}
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and codigo_cc = #{codigo_cc}
+		and via_ingreso = #{via_ingreso}
+		and codigo_centro = #{codigo_centro}
+	</update>
+
+	<select id="consultar" parameterType="c_costo_via_ingreso" resultMap="c_costo_via_ingresoMap">
+		select codigo_empresa,codigo_sucursal,
+		codigo_cc,via_ingreso,codigo_centro
+		from contaweb.c_costo_via_ingreso where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_cc = #{codigo_cc}
+		and via_ingreso = #{via_ingreso}
+		and codigo_centro = #{codigo_centro}
+	</select>
+	
+	<select id="consultarUnico" parameterType="c_costo_via_ingreso" resultMap="c_costo_via_ingresoMap">
+		select codigo_empresa,codigo_sucursal,
+		codigo_cc,via_ingreso,codigo_centro
+		from contaweb.c_costo_via_ingreso where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and via_ingreso = #{via_ingreso}
+		and codigo_centro = #{codigo_centro}
+		limit 1 offset 0
+	</select>
+
+	<delete id="eliminar" parameterType="c_costo_via_ingreso">
+		delete from contaweb.c_costo_via_ingreso
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} 
+		and codigo_cc = #{codigo_cc}
+		<if test="via_ingreso != null">
+			AND via_ingreso = #{via_ingreso}
+		</if>
+		<if test="codigo_centro != null">
+			AND codigo_centro = #{codigo_centro}
+		</if>
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="c_costo_via_ingresoMap">
+		select codigo_empresa,codigo_sucursal,
+		codigo_cc,via_ingreso,codigo_centro
+		from contaweb.c_costo_via_ingreso 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="codigo_cc != null">
+			AND codigo_cc = #{codigo_cc}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from contaweb.c_costo_via_ingreso 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

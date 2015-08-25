@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Detalle_plantilla_pypDao">
+
+	<resultMap id="detalle_plantilla_pypMap" type="detalle_plantilla_pyp">
+		<result column="area_intervencion" property="area_intervencion" />
+		<result column="consecutivo" property="consecutivo" />
+		<result column="sexo" property="sexo" />
+		<result column="maximo" property="maximo" />
+		<result column="tiempo" property="tiempo" />
+		<result column="unidad_tiempo" property="unidad_tiempo" />
+		<result column="edad_inicial" property="edad_inicial" />
+		<result column="unidad_med_edad_inicial" property="unidad_med_edad_inicial" />
+		<result column="edad_final" property="edad_final" />
+		<result column="unidad_med_edad_final" property="unidad_med_edad_final" />
+		<result column="id_actividad" property="id_actividad" />
+	</resultMap>
+
+	<insert id="crear" parameterType="detalle_plantilla_pyp">
+		insert into public.detalle_plantilla_pyp (area_intervencion,consecutivo,
+		sexo,maximo,tiempo,
+		unidad_tiempo,edad_inicial,unidad_med_edad_inicial,
+		edad_final,unidad_med_edad_final,id_actividad)
+
+		values (#{area_intervencion},#{consecutivo},
+		#{sexo},#{maximo},#{tiempo},
+		#{unidad_tiempo},#{edad_inicial},#{unidad_med_edad_inicial},
+		#{edad_final},#{unidad_med_edad_final},#{id_actividad})
+	</insert>
+
+	<update id="actualizar" parameterType="detalle_plantilla_pyp">
+		update public.detalle_plantilla_pyp set area_intervencion = #{area_intervencion},
+		consecutivo = #{consecutivo},sexo = #{sexo},
+		maximo = #{maximo},tiempo = #{tiempo},
+		unidad_tiempo = #{unidad_tiempo},edad_inicial = #{edad_inicial},
+		unidad_med_edad_inicial = #{unidad_med_edad_inicial},edad_final = #{edad_final},
+		unidad_med_edad_final = #{unidad_med_edad_final},id_actividad = #{id_actividad}
+		where consecutivo = #{consecutivo}
+		and id_actividad = #{id_actividad}
+	</update>
+
+	<select id="consultar" parameterType="detalle_plantilla_pyp" resultMap="detalle_plantilla_pypMap">
+		select area_intervencion,consecutivo,
+		sexo,maximo,tiempo,unidad_tiempo,
+		edad_inicial,unidad_med_edad_inicial,edad_final,unidad_med_edad_final,
+		id_actividad
+		from public.detalle_plantilla_pyp where consecutivo = #{consecutivo}
+		and id_actividad = #{id_actividad}
+	</select>
+
+	<delete id="eliminar" parameterType="detalle_plantilla_pyp">
+		delete from public.detalle_plantilla_pyp
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="consecutivo != null">
+			AND consecutivo = #{consecutivo}
+			</if>
+			<if test="id_actividad != null">
+			AND id_actividad = ${id_actividad}
+			</if>
+		</trim>
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="detalle_plantilla_pypMap">
+		SELECT
+			dtt_pnat.area_intervencion,
+			dtt_pnat.consecutivo,
+			dtt_pnat.sexo,
+			dtt_pnat.maximo,
+			dtt_pnat.tiempo,
+			dtt_pnat.unidad_tiempo,
+			dtt_pnat.edad_inicial,
+			dtt_pnat.unidad_med_edad_inicial,
+			dtt_pnat.edad_final,
+			dtt_pnat.unidad_med_edad_final,
+			dtt_pnat.id_actividad
+			FROM
+			public.detalle_plantilla_pyp AS dtt_pnat
+			INNER JOIN public.plantilla_pyp AS planti ON planti.area_intervencion = dtt_pnat.area_intervencion AND planti.id = dtt_pnat.id_actividad
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+			<if test="area_intervencion != null">
+			AND dtt_pnat.area_intervencion = #{area_intervencion}
+			</if>
+			<if test="id_actividad != null">
+			AND dtt_pnat.id_actividad = #{id_actividad}
+			</if>
+			<if test="sexo != null">
+			AND (dtt_pnat.sexo = #{sexo} OR sexo = 'A') 
+			</if>
+			<if test="codigo_pdc != null">
+			AND planti.codigo_pdc = #{codigo_pdc}
+			</if>
+		</trim>
+		<if test="limite_paginado != null">
+			${limite_paginado}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from public.detalle_plantilla_pyp 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

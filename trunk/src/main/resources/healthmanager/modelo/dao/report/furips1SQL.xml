@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.furips1Model">
+    <select id="select" resultType="java.util.HashMap" parameterType="java.util.Map">
+   select f.codigo_empresa,f.codigo_sucursal,
+		f.codigo_currips,f.fecha_radicacion,
+		f.rg,f.nro_radicacion,f.nro_radicacion_anterior,f.nro_factura,
+		f.nro_identificacion,f.condicion_accidentado,
+		f.naturaleza_evento,f.eventos_naturales,
+		f.eventos_terroristas,f.otro_evento,f.descripcion_otro_evento,
+		f.direccion_evento,
+		f.fecha_evento_accidentente,f.hora_evento,f.codigo_departamento_evento,
+		f.codigo_municipio_evento,
+		f.descripcion_breve_evento,f.estado_aseguramiento,f.marca_vehiculo,
+		f.placa_vehiculo,
+		f.tipo_servicio_vehiculo,f.codigo_aseguradora_vehiculo,f.nro_poliza_vehiculo,
+		f.intervencion_autoridad_vehiculo,
+		f.vigencia_desde_vehiculo,f.vigencia_hasta_vehiculo,
+		f.cobro_excedente_poliza_vehiculo,f.propietario_apellido1,
+		f.propietario_apellido2,f.propietario_nombre1,f.propietario_nombre2,
+		f.propietario_tipodocumento,
+		f.propietario_nro_documento,f.propietario_direccion_res,
+		f.propietario_codigo_departamento,f.propietario_codigo_municipio,
+		f.propietario_telefono,f.propietario_total_folios,
+        f.zona_ocurrecia,
+		pct.nombre1 as nombre1,pct.nombre2 as nombre2,
+		pct.apellido1 as apellido1,pct.apellido2 as apellido2,
+		pct.tipo_identificacion as tipo_id,pct.nro_identificacion as nro_identificacion,
+		pct.fecha_nacimiento as fecha_nacimiento,pct.sexo as sexo,
+		pct.direccion as direccion,pct.tel_res as tel_res,
+
+		dpto.codigo as dpto_codigo,mun.codigo as mun_codigo,
+		dpto.nombre as dpto,mun.nombre as mun,
+		dpto_evento.nombre as dpto_evento,mun_evento.nombre as mun_evento,
+		dpto_propietario.nombre as dpto_propietario,mun_propietario.nombre as mun_propietario,
+        emp.nombre_empresa, emp.nro_identificacion, emp.codigo_habilitacion
+
+		
+		
+		from furips2 f
+		INNER JOIN empresa AS emp ON (emp.codigo_empresa = f.codigo_empresa)
+		left join paciente pct on (pct.codigo_empresa = f.codigo_empresa
+		and pct.codigo_sucursal = f.codigo_sucursal and pct.nro_identificacion = f.nro_identificacion)
+		left join departamentos dpto on
+		pct.codigo_dpto = dpto.codigo
+		left join departamentos dpto_evento on
+		dpto_evento.codigo = f.codigo_departamento_evento
+		left join departamentos dpto_propietario on
+		dpto_propietario.codigo = f.propietario_codigo_departamento
+
+		left join municipios mun on
+		mun.coddep = pct.codigo_dpto
+		and mun.codigo = pct.codigo_municipio
+		left join municipios mun_evento on
+		mun_evento.coddep = f.codigo_departamento_evento
+		and mun_evento.codigo = f.codigo_municipio_evento
+		left join municipios mun_propietario on
+		mun_propietario.coddep = f.propietario_codigo_departamento
+		and mun_propietario.codigo = f.propietario_codigo_municipio
+		
+		where f.codigo_empresa = #{codigo_empresa}
+		and f.codigo_sucursal = #{codigo_sucursal} 
+		and f.codigo_currips = #{codigo_currips}
+		
+    </select>
+   
+</mapper>

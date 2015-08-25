@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.historia_odontologia1Model">
+    <select id="select" resultType="java.util.HashMap" parameterType="java.util.Map">
+    
+    select cta.identificacion,cta.fecha_inicial,cta.codigo_historia,pct.nombre1 as nombre1_pct,
+	pct.nombre2 as nombre2_pct,pct.apellido1 as apellido1_pct,pct.apellido2 as apellido2_pct,
+	sexo.descripcion as sexo_pct,pct.fecha_nacimiento as nac_pct,
+	get_edad(pct.fecha_nacimiento, CURRENT_DATE, '1') as edad,estado_civil.descripcion as estado_civil,
+	etnica.nombre as pert_etnica,dpto.nombre as dpto,mun.nombre as mun,bpct.barrio,
+	pct.direccion dir_pct,loc.localidad,pct.tel_res as tel_pct,oc.nombre as ocupacion_pct,
+	ne.nombre nivel_educativo,reg.descripcion as tipo_usuario,pct.codigo_administradora,
+	ad.nombre as administradora,cta.acompaniante,rel.descripcion as relacion,cta.tel_acompaniante,
+	
+	cta.codigo_prestador,med.apellidos as ape_med,med.nombres as nom_med,
+	
+	cta.motivo_consulta,cta.enfermedad_actual,
+	
+	anam_tratamiento,anam_toma_medicamentos,anam_alergias,anam_cardiopatias,anam_alteracion_presion,
+	anam_cual_tratamiento,anam_cual_toma_medicamentos,anam_cual_alergias,
+	anam_cual_cardiopatias,anam_cual_alteracion_presion,
+	
+	anam_embarazo,anam_diabetes,anam_hepatitis,anam_irradiaciones,anam_discracias,
+	anam_cual_embarazo,anam_cual_diabetes,anam_cual_hepatitis,anam_cual_irradiaciones,
+	anam_cual_discracias,
+	
+	anam_fiebre_reumatica,anam_enfermedad_renal,anam_inmunosupresion,anam_trastornos,anam_patologia,
+	anam_cual_fiebre_reumatica,anam_cual_enfermedad_renal,anam_cual_inmunosupresion,anam_cual_trastornos,
+	anam_cual_patologia,
+	
+	anam_trastornos_gastricos,anam_epilepsia,anam_cirugias,anam_protasis,anam_otro,
+	anam_cual_trastornos_gastricos,anam_cual_epilepsia,anam_cual_cirugias,anam_cual_protasis,
+	anam_cual_otros,
+	
+	sintoma_respiratorio,sintoma_piel
+	
+	from odontologia cta
+	
+	left join paciente pct on (pct.codigo_empresa = cta.codigo_empresa
+	and pct.codigo_sucursal = cta.codigo_sucursal and pct.nro_identificacion = cta.identificacion)
+	left join elemento sexo on (sexo.codigo = pct.sexo and sexo.tipo = 'sexo')
+	left join elemento estado_civil on (estado_civil.codigo = pct.estado_civil
+	and estado_civil.tipo = 'estado_civil')
+	left join pertenencia_etnica etnica on (etnica.id = pct.pertenencia_etnica)
+	left join departamentos dpto on (dpto.codigo = pct.codigo_dpto)
+	left join municipios mun on (mun.codigo = pct.codigo_municipio and mun.coddep = pct.codigo_dpto)
+	left join adicional_paciente apct on (apct.codigo_empresa = pct.codigo_empresa
+	and apct.codigo_sucursal = pct.codigo_sucursal and apct.nro_identificacion = pct.nro_identificacion)
+	left join barrio bpct on (apct.codigo_barrio = bpct.codigo_barrio)
+	left join localidad loc on (loc.codigo_localidad = bpct.codigo_localidad)
+	left join ocupaciones oc on (oc."id" = pct.codigo_ocupacion)
+	left join nivel_educativo ne on (ne."id" = pct.codigo_educativo)
+	left join elemento reg on (reg.codigo = pct.tipo_usuario
+	and reg.tipo = 'tipo_usuario')
+	left join elemento rel on (rel.codigo = cta.relacion
+	and rel.tipo = 'relacion_acomp')
+	left join administradora ad on (ad.codigo_empresa = pct.codigo_empresa
+	and ad.codigo_sucursal = pct.codigo_sucursal and ad.codigo = pct.codigo_administradora)
+	
+	LEFT JOIN prestadores med on (med.codigo_empresa = cta.codigo_empresa
+	and med.codigo_sucursal = cta.codigo_sucursal
+	and med.nro_identificacion = cta.codigo_prestador)
+	
+	where cta.codigo_empresa = #{codigo_empresa}
+	and cta.codigo_sucursal = #{codigo_sucursal}
+	and cta.codigo_historia = #{nro_historia}
+    
+    
+    </select>
+   
+</mapper>

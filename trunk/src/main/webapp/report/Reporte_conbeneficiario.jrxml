@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Reporte_conbeneficiario" pageWidth="612" pageHeight="792" whenNoDataType="AllSectionsNoDetail" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cba0ff65-631c-449f-a779-4bc134ceddbd">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="66"/>
+	<parameter name="codigo_empresa" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="codigo_sucursal" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="empresa" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="id" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="direccion" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="telefono" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="imagen" class="java.io.InputStream" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="fecha_inicial" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="nro_identificacion" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="numero" class="java.lang.String"/>
+	<parameter name="date_vencimiento" class="java.util.Date"/>
+	<parameter name="firma" class="java.io.InputStream"/>
+	<parameter name="nombre_firma" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select a.nro_identificacion_afiliado, a.nro_identificacion_cotizante,p.tipo_identificacion,tipo_id.descripcion, a.tipo_afiliado, a.fecha_afiliacion,
+       p.apellido1 as apellido1_paciente,p.apellido2 as apellido2_paciente, p.nombre1 as nombre1_paciente,
+       p.nombre2 as nombre2_paciente, p.estado_afiliacion, f.imagen_firma, f.identificacion, f.nombre
+from afiliaciones_me a
+inner join paciente p on (p.codigo_empresa = a.codigo_empresa
+and p.codigo_sucursal = a.codigo_sucursal and p.nro_identificacion = a.nro_identificacion_afiliado)
+left join elemento tipo_id on (tipo_id.tipo = 'tipo_id'
+	and tipo_id.codigo = p.tipo_identificacion)
+left join firma f on (f.codigo_empresa = a.codigo_empresa
+and f.codigo_sucursal = a.codigo_sucursal)
+right join firma_certificado fc on (fc.codigo_firma = f.codigo_firma and fc.codigo_certificado = '1')
+
+
+where a.codigo_empresa = $P{codigo_empresa}
+and a.codigo_sucursal = $P{codigo_sucursal}
+and ((a.nro_identificacion_afiliado= $P{nro_identificacion} and a.tipo_afiliado = 'C')
+or (a.nro_identificacion_cotizante= $P{nro_identificacion} and a.tipo_afiliado = 'B'))]]>
+	</queryString>
+	<field name="nro_identificacion_afiliado" class="java.lang.String"/>
+	<field name="nro_identificacion_cotizante" class="java.lang.String"/>
+	<field name="tipo_identificacion" class="java.lang.String"/>
+	<field name="descripcion" class="java.lang.String"/>
+	<field name="tipo_afiliado" class="java.lang.String"/>
+	<field name="fecha_afiliacion" class="java.sql.Timestamp"/>
+	<field name="apellido1_paciente" class="java.lang.String"/>
+	<field name="apellido2_paciente" class="java.lang.String"/>
+	<field name="nombre1_paciente" class="java.lang.String"/>
+	<field name="nombre2_paciente" class="java.lang.String"/>
+	<field name="estado_afiliacion" class="java.lang.String"/>
+	<field name="imagen_firma" class="java.lang.Object"/>
+	<field name="identificacion" class="java.lang.String"/>
+	<field name="nombre" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="87" splitType="Stretch">
+			<image scaleImage="FillFrame" isUsingCache="true" onErrorType="Icon">
+				<reportElement x="0" y="0" width="101" height="62" uuid="13d74141-721a-4350-9611-5f242f2acdf1"/>
+				<imageExpression><![CDATA[$P{imagen}]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="101" y="34" width="358" height="14" uuid="f3ab0950-8448-49bf-bfa7-a9c90c5ad7ce"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{id}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="101" y="0" width="358" height="20" uuid="edcf9ad3-f0df-41b6-b64f-589108c2f65c"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{empresa}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="101" y="20" width="358" height="14" uuid="c1d6d62f-d989-4a6b-b70c-93804d660c81"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Dirección: "+$P{direccion}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="226">
+			<textField>
+				<reportElement mode="Opaque" x="0" y="212" width="87" height="14" backcolor="#E2DEDE" uuid="428c07a2-cea6-404b-8b47-2e5a78880aa2"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["TD"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="87" y="212" width="85" height="14" backcolor="#E2DEDE" uuid="56ccd98d-adf5-4e63-8cde-c90563af151f"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Documento"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="172" y="212" width="294" height="14" backcolor="#E2DEDE" uuid="555a3797-6ca8-491a-8d94-2b1033838bbd"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Nombre "]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement mode="Transparent" x="198" y="60" width="121" height="17" uuid="d157d54c-3dcd-4949-aa9d-8e6698a65fa5"/>
+				<box>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["CERTIFICA"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="84" y="13" width="388" height="31" uuid="ae737ccf-1da3-47e9-a4d7-ff26dfbeb9f6"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["EL JEFE DE LA DIVISION ADMINISTRATIVA DE LA CAJA DE PREVISION SOCIAL DE LA UNIVERSIDAD DE CARTAGENA"]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd MMMMM yyyy">
+				<reportElement x="16" y="99" width="540" height="90" uuid="8a712766-7f38-4f3a-9a48-225c731da3f1"/>
+				<box>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Que: "+$F{nombre1_paciente}+" "+$F{nombre2_paciente}+" "+$F{apellido1_paciente}+" "+$F{apellido2_paciente}+",  identificado con la Cédula de Ciudadanía  No. "+$F{nro_identificacion_afiliado}+", se encuentra afiliado en salud a "+$P{empresa}+", desde el "+DateFormat.getDateInstance(DateFormat.LONG).format($F{fecha_afiliacion})+" y su estado de afiliacion es "+($F{estado_afiliacion}.equals("01")?"Activo":"Inactivo")+".Dentro de su grupo familiar se encuentra:"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="466" y="212" width="90" height="14" backcolor="#E2DEDE" uuid="e868bd09-174a-4cb7-a89f-32f371a08c38"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Tipo Afiliacion"]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="87" height="14" uuid="fd663bf8-e633-4b75-a939-001df7c808af"/>
+				<box>
+					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nro_identificacion_afiliado}]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement mode="Transparent" x="87" y="0" width="85" height="14" uuid="57729146-101e-4e09-a399-5747d87757ac"/>
+				<box>
+					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nro_identificacion_afiliado}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Transparent" x="466" y="0" width="90" height="14" uuid="9a15ee44-aadf-4da6-9d3f-e64bbd4e8920"/>
+				<box>
+					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tipo_afiliado}.equals("C")?" Cotizante ":"Beneficiario"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="172" y="0" width="294" height="14" uuid="5dec55b8-7693-4a13-b323-99a4a69e2a28"/>
+				<box>
+					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{nombre1_paciente}!=null?$F{nombre1_paciente}+" "+$F{nombre2_paciente}+" "+$F{apellido1_paciente}+" "+$F{apellido2_paciente}:"")]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="252">
+			<staticText>
+				<reportElement x="18" y="28" width="540" height="20" uuid="897c07c2-f8a5-4a60-bad4-1614a59fa179"/>
+				<textElement textAlignment="Justified">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[El presente certificado se expide a solicitud del interesado.]]></text>
+			</staticText>
+			<textField pattern="dd MMMMM yyyy">
+				<reportElement x="16" y="89" width="540" height="28" uuid="d48bc5c6-a98d-4a1b-906c-66e55519a6c1"/>
+				<box>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Para constancia se firma en la Ciudad de Cartagena de Indias, a los "+$P{numero}+" ("+new SimpleDateFormat("dd").format($P{fecha_inicial})+") de "+new SimpleDateFormat("MMMM").format($P{fecha_inicial})+" de "+new SimpleDateFormat("yyyy").format($P{fecha_inicial})]]></textFieldExpression>
+			</textField>
+			<image scaleImage="RetainShape" hAlign="Center" vAlign="Bottom" onErrorType="Blank">
+				<reportElement x="198" y="138" width="175" height="49" uuid="9bc6daa4-1577-4d24-a70d-d2884da7c5bc"/>
+				<imageExpression><![CDATA[$P{firma}]]></imageExpression>
+			</image>
+			<textField isBlankWhenNull="true">
+				<reportElement x="198" y="194" width="175" height="15" uuid="8d48118a-9802-4231-918a-822c77c63010"/>
+				<box leftPadding="10">
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{nombre_firma}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="198" y="193" width="175" height="1" uuid="8325fd15-121e-463d-9bf5-ba5487e0befb"/>
+			</line>
+		</band>
+	</pageFooter>
+</jasperReport>

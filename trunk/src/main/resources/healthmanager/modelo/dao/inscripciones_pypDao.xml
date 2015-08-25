@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Inscripciones_pypDao">
+
+	<resultMap id="inscripciones_pypMap" type="inscripciones_pyp">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="codigo" property="codigo" />
+		<result column="id_codigo" property="id_codigo" />
+		<result column="nro_identificacion" property="nro_identificacion" />
+		<result column="estado" property="estado" />
+		<result column="observaciones" property="observaciones" />
+		<result column="creacion_date" property="creacion_date" />
+		<result column="creacion_user" property="creacion_user" />
+		<result column="fecha_inscripcion" property="fecha_inscripcion" />
+		<result column="tipo" property="tipo" />
+	</resultMap>
+
+	<insert id="crear" parameterType="inscripciones_pyp">
+		insert into public.inscripciones_pyp (codigo_empresa,codigo_sucursal,
+		codigo,id_codigo,nro_identificacion,
+		estado,observaciones,creacion_date,
+		creacion_user,fecha_inscripcion,tipo)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{codigo},#{id_codigo},#{nro_identificacion},
+		#{estado},#{observaciones},#{creacion_date},
+		#{creacion_user},#{fecha_inscripcion},#{tipo})
+	</insert>
+
+	<update id="actualizar" parameterType="inscripciones_pyp">
+		update public.inscripciones_pyp set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},codigo = #{codigo},
+		id_codigo = #{id_codigo},nro_identificacion = #{nro_identificacion},
+		estado = #{estado},observaciones = #{observaciones},
+		creacion_date = #{creacion_date},creacion_user = #{creacion_user},
+		fecha_inscripcion = #{fecha_inscripcion}, tipo = #{tipo}
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and codigo = #{codigo}
+	</update>
+
+	<select id="consultar" parameterType="inscripciones_pyp" resultMap="inscripciones_pypMap">
+		select codigo_empresa,codigo_sucursal,
+		codigo,id_codigo,nro_identificacion,estado,
+		observaciones,creacion_date,creacion_user,fecha_inscripcion, tipo
+		from public.inscripciones_pyp where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo = #{codigo}
+	</select>
+
+	<delete id="eliminar" parameterType="inscripciones_pyp">
+		delete from public.inscripciones_pyp
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo = #{codigo}
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="inscripciones_pypMap">
+		select codigo_empresa,codigo_sucursal,
+		codigo,id_codigo,nro_identificacion,estado,
+		observaciones,creacion_date,creacion_user,fecha_inscripcion,tipo
+		from public.inscripciones_pyp 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="nro_identificacion != null">
+			AND nro_identificacion = #{nro_identificacion}
+			</if>
+			<if test="tipo != null">
+			AND tipo = #{tipo}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from public.inscripciones_pyp 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

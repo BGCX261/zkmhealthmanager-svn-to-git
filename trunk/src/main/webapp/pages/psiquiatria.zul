@@ -1,0 +1,1241 @@
+<?page title="Psiquiatria" contentType="text/html;charset=UTF-8"?>
+<?component name="informacionPacientes" macroURI="/WEB-INF/macros/informacionPacientes.zul"?>
+<?component name="impresionDiagnostica" macroURI="/WEB-INF/macros/impresionDiagnostica.zul"?>
+<?component name="remision_interna" macroURI="/WEB-INF/macros/remision_interna.zul"?>
+<?component name="autorizaciones" macroURI="/pages/autorizaciones.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formPsiquiatria" width="100%" height="97%"
+		use="healthmanager.controller.PsiquiatriaAction"
+		onCreate="formPsiquiatria.init();">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="false" closable="false"
+			mold="3d" height="90%">
+			<caption label="Consultar Historias Clínicas "
+				style="font-weight: bold">
+				<toolbarbutton image="/images/add_perfil.png"
+					style="font-weight:bold;float:right;margin-right:50px"
+					label="PACIENTE ADMISIONADO"
+					id="toolbarbuttonPaciente_admisionado1" />
+			</caption>
+
+			<listbox id="lbxAtendida" mold="select" sclass="combobox"
+				width="150px" visible="false" />
+
+			<separator />
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" height="90%" mold="paging"
+				pageSize="20" vflex="1">
+				<auxhead>
+					<auxheader colspan="6">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<separator />
+							<textbox id="tbxValue" width="120px"
+								onOK="formPsiquiatria.buscarDatos();"
+								style="text-transform:uppercase" />
+							<space />
+
+							<label value="Tipo" />
+							<space width="5px" />
+							<listbox id="lbxTipo_historia" mold="select"
+								width="120px" onSelect="formPsiquiatria.buscarDatos()">
+								<listitem label="Todas" selected="true"
+									value="0" />
+								<listitem label="Primera Vez" value="1" />
+								<listitem label="Control" value="2" />
+							</listbox>
+
+							<space />
+							<toolbarbutton label="Consultar"
+								image="/images/Magnifier.gif"
+								onClick="formPsiquiatria.buscarDatos();"
+								tooltiptext="Consultar Psiquiatría" />
+							<space width="5px" />
+							<button mold="trendy"
+								image="/images/New16.gif"
+								onClick='formPsiquiatria.accionForm(true,"registrar");'
+								tooltiptext="Nuevo" visible="false" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Código historia" width="150px" />
+					<column label="Identificación" width="200px" />
+					<column label="Nombre" />
+					<column label="Fecha" width="150px" />
+					<column label="Tipo Historia" width="150px" />
+					<column label="Acciones" align="center"
+						width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+
+		<groupbox id="groupboxEditar" visible="true" closable="false"
+			mold="3d" height="100%">
+			<caption label="Registrar/Modificar Historias Clínicas"
+				style="font-weight: bold">
+				<toolbarbutton image="/images/add_perfil.png"
+					style="font-weight:bold;float:right;margin-right:50px"
+					label="PACIENTE ADMISIONADO"
+					id="toolbarbuttonPaciente_admisionado2" />
+			</caption>
+
+			<borderlayout width="100%" height="100%"
+				id="borderlayoutEditar" visible="true">
+				<north border="none" id="northEditar">
+					<div height="50px">
+						<toolbar width="100%" align="start">
+							<textbox id="tbxAccion" value="registrar"
+								visible="false" />
+							<toolbarbutton image="/images/Save16.gif"
+								label="Guardar HC Psiquiatría"
+								onClick="formPsiquiatria.guardarDatos();" id="btGuardar" />
+							<toolbarbutton image="/images/New16.gif"
+								label="Nuevo"
+								onClick='formPsiquiatria.accionForm(true,"registrar");'
+								id="btNew" visible="false" />
+							<space />
+							<toolbarbutton image="/images/trasladar.gif"
+								label="Cancelar"
+								onClick='formPsiquiatria.accionForm(false,tbxAccion.getText());'
+								id="btnCancelar" />
+							<toolbarbutton image="/images/print_ico.gif"
+								label="Imprimir Historia" onClick="formPsiquiatria.imprimir();"
+								id="btnImprimir" visible="false"/>
+							<space />
+							<label value="Formato impresión: "
+								visible="false" />
+							<listbox id="lbxFormato" mold="select"
+								width="150px" visible="false" sclass="combobox">
+								<listitem value="pdf" label="PDF"
+									selected="true" />
+								<listitem value="rtf" label="WORD" />
+							</listbox>
+						</toolbar>
+						<toolbarbutton image="/images/info_icon.png"
+							style="font-weight:bold;float:right;margin-right:50px"
+							label="Historia Clínica de Control"
+							id="toolbarbuttonTipo_historia" />
+					</div>
+				</north>
+				<center autoscroll="true" border="none">
+					<div align="center">
+
+
+						<!-- *************************** -->
+						<!-- *** Insertar/Actualizar *** -->
+						<!-- *************************** -->
+						<groupbox closable="false" width="905px"
+							mold="3d">
+							<grid sclass="GridSinBorde" hflex="1">
+								<columns>
+									<column label="" width="276px" />
+									<column label="" width="170px"
+										align="left" />
+									<column label="" width="182px" />
+								</columns>
+								<rows>
+
+									<row>
+										<cell colspan="6">
+											<groupbox mold="3d"
+												closable="false" visible="true" id="gbxIdentificacion">
+												<caption
+													label="Identificación" style="font-weight:bold" />
+
+												<informacionPacientes
+													id="infoPacientes" />
+												<grid>
+													<columns>
+														<column label=""
+															width="20%" />
+														<column label=""
+															width="30%" />
+														<column label=""
+															width="20%" />
+														<column label=""
+															width="30%" />
+													</columns>
+													<rows>
+														<!-- fila 1 -->
+
+														<row>
+															<cell>
+																<label
+																	value="* " style="color: red"
+																	tooltiptext="Campo obligatorio" />
+																<label
+																	value="Prestador: " />
+															</cell>
+															<cell
+																colspan="3">
+																<bandbox
+																	id="bandboxPrestador" width="170px" readonly="true"
+																	disabled="false" />
+																<space />
+																<textbox
+																	id="tbxNomPrestador" width="420px"
+																	style="text-transform:uppercase" readonly="true" />
+																<toolbarbutton
+																	id="btnLimpiar_prestador" image="/images/borrar.gif"
+																	visible="false" />
+															</cell>
+														</row>
+
+														<row>
+															<cell>
+																<label
+																	id="lbDesplazamiento" value="Desplazamiento: " />
+															</cell>
+															<cell>
+																<radiogroup
+																	id="rdbDesplazamiento">
+																	<radio
+																		id="Desplazamiento1" label="SI" value="1" />
+																	<space />
+																	<radio
+																		id="Desplazamiento2" label="NO" checked="true"
+																		value="2" />
+																</radiogroup>
+															</cell>
+
+															<cell>
+																<label
+																	id="lbDiscapacidad" value="Discapacidad: " />
+															</cell>
+															<cell>
+																<radiogroup
+																	id="rdbDiscapacidad">
+																	<radio
+																		id="Discapacidad1" label="SI" value="1" />
+																	<space />
+																	<radio
+																		id="Discapacidad2" label="NO" checked="true"
+																		value="2" />
+																</radiogroup>
+															</cell>
+														</row>
+
+
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+
+									<!-- fila 14 -->
+									<row id="rowMotivo"
+										visible="false">
+										<cell colspan="6">
+											<groupbox mold="3d"
+												width="100%" closable="false">
+												<caption
+													label="MOTIVO DE CONSULTA Y ENFERMEDAD ACTUAL" />
+												<grid
+													sclass="GridSinBorde" style="border:none">
+													<columns>
+														<column />
+
+													</columns>
+													<rows>
+														<row>
+															<cell>
+																<label
+																	value="* " style="color: red"
+																	tooltiptext="Campo obligatorio" />
+																<label
+																	id="lbMotivo_consulta" value="Motivo de Consulta: " />
+
+															</cell>
+														</row>
+														<row>
+															<cell>
+																<textbox
+																	id="tbxMotivo" width="98%" rows="4"
+																	style="text-transform:uppercase" />
+															</cell>
+														</row>
+														<row>
+															<cell>
+																<label
+																	value="* " style="color: red"
+																	tooltiptext="Campo obligatorio" />
+																<label
+																	id="lbEnfermedad" value="Enfermedad Actual: " />
+
+															</cell>
+														</row>
+														<row>
+															<cell>
+																<textbox
+																	id="tbxEnfermedad_actual" width="98%" rows="4"
+																	style="text-transform:uppercase" />
+															</cell>
+														</row>
+
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+
+									<!-- fila 14 -->
+									<row id="rowAreas_ajustes"
+										visible="false">
+										<cell colspan="6">
+											<groupbox mold="3d"
+												width="100%" closable="false">
+												<caption
+													label="ANTECEDENTES" />
+												<grid
+													sclass="GridSinBorde" style="border:none">
+													<columns>
+														<column label=""
+															width="82px" />
+														<column label=""
+															width="180px" />
+														<column label=""
+															width="82px" />
+														<column label=""
+															width="225px" />
+														<column label=""
+															width="79px" />
+														<column label=""
+															width="145px" />
+													</columns>
+													<rows>
+
+														<!-- fila 21 -->
+														<row>
+															<cell
+																colspan="8">
+																<label
+																	value="* " style="color: red"
+																	tooltiptext="Campo obligatorio" />
+																<label
+																	id="lbArea_personal" value="Personal: " />
+															</cell>
+														</row>
+														<row>
+															<cell
+																colspan="8">
+																<textbox
+																	id="tbxArea_personal" width="98%" rows="4"
+																	style="text-transform:uppercase" />
+															</cell>
+														</row>
+
+														<!-- fila 22 -->
+														<row>
+															<cell
+																colspan="8">
+																<label
+																	value="* " style="color: red"
+																	tooltiptext="Campo obligatorio" />
+																<label
+																	id="lbArea_familiar" value="Familiar: " />
+															</cell>
+														</row>
+														<row>
+															<cell
+																colspan="8">
+																<textbox
+																	id="tbxArea_familiar" width="98%" rows="4"
+																	style="text-transform:uppercase" />
+															</cell>
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+
+									<row>
+										<cell colspan="6">
+											<groupbox width="100%"
+												mold="3d" closable="false">
+												<caption
+													label="EXÁMEN FÍSICO" />
+
+												<grid
+													sclass="GridSinBorde" style="border:none" width="100%">
+													<columns>
+														<column />
+													</columns>
+													<rows>
+														<!-- fila 14 -->
+														<row>
+															<cell>
+																<groupbox
+																	width="100%" closable="false">
+																	<caption
+																		label="Signos Vitales">
+																		<toolbarbutton
+																			id="toolbarbuttonCargar_signos"
+																			image="/images/refresh_m.png"
+																			label="Cargar signos vitales"
+																			onClick="formPsiquiatria.cargarSignosVitalesEnfermera()" />
+																	</caption>
+
+																	<grid
+																		sclass="GridSinBorde" style="border:none">
+																		<columns>
+																			<column />
+																			<column />
+																			<column />
+
+																		</columns>
+																		<rows>
+																			<row>
+																				<cell
+																					colspan="3">
+																					<hlayout>
+																						<space />
+																						<space />
+																						<space />
+																						<space />
+																						<label
+																							value="* " style="color: red"
+																							tooltiptext="Campo obligatorio" />
+																						<label
+																							id="lbPresion"
+																							value="TA Sistólica / TA Diastólica " />
+																						<space />
+																						<space />
+																						<space />
+																						<space />
+																						<space />
+																						<space />
+																						<space />
+																						<label
+																							value="* " style="color: red"
+																							tooltiptext="Campo obligatorio" />
+																						<label
+																							id="lbCardiaca" value=" FC (min) " />
+																						<space />
+																						<space />
+
+																						<label
+																							value="* " style="color: red"
+																							tooltiptext="Campo obligatorio" />
+																						<label
+																							id="lbRespiratoria" value="FR (min) " />
+																						<space />
+																						<space />
+																						<label
+																							value="* " style="color: red"
+																							tooltiptext="Campo obligatorio" />
+																						<label
+																							id="lbTalla" value="Talla (cm) " />
+																						<space />
+
+																						<label
+																							value="* " style="color: red"
+																							tooltiptext="Campo obligatorio" />
+																						<label
+																							id="lbPeso" value="Peso (kg) " />
+																						<space />
+																						<space />
+																						<space />
+																						<label
+																							value="* " style="color: red"
+																							tooltiptext="Campo obligatorio" />
+																						<label
+																							id="lbInd_masa" value="IMC: " />
+
+																					</hlayout>
+																				</cell>
+																			</row>
+																			<row>
+																				<cell
+																					colspan="3">
+																					<hlayout>
+																						<space />
+																						<space />
+																						<space />
+																						<space />
+																						<space />
+																						<doublebox
+																							id="dbxPresion" width="50px" format="0"
+																							locale="en"
+																							onChange="formPsiquiatria.calcularTA(dbxPresion,dbxPresion2)"
+																							onBlur="formPsiquiatria.calcularTA(dbxPresion,dbxPresion2)" />
+																						<label
+																							value=" / " />
+																						<doublebox
+																							id="dbxPresion2" width="50px" format="0"
+																							locale="en"
+																							onChange="formPsiquiatria.calcularTA(dbxPresion,dbxPresion2)"
+																							onBlur="formPsiquiatria.calcularTA(dbxPresion,dbxPresion2)" />
+																						<label
+																							value="(mm/Hg)" />
+																						<space />
+																						<space />
+																						<space />
+																						<space />
+																						<space />
+																						<doublebox
+																							id="dbxCardiaca" width="50px" format="0"
+																							locale="en"
+																							onChange="formPsiquiatria.calcularFrecuenciaCardiaca(dbxCardiaca)"
+																							onBlur="formPsiquiatria.calcularFrecuenciaCardiaca(dbxCardiaca)" />
+																						<space />
+																						<space />
+																						<doublebox
+																							id="dbxRespiratoria" width="50px" format="0"
+																							locale="en"
+																							onChange="formPsiquiatria.calcularFrecuenciaRespiratoria(dbxRespiratoria)"
+																							onBlur="formPsiquiatria.calcularFrecuenciaRespiratoria(dbxRespiratoria)" />
+																						<space />
+																						<space />
+																						<doublebox
+																							id="dbxTalla" locale="en" width="50px"
+																							value="0.00"
+																							onChange="formPsiquiatria.calcularIMC(dbxPeso,dbxTalla,dbxImc)"
+																							onBlur="formPsiquiatria.calcularIMC(dbxPeso,dbxTalla,dbxImc)" />
+																						<space />
+																						<space />
+																						<doublebox
+																							id="dbxPeso" locale="en" width="50px"
+																							value="0.00"
+																							onChange="formPsiquiatria.calcularIMC(dbxPeso,dbxTalla,dbxImc)"
+																							onBlur="formPsiquiatria.calcularIMC(dbxPeso,dbxTalla,dbxImc)" />
+																						<space />
+																						<space />
+																						<doublebox
+																							id="dbxImc" readonly="true" locale="en"
+																							width="50px" value="0.00" />
+																					</hlayout>
+																				</cell>
+																			</row>
+																		</rows>
+																	</grid>
+																</groupbox>
+															</cell>
+														</row>
+
+														<!-- fila 6.3.1 -->
+														<row>
+															<cell>
+																<groupbox
+																	closable="false">
+																	<caption
+																		label="Exámenes" />
+
+																	<grid
+																		sclass="GridSinBorde" style="border:none"
+																		width="100%">
+																		<columns>
+																			<column
+																				width="120px" />
+																			<column />
+																		</columns>
+																		<rows>
+																			<row>
+																				<cell
+																					colspan="2">
+																					<div
+																						width="100%" align="left">
+																						<label
+																							id="lbFisico_estado_general"
+																							value="Estado General: " />
+																						<space
+																							width="720px" />
+																						<label
+																							style="color:red"
+																							value="Estado de Conciencia (Consciente o Inconsciente), grado de hidratación, febril, condiciones generales, caracteristicas predominantes en el paciente" />
+
+																						<textbox
+																							id="tbxFisico_estado_general" width="98%"
+																							style="text-transform:uppercase" rows="3" />
+																					</div>
+																				</cell>
+																			</row>
+
+																			<row>
+																				<cell>
+																					<div
+																						width="100%" align="left">
+																						<label
+																							id="lbFisico_cabeza_cara"
+																							value="Cabeza y Cara: " />
+
+
+																					</div>
+																				</cell>
+																				<cell>
+																					<div
+																						width="100%" align="left">
+																						<listbox
+																							name="estado_examen_fisico" sclass="combobox"
+																							mold="select" width="100px"
+																							id="lbxFisico_cabeza_cara_estado"
+																							onSelect="formPsiquiatria.seleccion(self, 2,new AbstractComponent[]{tbxFisico_cabeza_cara})" />
+
+
+																					</div>
+																				</cell>
+																			</row>
+
+																			<row>
+																				<cell
+																					colspan="2">
+																					<textbox
+																						id="tbxFisico_cabeza_cara" width="98%"
+																						style="text-transform:uppercase" rows="2"
+																						readonly="true" />
+																				</cell>
+																			</row>
+
+																			<row>
+																				<cell>
+																					<div
+																						width="100%" align="left">
+																						<label
+																							id="lbFisico_ocular" value="Ocular: " />
+
+																					</div>
+																				</cell>
+																				<cell>
+																					<div
+																						width="100%" align="left">
+																						<listbox
+																							name="estado_examen_fisico" sclass="combobox"
+																							mold="select" width="100px"
+																							id="lbxFisico_ocular_estado"
+																							onSelect="formPsiquiatria.seleccion(self, 2,new AbstractComponent[]{tbxFisico_ocular})" />
+
+
+																					</div>
+																				</cell>
+																			</row>
+
+																			<row>
+																				<cell
+																					colspan="2">
+																					<textbox
+																						id="tbxFisico_ocular" width="98%"
+																						style="text-transform:uppercase" rows="2"
+																						readonly="true" />
+																				</cell>
+																			</row>
+
+																			<row>
+																				<cell>
+																					<div
+																						width="100%" align="left">
+																						<label
+																							id="lbFisico_otorrino" value="Otorrino: " />
+
+																					</div>
+																				</cell>
+																				<cell>
+																					<div
+																						width="100%" align="left">
+																						<listbox
+																							name="estado_examen_fisico" sclass="combobox"
+																							mold="select" width="100px"
+																							id="lbxFisico_otorrino_estado"
+																							onSelect="formPsiquiatria.seleccion(self, 2,new AbstractComponent[]{tbxFisico_otorrino})" />
+
+																					</div>
+																				</cell>
+																			</row>
+
+																			<row>
+																				<cell
+																					colspan="2">
+																					<textbox
+																						id="tbxFisico_otorrino" width="98%"
+																						style="text-transform:uppercase" rows="2"
+																						readonly="true" />
+																				</cell>
+																			</row>
+
+																			<row>
+																				<cell>
+																					<div
+																						width="100%" align="left">
+																						<label
+																							id="lbFisico_cuello" value="Cuello: " />
+
+																					</div>
+																				</cell>
+																				<cell>
+																					<div
+																						width="100%" align="left">
+																						<listbox
+																							name="estado_examen_fisico" sclass="combobox"
+																							mold="select" width="100px"
+																							id="lbxFisico_cuello_estado"
+																							onSelect="formPsiquiatria.seleccion(self, 2,new AbstractComponent[]{tbxFisico_cuello})" />
+
+
+																					</div>
+																				</cell>
+																			</row>
+
+																			<row>
+																				<cell
+																					colspan="2">
+																					<textbox
+																						id="tbxFisico_cuello" width="98%"
+																						style="text-transform:uppercase" rows="2"
+																						readonly="true" />
+																				</cell>
+																			</row>
+
+																			<row>
+																				<cell>
+																					<div
+																						width="100%" align="left">
+																						<label
+																							id="lbFisico_cardio_pulmonar"
+																							value="Cardio pulmonar: " />
+
+																					</div>
+																				</cell>
+																				<cell>
+																					<div
+																						width="100%" align="left">
+																						<listbox
+																							name="estado_examen_fisico" sclass="combobox"
+																							mold="select" width="100px"
+																							id="lbxFisico_cardio_pulmonar_estado"
+																							onSelect="formPsiquiatria.seleccion(self, 2,new AbstractComponent[]{tbxFisico_cardio_pulmonar})" />
+
+																					</div>
+																				</cell>
+																			</row>
+
+																			<row>
+																				<cell
+																					colspan="2">
+																					<textbox
+																						id="tbxFisico_cardio_pulmonar" width="98%"
+																						style="text-transform:uppercase" rows="2"
+																						readonly="true" />
+																				</cell>
+																			</row>
+
+																			<row
+																				id="rowFisico_examen_mama">
+																				<cell>
+																					<div
+																						width="100%" align="left">
+																						<label
+																							id="lbFisico_examen_mama"
+																							value="Exámen de mama: " />
+
+																					</div>
+																				</cell>
+																				<cell>
+																					<div
+																						width="100%" align="left">
+																						<listbox
+																							name="estado_examen_fisico" sclass="combobox"
+																							mold="select" width="100px"
+																							id="lbxFisico_examen_mama_estado"
+																							onSelect="formPsiquiatria.seleccion(self, 2,new AbstractComponent[]{tbxFisico_examen_mama})" />
+
+																					</div>
+																				</cell>
+																			</row>
+
+																			<row
+																				id="rowFisico_examen_mama2">
+																				<cell
+																					colspan="2">
+																					<textbox
+																						id="tbxFisico_examen_mama" width="98%"
+																						style="text-transform:uppercase" rows="2"
+																						readonly="true" />
+																				</cell>
+																			</row>
+
+																			<row>
+																				<cell>
+																					<div
+																						width="100%" align="left">
+																						<label
+																							id="lbFisico_gastointestinal" value="Abdomen: " />
+
+																					</div>
+																				</cell>
+																				<cell>
+																					<div
+																						width="100%" align="left">
+																						<listbox
+																							name="estado_examen_fisico" sclass="combobox"
+																							mold="select" width="100px"
+																							id="lbxFisico_gastointestinal_estado"
+																							onSelect="formPsiquiatria.seleccion(self, 2,new AbstractComponent[]{tbxFisico_gastointestinal})" />
+
+																					</div>
+																				</cell>
+																			</row>
+
+																			<row>
+																				<cell
+																					colspan="2">
+																					<textbox
+																						id="tbxFisico_gastointestinal" width="98%"
+																						style="text-transform:uppercase" rows="2"
+																						readonly="true" />
+																				</cell>
+																			</row>
+
+																			<row>
+																				<cell>
+																					<div
+																						width="100%" align="left">
+																						<label
+																							id="lbFisico_genitourinario"
+																							value="Genitourinario: " />
+
+																					</div>
+																				</cell>
+																				<cell>
+																					<div
+																						width="100%" align="left">
+																						<listbox
+																							name="estado_examen_fisico" sclass="combobox"
+																							mold="select" width="100px"
+																							id="lbxFisico_genitourinario_estado"
+																							onSelect="formPsiquiatria.seleccion(self, 2,new AbstractComponent[]{tbxFisico_genitourinario})" />
+
+																					</div>
+																				</cell>
+																			</row>
+
+																			<row>
+																				<cell
+																					colspan="2">
+																					<textbox
+																						id="tbxFisico_genitourinario" width="98%"
+																						style="text-transform:uppercase" rows="2"
+																						readonly="true" />
+																				</cell>
+																			</row>
+
+																			<row>
+																				<cell>
+																					<div
+																						width="100%" align="left">
+																						<label
+																							id="lbFisico_endocrinologo" value="Endocrino: " />
+
+																					</div>
+																				</cell>
+																				<cell>
+																					<div
+																						width="100%" align="left">
+																						<listbox
+																							name="estado_examen_fisico" sclass="combobox"
+																							mold="select" width="100px"
+																							id="lbxFisico_endocrinologo_estado"
+																							onSelect="formPsiquiatria.seleccion(self, 2,new AbstractComponent[]{tbxFisico_endocrinologo})" />
+
+																					</div>
+																				</cell>
+																			</row>
+
+																			<row>
+																				<cell
+																					colspan="2">
+																					<textbox
+																						id="tbxFisico_endocrinologo" width="98%"
+																						style="text-transform:uppercase" rows="2"
+																						readonly="true" />
+																				</cell>
+																			</row>
+
+																			<row>
+																				<cell>
+																					<div
+																						width="100%" align="left">
+																						<label
+																							id="lbFisico_osteomuscular"
+																							value="Osteomuscular: " />
+
+																					</div>
+																				</cell>
+																				<cell>
+																					<div
+																						width="100%" align="left">
+																						<listbox
+																							name="estado_examen_fisico" sclass="combobox"
+																							mold="select" width="100px"
+																							id="lbxFisico_osteomuscular_estado"
+																							onSelect="formPsiquiatria.seleccion(self, 2,new AbstractComponent[]{tbxFisico_osteomuscular})" />
+
+																					</div>
+																				</cell>
+																			</row>
+
+																			<row>
+																				<cell
+																					colspan="2">
+																					<textbox
+																						id="tbxFisico_osteomuscular" width="98%"
+																						style="text-transform:uppercase" rows="2"
+																						readonly="true" />
+																				</cell>
+																			</row>
+
+																			<row>
+																				<cell>
+																					<div
+																						width="100%" align="left">
+																						<label
+																							id="lbFisico_vacular" value="Vascular: " />
+
+																					</div>
+																				</cell>
+																				<cell>
+																					<div
+																						width="100%" align="left">
+																						<listbox
+																							name="estado_examen_fisico" sclass="combobox"
+																							mold="select" width="100px"
+																							id="lbxFisico_vacular_estado"
+																							onSelect="formPsiquiatria.seleccion(self, 2,new AbstractComponent[]{tbxFisico_vacular})" />
+
+
+																					</div>
+																				</cell>
+																			</row>
+
+																			<row>
+																				<cell
+																					colspan="2">
+																					<textbox
+																						id="tbxFisico_vacular" width="98%"
+																						style="text-transform:uppercase" rows="2"
+																						readonly="true" />
+																				</cell>
+																			</row>
+
+																			<row>
+																				<cell>
+																					<div
+																						width="100%" align="left">
+																						<label
+																							id="lbFisico_piel_fanera"
+																							value="Piel y Faneras: " />
+
+																					</div>
+																				</cell>
+																				<cell>
+																					<div
+																						width="100%" align="left">
+																						<listbox
+																							name="estado_examen_fisico" sclass="combobox"
+																							mold="select" width="100px"
+																							id="lbxFisico_piel_fanera_estado"
+																							onSelect="formPsiquiatria.seleccion(self, 2,new AbstractComponent[]{tbxFisico_piel_fanera})" />
+
+
+																					</div>
+																				</cell>
+																			</row>
+
+																			<row>
+																				<cell
+																					colspan="2">
+																					<textbox
+																						id="tbxFisico_piel_fanera" width="98%"
+																						style="text-transform:uppercase" rows="2"
+																						readonly="true" />
+																				</cell>
+																			</row>
+
+																			<row>
+																				<cell>
+																					<div
+																						width="100%" align="left">
+																						<label
+																							id="lbFisico_neurologico" value="Neurologico: " />
+
+																					</div>
+																				</cell>
+																				<cell>
+																					<div
+																						width="100%" align="left">
+																						<listbox
+																							name="estado_examen_fisico" sclass="combobox"
+																							mold="select" width="100px"
+																							id="lbxFisico_neurologico_estado"
+																							onSelect="formPsiquiatria.seleccion(self, 2,new AbstractComponent[]{tbxFisico_neurologico})" />
+
+																					</div>
+																				</cell>
+																			</row>
+
+																			<row>
+																				<cell
+																					colspan="2">
+																					<textbox
+																						id="tbxFisico_neurologico" width="98%"
+																						style="text-transform:uppercase" rows="2"
+																						readonly="true" />
+																				</cell>
+																			</row>
+
+																		</rows>
+																	</grid>
+
+																</groupbox>
+															</cell>
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+									<!-- fila 14 -->
+									<row>
+										<cell colspan="6">
+											<groupbox mold="3d"
+												width="100%" closable="false">
+												<caption
+													label="EXAMEN MENTAL" />
+												<grid
+													sclass="GridSinBorde" style="border:none">
+													<columns>
+														<column label=""
+															width="82px" />
+														<column label=""
+															width="180px" />
+														<column label=""
+															width="82px" />
+														<column label=""
+															width="225px" />
+														<column label=""
+															width="79px" />
+														<column label=""
+															width="145px" />
+													</columns>
+													<rows>
+														<row>
+															<cell
+																colspan="8">
+																<textbox
+																	id="tbxExamen_mental" width="98%" rows="4"
+																	style="text-transform:uppercase" />
+															</cell>
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+
+
+									<!-- fila 14 -->
+									<row id="rowEvolucion"
+										visible="false">
+										<cell colspan="6">
+											<groupbox mold="3d"
+												width="100%" closable="false">
+												<caption
+													label="EVOLUCIÓN" />
+												<grid
+													sclass="GridSinBorde" style="border:none">
+													<columns>
+														<column label=""
+															width="82px" />
+														<column label=""
+															width="180px" />
+														<column label=""
+															width="82px" />
+														<column label=""
+															width="225px" />
+														<column label=""
+															width="79px" />
+														<column
+															label="" />
+													</columns>
+													<rows>
+														<row>
+															<cell
+																colspan="6">
+																<textbox
+																	id="tbxEvolucion" width="98%" rows="10"
+																	style="text-transform:uppercase" />
+															</cell>
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+
+									<!-- fila 10 -->
+									<row>
+										<cell colspan="6">
+
+											<impresionDiagnostica
+												id="macroImpresion_diagnostica" />
+
+										</cell>
+									</row>
+
+
+									<!-- fila 14 -->
+									<row id="rowDiagnostico"
+										visible="false">
+										<cell colspan="6">
+											<groupbox mold="3d"
+												width="100%" closable="false">
+												<caption
+													label="ANÁLISIS DIAGNOSTICO" />
+												<grid
+													sclass="GridSinBorde" style="border:none">
+													<columns>
+														<column label=""
+															width="82px" />
+														<column label=""
+															width="180px" />
+														<column label=""
+															width="82px" />
+														<column label=""
+															width="225px" />
+														<column label=""
+															width="79px" />
+														<column label=""
+															width="145px" />
+													</columns>
+													<rows>
+														<row>
+															<cell
+																colspan="8">
+																<label
+																	value="* " style="color: red"
+																	tooltiptext="Campo obligatorio" />
+																<label
+																	id="lbDiagnostico" value="Análisis Diagnostico: " />
+																<textbox
+																	id="tbxDiagnostico" width="98%" rows="4"
+																	style="text-transform:uppercase" />
+															</cell>
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+
+									<!-- fila 14 -->
+									<row id="rowPlan" visible="false">
+										<cell colspan="6">
+											<groupbox mold="3d"
+												width="100%" closable="false">
+												<caption
+													label="PLAN DE SEGUIMIENTO Y CONTROL" />
+												<grid
+													sclass="GridSinBorde" style="border:none">
+													<columns>
+														<column label=""
+															width="82px" />
+														<column label=""
+															width="180px" />
+														<column label=""
+															width="82px" />
+														<column label=""
+															width="225px" />
+														<column label=""
+															width="79px" />
+														<column label=""
+															width="145px" />
+													</columns>
+													<rows>
+														<row>
+															<cell
+																colspan="8">
+																<textbox
+																	id="tbxTratamiento" width="98%" rows="4"
+																	style="text-transform:uppercase" />
+															</cell>
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+
+
+
+									<!-- fila 10 -->
+									<row>
+										<cell colspan="6">
+											<groupbox width="100%"
+												closable="false">
+
+												<div style=""
+													id="divModuloFarmacologico" visible="true">
+												</div>
+
+												<separator
+													height="10px" />
+
+												<div style=""
+													id="divModuloOrdenamiento" visible="true">
+												</div>
+												<autorizaciones
+													id="divModuloAutorizacion" widthW="900px" heightW="360px"
+													modo="1" idDiv="divModuloOrdenamiento" visibleM="false" />
+											</groupbox>
+
+										</cell>
+									</row>
+									<row>
+										<cell colspan="6">
+											<remision_interna
+												id="macroRemision_interna" />
+										</cell>
+									</row>
+									<row>
+										<cell colspan="6">
+											<groupbox mold="3d"
+												closable="false" visible="true" id="gbxRemisiones">
+												<caption
+													label="REMISIONES" />
+												<div style=""
+													id="divModuloRemisiones_externas" visible="true">
+												</div>
+											</groupbox>
+										</cell>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+					</div>
+				</center>
+			</borderlayout>
+		</groupbox>
+	</window>
+</zk>

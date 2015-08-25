@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Detalle_config_servicios_autorizacionDao">
+
+	<resultMap id="detalle_config_servicios_autorizacionMap" type="detalle_config_servicios_autorizacion">
+		<result column="id" property="id" />
+		<result column="id_configuracion" property="id_configuracion" />
+		<result column="codigo_servicio" property="codigo_servicio" />
+	</resultMap>
+
+	<insert id="crear" parameterType="detalle_config_servicios_autorizacion">
+		insert into public.detalle_config_servicios_autorizacion (id_configuracion,codigo_servicio)
+
+		values (#{id_configuracion},#{codigo_servicio})
+	</insert>
+
+	<update id="actualizar" parameterType="detalle_config_servicios_autorizacion">
+		update public.detalle_config_servicios_autorizacion set id = #{id},
+		id_configuracion = #{id_configuracion},codigo_servicio = #{codigo_servicio}
+		where id = #{id}
+	</update>
+
+	<select id="consultar" parameterType="detalle_config_servicios_autorizacion" resultMap="detalle_config_servicios_autorizacionMap">
+		select id,id_configuracion,
+		codigo_servicio
+		from public.detalle_config_servicios_autorizacion where id = #{id}
+	</select>
+
+	<delete id="eliminar" parameterType="detalle_config_servicios_autorizacion">
+		delete from public.detalle_config_servicios_autorizacion
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="id != null">
+			   AND id = #{id}
+			</if>
+			<if test="id_configuracion != null">
+			   AND id_configuracion = #{id_configuracion}
+			</if>
+		</trim>
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="detalle_config_servicios_autorizacionMap">
+		select id,id_configuracion,
+		codigo_servicio
+		from public.detalle_config_servicios_autorizacion 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="parameter != null">
+				AND ${parameter} like '${value}'
+			</if>
+			<if test="id_configuracion != null">
+				AND id_configuracion = #{id_configuracion}
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from public.detalle_config_servicios_autorizacion 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

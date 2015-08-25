@@ -1,0 +1,2105 @@
+<?page title="Ficha_epidemiologia_n2" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formFicha_epidemiologia_n2" width="950px" height="450px"
+		border="normal"
+		use="healthmanager.controller.Ficha_epidemiologia_n2Action">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+		<style>
+			div.minimize { border: 1px solid #79858E; background:
+			#D3E1EC; position: absolute; opacity: 0.8; } div.loginGrid {
+			border: none; } td.loginCtl { text-align: center; }
+			td.loginCtl .z-label { color: red; font-style: italic; }
+		</style>
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="false" closable="false"
+			mold="3d" height="100%">
+			<caption label="Consultar"
+				style="color: blue;font-weight: bold" />
+			<separator />
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" height="100%" mold="paging"
+				pageSize="20" vflex="1">
+				<auxhead>
+					<auxheader colspan="4">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<separator />
+							<textbox id="tbxValue" width="200px"
+								onOK="formFicha_epidemiologia_n2.buscarDatos();"
+								style="text-transform:uppercase" />
+							<separator />
+							<button mold="trendy"
+								image="/images/Magnifier.gif"
+								onClick="formFicha_epidemiologia_n2.buscarDatos();"
+								tooltiptext="Consultar Ficha epidemiologia n2" />
+							<separator />
+							<button mold="trendy"
+								image="/images/New16.gif"
+								onClick='formFicha_epidemiologia_n2.accionForm(true,"registrar");'
+								tooltiptext="Nuevo Ficha epidemiologia n2" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Codigo ficha" />
+					<column label="Identificacion" />
+					<column label="Fecha inicial" />
+					<column label="Acciones" align="center"
+						width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+		<borderlayout width="100%" height="98%" id="groupboxEditar"
+			visible="true">
+			<north border="none" visible="false">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<toolbarbutton image="/images/Save16.gif"
+						label="Guardar Ficha epidemiologia n2"
+						onClick="formFicha_epidemiologia_n2.guardarDatos();"
+						id="btGuardar" />
+					<toolbarbutton image="/images/New16.gif"
+						label="Nueva Ficha epidemiologia n2"
+						onClick='formFicha_epidemiologia_n2.accionForm(true,"registrar");'
+						id="btNew" />
+					<space />
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Cancelar"
+						onClick='formFicha_epidemiologia_n2.accionForm(false,tbxAccion.getText());'
+						id="btCancel" />
+					<toolbarbutton image="/images/print_ico.gif"
+						label="Imprimir Ficha epidemiologia n2"
+						onClick="formFicha_epidemiologia_n2.imprimir();" id="btImprimir"
+						visible="false" />
+					<space />
+					<label value="Formato impresión: " visible="false" />
+					<listbox id="lbxFormato" mold="select" width="150px"
+						visible="false" sclass="combobox">
+						<listitem value="pdf" label="PDF"
+							selected="true" />
+						<listitem value="rtf" label="WORD" />
+					</listbox>
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center">
+
+					<!-- *************************** -->
+					<!-- *** Insertar/Actualizar *** -->
+					<!-- *************************** -->
+					<groupbox mold="3d" closable="false" visible="true"
+						id="gbxDatosPaciente">
+						<caption label="DATOS DE LA FICHA"
+							style="font-weight:bold" />
+						<grid>
+							<columns>
+								<column label="" />
+							</columns>
+							<rows>
+								<row visible="false">
+									<cell></cell>
+									<cell height="30px">
+										<label id="lbCodigo_diagnostico"
+											value="Código diagnostico: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxCodigo_diagnostico" width="170px"
+											style="text-transform:uppercase" maxlength="20" />
+									</cell>
+									<cell></cell>
+								</row>
+								<row>
+									<cell>
+										<hlayout>
+											<space width="130px" />
+											<label value="* "
+												style="color: red" tooltiptext="Campo obligatorio" />
+											<label id="lbFecha_inicial"
+												value="Fecha: " />
+											<datebox
+												id="dtbxFecha_inicial" onCreate="self.value = new Date();"
+												format="dd-MM-yyyy" width="170px" readonly="true" buttonVisible="false"/>
+											<space width="70px" />
+											<label value="* "
+												style="color: red" tooltiptext="Campo obligatorio" />
+											<label id="lbCodigo_ficha"
+												value="Codigo ficha: " />
+											<textbox readonly="true"
+												id="tbxCodigo_ficha" width="170px"
+												style="text-transform:uppercase" maxlength="20" />
+										</hlayout>
+									</cell>
+								</row>
+								<row>
+									<cell visible="false">
+										<label id="lbIdentificacion"
+											value="Identificacion: " />
+									</cell>
+									<cell colspan="2" visible="false">
+										<textbox id="tbxIdentificacion"
+											width="170px" style="text-transform:uppercase"
+											maxlength="20" />
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+
+
+					<groupbox mold="3d" closable="false" visible="true"
+						id="gbxDatosPacientett">
+						<caption label="DATOS DEL PACIENTE"
+							style="font-weight:bold" />
+						<grid>
+						<columns visible="false">
+								<column width="100px" />
+								<column />
+								<column />
+								<column />
+								<column />
+								<column width="220px" />
+							</columns>
+							<rows>
+								
+								<row>
+									<cell>
+										<label value="* " style="color: red"
+											tooltiptext="Campo obligatorio" />
+										<label value="Paciente: " />
+									</cell>
+									<cell colspan="4">
+										<textbox id="tbxIdentificacion_p" width="27%" readonly="true" disabled="true"/>
+											<!--  -->
+										<space width="1%" />
+										<textbox id="tbxNombres_y_apellidos" width="65%"
+											style="text-transform:uppercase" readonly="true" />
+									</cell>
+									<cell>
+										<space width="15px" />
+										<label value="Tipo: " />
+										<space width="23px" />
+										<textbox id="tbxTipo_identidad_p" width="135px" style="text-transform:uppercase" readonly="true"/>
+									</cell>
+										
+								</row>
+								<row>
+									<cell>
+										<label value="* " style="color: red"
+											tooltiptext="Campo obligatorio" />
+										<label value="Aseguradora: " />
+									</cell>
+									<cell colspan="4">
+										<textbox id="tbxAseguradora" width="27%" readonly="true" disabled="true"/>
+											<!--  -->
+										<space width="1%" />
+										<textbox id="tbxNombre_aseguradora" width="65%"
+											style="text-transform:uppercase" readonly="true" />
+									</cell>
+									<cell></cell>
+										
+								</row>
+		
+							</rows>
+						</grid>
+					</groupbox>
+
+
+					<groupbox mold="3d" closable="false" visible="true"
+						id="gbxDatosficha">
+						<caption label="RELACIÓN CON DATOS BÁSICOS"
+							style="font-weight:bold" />
+						<grid>
+							<columns>
+								<column label="" width="20px" />
+								<column label="" width="200px" />
+								<column label="" width="190px" />
+								<column label="" width="20px" />
+								<column label="" width="200px" />
+								<column label="" width="120px" />
+								<column label="" />
+							</columns>
+							<rows>
+
+								<row>
+									<cell></cell>
+									<cell>
+										<label
+											id="lbPrimer_nombre_madre"
+											value="Primer nombre de la madre: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxPrimer_nombre_madre" width="170px"
+											style="text-transform:uppercase" maxlength="20" />
+									</cell>
+									<cell></cell>
+									<cell>
+										<label
+											id="lbSegundo_nombre_madre" value="Segundo nombre madre: " />
+									</cell>
+									<cell colspan="2">
+										<textbox
+											id="tbxSegundo_nombre_madre" width="170px"
+											style="text-transform:uppercase" maxlength="20" />
+									</cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell>
+										<label
+											id="lbPrimer_apellido_madre" value="Primer apellido madre: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxPrimer_apellido_madre" width="170px"
+											style="text-transform:uppercase" maxlength="20" />
+									</cell>
+									<cell></cell>
+									<cell>
+										<label
+											id="lbSegundo_apellido_madre"
+											value="Segundo apellido madre: " />
+									</cell>
+									<cell colspan="2">
+										<textbox
+											id="tbxSegundo_apellido_madre" width="170px"
+											style="text-transform:uppercase" maxlength="20" />
+									</cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell>
+										<label id="lbTipo_identidad"
+											value="Tipo identidad: " />
+									</cell>
+									<cell>
+										<listbox id="lbxTipo_identidad"
+											name="tipo_id" mold="select" width="170px" sclass="combobox" />
+									</cell>
+									<cell></cell>
+									<cell>
+										<label id="lbId_madre"
+											value="Id madre: " />
+									</cell>
+									<cell colspan="2">
+										<textbox id="tbxId_madre"
+											width="170px" style="text-transform:uppercase"
+											maxlength="20" />
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+
+
+					<groupbox mold="3d" closable="false" visible="true"
+						id="gbxnotoficacion_e_informacion_rnacido">
+						<caption
+							label="NOTOFICACION E INFORMACION DEL RECIEN NACIDO"
+							style="font-weight:bold" />
+						<grid>
+							<columns>
+								<column label="" width="20px" />
+								<column label="" width="200px" />
+								<column label="" width="190px" />
+								<column label="" width="20px" />
+								<column label="" width="200px" />
+								<column label="" width="120px" />
+								<column label="" />
+							</columns>
+							<rows>
+								<!-- fila 10 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label
+											id="lbPrimer_nombre_rnacido" value="Primer nombre rnacido: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxPrimer_nombre_rnacido" width="170px"
+											style="text-transform:uppercase" maxlength="20" />
+									</cell>
+									<cell></cell>
+									<cell height="30px">
+										<label
+											id="lbSegundo_nombre_rnacido"
+											value="Segundo nombre rnacido: " />
+									</cell>
+									<cell colspan="2">
+										<textbox
+											id="tbxSegundo_nombre_rnacido" width="170px"
+											style="text-transform:uppercase" maxlength="20" />
+									</cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell>
+										<label
+											id="lbPrimer_apellido_rnacido"
+											value="Primer apellido rnacido: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxPrimer_apellido_rnacido" width="170px"
+											style="text-transform:uppercase" maxlength="20" />
+									</cell>
+									<cell></cell>
+									<cell>
+										<label
+											id="lbSegundo_apellido_rnacido"
+											value="Segundo apellido rnacido: " />
+									</cell>
+									<cell colspan="2">
+										<textbox
+											id="tbxSegundo_apellido_rnacido" width="170px"
+											style="text-transform:uppercase" maxlength="20" />
+									</cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label
+											id="lbTipo_documento_rnacido"
+											value="Tipo documento rnacido: " />
+									</cell>
+									<cell>
+										<listbox
+											id="lbxTipo_documento_rnacido" name="id_menor" mold="select"
+											width="170px" sclass="combobox" />
+									</cell>
+									<cell></cell>
+									<cell height="30px">
+										<label
+											id="lbNumero_identificacion_rnacido"
+											value="Número identificación rnacido: " />
+									</cell>
+									<cell colspan="2">
+										<intbox
+											constraint="no negative:Este valor no puede ser negativo"
+											id="ibxNumero_identificacion_rnacido" width="170px"
+											style="text-transform:uppercase" />
+									</cell>
+								</row>
+								<!-- fila 16 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label id="lbFecha_rnacimiento"
+											value="Fecha rnacimiento: " />
+									</cell>
+									<cell>
+										<datebox
+											id="dtbxFecha_rnacimiento"
+											onCreate="self.value = new Date();" format="yyyy-MM-dd"
+											width="170px" />
+									</cell>
+									<cell></cell>
+									<cell height="30px">
+										<label id="lbEdad_rnacido"
+											value="Edad rnacido: " />
+									</cell>
+									<cell colspan="2">
+										<intbox
+											constraint="no negative:Este valor no puede ser negativo"
+											id="ibxEdad_rnacido" width="170px"
+											style="text-transform:uppercase" />
+									</cell>
+								</row>
+								<!-- fila 18 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label id="lbSexo_rnacido"
+											value="Sexo recien nacido: " />
+										<radiogroup
+											id="rdbSexo_rnacido">
+											<radio label="Sí" value="S" />
+											<radio label="No" value="N"
+												checked="true" />
+										</radiogroup>
+									</cell>
+									<cell>
+										<label id="lbPeso_al_nacer"
+											value="Peso al nacer(gr): " />
+										<intbox
+											constraint="no negative:Este valor no puede ser negativo"
+											id="ibxPeso_al_nacer" width="60px"
+											style="text-transform:uppercase" />
+									</cell>
+									<cell></cell>
+									<cell>
+										<label id="lbTalla_al_nacer"
+											value="Talla al nacer(cm): " />
+										<intbox
+											constraint="no negative:Este valor no puede ser negativo"
+											id="ibxTalla_al_nacer" width="60px"
+											style="text-transform:uppercase" />
+									</cell>
+									<cell colspan="2">
+										<label
+											id="lbPerimetro_cefalico_rn" value="Perimetro cefalico rn: " />
+										<doublebox
+											id="dbxPerimetro_cefalico_rn" format="#,##0.00" width="60px"
+											value="0.00" />
+									</cell>
+								</row>
+								<!-- fila 22 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label
+											id="lbSemanas_gestacion_parto"
+											value="Semanas gestacion parto: " />
+									</cell>
+									<cell>
+										<intbox
+											constraint="no negative:Este valor no puede ser negativo"
+											id="ibxSemanas_gestacion_parto" width="170px"
+											style="text-transform:uppercase" />
+									</cell>
+									<cell></cell>
+									<cell>
+										<label id="lbClasificacion_peso"
+											value="Clasificación peso: " />
+										<space></space>
+										<radiogroup
+											id="rdbClasificacion_peso">
+											<radio label="Sí" value="S" />
+											<radio label="No" value="N"
+												checked="true" />
+										</radiogroup>
+									</cell>
+									<cell colspan="2">
+										<label
+											id="lbSitio_atencion_parto" value="Sitio atencion parto: " />
+										<space></space>
+										<radiogroup
+											id="rdbSitio_atencion_parto">
+											<radio label="Sí" value="S" />
+											<space />
+											<radio label="No" value="N"
+												checked="true" />
+										</radiogroup>
+									</cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell colspan="3">
+										<label
+											id="lbMultiplicidad_embarazo"
+											value="Multiplicidad del embarazo: " />
+										<space></space>
+										<radiogroup
+											id="rdbMultiplicidad_embarazo">
+											<radio label="Simple"
+												value="S" />
+											<space />
+											<radio label="Doble"
+												value="N" checked="true" />
+											<radio label="Triple o mas"
+												value="N" />
+										</radiogroup>
+									</cell>
+									<cell colspan="4">
+										<label
+											id="lbEdad_gestacion_primer_control"
+											value="Edad gestacion del primer control prenatal: " />
+										<space></space>
+										<intbox
+											constraint="no negative:Este valor no puede ser negativo"
+											id="ibxEdad_gestacion_primer_control" width="60px"
+											style="text-transform:uppercase" />
+									</cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell colspan="2">
+										<label
+											id="lbNumero_control_prenatal"
+											value="Número de controles prenatales que tuvo la madre: " />
+										<space></space>
+										<intbox
+											constraint="no negative:Este valor no puede ser negativo"
+											id="ibxNumero_control_prenatal" width="60px"
+											style="text-transform:uppercase" />
+									</cell>
+									<cell></cell>
+									<cell colspan="3">
+										<label
+											id="lbIntervalo_intergenesico_mn2anios"
+											value="Intervalo intergenesico mn2anios: " />
+										<space></space>
+										<radiogroup
+											id="rdbIntervalo_intergenesico_mn2anios">
+											<radio label="Sí" value="S" />
+											<space />
+											<radio label="No" value="N"
+												checked="true" />
+										</radiogroup>
+									</cell>
+								</row>
+								<row>
+									<cell colspan="7">
+										<label
+											value="¿Consumió micronutrientes durante el embarazo?">
+										</label>
+									</cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell>
+										<label id="lbCalcio"
+											value="Calcio: " />
+										<space></space>
+										<radiogroup id="rdbCalcio">
+											<radio label="Sí" value="S" />
+											<space />
+											<radio label="No" value="N"
+												checked="true" />
+										</radiogroup>
+									</cell>
+									<cell>
+										<label id="lbHierro"
+											value="Hierro: " />
+										<space></space>
+										<radiogroup id="rdbHierro">
+											<radio label="Sí" value="S" />
+											<space />
+											<radio label="No" value="N"
+												checked="true" />
+										</radiogroup>
+									</cell>
+									<cell></cell>
+									<cell colspan="3">
+										<label id="lbAc_folico"
+											value="Ac folico: " />
+										<space></space>
+										<radiogroup id="rdbAc_folico">
+											<radio label="Sí" value="S" />
+											<space />
+											<radio label="No" value="N"
+												checked="true" />
+										</radiogroup>
+									</cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell colspan="2">
+										<label
+											id="lbSindrome_anemico_embarazo"
+											value="Se le diagnosticó sindrome anemico en el embarazo: " />
+										<space></space>
+										<radiogroup
+											id="rdbSindrome_anemico_embarazo">
+											<radio label="Sí" value="S" />
+											<radio label="No" value="N"
+												checked="true" />
+										</radiogroup>
+									</cell>
+									<cell></cell>
+									<cell colspan="3">
+										<label
+											id="lbUltimo_valor_emoglobina_madre"
+											value="Registre el último valor de hemoglobina que tuvo la madre: " />
+										<space></space>
+										<doublebox
+											id="dbxUltimo_valor_emoglobina_madre" format="#,##0.00"
+											width="60px" value="0.00" />
+									</cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell colspan="6">
+										<label
+											id="lbTrimestre_gestacion_hemoglobina"
+											value="Trimestre gestacion hemoglobina: " />
+										<space></space>
+										<radiogroup
+											id="rdbTrimestre_gestacion_hemoglobina">
+											<radio label="Sí" value="S" />
+											<radio label="No" value="N"
+												checked="true" />
+										</radiogroup>
+									</cell>
+									<cell></cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+
+					<groupbox mold="3d" closable="false" visible="true"
+						id="gbxantecedentes_de_la_gestacion">
+						<caption label="ANTECEDENTES DE LA GESTACIÓN"
+							style="font-weight:bold" />
+						<grid>
+							<columns>
+								<column label="" width="10px" />
+								<column label="" width="430px" />
+								<column label="" width="100px" />
+								<column label="" width="20px" />
+								<column label="" width="100px" />
+								<column label="" width="100px" />
+								<column label="" />
+							</columns>
+							<rows>
+								<row>
+									<cell></cell>
+									<cell colspan="1">
+										<label
+											id="lbPresento_hipertension_embarazo"
+											value="Presento hipertension arterial durante el embarazo: " />
+									</cell>
+									<cell colspan="1">
+										<radiogroup
+											id="rdbPresento_hipertension_embarazo">
+											<radio label="Sí" value="1" />
+											<space />
+											<radio label="No" value="2"
+												checked="true" />
+										</radiogroup>
+									</cell>
+									<cell colspan="3">
+										<label
+											id="lbHijo_bajo_peso_nacer"
+											value="Hijo bajo peso al nacer: " />
+									</cell>
+									<cell>
+										<radiogroup
+											id="rdbHijo_bajo_peso_nacer">
+											<radio label="Sí" value="1" />
+											<space />
+											<radio label="No" value="2"
+												checked="true" />
+										</radiogroup>
+									</cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell>
+										<label
+											id="lbAmenaza_parto_pretermino"
+											value="¿Presentó amenaza de parto pretermino?: " />
+									</cell>
+									<cell>
+										<radiogroup
+											id="rdbAmenaza_parto_pretermino">
+											<radio label="Sí" value="1" />
+											<space />
+											<radio label="No" value="2"
+												checked="true" />
+										</radiogroup>
+									</cell>
+									<cell colspan="3">
+										<label
+											id="lbNumero_embarazos_previos"
+											value="Número de embarazos previos: " />
+									</cell>
+									<cell>
+										<intbox
+											constraint="no negative:Este valor no puede ser negativo"
+											id="ibxNumero_embarazos_previos" width="100px"
+											style="text-transform:uppercase" />
+									</cell>
+								</row>
+								<!-- fila 40 -->
+								<row>
+									<cell></cell>
+									<cell>
+										<label
+											id="lbConsumio_bebidas_alcoholicas"
+											value="¿Consumio bebidas alcoholicas, tabaco u otras sustancias durante el embarazo?: " />
+									</cell>
+									<cell>
+										<radiogroup
+											id="rdbConsumio_bebidas_alcoholicas">
+											<radio label="Sí" value="1" />
+											<space />
+											<radio label="No" value="2"
+												checked="true" />
+										</radiogroup>
+									</cell>
+									<cell colspan="3">
+										<label id="lbEsfuerzo_fisico"
+											value="Esfuerzo físico: " />
+									</cell>
+									<cell>
+										<radiogroup
+											id="rdbEsfuerzo_fisico">
+											<radio label="Sí" value="1" />
+											<space />
+											<radio label="No" value="2"
+												checked="true" />
+										</radiogroup>
+									</cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell colspan="1">
+										<label
+											id="lbInfeccion_vias_urinarias"
+											value="¿Se le diagnosticó infeccion de vías urinarias durante el embarazo?: " />
+									</cell>
+									<cell>
+										<radiogroup
+											id="rdbInfeccion_vias_urinarias">
+											<radio label="Sí" value="1" />
+											<space />
+											<radio label="No" value="2"
+												checked="true" />
+										</radiogroup>
+									</cell>
+									<cell colspan="3">
+										<label id="lbTalla_madre"
+											value="Talla madre: " />
+									</cell>
+									<cell>
+										<doublebox id="dbxTalla_madre"
+											format="#,##0.00" width="100px" value="0.00" />
+									</cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell colspan="1">
+										<label
+											id="lbPeso_ganado_embarazo"
+											value="Cuántos kilogramos de peso ganadó en el embarazo: " />
+									</cell>
+									<cell>
+										<doublebox
+											id="dbxPeso_ganado_embarazo" format="#,##0.00" width="60px"
+											value="0.00" />
+									</cell>
+									<cell colspan="3">
+										<label
+											id="lbPeso_pregestacional"
+											value="¿Cuál fue el Peso pregestacional?: " />
+									</cell>
+									<cell>
+										<doublebox
+											id="dbxPeso_pregestacional" format="#,##0.00" width="100px"
+											value="0.00" />
+									</cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell colspan="1">
+										<label id="lbSobrepeso_obesidad"
+											value="Se le diagnosticó Sobrepeso u obesidad en el embarazo: " />
+									</cell>
+									<cell colspan="4">
+										<radiogroup
+											id="rdbSobrepeso_obesidad">
+											<radio label="Sí" value="1" />
+											<space />
+											<radio label="No" value="2"
+												checked="true" />
+										</radiogroup>
+									</cell>
+									<cell></cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell colspan="1">
+										<label id="lbDesnutricion"
+											value="Se le diagnosticó desnutricion durante el embarazo: " />
+									</cell>
+									<cell>
+										<radiogroup
+											id="rdbDesnutricion">
+											<radio label="Sí" value="1" />
+											<space />
+											<radio label="No" value="2"
+												checked="true" />
+										</radiogroup>
+									</cell>
+									<cell colspan="3">
+										<label id="lbNumero_hijos_vivos"
+											value="Número hijos vivos: " />
+									</cell>
+									<cell>
+										<intbox
+											constraint="no negative:Este valor no puede ser negativo"
+											id="ibxNumero_hijos_vivos" width="100px"
+											style="text-transform:uppercase" />
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+
+					<groupbox mold="3d" closable="false" visible="true"
+						id="gbxinformacion_adicional_madre">
+						<caption
+							label="INFORMACION ADICIONAL DE LA MADRE:"
+							style="font-weight:bold" />
+						<grid>
+							<columns>
+								<column label="" width="80px" />
+								<column label="" width="400px" />
+								<column label="" width="400px" />
+							</columns>
+							<rows>
+								<row>
+									<cell></cell>
+									<cell colspan="1">
+										<label
+											id="lbNivel_educativo_madre" value="Nivel educativo madre: " />
+									</cell>
+									<cell colspan="2">
+										<label
+											value="Estrato socioeconomico" />
+									</cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell colspan="1">
+										<radiogroup
+											id="rdbNivel_educativo_madre">
+											<radio label="Primaria"
+												value="1" />
+											<space />
+											<radio label="Secundaria"
+												value="2" />
+											<space />
+											<radio
+												label="Técnico superior" value="3" />
+											<radio label="Ninguna"
+												value="4" checked="true" />
+										</radiogroup>
+									</cell>
+									<cell colspan="2">
+										<radiogroup
+											id="rdbEstado_socioeconomico">
+											<radio label="1" value="1" />
+											<space />
+											<radio label="2" value="2"
+												checked="true" />
+											<space />
+											<radio label="3" value="3" />
+											<space />
+											<radio label="4" value="4"
+												checked="true" />
+											<space />
+											<radio label="5" value="5" />
+											<space />
+											<radio label="6" value="6"
+												checked="true" />
+										</radiogroup>
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+
+					<groupbox mold="3d" closable="false" visible="true"
+						id="gbxinformacion_general">
+						<caption label="INFORMACION GENERAL:"
+							style="font-weight:bold" />
+						<grid>
+							<columns>
+								<column label="" width="100px" />
+								<column label="" width="270px" />
+								<column label="" width="500px" />
+
+							</columns>
+							<rows>
+								<row>
+									<cell></cell>
+									<cell>
+										<label
+											id="lbFecha_investigacion" value="Fecha de investigacion: " />
+									</cell>
+									<cell>
+										<label
+											id="lbEntidad_realiza_investigacion"
+											value="Entidad que realiza la investigacion: " />
+									</cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell>
+										<space></space>
+										<datebox
+											id="dtbxFecha_investigacion"
+											onCreate="self.value = new Date();" format="yyyy-MM-dd"
+											width="170px" />
+									</cell>
+									<cell>
+										<radiogroup
+											id="rdbEntidad_realiza_investigacion">
+											<radio label="UPGD"
+												value="S" />
+											<space />
+											<radio label="ASEGURADORA"
+												value="N" checked="true" />
+											<space />
+											<radio
+												label="ENTIDAD TERRITORIAL" value="N" checked="true" />
+										</radiogroup>
+									</cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell colspan="1">
+										<label
+											id="lbNombre_realiza_investigacion"
+											value="Nombre de quien realiza la investigación: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxNombre_realiza_investigacion" width="300px"
+											style="text-transform:uppercase" maxlength="20" />
+									</cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell colspan="1">
+										<label
+											id="lbPerfil_realiza_investigacion"
+											value="Perfil realiza investigacion: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxPerfil_realiza_investigacion" width="300px"
+											style="text-transform:uppercase" maxlength="20" />
+									</cell>
+									<cell></cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+
+					<groupbox mold="3d" closable="false" visible="true"
+						id="gbxdatos_de_identidad_del_caso">
+						<caption label="DATOS DE IDENTIDAD DEL CASO:"
+							style="font-weight:bold" />
+						<grid>
+							<columns>
+								<column label="" width="130px" />
+								<column label="" width="350px" />
+								<column label="" width="400px" />
+							</columns>
+							<rows>
+								<row>
+									<cell></cell>
+									<cell>
+										<label
+											id="lbPrimer_nombre_realiza_investigacion"
+											value="Primer nombre de quien suministra la información: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxPrimer_nombre_realiza_investigacion" width="170px"
+											style="text-transform:uppercase" maxlength="20" />
+									</cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell>
+										<label
+											id="lbSegundo_nombre_realiza_investigacion"
+											value="Segundo nombre de quien suministra la información: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxSegundo_nombre_realiza_investigacion" width="170px"
+											style="text-transform:uppercase" maxlength="20" />
+									</cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell>
+										<label
+											id="lbPrimer_apellido_realiza_investigacion"
+											value="Primer apellido de quien suministra la información: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxPrimer_apellido_realiza_investigacion" width="170px"
+											style="text-transform:uppercase" maxlength="20" />
+									</cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell>
+										<label
+											id="lbSegundo_apellido_realiza_investigacion"
+											value="Segundo apellido de quien suministra la información:: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxSegundo_apellido_realiza_investigacion" width="170px"
+											style="text-transform:uppercase" maxlength="20" />
+									</cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell>
+										<label
+											id="lbParentesco_recien_nacido"
+											value="Parentesco recien nacido: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxParentesco_recien_nacido" width="170px"
+											style="text-transform:uppercase" maxlength="20" />
+									</cell>
+									<cell></cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell>
+										<label id="lbMenor_asegurado"
+											value="Menor asegurado: " />
+									</cell>
+									<cell>
+										<radiogroup
+											id="rdbMenor_asegurado">
+											<radio label="Sí" value="1" />
+											<space />
+											<radio label="No" value="2"
+												checked="true" />
+										</radiogroup>
+									</cell>
+									<cell></cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+
+					<groupbox mold="3d" closable="false" visible="true"
+						id="gbxinformacion_socioeconomico">
+						<caption label="INFORMACIÓN SOCIOECONÓMICO:"
+							style="font-weight:bold" />
+						<grid>
+							<columns>
+								<column label="" width="100px" />
+								<column label="" width="400px" />
+								<column label="" width="20px" />
+								<column label="" width="300px" />
+							</columns>
+							<rows>
+								<row>
+									<cell></cell>
+									<cell colspan="1">
+										<label id="lbEstado_civil_madre"
+											value="Estado civil madre: " />
+									</cell>
+									<cell></cell>
+									<cell>
+										<label id="lbHacinamiento"
+											value="Hacinamiento: " />
+									</cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell colspan="1">
+										<radiogroup
+											id="rdbEstado_civil_madre">
+											<radio label="Soltera"
+												value="1" checked="true" />
+											<space />
+											<radio label="Casada"
+												value="2" />
+											<space />
+											<radio label="Unión libre"
+												value="3" />
+											<space />
+											<radio label="Separada"
+												value="4" />
+											<space />
+											<radio label="Viuda"
+												value="5" />
+										</radiogroup>
+									</cell>
+									<cell></cell>
+									<cell>
+										<radiogroup
+											id="rdbHacinamiento">
+											<radio label="Sí" value="1" />
+											<space />
+											<radio label="No" value="2"
+												checked="true" />
+										</radiogroup>
+									</cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell>
+										<label
+											id="lbIngreso_mensual_hogar"
+											value="Ingresos mensuales del hogar: " />
+									</cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell colspan="4">
+										<radiogroup
+											id="rdbIngreso_mensual_hogar">
+											<radio
+												label="Menos de 1SMLV" value="1" />
+											<space />
+											<radio
+												label="Entre 1 y 2SMLV " value="2" />
+											<space />
+											<radio
+												label="Entre 2 y 3SMLV" value="3" checked="true" />
+
+										</radiogroup>
+									</cell>
+									<cell></cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell colspan="4">
+										<radio label="Entre 3 y 4SMLV"
+											value="4" />
+										<space />
+										<radio label="Mayor a 4SMLV"
+											value="5" />
+										<space />
+										<radio label="No refiere"
+											value="6" />
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+
+					<groupbox mold="3d" closable="false" visible="true"
+						id="gbxinformacion_socio_ambiental">
+						<caption label="INFORMACIÓN SOCIO AMBIENTAL:"
+							style="font-weight:bold" />
+						<grid>
+							<columns>
+								<column label="" width="10px" />
+								<column label="" width="185px" />
+								<column label="" width="100px" />
+								<column label="" width="185px" />
+								<column label="" width="100px" />
+								<column label="" width="200px" />
+								<column label="" width="100px" />
+							</columns>
+							<rows>
+								<row>
+									<cell></cell>
+									<cell>
+										<label id="lbAgua_potable"
+											value="Agua potable: " />
+									</cell>
+									<cell>
+										<radiogroup
+											id="rdbAgua_potable">
+											<radio label="Sí" value="S" />
+											<space />
+											<radio label="No" value="N"
+												checked="true" />
+										</radiogroup>
+									</cell>
+									<cell>
+										<label
+											id="lbLavado_mano_cuidador" value="Lavado mano cuidador: " />
+									</cell>
+									<cell>
+										<radiogroup
+											id="rdbLavado_mano_cuidador">
+											<radio label="Sí" value="S" />
+											<space />
+											<radio label="No" value="N"
+												checked="true" />
+										</radiogroup>
+									</cell>
+									<cell>
+										<label
+											id="lbRecipientes_cocina_tapa_lavables"
+											value="Recipientes cocina tapa lavables: " />
+									</cell>
+									<cell colspan="1">
+										<radiogroup
+											id="rdbRecipientes_cocina_tapa_lavables">
+											<radio label="Sí" value="S" />
+											<space />
+											<radio label="No" value="N"
+												checked="true" />
+										</radiogroup>
+									</cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell>
+										<label
+											id="lbSistema_eliminacion_excreta"
+											value="Sistema eliminacion excreta: " />
+									</cell>
+									<cell>
+										<radiogroup
+											id="rdbSistema_eliminacion_excreta">
+											<radio label="Sí" value="S" />
+											<space />
+											<radio label="No" value="N"
+												checked="true" />
+										</radiogroup>
+									</cell>
+									<cell height="30px">
+										<label
+											id="lbAlmacenamiento_alimentos"
+											value="Almacenamiento alimentos: " />
+									</cell>
+									<cell>
+										<radiogroup
+											id="rdbAlmacenamiento_alimentos">
+											<radio label="Sí" value="S" />
+											<space />
+											<radio label="No" value="N"
+												checked="true" />
+										</radiogroup>
+									</cell>
+									<cell>
+										<label
+											id="lbConcervacion_alimentos"
+											value="Concervacion alimentos: " />
+									</cell>
+									<cell>
+										<radiogroup
+											id="rdbConcervacion_alimentos">
+											<radio label="Sí" value="S" />
+											<space />
+											<radio label="No" value="N"
+												checked="true" />
+										</radiogroup>
+									</cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell>
+										<label
+											id="lbEvaluacion_condicion_higiene"
+											value="Evaluacion condicion higiene: " />
+									</cell>
+									<cell colspan="5">
+										<radiogroup
+											id="rdbEvaluacion_condicion_higiene">
+											<radio label="Sí" value="S" />
+											<space />
+											<radio label="No" value="N"
+												checked="true" />
+										</radiogroup>
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+
+					<groupbox mold="3d" closable="false" visible="true"
+						id="gbxantecedentes_de_la_gestion">
+						<caption label="INFORMACIÓN SOCIO AMBIENTAL:"
+							style="font-weight:bold" />
+						<grid>
+							<columns>
+								<column label="" width="10px" />
+								<column label="" width="185px" />
+								<column label="" width="100px" />
+								<column label="" width="185px" />
+								<column label="" width="100px" />
+								<column label="" width="200px" />
+								<column label="" width="100px" />
+							</columns>
+							<rows>
+								<row>
+									<cell></cell>
+									<cell colspan="3">
+										<label
+											id="lbInstitucion_realizaron_controles"
+											value="Institucion donde le realizaron los controles prenatales: " />
+									</cell>
+									<cell colspan="3">
+										<textbox
+											id="tbxInstitucion_realizaron_controles" width="300px"
+											style="text-transform:uppercase" maxlength="2" />
+									</cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell>
+										<label id="lbDiabetes"
+											value="Diabetes: " />
+									</cell>
+									<cell>
+										<radiogroup id="rdbDiabetes">
+											<radio label="SÍ" value="1" />
+											<space />
+											<radio label="No" value="2"
+												checked="true" />
+										</radiogroup>
+									</cell>
+									<cell>
+										<label id="lbAmenaza_aborto"
+											value="Amenaza de aborto: " />
+									</cell>
+									<cell>
+										<radiogroup
+											id="rdbAmenaza_aborto">
+											<radio label="Sí" value="1" />
+											<space />
+											<radio label="No" value="2"
+												checked="true" />
+										</radiogroup>
+									</cell>
+									<cell>
+										<label
+											id="lbRecibio_realizo_tratamiento"
+											value="¿Recibio y realizó tratamiento?: " />
+									</cell>
+									<cell>
+										<radiogroup
+											id="rdbRecibio_realizo_tratamiento">
+											<radio label="Sí" value="S" />
+											<space />
+											<radio label="No" value="N"
+												checked="true" />
+										</radiogroup>
+									</cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell>
+										<label id="lbOtra_complicacion"
+											value="Otra complicacion: " />
+									</cell>
+									<cell>
+										<radiogroup
+											id="rdbOtra_complicacion">
+											<radio label="Sí" value="1" />
+											<space />
+											<radio label="No" value="2"
+												checked="true" />
+										</radiogroup>
+									</cell>
+									<cell>
+										<label id="lbCual"
+											value="Cuál: " />
+									</cell>
+									<cell colspan="3">
+										<textbox id="tbxCual"
+											width="170px" style="text-transform:uppercase"
+											maxlength="20" />
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+
+					<groupbox mold="3d" closable="false" visible="true"
+						id="gbxestado_actual_del_recien_nacido_y_signos_de_alarma">
+						<caption
+							label="
+											ESTADO ACTUAL DEL RECIEN NACIDO Y SIGNOS DE ALARMA: "
+							style="font-weight:bold" />
+						<grid>
+							<columns>
+								<column label="" width="10px" />
+								<column label="" width="185px" />
+								<column label="" width="100px" />
+								<column label="" width="185px" />
+								<column label="" width="100px" />
+								<column label="" width="200px" />
+								<column label="" width="100px" />
+							</columns>
+							<rows>
+								<row>
+									<cell></cell>
+									<cell>
+										<label
+											id="lbDificultad_respirar" value="Dificultad respirar: " />
+									</cell>
+									<cell>
+										<radiogroup
+											id="rdbDificultad_respirar">
+											<radio label="Sí" value="S" />
+											<space />
+											<radio label="No" value="N"
+												checked="true" />
+										</radiogroup>
+									</cell>
+									<cell>
+										<label
+											id="lbDificultad_alimentarse"
+											value="Dificultad alimentarse: " />
+									</cell>
+									<cell>
+										<radiogroup
+											id="rdbDificultad_alimentarse">
+											<radio label="Sí" value="S" />
+											<space />
+											<radio label="No" value="N"
+												checked="true" />
+										</radiogroup>
+									</cell>
+									<cell>
+										<label
+											id="lbReflujo_gastroesofagico"
+											value="Reflujo gastroesofagico: " />
+									</cell>
+									<cell>
+										<radiogroup
+											id="rdbReflujo_gastroesofagico">
+											<radio label="Sí" value="S" />
+											<space />
+											<radio label="No" value="N"
+												checked="true" />
+										</radiogroup>
+									</cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell>
+										<label id="lbVomito"
+											value="Vomito: " />
+									</cell>
+									<cell>
+										<radiogroup id="rdbVomito">
+											<radio label="Sí" value="S" />
+											<space />
+											<radio label="No" value="N"
+												checked="true" />
+										</radiogroup>
+									</cell>
+									<cell>
+										<label id="lbDiarrea"
+											value="Diarrea: " />
+									</cell>
+									<cell>
+										<radiogroup id="rdbDiarrea">
+											<radio label="Sí" value="1" />
+											<space />
+											<radio label="No" value="2"
+												checked="true" />
+										</radiogroup>
+									</cell>
+									<cell>
+										<label
+											id="lbRecibio_vacunacion_bcg"
+											value="Recibio vacunacion bcg: " />
+									</cell>
+									<cell>
+										<radiogroup
+											id="rdbRecibio_vacunacion_bcg">
+											<radio label="Sí" value="S" />
+											<space />
+											<radio label="No" value="N"
+												checked="true" />
+										</radiogroup>
+									</cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell colspan="2">
+										<label
+											id="lbRecibio_realizo_tratamiento_recien_nacido"
+											value="Recibio realizo tratamiento recien nacido: " />
+									</cell>
+									<cell colspan="4">
+										<radiogroup
+											id="rdbRecibio_realizo_tratamiento_recien_nacido">
+											<radio label="Sí" value="1" />
+											<space />
+											<radio label="No" value="2"
+												checked="true" />
+										</radiogroup>
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+
+					<groupbox mold="3d" closable="false" visible="true"
+						id="gbxantropometria_del_recien_nacido">
+						<caption
+							label="
+											ANTROPOMETRIA DEL RECIEN NACIDO: "
+							style="font-weight:bold" />
+						<grid>
+							<columns>
+								<column label="" width="10px" />
+								<column label="" width="185px" />
+								<column label="" width="100px" />
+								<column label="" width="185px" />
+								<column label="" width="100px" />
+								<column label="" width="200px" />
+								<column label="" width="100px" />
+							</columns>
+							<rows>
+								<row>
+									<cell></cell>
+									<cell>
+										<label id="lbPeso_gramo"
+											value="Peso gramo: " />
+									</cell>
+									<cell>
+										<intbox
+											constraint="no negative:Este valor no puede ser negativo"
+											id="ibxPeso_gramo" width="80px"
+											style="text-transform:uppercase" />
+									</cell>
+									<cell>
+										<label id="lbTalla_centimetro"
+											value="Talla centimetro: " />
+									</cell>
+									<cell>
+										<doublebox
+											id="dbxTalla_centimetro" format="#,##0.00" width="80px"
+											value="0.00" />
+									</cell>
+									<cell>
+										<label id="lbPerimetro_cefalico"
+											value="Perimetro cefalico: " />
+									</cell>
+									<cell>
+										<doublebox
+											id="dbxPerimetro_cefalico" format="#,##0.00" width="80px"
+											value="0.00" />
+									</cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell>
+										<label id="lbEstado_actual"
+											value="Estado actual: " />
+									</cell>
+									<cell colspan="5">
+										<radiogroup
+											id="rdbEstado_actual">
+											<radio label="Subió de peso"
+												value="1" />
+											<space />
+											<radio
+												label="Permanece igual" value="2" checked="true" />
+											<space />
+											<radio label="Bajó de peso"
+												value="3" checked="true" />
+										</radiogroup>
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+
+					<groupbox mold="3d" closable="false" visible="true"
+						id="gbxalimentacion_del_reien_nacido">
+						<caption
+							label="
+											ALIMENTACIÓN DEL REIEN NACIDO: "
+							style="font-weight:bold" />
+						<grid>
+							<columns>
+								<column label="" width="10px" />
+								<column label="" width="210px" />
+								<column label="" width="100px" />
+								<column label="" width="180px" />
+								<column label="" width="100px" />
+								<column label="" width="180px" />
+								<column label="" width="100px" />
+							</columns>
+							<rows>
+								<row>
+									<cell></cell>
+									<cell>
+										<label
+											id="lbRecibe_lactancia_materna"
+											value="Recibe lactancia materna exclisiva: " />
+									</cell>
+									<cell>
+										<radiogroup
+											id="rdbRecibe_lactancia_materna">
+											<radio label="Sí" value="1" />
+											<space />
+											<radio label="No" value="2"
+												checked="true" />
+										</radiogroup>
+									</cell>
+									<cell>
+										<label id="lbLibre_demanda"
+											value="Libre demanda: " />
+									</cell>
+									<cell>
+										<radiogroup
+											id="rdbLibre_demanda">
+											<radio label="Sí" value="1" />
+											<space />
+											<radio label="No" value="2"
+												checked="true" />
+										</radiogroup>
+									</cell>
+									<cell>
+										<label id="lbEn_la_noche"
+											value="En la noche: " />
+									</cell>
+									<cell>
+										<radiogroup
+											id="rdbEn_la_noche">
+											<radio label="Sí" value="1" />
+											<space />
+											<radio label="No" value="2"
+												checked="true" />
+										</radiogroup>
+									</cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell>
+										<label
+											id="lbAlimento_diferente_lactancia"
+											value="Alimento diferente lactancia: " />
+									</cell>
+									<cell>
+										<radiogroup
+											id="rdbAlimento_diferente_lactancia">
+											<radio label="Sí" value="1" />
+											<space />
+											<radio label="No" value="2"
+												checked="true" />
+										</radiogroup>
+									</cell>
+									<cell>
+										<label
+											id="lbRecibe_leche_formula" value="Recibe leche formula: " />
+									</cell>
+									<cell>
+										<radiogroup
+											id="rdbRecibe_leche_formula">
+											<radio label="Sí" value="1" />
+											<space />
+											<radio label="No" value="2"
+												checked="true" />
+										</radiogroup>
+									</cell>
+									<cell>
+										<label id="lbNumero_tomas"
+											value="Número tomas/día: " />
+									</cell>
+									<cell>
+										<intbox
+											constraint="no negative:Este valor no puede ser negativo"
+											id="ibxNumero_tomas" width="80px"
+											style="text-transform:uppercase" />
+									</cell>
+								</row>
+								<row>
+									<cell></cell>
+
+									<cell>
+										<label id="lbPezon_fisurado"
+											value="Pezon fisurado: " />
+									</cell>
+									<cell>
+										<radiogroup
+											id="rdbPezon_fisurado">
+											<radio label="Sí" value="1" />
+											<space />
+											<radio label="No" value="2"
+												checked="true" />
+										</radiogroup>
+									</cell>
+									<cell>
+										<label
+											id="lbBaja_produccion_libre"
+											value="Baja produccion de leche: " />
+									</cell>
+									<cell>
+										<radiogroup
+											id="rdbBaja_produccion_libre">
+											<radio label="Sí" value="1" />
+											<space />
+											<radio label="No" value="2"
+												checked="true" />
+										</radiogroup>
+									</cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell>
+										<label id="lbCongestion_mamaria"
+											value="Congestion mamaria: " />
+									</cell>
+									<cell>
+										<radiogroup
+											id="rdbCongestion_mamaria">
+											<radio label="Sí" value="1" />
+											<space />
+											<radio label="No" value="2"
+												checked="true" />
+										</radiogroup>
+									</cell>
+									<cell>
+										<label id="lbMastitis"
+											value="Mastitis: " />
+									</cell>
+									<cell>
+										<radiogroup id="rdbMastitis">
+											<radio label="Sí" value="1" />
+											<space />
+											<radio label="No" value="2"
+												checked="true" />
+										</radiogroup>
+									</cell>
+									<cell>
+										<label
+											id="lbOtra_complicacion_alimentacion_rn"
+											value="Otra complicaciín: " />
+									</cell>
+									<cell>
+										<radiogroup
+											id="rdbOtra_complicacion_alimentacion_rn">
+											<radio label="Sí" value="1" />
+											<space />
+											<radio label="No" value="2"
+												checked="true" />
+										</radiogroup>
+									</cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell>
+										<label
+											id="lbCual_alimentacion_recibido" value="Cuál: " />
+									</cell>
+									<cell colspan="5">
+										<textbox
+											id="tbxCual_alimentacion_recibido" width="200px"
+											style="text-transform:uppercase" maxlength="20" />
+									</cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell colspan="3">
+										<label
+											id="lbRecibio_capacitacion_lactancia_materna"
+											value="Ha recibio algún alimento o bebida diferente a leche materna: " />
+									</cell>
+									<cell colspan="3">
+										<radiogroup
+											id="rdbRecibio_capacitacion_lactancia_materna">
+											<radio label="Sí" value="1" />
+											<space />
+											<radio label="No" value="2"
+												checked="true" />
+										</radiogroup>
+									</cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell colspan="3">
+										<label
+											id="lbDificultades_lactancia_materna"
+											value="Dificultades lactancia materna: " />
+									</cell>
+									<cell colspan="3">
+										<radiogroup
+											id="rdbDificultades_lactancia_materna">
+											<radio label="Sí" value="1" />
+											<space />
+											<radio label="No" value="2"
+												checked="true" />
+										</radiogroup>
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+
+					<groupbox mold="3d" closable="false" visible="true"
+						id="gbxpercepcion_inseguridad_alimentaria">
+						<caption
+							label="
+											PERCEPCIÓN DE INSEGURIDAD ALIMENTARIA: "
+							style="font-weight:bold" />
+						<grid>
+							<columns>
+								<column label="" width="10px" />
+								<column label="" width="210px" />
+								<column label="" width="100px" />
+								<column label="" width="180px" />
+								<column label="" width="100px" />
+								<column label="" width="180px" />
+								<column label="" width="100px" />
+							</columns>
+							<rows>
+								<row>
+									<cell></cell>
+									<cell colspan="4">
+										<label
+											id="lbQuedaron_sin_alimentos_falta_dinero"
+											value="En el último mes ¿alguna vez en su hogar se quedaron sin alimentos por falta de dinero?: " />
+									</cell>
+									<cell colspan="2">
+										<radiogroup
+											id="rdbQuedaron_sin_alimentos_falta_dinero">
+											<radio label="Sí" value="1" />
+											<space />
+											<radio label="No" value="2"
+												checked="true" />
+										</radiogroup>
+									</cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell colspan="4">
+										<label
+											id="lbQuedaron_sin_comer_falta_dinero"
+											value="En el último mes ¿alguna vez quedaron sin comer por falta de dinero?: " />
+									</cell>
+									<cell colspan="2">
+										<radiogroup
+											id="rdbQuedaron_sin_comer_falta_dinero">
+											<radio label="Sí" value="1" />
+											<space />
+											<radio label="No" value="2"
+												checked="true" />
+										</radiogroup>
+									</cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell colspan="4">
+										<label
+											id="lbRecibio_alimentos_institucion"
+											value="En el último mes ¿recibió alimentos de algun programa o institucion(restaurante, comedor etc)?: " />
+									</cell>
+									<cell colspan="2">
+										<radiogroup
+											id="rdbRecibio_alimentos_institucion">
+											<radio label="Sí" value="1" />
+											<space />
+											<radio label="No" value="2"
+												checked="true" />
+										</radiogroup>
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+
+					<groupbox mold="3d" closable="false" visible="true"
+						id="gbxplan_de_intervencion">
+						<caption
+							label="
+											PLAN DE INTERVENCIÓN: "
+							style="font-weight:bold" />
+						<grid>
+							<columns>
+								<column label="" width="10px" />
+								<column label="" width="400px" />
+								<column label="" width="100px" />
+								<column label="" width="200px" />
+								<column label="" width="100px" />
+							</columns>
+							<rows>
+								<row>
+									<cell></cell>
+									<cell>
+										<label
+											id="lbRealiza_educacion_alimentaria"
+											value="¿Se realiza educacion alimentaria y nutricional: " />
+									</cell>
+									<cell>
+										<radiogroup
+											id="rdbRealiza_educacion_alimentaria">
+											<radio label="Sí" value="1" />
+											<space />
+											<radio label="No" value="2"
+												checked="true" />
+										</radiogroup>
+									</cell>
+									<cell>
+										<label
+											id="lbRemite_servicio_salud"
+											value="¿Se remite a servicios de salud?: " />
+									</cell>
+									<cell colspan="2">
+										<radiogroup
+											id="rdbRemite_servicio_salud">
+											<radio label="Sí" value="1" />
+											<space />
+											<radio label="No" value="2"
+												checked="true" />
+										</radiogroup>
+									</cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell>
+										<label
+											id="lbCanaliza_programas_apoyo_alimentario"
+											value="¿Se canaliza a programas de apoyo alimentario u otros oficios?: " />
+									</cell>
+									<cell colspan="4">
+										<radiogroup
+											id="rdbCanaliza_programas_apoyo_alimentario">
+											<radio label="Sí" value="1" />
+											<space />
+											<radio label="No" value="2"
+												checked="true" />
+										</radiogroup>
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+
+					<groupbox mold="3d" closable="false" visible="true"
+						id="gbxvisita_de_seguimiento">
+						<caption
+							label="
+											VISITA DE SEGUIMIENTO: "
+							style="font-weight:bold" />
+						<grid>
+							<columns>
+								<column label="" width="10px" />
+								<column label="" width="150px" />
+								<column label="" width="100px" />
+								<column label="" width="150px" />
+								<column label="" width="100px" />
+								<column label="" width="150px" />
+								<column label="" width="100px" />
+							</columns>
+							<rows>
+								<row>
+									<cell></cell>
+									<cell>
+										<label
+											id="lbFecha_visita_control" value="Fecha visita control: " />
+									</cell>
+									<cell>
+										<datebox
+											id="dtbxFecha_visita_control"
+											onCreate="self.value = new Date();" format="yyyy-MM-dd"
+											width="80px" />
+									</cell>
+									<cell>
+										<label
+											id="lbPeso_grmos_visita_seguimiento" value="Peso : " />
+									</cell>
+									<cell>
+										<intbox
+											constraint="no negative:Este valor no puede ser negativo"
+											id="ibxPeso_grmos_visita_seguimiento" width="80px"
+											style="text-transform:uppercase" />
+									</cell>
+									<cell>
+										<label
+											id="lbTalla_visita_seguimiento" value="Talla: " />
+									</cell>
+									<cell>
+										<doublebox
+											id="dbxTalla_visita_seguimiento" format="#,##0.00"
+											width="80px" value="0.00" />
+									</cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell>
+										<label
+											id="lbPerimetro_cefalico_visita_seguimiento"
+											value="Perimetro cefalico: " />
+									</cell>
+									<cell>
+										<doublebox
+											id="dbxPerimetro_cefalico_visita_seguimiento"
+											format="#,##0.00" width="80px" value="0.00" />
+									</cell>
+									<cell>
+										<label
+											id="lbEstado_actual_visita_seguimiento"
+											value="Estado actual : " />
+									</cell>
+									<cell colspan="4">
+										<radiogroup
+											id="rdbEstado_actual_visita_seguimiento">
+											<radio label="Subió de peso"
+												value="1" />
+											<space />
+											<radio
+												label="Permaneció igual" value="2" checked="true" />
+											<space />
+											<radio label="Bajó de peso"
+												value="3" checked="true" />
+										</radiogroup>
+									</cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell>
+										<label id="lbNombre_profesional"
+											value="Nombre del profesional: " />
+									</cell>
+									<cell colspan="2">
+										<textbox
+											id="tbxNombre_profesional" width="180px"
+											style="text-transform:uppercase" maxlength="20" />
+									</cell>
+									<cell>
+										<label id="lbCargo"
+											value="Cargo: " />
+									</cell>
+									<cell colspan="2">
+										<textbox id="tbxCargo"
+											width="180px" style="text-transform:uppercase"
+											maxlength="20" />
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+
+					<groupbox mold="3d" closable="false" visible="true"
+						id="gbxinformacion_complementaria">
+						<caption label="INFORMACION COMPLEMENTARIA: "
+							style="font-weight:bold" />
+						<grid>
+							<columns>
+								<column label="" width="" />
+							</columns>
+							<rows>
+								<row>
+									<cell>
+										<label
+											id="lbInformacion_complementaria"
+											value="Informacion complementaria: " />
+									</cell>
+								</row>
+								<row>
+									<cell>
+										<textbox
+											id="tbxInformacion_complementaria" width="98%" rows="4"
+											style="text-transform:uppercase" maxlength="-1" />
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+				</div>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

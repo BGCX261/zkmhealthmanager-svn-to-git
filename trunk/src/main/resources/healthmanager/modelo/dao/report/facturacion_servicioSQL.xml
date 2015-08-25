@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.facturacion_servicioModel">
+    <select id="select" resultType="java.util.HashMap" parameterType="java.util.Map">
+	select inv.nro_factura,inv.nro_identificacion,inv.fecha_servicio,inv.observacion,
+	det.codigo_servicio,det.unidades,det.valor_unitario,det.valor_total,
+	ter.nombre1 ||' '|| ter.apellido1 ||' '|| ter.apellido2 as paciente,
+	us.nombres ||' '|| us.apellidos as "user",
+	admin.nombre as nom_admin
+	FROM facturacion_servicio inv
+	left join paciente ter on
+	ter.codigo_empresa = inv.codigo_empresa
+	and ter.codigo_sucursal =
+	inv.codigo_sucursal
+	and ter.nro_identificacion = inv.nro_identificacion
+	left join usuarios us on
+	inv.codigo_empresa = us.codigo_empresa
+	and inv.codigo_sucursal = us.codigo_sucursal
+	and inv.creacion_user = us.codigo
+	left join administradora admin on
+	admin.codigo =
+	inv.codigo_administradora
+	and "admin".codigo_empresa = inv.codigo_empresa
+	and "admin".codigo_sucursal = inv.codigo_sucursal
+	inner join datos_servicio det on (inv.codigo_empresa = det.codigo_empresa
+	and inv.codigo_sucursal = det.codigo_sucursal
+	and inv.nro_factura = det.nro_factura)
+	WHERE inv.codigo_empresa = #{codigo_empresa}
+	and	inv.codigo_sucursal = #{codigo_sucursal}
+	and inv.nro_factura = #{nro_factura}
+	order by det.consecutivo::int
+    </select>
+   
+</mapper>

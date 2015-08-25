@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="contaweb.modelo.dao.report.consolidado_cajaModel">
+
+   <resultMap id="queryMap" type="mapTest">
+   		<result column="codigo_cajero" property="codigo_cajero" />
+   		<result column="copago" property="copago" javaType="java.lang.Double" />
+   		<result column="cant_copago" property="cant_copago" javaType="java.lang.Double" />
+		<result column="codigo_documento" property="codigo_documento" />
+		<result column="codigo_recibo" property="codigo_recibo" />
+		<result column="tercero" property="tercero" />
+		<result column="creacion_date" property="creacion_date" />
+		<result column="valor_recibo" property="valor_recibo" javaType="java.lang.Double" />
+		<result column="dto" property="dto" javaType="java.lang.Double" />
+		<result column="efectivo" property="efectivo" javaType="java.lang.Double" />
+		<result column="valor_tarjeta" property="valor_tarjeta" javaType="java.lang.Double" />
+		<result column="valor_cheque" property="valor_cheque" javaType="java.lang.Double" />
+		<result column="detalle" property="detalle" />
+		<result column="cantidad" property="cantidad" javaType="java.lang.Integer" />
+		<result column="valor_unitario" property="valor_unitario" javaType="java.lang.Double" />
+		<result column="descuento" property="descuento" javaType="java.lang.Double" />
+		<result column="iva" property="iva" javaType="java.lang.Double" />
+		<result column="importe" property="importe" javaType="java.lang.Double" />
+		<result column="importe2" property="importe2" javaType="java.lang.Double" />
+		<result column="delete_date" property="delete_date" />
+	</resultMap>
+	
+    <select id="select" resultMap="queryMap"
+		parameterType="mapTest">
+    select caja.codigo_comprobante,caja.codigo_documento,caja.codigo_recibo,
+    ter.nombre1 ||' '|| ter.apellido1 ||' '|| ter.apellido2 as tercero,caja.creacion_date,
+    caja.valor_recibo,caja.descuento as dto,caja.efectivo,caja.valor_tarjeta,valor_cheque,cdet.detalle ,cdet.cantidad,cdet.valor_unitario,cdet.copago as copago,cdet.cantidad as cant_copago,cdet.descuento,
+    cdet.iva,cdet.copago+cdet.iva-cdet.descuento as importe,cdet.valor_total+cdet.iva-cdet.descuento as importe2,us.nombres,us.apellidos,caja.creacion_user as codigo_cajero,caja.delete_date
+    from contaweb.caja
+    left join contaweb.facturacion f on
+    f.codigo_empresa = caja.codigo_empresa
+    and f.codigo_sucursal = caja.codigo_sucursal
+    and f.codigo_comprobante = caja.codigo_comprobante
+    and f.codigo_documento = caja.codigo_documento
+    left join contaweb.detalle_caja cdet on
+    caja.fuente = cdet.fuente
+    and caja.codigo_recibo = cdet.codigo_recibo
+    and caja.codigo_empresa = cdet.codigo_empresa
+    and caja.codigo_sucursal = cdet.codigo_sucursal
+    left join contaweb.tercero ter on
+    caja.codigo_tercero = ter.nro_identificacion
+    and caja.codigo_empresa = ter.codigo_empresa
+    and caja.codigo_sucursal = ter.codigo_sucursal
+    left join contaweb.usuarios us on
+    caja.creacion_user = us.codigo
+    and caja.codigo_empresa = us.codigo_empresa
+    where caja.creacion_date between #{fecha_inicial} and #{fecha_final}
+    and caja.codigo_empresa = #{codigo_empresa}
+    and caja.codigo_sucursal = #{codigo_sucursal}
+    
+    <if test="tipo != null">
+         and caja.tipo_recibo = #{tipo}
+    </if>
+    <if test="tipos != null">
+        and caja.tipo_recibo IN
+        <foreach collection="tipos" item="i" open="(" separator="," close=")">
+            #{i}
+        </foreach>
+    </if>
+   
+    <if test="codigo_administradora != null">
+    and caja.codigo_administradora = #{codigo_administradora}
+    </if>
+    <if test="id_plan != null">
+    and caja.id_plan = #{id_plan}
+    </if>
+    <if test="codigo_usuario != null">
+    and caja.creacion_user = #{codigo_usuario}
+    </if>
+     <if test="agrupar_turnos != null">
+    order by us.codigo,caja.creacion_date
+    </if>
+     <if test="agrupar_turnos == null">
+    order by caja.creacion_date
+    </if>
+    </select>
+   
+</mapper>

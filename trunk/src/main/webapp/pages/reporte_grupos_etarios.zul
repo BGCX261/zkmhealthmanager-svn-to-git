@@ -1,0 +1,244 @@
+<?page title="Reporte grupos etarios morbilidad" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<zk>
+	<window id="formReporteGruposEtarios" width="100%" height="100%"
+		use="healthmanager.controller.ReporteGruposEtariosAction">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+		<borderlayout width="100%" height="100%" id="groupboxEditar">
+			<north border="none">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<toolbarbutton image="/images/Save16.gif"
+						label="Generar reporte" id="btGenerarReporte"
+						onClick="formReporteGruposEtarios.generarReporte()" />
+
+					<toolbarbutton image="/images/New16.gif"
+						label="Limpiar" onClick='formReporteGruposEtarios.limpiarDatos()' />
+
+					<space height="2px" />
+					<label value="Formato impresión: " />
+					<listbox id="lbxFormato" mold="select" width="150px"
+						sclass="combobox">
+						<listitem value="pdf" label="PDF"
+							selected="true" />
+						<listitem value="rtf" label="WORD" />
+						<listitem value="xls" label="EXCEL" />
+					</listbox>
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center">
+					<space />
+					<groupbox closable="false" width="700px" mold="3d"
+						id="groupInicial">
+						<caption label="" />
+						<grid sclass="GridSinBorde" hflex="1">
+							<columns visible="false">
+								<column label="" width="10px" />
+								<column label="" width="130px"
+									align="left" />
+								<column label="" width="182px"
+									align="left" />
+								<column label="" width="130px"
+									align="left" />
+								<column label="" width="182px"
+									align="left" />
+								<column label="" align="left" />
+							</columns>
+							<rows>
+								<row>
+									<cell />
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label value="Fecha inicial: " />
+									</cell>
+									<cell>
+										<datebox id="dtbxFechaIncio"
+											format="dd-MM-yyyy" width="170px" />
+									</cell>
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label value="Fecha final: " />
+									</cell>
+									<cell>
+										<datebox id="dtbxFechaFinal"
+											format="dd-MM-yyyy" width="170px" />
+									</cell>
+									<cell />
+								</row>
+								<row id="rowGruposEtarios">
+									<cell />
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label value="Grupo etareo: " />
+									</cell>
+									<cell colspan="3">
+										<bandboxRegistros
+											id="tbxGrupoEtario" widthBandbox="482px" widthListbox="800px"
+											heightListbox="300px" columnas="ID#65px|Nombre" />
+									</cell>
+									<cell>
+										<toolbarbutton
+											id="btnLimpiarPaciente" image="/images/borrar.gif" />
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+
+					<!-- En esta parte agrupamos  -->
+					<space height="2px" />
+					<groupbox closable="false" width="700px"
+						mold="3d">
+						<caption label="ORDENAR POR" />
+						<listbox 
+							id="lbxListadoAgrupacion" droppable="true"
+							oddRowSclass="non-odd">
+                            <listhead visible="false"> 
+                              <listheader />
+                              <listheader width="30px"/> 
+                            </listhead>
+                            <listfoot>
+                              <listfooter > 
+                                 <checkbox id="chkAgruparPorContrato" visible="false" label="Agrupar por contrato"/>
+                              </listfooter>
+                            </listfoot>
+						</listbox>
+					</groupbox>
+					<!-- fin de agrupacion -->
+					
+					<space height="2px" />
+					<groupbox open="false" width="700px" mold="3d"
+						onOpen="chk_centro_salud.setChecked(self.isOpen())">
+						<caption label="CENTRO DE ATENCIÓN">
+							<checkbox id="chk_centro_salud" label="Filtrar" />
+						</caption>
+						<toolbar>
+							<toolbarbutton image="/images/add.png"
+								label="Agregar Registro"
+								onClick="formReporteGruposEtarios.abrirWindowCentrosSalud()" />
+						</toolbar>
+						<grid height="150px">
+							<columns>
+								<column label="Código" width="100px"/>
+								<column label="Nombre" />
+								<column width="35px" />
+							</columns>
+							<rows id="rowCentroSalud" />
+						</grid>
+					</groupbox>
+					
+
+					<space height="2px" />
+					<groupbox open="false" width="700px" mold="3d"
+						onOpen="chk_servicios.setChecked(self.isOpen())">
+						<caption label="SERVICIOS">
+							<checkbox id="chk_servicios" label="Filtrar" />
+						</caption>
+
+						<toolbar>
+							<toolbarbutton image="/images/add.png"
+								label="Agregar Registro"
+								onClick="formReporteGruposEtarios.abrirWindowServicios()" />
+						</toolbar>
+						<grid height="150px">
+							<columns>
+								<column label="Nombre del servicio" />
+								<column width="35px" />
+							</columns>
+							<rows id="rowServicios" />
+						</grid>
+					</groupbox>
+
+
+					<space height="2px" />
+					<groupbox open="false" width="700px" mold="3d"
+						id="grbEntidades"
+						onOpen="chk_entidad_eps.setChecked(self.isOpen())">
+						<caption
+							label="ENTIDADES PROMOTORAS DE SALUD">
+							<checkbox id="chk_entidad_eps"
+								label="Filtrar" />
+						</caption>
+
+						<toolbar>
+							<toolbarbutton image="/images/add.png"
+								label="Agregar Registro"
+								onClick="formReporteGruposEtarios.abrirWindowEps()" />
+						</toolbar>
+						<grid height="150px">
+							<columns>
+								<column label="" width="40px" />
+								<column label="Código EPS"
+									width="150px" />
+								<column label="Nombre" />
+								<column width="35px" />
+							</columns>
+							<rows id="rowEps" />
+						</grid>
+					</groupbox>
+
+					<space height="2px" id="space_entidad" />
+
+					<groupbox id="grdMedicos" open="false" width="700px" mold="3d"
+						onOpen="chk_medicos.setChecked(self.isOpen())">
+						<caption label="MEDICO">
+							<checkbox id="chk_medicos" label="Filtrar" />
+						</caption>
+						<toolbar>
+							<toolbarbutton image="/images/add.png"
+								label="Agregar Registro"
+								onClick="formReporteGruposEtarios.abrirWindowMedicos()" />
+						</toolbar>
+						<grid height="150px">
+							<columns>
+								<column label="Código" />
+								<column label="Nombre" />
+								<column width="35px" />
+							</columns>
+							<rows id="rowMedicos" />
+						</grid>
+					</groupbox>
+
+					<space height="2px" />
+					<groupbox open="false" width="700px" mold="3d"
+						id="grbConsultas"
+						onOpen="chk_diagnosticos_consultas.setChecked(self.isOpen())">
+						<caption label="">
+							<checkbox id="chk_diagnosticos_consultas"
+								label="Filtrar" />
+						</caption>
+						<toolbar>
+							<toolbarbutton image="/images/add.png"
+								label="Agregar Registro"
+								onClick="formReporteGruposEtarios.abrirWindowDiagnosticosConsultas()" />
+						</toolbar>
+						<grid height="150px">
+							<columns>
+								<column label="Código" width="150px" />
+								<column label="Nombre" />
+								<column width="35px" />
+							</columns>
+							<rows id="rowDiagnosticosOConsulta" />
+						</grid>
+					</groupbox>
+					<space />
+				</div>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

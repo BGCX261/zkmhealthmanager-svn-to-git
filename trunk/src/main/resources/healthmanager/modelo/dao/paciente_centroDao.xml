@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Paciente_centroDao">
+
+	<!--<typeAlias alias="paciente_centro" type="healthmanager.modelo.bean.Paciente_centro" />-->
+
+	<!--<mapper resource="healthmanager/modelo/dao/xml/paciente_centroSQL.xml" />-->
+
+	<resultMap id="paciente_centroMap" type="paciente_centro">
+		<result column="nro_identificacion" property="nro_identificacion" />
+		<result column="codigo_centro" property="codigo_centro" />
+		<result column="estado" property="estado" />
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+	</resultMap>
+
+	<insert id="crear" parameterType="paciente_centro">
+		insert into public.paciente_centro (nro_identificacion,codigo_centro,
+		estado,codigo_empresa,codigo_sucursal)
+
+		values (#{nro_identificacion},#{codigo_centro},
+		#{estado},#{codigo_empresa},#{codigo_sucursal})
+	</insert>
+
+	<update id="actualizar" parameterType="paciente_centro">
+		update public.paciente_centro set nro_identificacion = #{nro_identificacion},
+		codigo_centro = #{codigo_centro},estado = #{estado},
+		codigo_empresa = #{codigo_empresa},codigo_sucursal = #{codigo_sucursal}
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and nro_identificacion = #{nro_identificacion}
+		and codigo_centro = #{codigo_centro}
+	</update>
+
+	<select id="consultar" parameterType="paciente_centro" resultMap="paciente_centroMap">
+		select nro_identificacion,codigo_centro,
+		estado,codigo_empresa,codigo_sucursal
+		from public.paciente_centro where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and nro_identificacion = #{nro_identificacion}
+		and codigo_centro = #{codigo_centro}
+	</select>
+	
+	<select id="consultarPorLoginPassword" parameterType="paciente_centro" resultMap="paciente_centroMap">
+		select nro_identificacion,codigo_centro,
+		estado,codigo_empresa,codigo_sucursal
+		from public.paciente_centro where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and nro_identificacion = #{nro_identificacion}
+	</select>
+
+	<delete id="eliminar" parameterType="paciente_centro">
+		delete from public.paciente_centro
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and nro_identificacion = #{nro_identificacion}
+		and codigo_centro = #{codigo_centro}
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="paciente_centroMap">
+		select nro_identificacion,codigo_centro,
+		estado,codigo_empresa,codigo_sucursal
+		from public.paciente_centro 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from public.paciente_centro 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

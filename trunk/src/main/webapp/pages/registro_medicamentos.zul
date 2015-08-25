@@ -1,0 +1,203 @@
+<?page title="Notas_enfermeria" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formRegistros_medicamentos" width="100%" height="100%"
+		use="healthmanager.controller.Registro_medicamentosAction" onCreate="formRegistros_medicamentos.onCreateNotas()" >
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="true" closable="false"
+			mold="3d" height="100%">
+			<caption label="Listado de ordenes medicas para este paciente" id="captionConsulta"
+				style="color: blue;font-weight: bold" />
+			
+			<grid id="gridResultado" height="95%" mold="paging"
+				pageSize="20" vflex="1" >
+				<auxhead>
+					<auxheader colspan="8">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<label value="Fecha de orden: " />
+							<space />
+							<datebox id="dtbxFecha_orden_b"
+								format="yyyy-MM-dd"
+								onCreate="" />
+							<toolbarbutton image="/images/Magnifier.gif"
+								id="toolbarbuttonConsultar" label="Consultar ordenes"
+								onClick='formRegistros_medicamentos.buscarDatos()' />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns>
+					<column width="40px" />
+					<column label="Codigo orden" width="100px" />
+					<column label="Tipo de orden" width="100px" />
+					<column label="Fecha de orden" width="120px" />
+					<column label="Medicamento" />
+					<column label="Cantidad" width="70px" />
+					<column label="Via de administración" width="140px" />
+					<column width="80px" label="Opciones" id="columnaOpciones" />
+				</columns>
+				
+				<rows id="rowsResultado" />
+				
+				<foot>
+					<footer span="5">
+						<toolbarbutton 
+								image="/images/print_ico.gif"
+								onClick="formRegistros_medicamentos.imprimirRegistros()"
+								tooltiptext="Imprimir Registros seleccionadas" label="Imprimir Registros" />
+					</footer>
+				</foot>
+			</grid>
+		</groupbox>
+
+		<borderlayout width="100%" height="90%" id="groupboxEditar"
+			visible="false">
+			<north border="none">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<toolbarbutton image="/images/Save16.gif"
+						label="Guardar Registro"
+						onClick="formRegistros_medicamentos.guardarDatos();" id="btGuardar" />
+					<space />
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Cancelar"
+						onClick='formRegistros_medicamentos.accionForm(false,tbxAccion.getText());'
+						id="btCancel" />
+					<space />
+					<label value="Formato impresión: " visible="false" />
+					<listbox id="lbxFormato" mold="select" width="150px"
+						visible="false" sclass="combobox">
+						<listitem value="pdf" label="PDF"
+							selected="true" />
+						<listitem value="rtf" label="WORD" />
+					</listbox>
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center">
+
+					<!-- *************************** -->
+					<!-- *** Insertar/Actualizar *** -->
+					<!-- *************************** -->
+					<groupbox closable="false" width="600px"
+						mold="3d">
+						<grid sclass="GridSinBorde" hflex="1">
+							
+							<auxhead>
+								<auxheader colspan="4" label="DATOS DEL REGISTRO DE MEDICAMENTOS" align="center" />
+							</auxhead>
+						
+							<columns visible="false" >
+								<column width="150px" />
+								<column />
+								<column width="100px" align="right" />
+								<column />
+							</columns>
+							<rows>
+
+								<!-- fila 1 -->
+								<row>
+									<cell height="30px">
+										<label id="lbCodigo_registro"
+											value="Codigo registro: " />
+									</cell>
+									<cell>
+										<textbox id="tbxCodigo_registro" readonly="true"
+											hflex="1" style="text-transform:uppercase" />
+									</cell>
+									<cell>
+										<label id="lbFecha_registro"
+											value="Fecha registro: " />
+									</cell>
+									<cell>
+										<datebox id="dtbxFecha_registro" buttonVisible="false" readonly="true"
+											onCreate="self.setValue(new Date());" format="yyyy-MM-dd hh:mm:ss"
+											width="170px" />
+									</cell>
+								</row>
+								
+								<row>
+									<cell height="30px">
+										<label id="lbMedicamento"
+											value="Medicamento: " />
+									</cell>
+									<cell>
+										<textbox id="tbxMedicamento" readonly="true"
+											hflex="1" style="text-transform:uppercase" />
+									</cell>
+									<cell>
+										<label id="lbVia_administracion"
+											value="Via de admon: " />
+									</cell>
+									<cell>
+										<textbox id="tbxVia_administracion" readonly="true"
+											hflex="1" style="text-transform:uppercase" />
+									</cell>
+								</row>
+								
+								<row>
+									<cell colspan="4" >
+										<textbox id="tbxInformacion_medicamento" readonly="true"
+											hflex="1" style="text-transform:uppercase" />
+									</cell>
+								</row>
+
+			
+								<!-- fila 6 -->
+								<row>
+									<cell colspan="4" >
+										<checkbox id="chbAplico_medicamento" label="Aplicó medicamento" onCheck="dtbxFecha_aplicacion.setDisabled(!self.isChecked())"/>
+									</cell>
+								</row>
+
+								<row>
+									<cell>
+										<label id="lbFecha_aplicacion"
+											value="Fecha de aplicación: " />
+									</cell>
+									<cell colspan="3" >
+										<datebox id="dtbxFecha_aplicacion"
+										 format="yyyy-MM-dd HH:mm:ss" width="170px" disabled="true"/>
+									</cell>
+								</row>
+
+								<!-- fila 7 -->
+								<row>
+									<cell>
+										<label id="lbCodigo_enfermera"
+											value="Enfermera(o): " />
+									</cell>
+									<cell colspan="3" >
+										<textbox visible="false"
+											id="tbxCodigo_enfermera" hflex="1"
+											style="text-transform:uppercase" />
+										<textbox
+											id="tbxInformacion_enfermera" hflex="1"
+											style="text-transform:uppercase" readonly="true" />
+									</cell>
+								</row>
+
+							</rows>
+						</grid>
+
+					</groupbox>
+				</div>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

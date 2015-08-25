@@ -1,0 +1,913 @@
+<?page title="Ficha_epidemiologia_n14" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formFicha_epidemiologia_n14" width="1220px"
+		height="590px" border="normal"
+		use="healthmanager.controller.Ficha_epidemiologia_n14Action">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="false" closable="false"
+			mold="3d" height="90%">
+			<caption label="Consultar"
+				style="color: blue;font-weight: bold" />
+
+			<separator />
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" height="90%" mold="paging"
+				pageSize="20" vflex="1">
+				<auxhead>
+					<auxheader colspan="4">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<separator />
+							<textbox id="tbxValue" width="200px"
+								onOK="formFicha_epidemiologia_n14.buscarDatos();"
+								style="text-transform:uppercase" />
+							<separator />
+							<button mold="trendy"
+								image="/images/Magnifier.gif"
+								onClick="formFicha_epidemiologia_n14.buscarDatos();"
+								tooltiptext="Consultar Ficha epidemiologia n14" />
+							<separator />
+							<button mold="trendy"
+								image="/images/New16.gif"
+								onClick='formFicha_epidemiologia_n14.accionForm(true,"registrar");'
+								tooltiptext="Nuevo Ficha epidemiologia n14" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Codigo ficha" />
+					<column label="Fecha inicial" />
+					<column label="Identificacion" />
+					<column label="Acciones" align="center"
+						width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<borderlayout width="100%" height="98%" id="groupboxEditar"
+			visible="true">
+			<north border="none" visible="false">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<toolbarbutton image="/images/Save16.gif"
+						label="Guardar Ficha"
+						onClick="formFicha_epidemiologia_n14.guardarDatos();"
+						id="btGuardar" />
+					<toolbarbutton image="/images/New16.gif"
+						label="Nueva Ficha"
+						onClick='formFicha_epidemiologia_n14.accionForm(true,"registrar");'
+						id="btNew" />
+					<space />
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Cancelar"
+						onClick='formFicha_epidemiologia_n14.accionForm(false,"mostrar");'
+						id="btnCancelar" />
+					<toolbarbutton image="/images/print_ico.gif"
+						label="Imprimir Ficha epidemiologia n14"
+						onClick="formFicha_epidemiologia_n14.imprimir();" id="btImprimir"
+						visible="false" />
+					<space />
+					<label value="Formato impresión: " visible="false" />
+					<listbox id="lbxFormato" mold="select" width="150px"
+						visible="false" sclass="combobox">
+						<listitem value="pdf" label="PDF"
+							selected="true" />
+						<listitem value="rtf" label="WORD" />
+					</listbox>
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center">
+
+					<!-- *************************** -->
+					<!-- *** Insertar/Actualizar *** -->
+					<!-- *************************** -->
+					<groupbox closable="false" width="845px"
+						mold="3d">
+
+						<groupbox mold="3d" closable="false">
+						<caption label="DATOS DE LA FICHA"
+							style="font-weight:bold" />
+							<grid>
+								<columns>
+									<column />
+								</columns>
+								<rows>
+									<row visible="false">
+										<cell></cell>
+										<cell height="30px">
+											<label
+												id="lbCodigo_diagnostico" value="Codigo diagnostico: " />
+										</cell>
+										<cell>
+											<textbox
+												id="tbxCodigo_diagnostico" width="170px"
+												style="text-transform:uppercase" maxlength="20" />
+										</cell>
+										<cell></cell>
+									</row>
+									<row>
+									<cell>
+										<hlayout>
+											<space width="130px" />
+											<label value="* "
+												style="color: red" tooltiptext="Campo obligatorio" />
+											<label id="lbFecha_inicial"
+												value="Fecha: " />
+											<datebox
+												id="dtbxFecha_inicial" onCreate="self.value = new Date();"
+												format="dd-MM-yyyy" width="170px" readonly="true" buttonVisible="false"/>
+											<space width="70px" />
+											<label value="* "
+												style="color: red" tooltiptext="Campo obligatorio" />
+											<label id="lbCodigo_ficha"
+												value="Codigo ficha: " />
+											<textbox readonly="true"
+												id="tbxCodigo_ficha" width="170px"
+												style="text-transform:uppercase" maxlength="20" />
+										</hlayout>
+									</cell>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+						
+						<groupbox mold="3d" closable="false">
+							<caption label="RELACIÓN CON DATOS BÁSICOS"
+								style="font-weight:bold" />
+							<grid>
+								<columns>
+								<column width="100px" />
+								<column />
+								<column />
+								<column />
+								<column />
+								<column width="220px" />
+								</columns>
+								<rows>
+									<row>
+										<cell>
+											<label value="* " style="color: red"
+												tooltiptext="Campo obligatorio" />
+											<label value="Paciente: " />
+										</cell>
+										<cell colspan="4">
+											<textbox id="tbxIdentificacion" width="27%" readonly="true" disabled="true"/>
+												<!--  -->
+											<space width="1%" />
+											<textbox id="tbxNombres_y_apellidos" width="65%"
+												style="text-transform:uppercase" readonly="true" />
+										</cell>
+										<cell>
+											<space width="15px" />
+											<label value="Tipo: " />
+											<space width="23px" />
+											<textbox id="tbxTipo_identidad" width="135px" style="text-transform:uppercase" readonly="true"/>
+										</cell>
+											
+									</row>
+									<row>
+										<cell>
+											<label value="* " style="color: red"
+												tooltiptext="Campo obligatorio" />
+											<label value="Aseguradora: " />
+										</cell>
+										<cell colspan="4">
+											<textbox id="tbxAseguradora" width="27%" readonly="true" disabled="true"/>
+												<!--  -->
+											<space width="1%" />
+											<textbox id="tbxNombre_aseguradora" width="65%"
+												style="text-transform:uppercase" readonly="true" />
+										</cell>
+										<cell></cell>
+											
+									</row>
+									
+								</rows>
+							</grid>
+						</groupbox>
+						
+						<groupbox mold="3d" closable="false">
+							<grid>
+								<columns>
+									<column />
+								</columns>
+								<rows>
+									<row>
+										<cell>
+											<space width="70px" />
+											<label
+												id="lbFecha_nacimiento" value="Fecha Nac: " />
+											<datebox readonly="true"
+												buttonVisible="false" id="dtbxFecha_nacimiento"
+												format="dd/MM/yyyy hh:mm:ss" width="170px"
+												onChange="formFicha_epidemiologia_n14.obtenerEdad();" />
+											<space width="20px" />
+											<label id="lbUnidad_medidad"
+												value="Unid Med: " />
+											<textbox readonly="true"
+												id="tbxUnidad_medidad" width="75px"
+												style="text-transform:uppercase" />
+											<space width="20px" />
+											<label id="lbEdad"
+												value="Edad: " />
+											<textbox id="tbxEdad"
+												readonly="true" width="75px"
+												style="text-transform:uppercase" />
+											<space width="20px" />
+											<label id="lbSexo"
+												value="Sexo: " />
+											<textbox id="tbxSexo"
+												width="75px" readonly="true"
+												style="text-transform:uppercase" />
+										</cell>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+						<groupbox mold="3d" closable="false">
+							<grid>
+								<columns>
+									<column width="50%"
+										label="Código del puesto de microscopia o UPGD" />
+									<column width="20%"
+										label="Código evento" />
+									<column width="20%"
+										label="Fecha de notificación" />
+									<column width="10%" label="Orden" />
+								</columns>
+								<rows>
+									<row>
+										<cell>
+											<hlayout>
+												<label
+													id="lbCodigo_dpto" value="Dpto " />
+												<space width="43px" />
+												<label
+													id="lbCodigo_municipio" value="Municipio " />
+												<space width="35px" />
+												<label id="lbCodigo"
+													value="Codigo " />
+												<space width="79px" />
+												<label id="lbSubindice"
+													value="Subindice " />
+											</hlayout>
+
+											<hlayout>
+												<textbox readonly="true"
+													value="13" id="tbxCodigo_dpto" width="50px" maxlength="2" />
+												<space />
+												<textbox value="001"
+													readonly="true" id="tbxCodigo_municipio" width="70px" />
+												<space />
+												<textbox id="tbxCodigo"
+													readonly="true" width="100px" value="12345" />
+												<space />
+												<listbox
+													id="lbxSubindice" name="subindice" mold="select"
+													width="100px" sclass="combobox" />
+											</hlayout>
+										</cell>
+										<cell>
+											<listbox
+												id="lbxCodigo_evento" name="codigo_evento" mold="select"
+												width="140px" sclass="combobox" />
+										</cell>
+										<cell>
+											<space width="17px" />
+											<datebox
+												id="dtbxFecha_de_notificacion"
+												onCreate="self.value = new Date();" format="yyyy-MM-dd"
+												width="120px" />
+										</cell>
+										<cell>
+											<textbox id="tbxOrden"
+												width="50px" style="text-transform:uppercase"
+												maxlength="20" />
+										</cell>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+
+						
+						<groupbox mold="3d" closable="false">
+							<grid>
+								<columns>
+									<column width="40%"
+										label="País de procedencia/ocurrencia del caso" />
+									<column width="40%"
+										label="Departamento/municipio de origen del caso" />
+									<column width="20%"
+										label="Área de origen del caso" />
+								</columns>
+								<rows>
+									<row>
+										<cell>
+											<hlayout>
+												<label
+													id="lbPais_procedencia_del_caso" value="País" />
+											</hlayout>
+											<hlayout>
+												<textbox
+													id="tbxPais_procedencia_del_caso" width="170px"
+													style="text-transform:uppercase" maxlength="40" />
+											</hlayout>
+										</cell>
+
+										<cell>
+											<label
+												id="lbCodigo_dpto_caso" value="Depto " />
+											<space width="140px" />
+											<label
+												id="lbCodigo_municipio_caso" value="Municipio " />
+											<listbox
+												id="lbxCodigo_dpto_caso" name="dpto"
+												onSelect="formFicha_epidemiologia_n14.listarMunicipios(lbxCodigo_municipio_caso,lbxCodigo_dpto_caso);"
+												onFocus="lbxCodigo_municipio_caso.focus()" mold="select"
+												width="170px" sclass="combobox" />
+											<space />
+											<listbox
+												id="lbxCodigo_municipio_caso" name="municipio" mold="select"
+												width="130px" sclass="combobox" />
+										</cell>
+										<cell>
+											<space />
+											<hlayout>
+												<listbox
+													id="lbxArea_origen_caso" name="area_origen_caso"
+													mold="select" width="130px" sclass="combobox" />
+											</hlayout>
+										</cell>
+									</row>
+								</rows>
+							</grid>
+							<grid>
+								<columns>
+									<column width="" />
+									<column width="45%"
+										label="Barrio, verada o localidad de origen del caso" />
+									<column width="45%"
+										label="Ocupación del paciente" />
+									<column width="" />
+								</columns>
+								<rows>
+									<row>
+										<cell />
+										<cell>
+											<space />
+											<textbox
+												id="tbxCodigo_barrio_vereda" width="320px"
+												style="text-transform:uppercase" />
+										</cell>
+										<cell>
+											<space width="70px" />
+											<textbox id="tbxOcupacion"
+												readonly="true" width="200px"
+												style="text-transform:uppercase" />
+										</cell>
+										<cell />
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+						<groupbox mold="3d" closable="false">
+							<grid>
+								<columns>
+									<column width="30%"
+										label="Tipo de régimen en salud" />
+									<column width="40%"
+										label="Nombre de la admin de servicios de salud" />
+									<column width="30%"
+										label="Pertenencia étnica" />
+								</columns>
+								<rows>
+									<row>
+										<cell>
+											<space />
+											<textbox id="tbxRegimen"
+												readonly="true" width="160px"
+												style="text-transform:uppercase" />
+										</cell>
+										<cell>
+											<space />
+											<textbox readonly="true"
+												id="tbxAdministradora" width="285px"
+												style="text-transform:uppercase" />
+										</cell>
+										<cell>
+											<space width="40px" />
+											<textbox readonly="true"
+												id="tbxPertenencia_etnica" width="150px"
+												style="text-transform:uppercase" />
+										</cell>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+						<groupbox mold="3d" closable="false">
+							<grid>
+								<columns>
+									<column width="18%"
+										label="Grupo poblacional" />
+									<column width=""
+										label="Dpto/municipio de residencia" />
+									<column width="38%"
+										label="Dirección de residencia" />
+								</columns>
+								<rows>
+									<row>
+										<cell>
+											<space />
+											<hlayout>
+												<listbox
+													id="lbxGrupo_poblacional" name="grupo_poblacional"
+													mold="select" width="120px" sclass="combobox" />
+											</hlayout>
+										</cell>
+
+										<cell>
+											<hlayout>
+												<label
+													id="lbCodigo_dpto2" value="Depto " />
+												<space width="140px" />
+												<label
+													id="lbCodigo_municipio2" value="Municipio " />
+											</hlayout>
+											<hlayout>
+												<textbox readonly="true"
+													id="tbxCodigo_dpto2" width="160px"
+													style="text-transform:uppercase" />
+												<space />
+												<textbox readonly="true"
+													id="tbxCodigo_municipio2" width="155px"
+													style="text-transform:uppercase" />
+											</hlayout>
+										</cell>
+										<cell>
+											<space />
+											<hlayout>
+												<textbox readonly="true"
+													id="tbxDireccion" width="280px"
+													style="text-transform:uppercase" maxlength="40" />
+											</hlayout>
+										</cell>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+						<groupbox mold="3d" closable="false">
+							<grid>
+								<columns>
+									<column width="" />
+									<column width="20%"
+										label="Fecha de consulta" />
+									<column width="20%"
+										label="Inicio de síntomas" />
+									<column width="" />
+								</columns>
+								<rows>
+									<row>
+										<cell />
+										<cell>
+											<hlayout>
+												<datebox
+													id="dtbxFecha_de_consulta"
+													onCreate="self.value = new Date();" format="yyyy-MM-dd"
+													width="130px" />
+											</hlayout>
+										</cell>
+										<cell>
+											<hlayout>
+												<datebox
+													id="dtbxInicio_de_sintomas"
+													onCreate="self.value = new Date();" format="yyyy-MM-dd"
+													width="130px" />
+											</hlayout>
+										</cell>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+						<groupbox mold="3d" closable="false">
+							<grid>
+								<columns>
+									<column width="30%"
+										label="Clasificación del caso" />
+									<column width="70%"
+										label="Tratamiento suministrado" />
+								</columns>
+								<rows>
+									<row>
+										<cell>
+											<hlayout>
+												<radiogroup
+													id="rdbClasificacion_del_caso" />
+												<radio
+													label="Conf. Laboratorio" value="S"
+													radiogroup="rdbClasificacion_del_caso" checked="true" />
+											</hlayout>
+										</cell>
+										<cell>
+											<hlayout>
+												<checkbox
+													id="chbCoartem" />
+												<label id="lbCoartem"
+													value="Coartem " />
+												<space width="110px" />
+												<checkbox
+													id="chbCloroquina_primaquina" />
+												<label
+													id="lbCloroquina_primaquina"
+													value="Cloroquina + primaquina " />
+												<space width="110px" />
+												<checkbox
+													id="chbCloroquina" />
+												<label id="lbCloroquina"
+													value="Cloroquina " />
+											</hlayout>
+											<hlayout>
+												<checkbox id="chbOtro"
+													onFocus="tbxOtro_tratamiento.focus();"
+													onCheck="formFicha_epidemiologia_n14.deshabilitar_conCheck(self, new AbstractComponent[]{tbxOtro_tratamiento})" />
+												<label id="lbOtro"
+													value="Otro " />
+												<space />
+												<label
+													id="lbOtro_tratamiento" value="¿Cúal?: " />
+												<textbox
+													id="tbxOtro_tratamiento" width="428px" readonly="true"
+													style="text-transform:uppercase" maxlength="150" />
+											</hlayout>
+										</cell>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+						<groupbox mold="3d" closable="false">
+							<grid>
+								<columns>
+									<column width=""
+										label="Vigilancia activa" />
+									<column width=""
+										label="Sintomatico" />
+									<column width=""
+										label="Clasificacion caso origen" />
+									<column width="" label="Nuevo" />
+								</columns>
+								<rows>
+									<row>
+										<cell>
+											<hlayout>
+												<radiogroup
+													id="rdbVigilancia_activa" />
+												<radio label="SÍ"
+													value="1" radiogroup="rdbVigilancia_activa" />
+												<radio label="NO"
+													value="2" radiogroup="rdbVigilancia_activa" checked="true" />
+											</hlayout>
+										</cell>
+										<cell>
+											<hlayout>
+												<radiogroup
+													id="rdbSintomatico" />
+												<radio label="SÍ"
+													value="1" radiogroup="rdbSintomatico" />
+												<radio label="NO"
+													value="2" radiogroup="rdbSintomatico" checked="true" />
+											</hlayout>
+										</cell>
+										<cell>
+											<hlayout>
+												<radiogroup
+													id="rdbClasificacion_caso_origen" />
+												<radio label="Autóctono"
+													value="1" radiogroup="rdbClasificacion_caso_origen" />
+												<radio label="Importado"
+													value="2" radiogroup="rdbClasificacion_caso_origen"
+													checked="true" />
+											</hlayout>
+										</cell>
+										<cell>
+											<hlayout>
+												<radiogroup
+													id="rdbNuevo" />
+												<radio label="SÍ"
+													value="1" radiogroup="rdbNuevo" />
+												<radio label="NO"
+													value="2" radiogroup="rdbNuevo" checked="true" />
+											</hlayout>
+										</cell>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+						<groupbox mold="3d" closable="false">
+							<grid>
+								<columns>
+									<column width="17%"
+										label="Recrudescencia" />
+									<column width="17%"
+										label="Embarazo" />
+									<column width="49%"
+										label="Trimestre de gestación" />
+									<column width="17%"
+										label="Tipo de exámen" />
+								</columns>
+								<rows>
+									<row>
+										<cell>
+											<hlayout>
+												<radiogroup
+													id="rdbRecurdescencia" />
+												<radio label="SÍ"
+													value="1" radiogroup="rdbRecurdescencia" />
+												<space />
+												<radio label="NO"
+													value="2" radiogroup="rdbRecurdescencia" checked="true" />
+											</hlayout>
+										</cell>
+										<cell>
+											<hlayout>
+												<radiogroup
+													id="rdbEmbarazo" />
+												<radio label="SÍ"
+													value="1" radiogroup="rdbEmbarazo" />
+												<space />
+												<radio label="NO"
+													value="2" radiogroup="rdbEmbarazo" checked="true" />
+											</hlayout>
+										</cell>
+										<cell>
+											<hlayout>
+												<radiogroup
+													id="rdbTrimestre_de_gestacion" />
+												<radio
+													label="1er trimestre" value="1"
+													radiogroup="rdbTrimestre_de_gestacion" />
+												<space />
+												<radio
+													label="2do trimestre" value="2"
+													radiogroup="rdbTrimestre_de_gestacion" checked="true" />
+												<space />
+												<radio
+													label="3er trimestre" value="3"
+													radiogroup="rdbTrimestre_de_gestacion" />
+											</hlayout>
+										</cell>
+										<cell>
+											<hlayout>
+												<radiogroup
+													id="rdbTipo_de_examen" />
+												<radio label="GG"
+													onCheck="radioExamen3.setSelected(true)" value="S"
+													radiogroup="rdbTipo_de_examen" />
+												<space />
+												<radio label="PDR"
+													onCheck="radioExamen4.setSelected(true)" value="N"
+													radiogroup="rdbTipo_de_examen" checked="true" />
+											</hlayout>
+										</cell>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+						<groupbox mold="3d" closable="false">
+							<grid>
+								<columns>
+									<column width="" label="Recuento" />
+									<column width=""
+										label="Gametocitos" />
+									<column width=""
+										label="Resultado del examen" />
+									<column width=""
+										label="Fecha del resultado" />
+								</columns>
+								<rows>
+									<row>
+										<cell>
+											<hlayout>
+												<textbox
+													id="tbxRecuento" width="170px"
+													onChanging="tbxRecuento_parasitario.value = event.value"
+													style="text-transform:uppercase" maxlength="30" />
+											</hlayout>
+										</cell>
+										<cell>
+											<hlayout>
+												<radiogroup
+													id="rdbGametocitos" />
+												<radio label="SÍ"
+													value="1" radiogroup="rdbGametocitos" />
+												<space />
+												<radio label="NO"
+													value="2" radiogroup="rdbGametocitos" checked="true" />
+											</hlayout>
+										</cell>
+										<cell>
+											<hlayout>
+												<radiogroup
+													id="rdbResultado_del_examen" />
+												<radio label="Positivo"
+													onCheck="radioExamen5.setSelected(true)" value="1"
+													radiogroup="rdbResultado_del_examen" />
+												<space />
+												<radio label="Negativo"
+													onCheck="radioExamen6.setSelected(true)" value="2"
+													radiogroup="rdbResultado_del_examen" checked="true" />
+											</hlayout>
+										</cell>
+										<cell>
+											<hlayout>
+												<space width="27px" />
+												<datebox
+													id="dtbxFecha_del_resultado"
+													onCick="dtbxFecha_del_resultado2.focus()"
+													onCreate="self.value = new Date();" format="yyyy-MM-dd"
+													width="130px" />
+											</hlayout>
+										</cell>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+
+					</groupbox>
+				</div>
+			</center>
+			<east title="Registro individual de malaria" size="26%"
+				flex="true" collapsible="true">
+				<div>
+					<groupbox mold="3d" closable="false">
+						<grid>
+							<columns>
+								<column width=""
+									label="Nombres y apellidos del paciente" />
+							</columns>
+							<rows>
+								<row>
+									<cell>
+										<hlayout>
+											<textbox readonly="true"
+												id="tbxNombres_paciente" width="273px"
+												style="text-transform:uppercase" maxlength="200" />
+										</hlayout>
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+					<space />
+					<groupbox mold="3d" closable="false">
+						<grid>
+							<columns>
+								<column width="" label="Tipo de exámen" />
+							</columns>
+							<rows>
+								<row>
+									<cell>
+										<hlayout>
+											<radiogroup
+												id="rdbTipo_de_examen2" />
+											<space width="63px" />
+											<radio label="GG" value="1"
+												id="radioExamen3" disabled="true"
+												radiogroup="rdbTipo_de_examen2" />
+											<space width="35px" />
+											<radio label="PDR" value="2"
+												id="radioExamen4" disabled="true"
+												radiogroup="rdbTipo_de_examen2" checked="true" />
+										</hlayout>
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+					<groupbox mold="3d" closable="false">
+						<grid>
+							<columns>
+								<column width=""
+									label="Resultado del exámen" />
+							</columns>
+							<rows>
+								<row>
+									<cell>
+										<hlayout>
+											<radiogroup
+												id="rdbResultado_del_examen2" />
+											<space width="63px" />
+											<radio label="Positivo"
+												value="1" id="radioExamen5" disabled="true"
+												radiogroup="rdbResultado_del_examen2" />
+											<space />
+											<radio label="Negativo"
+												value="2" id="radioExamen6" disabled="true"
+												radiogroup="rdbResultado_del_examen2" checked="true" />
+										</hlayout>
+									</cell>
+								</row>
+							</rows>
+						</grid>
+						<grid>
+							<columns>
+								<column width="" label="Especie" />
+							</columns>
+							<rows>
+								<row>
+									<cell>
+										<hlayout>
+											<textbox id="tbxEspecie"
+												width="273px" style="text-transform:uppercase"
+												maxlength="200" />
+										</hlayout>
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+					<space />
+					<groupbox mold="3d" closable="false">
+						<grid>
+							<columns>
+								<column width=""
+									label="Recuento parasitario" />
+							</columns>
+							<rows>
+								<row>
+									<cell>
+										<hlayout>
+											<textbox readonly="true"
+												id="tbxRecuento_parasitario" width="273px"
+												style="text-transform:uppercase" maxlength="30" />
+										</hlayout>
+									</cell>
+								</row>
+							</rows>
+						</grid>
+						<grid>
+							<columns>
+								<column width=""
+									label="Fecha del resultado" />
+							</columns>
+							<rows>
+								<row>
+									<cell>
+										<hlayout>
+											<space width="70px" />
+											<datebox
+												id="dtbxFecha_del_resultado2"
+												onCreate="self.value = new Date();" format="yyyy-MM-dd"
+												width="130px" />
+										</hlayout>
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+					<groupbox mold="3d" closable="false">
+						<grid>
+							<columns>
+								<column width=""
+									label="Responsable del diagnóstico" />
+							</columns>
+							<rows>
+								<row>
+									<cell>
+										<hlayout>
+											<textbox
+												id="tbxResponsable_diagnostico" width="273px"
+												style="text-transform:uppercase" maxlength="30" />
+										</hlayout>
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+
+				</div>
+			</east>
+		</borderlayout>
+	</window>
+</zk>

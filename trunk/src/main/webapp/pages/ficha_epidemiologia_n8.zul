@@ -1,0 +1,1666 @@
+<?page title="Ficha_epidemiologia_n8" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formFicha_epidemiologia_n8" width="950px" height="450px"
+		border="normal"
+		use="healthmanager.controller.Ficha_epidemiologia_n8Action">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+		<style>
+			div.minimize { border: 1px solid #79858E; background:
+			#D3E1EC; position: absolute; opacity: 0.8; } div.loginGrid {
+			border: none; } td.loginCtl { text-align: center; }
+			td.loginCtl .z-label { color: red; font-style: italic; }
+		</style>
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="false" closable="false"
+			mold="3d" height="100%">
+			<caption label="Consultar"
+				style="color: blue;font-weight: bold" />
+			<separator />
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" height="100%" mold="paging"
+				pageSize="20" vflex="1">
+				<auxhead>
+					<auxheader colspan="4">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<separator />
+							<textbox id="tbxValue" width="200px"
+								onOK="formFicha_epidemiologia_n8.buscarDatos();"
+								style="text-transform:uppercase" />
+							<separator />
+							<button mold="trendy"
+								image="/images/Magnifier.gif"
+								onClick="formFicha_epidemiologia_n8.buscarDatos();"
+								tooltiptext="Consultar Ficha epidemiologia n8" />
+							<separator />
+							<button mold="trendy"
+								image="/images/New16.gif"
+								onClick='formFicha_epidemiologia_n8.accionForm(true,"registrar");'
+								tooltiptext="Nuevo Ficha epidemiologia n8" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Codigo ficha" />
+					<column label="Identificacion" />
+					<column label="Fecha inicial" />
+					<column label="Acciones" align="center"
+						width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+		<borderlayout width="100%" height="98%" id="groupboxEditar"
+			visible="true">
+			<north id="north_ficha" border="none" visible="false">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<toolbarbutton image="/images/Save16.gif"
+						label="Guardar Ficha epidemiologia n8"
+						onClick="formFicha_epidemiologia_n8.guardarDatos();"
+						id="btGuardar" />
+					<toolbarbutton image="/images/print_ico.gif"
+						label="Imprimir"
+						onClick="formFicha_epidemiologia_n8.imprimir();" id="btImprimir"
+						visible="false" />
+					<space />
+					<label value="Formato impresión: " visible="false" />
+					<listbox id="lbxFormato" mold="select" width="150px"
+						visible="false" sclass="combobox">
+						<listitem value="pdf" label="PDF"
+							selected="true" />
+						<listitem value="rtf" label="WORD" />
+					</listbox>
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center">
+
+					<!-- *************************** -->
+					<!-- *** Insertar/Actualizar *** -->
+					<!-- *************************** -->
+					<groupbox mold="3d" closable="false" visible="true"
+						id="gbxDatosPaciente">
+						<caption label="DATOS DE LA FICHA"
+							style="font-weight:bold" />
+						<grid>
+							<columns>
+								<column label="" />
+							</columns>
+							<rows>
+								<row>
+									<cell>
+										<hlayout>
+											<space width="130px" />
+											<label value="* "
+												style="color: red" tooltiptext="Campo obligatorio" />
+											<label id="lbFecha_inicial"
+												value="Fecha: " />
+											<datebox
+												id="dtbxFecha_inicial" onCreate="self.value = new Date();"
+												format="dd-MM-yyyy" width="170px" readonly="true" buttonVisible="false"/>
+											<space width="70px" />
+											<label value="* "
+												style="color: red" tooltiptext="Campo obligatorio" />
+											<label id="lbCodigo_ficha"
+												value="Codigo ficha: " />
+											<textbox readonly="true"
+												id="tbxCodigo_ficha" width="170px"
+												style="text-transform:uppercase" maxlength="20" />
+										</hlayout>
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+					
+					<groupbox mold="3d" closable="false" visible="true"
+						id="gbxDatosPacientett">
+						<caption label="RELACIÓN CON DATOS BÁSICOS"
+							style="font-weight:bold" />
+						<grid>
+						<columns visible="false">
+								<column width="100px" />
+								<column />
+								<column />
+								<column />
+								<column />
+								<column width="220px" />
+							</columns>
+							<rows>
+																
+							<row>
+								<cell>
+									<label value="* " style="color: red"
+										tooltiptext="Campo obligatorio" />
+									<label value="Paciente: " />
+								</cell>
+								<cell colspan="4">
+									<textbox id="tbxIdentificacion_p" width="27%" readonly="true" disabled="true"/>
+										<!--  -->
+									<space width="1%" />
+									<textbox id="tbxNombres_y_apellidos" width="65%"
+										style="text-transform:uppercase" readonly="true" />
+								</cell>
+								<cell>
+									<space width="15px" />
+									<label value="Tipo: " />
+									<space width="23px" />
+									<textbox id="tbxTipo_identidad_p" width="135px" style="text-transform:uppercase" readonly="true"/>
+								</cell>
+									
+							</row>
+							<row>
+								<cell>
+									<label value="* " style="color: red"
+										tooltiptext="Campo obligatorio" />
+									<label value="Aseguradora: " />
+								</cell>
+								<cell colspan="4">
+									<textbox id="tbxAseguradora" width="27%" readonly="true" disabled="true"/>
+										<!--  -->
+									<space width="1%" />
+									<textbox id="tbxNombre_aseguradora" width="65%"
+										style="text-transform:uppercase" readonly="true" />
+								</cell>
+								<cell></cell>
+									
+							</row>
+							
+							</rows>
+						</grid>
+					</groupbox>
+					<groupbox mold="3d" closable="false" visible="true"
+						id="gbxdatos_clinicos">
+						<caption label="
+											DATOS CLíNICOS: "
+							style="font-weight:bold" />
+						<grid>
+							<columns>
+								<column label="" width="30px" />
+								<column label="" width="100px" />
+								<column label="" width="50px" />
+								<column label="" width="100px" />
+								<column label="" width="50px" />
+								<column label="" width="100px" />
+								<column label="" width="50px" />
+								<column label="" width="100px" />
+								<column label="" width="50px" />
+								<column label="" width="180px" />
+								<column label="" width="30px" />
+							</columns>
+							<rows>
+								<!-- fila 1 -->
+								<row>
+									<cell></cell>
+									<cell>
+										<label id="lbNauseas"
+											value="Nauseas: " />
+									</cell>
+									<cell>
+										<checkbox id="chbNauseas" />
+									</cell>
+									<cell>
+										<label id="lbVomito"
+											value="Vomito: " />
+									</cell>
+									<cell>
+										<checkbox id="chbVomito" />
+									</cell>
+									<cell>
+										<label id="lbDiarrea"
+											value="Diarrea: " />
+									</cell>
+									<cell>
+										<checkbox id="chbDiarrea" />
+									</cell>
+									<cell>
+										<label id="lbFiebre"
+											value="Fiebre: " />
+									</cell>
+									<cell>
+										<checkbox id="chbFiebre" />
+									</cell>
+									<cell>
+										<label
+											id="lbCalambres_abdominales" value="Calambres abdominales: " />
+									</cell>
+									<cell>
+										<checkbox
+											id="chbCalambres_abdominales" />
+									</cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell>
+										<label id="lbCefalea"
+											value="Cefalea: " />
+									</cell>
+									<cell>
+										<checkbox id="chbCefalea" />
+									</cell>
+									<cell>
+										<label id="lbDeshidratacion"
+											value="Deshidratacion: " />
+									</cell>
+									<cell>
+										<checkbox
+											id="chbDeshidratacion" />
+									</cell>
+									<cell>
+										<label id="lbCianosis"
+											value="Cianosis: " />
+									</cell>
+									<cell>
+										<checkbox id="chbCianosis" />
+									</cell>
+									<cell>
+										<label id="lbMialgias"
+											value="Mialgias: " />
+									</cell>
+									<cell>
+										<checkbox id="chbMialgias" />
+									</cell>
+									<cell>
+										<label id="lbArtralgias"
+											value="Artralgias: " />
+									</cell>
+									<cell>
+										<checkbox id="chbArtralgias" />
+									</cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell>
+										<label id="lbMareo"
+											value="Mareo: " />
+									</cell>
+									<cell>
+										<checkbox id="chbMareo" />
+									</cell>
+									<cell>
+										<label id="lbParestesias"
+											value="Parestesias: " />
+									</cell>
+									<cell>
+										<checkbox id="chbParestesias" />
+									</cell>
+									<cell>
+										<label id="lbEscalofrio"
+											value="Escalofrio: " />
+									</cell>
+									<cell>
+										<checkbox id="chbEscalofrio" />
+									</cell>
+									<cell>
+										<label id="lbTos" value="Tos: " />
+									</cell>
+									<cell>
+										<checkbox id="chbTos" />
+									</cell>
+									<cell>
+										<label id="lbSialorrea"
+											value="Sialorrea: " />
+									</cell>
+									<cell>
+										<checkbox id="chbSialorrea" />
+									</cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell>
+										<label id="lbMiosis"
+											value="Miosis: " />
+									</cell>
+									<cell>
+										<checkbox id="chbMiosis" />
+									</cell>
+									<cell colspan="3">
+										<label
+											id="lbLesiones_maculopapulares"
+											value="Lesiones maculopapulares: " />
+									</cell>
+									<cell colspan="3">
+										<checkbox
+											id="chbLesiones_maculopapulares" />
+									</cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell>
+										<label id="lbOtros"
+											value="Otros: " />
+									</cell>
+									<cell>
+										<checkbox id="chbOtros" />
+									</cell>
+									<cell visible="false">
+										<label id="lbCual"
+											value="Cual: " visible="false" />
+									</cell>
+									<cell colspan="12">
+										<textbox id="tbxCual"
+											width="170px" style="text-transform:uppercase" maxlength="20"
+											visible="false" />
+									</cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell colspan="2">
+										<label
+											id="lbHora_inicio_sintomas" value="Hora inicio sintomas: " />
+									</cell>
+									<cell colspan="12">
+										<timebox
+											id="dtbxHora_inicio_sintomas"
+											onCreate="self.value = new Date();" format="medium"
+											mold="rounded"  />
+											
+										
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+					<groupbox mold="3d" visible="true"
+						id="gbxdatos_de_la_exposicion">
+						<caption
+							label="
+											DATOS DE LA EXPOSICION: "
+							style="font-weight:bold" />
+						<grid>
+							<columns>
+								<column label="" width="10px" />
+								<column label="" width="130px" />
+								<column label="" width="150px" />
+								<column label="" width="130px" />
+								<column label="" width="150px" />
+								<column label="" width="130px" />
+								<column label="" width="150px" />
+							</columns>
+							<rows>
+								<row>
+									<cell colspan="8" width="100%">
+										<groupbox mold="3d"
+											closable="false" visible="true"
+											id="gbxdatos_de_la_exposicon">
+											<grid>
+												<columns>
+													<column label=""
+														width="10px" />
+													<column label=""
+														width="130px" />
+													<column label=""
+														width="150px" />
+													<column label=""
+														width="130px" />
+													<column label=""
+														width="150px" />
+													<column label=""
+														width="130px" />
+													<column label=""
+														width="150px" />
+												</columns>
+												<rows>
+													<row>
+														<cell
+															colspan="2">
+														</cell>
+														<cell
+															colspan="6">
+															<label
+																value="ALIMENTOS INGERIDOS EL DÍA DE LOS SÍNTOMAS:" />
+														</cell>
+													</row>
+													<row>
+														<cell></cell>
+														<cell>
+															<label
+																id="lbNombre1_alimento_dia"
+																value="Nombre del alimento:" />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxNombre1_alimento_dia" width="120px"
+																style="text-transform:uppercase" maxlength="20" />
+														</cell>
+														<cell>
+															<label
+																id="lbLugar1_consumo_dia" value="Lugar de consumo: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxLugar1_consumo_dia" width="120px"
+																style="text-transform:uppercase" maxlength="20" />
+														</cell>
+														<cell>
+															<label
+																id="lbHora1_dia" value="Hora: " />
+														</cell>
+														<cell
+															colspan="2">
+															<timebox
+																id="tbHora1_dia" cols="8" format="medium"
+																onCreate="self.value = new Date()" mold="rounded" />
+														</cell>
+													</row>
+													<row>
+														<cell></cell>
+														<cell>
+															<label
+																id="lbNombre2_alimento_dia"
+																value="Nombre de alimento: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxNombre2_alimento_dia" width="120px"
+																style="text-transform:uppercase" maxlength="20" />
+														</cell>
+														<cell>
+															<label
+																id="lbLugar2_consumo_dia" value="Lugar del consumo: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxLugar2_consumo_dia" width="120px"
+																style="text-transform:uppercase" maxlength="20" />
+														</cell>
+														<cell>
+															<label
+																id="lbHora2_dia" value="Hora: " />
+														</cell>
+														<cell
+															colspan="2">
+															<timebox
+																id="tbHora2_dia" cols="8" format="medium"
+																onCreate="self.value = new Date()" mold="rounded" />
+														</cell>
+													</row>
+													<row>
+														<cell></cell>
+														<cell>
+															<label
+																id="lbNombre3_alimento_dia"
+																value="Nombre del alimento: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxNombre3_alimento_dia" width="120px"
+																style="text-transform:uppercase" maxlength="20" />
+														</cell>
+														<cell>
+															<label
+																id="lbLugar3_consumo_dia" value="Lugar del consumo: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxLugar3_consumo_dia" width="120px"
+																style="text-transform:uppercase" maxlength="20" />
+														</cell>
+														<cell>
+															<label
+																id="lbHora3_dia" value="Hora: " />
+														</cell>
+														<cell
+															colspan="2">
+															<timebox
+																id="tbHora3_dia" cols="8" format="medium"
+																onCreate="self.value = new Date()" mold="rounded" />
+														</cell>
+													</row>
+												</rows>
+											</grid>
+										</groupbox>
+									</cell>
+								</row>
+								<row>
+									<cell colspan="8" width="100%">
+										<groupbox mold="3d"
+											closable="false" visible="true">
+											<grid>
+												<columns>
+													<column label=""
+														width="10px" />
+													<column label=""
+														width="130px" />
+													<column label=""
+														width="150px" />
+													<column label=""
+														width="130px" />
+													<column label=""
+														width="150px" />
+													<column label=""
+														width="130px" />
+													<column label=""
+														width="150px" />
+												</columns>
+												<rows>
+													<row>
+														<cell
+															colspan="2">
+														</cell>
+														<cell
+															colspan="6">
+															<label
+																value="ALIMENTOS INGERIDOS EL DÍA SIGUIENTE DE LOS SÍNTOMAS:" />
+														</cell>
+													</row>
+													<row>
+														<cell></cell>
+														<cell>
+															<label
+																id="lbNombre1_alimento_dia_ant"
+																value="Nombre del alimento: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxNombre1_alimento_dia_ant" width="120px"
+																style="text-transform:uppercase" maxlength="20" />
+														</cell>
+														<cell>
+															<label
+																id="lbLugar1_consumo_dia_ant"
+																value="Lugar del consumo: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxLugar1_consumo_dia_ant" width="120px"
+																style="text-transform:uppercase" maxlength="20" />
+														</cell>
+														<cell>
+															<label
+																id="lbHora1_dia_ant" value="Hora: " />
+														</cell>
+														<cell
+															colspan="2">
+															<timebox
+																id="tbHora1_dia_ant" cols="8" format="medium"
+																onCreate="self.value = new Date()" mold="rounded" />
+														</cell>
+													</row>
+													<row>
+														<cell></cell>
+														<cell
+															height="30px">
+															<label
+																id="lbNombre2_alimento_dia_ant"
+																value="Nombre  del alimento: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxNombre2_alimento_dia_ant" width="120px"
+																style="text-transform:uppercase" maxlength="20" />
+														</cell>
+														<cell
+															height="30px">
+															<label
+																id="lbLugar2_consumo_dia_ant"
+																value="Lugar del consumo: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxLugar2_consumo_dia_ant" width="120px"
+																style="text-transform:uppercase" maxlength="20" />
+														</cell>
+														<cell
+															height="30px">
+															<label
+																id="lbHora2_dia_ant" value="Hora: " />
+														</cell>
+														<cell
+															colspan="2">
+															<timebox
+																id="tbHora2_dia_ant" cols="8" format="medium"
+																onCreate="self.value = new Date()" mold="rounded" />
+
+														</cell>
+													</row>
+													<row>
+														<cell></cell>
+														<cell
+															height="30px">
+															<label
+																id="lbNombre3_alimento_dia_ant"
+																value="Nombre del alimento: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxNombre3_alimento_dia_ant" width="120px"
+																style="text-transform:uppercase" maxlength="20" />
+														</cell>
+														<cell
+															height="30px">
+															<label
+																id="lbLugar3_consumo_dia_ant"
+																value="Lugar del consumo: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxLugar3_consumo_dia_ant" width="120px"
+																style="text-transform:uppercase" maxlength="20" />
+														</cell>
+														<cell
+															height="30px">
+															<label
+																id="lbHora3_dia_ant" value="Hora: " />
+														</cell>
+														<cell
+															colspan="2">
+															<timebox
+																id="tbHora3_dia_ant" cols="8" format="medium"
+																onCreate="self.value = new Date()" mold="rounded" />
+														</cell>
+													</row>
+												</rows>
+											</grid>
+										</groupbox>
+									</cell>
+								</row>
+								<row>
+									<cell colspan="8" width="100%">
+										<groupbox mold="3d"
+											closable="false" visible="true">
+											<grid>
+												<columns>
+													<column label=""
+														width="10px" />
+													<column label=""
+														width="130px" />
+													<column label=""
+														width="150px" />
+													<column label=""
+														width="130px" />
+													<column label=""
+														width="150px" />
+													<column label=""
+														width="130px" />
+													<column label=""
+														width="150px" />
+												</columns>
+												<rows>
+													<row>
+														<cell
+															colspan="2">
+														</cell>
+														<cell
+															colspan="6">
+															<label
+																value="ALIMENTOS INGERIDOS EL DÍA SIGUIENTE DE LOS SÍNTOMAS:" />
+														</cell>
+													</row>
+													<row>
+														<cell></cell>
+														<cell
+															height="30px">
+															<label
+																id="lbNombre1_alimento_2dia_ant"
+																value="Nombre del alimento: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxNombre1_alimento_2dia_ant" width="120px"
+																style="text-transform:uppercase" maxlength="20" />
+														</cell>
+														<cell
+															height="30px">
+															<label
+																id="lbLugar1_consumo_2dia_ant"
+																value="Lugar del consumo: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxLugar1_consumo_2dia_ant" width="120px"
+																style="text-transform:uppercase" maxlength="20" />
+														</cell>
+														<cell
+															height="30px">
+															<label
+																id="lbHora1_2dia_ant" value="Hora: " />
+
+														</cell>
+														<cell
+															colspan="2">
+															<timebox
+																id="tbHora1_2dia_ant" cols="8" format="medium"
+																onCreate="self.value = new Date()" mold="rounded" />
+														</cell>
+													</row>
+													<row>
+														<cell></cell>
+														<cell
+															height="30px">
+															<label
+																id="lbNombre2_alimento_2dia_ant"
+																value="Nombre del alimento: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxNombre2_alimento_2dia_ant" width="120px"
+																style="text-transform:uppercase" maxlength="20" />
+														</cell>
+														<cell
+															height="30px">
+															<label
+																id="lbLugar2_consumo_2dia_ant"
+																value="Lugar del consumo: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxLugar2_consumo_2dia_ant" width="120px"
+																style="text-transform:uppercase" maxlength="20" />
+														</cell>
+														<cell
+															height="30px">
+															<label
+																id="lbHora2_2dia_ant" value="Hora: " />
+														</cell>
+														<cell
+															colspan="2">
+															<timebox
+																id="tbHora2_2dia_ant" cols="8" format="medium"
+																onCreate="self.value = new Date()" mold="rounded" />
+														</cell>
+													</row>
+													<row>
+														<cell></cell>
+														<cell
+															height="30px">
+															<label
+																id="lbNombre3_alimento_2dia_ant"
+																value="Nombre del alimento: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxNombre3_alimento_2dia_ant" width="120px"
+																style="text-transform:uppercase" maxlength="20" />
+														</cell>
+														<cell
+															height="30px">
+															<label
+																id="lbLugar3_consumo_2dia_ant"
+																value="Lugar del consumo: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxLugar3_consumo_2dia_ant" width="120px"
+																style="text-transform:uppercase" maxlength="20" />
+														</cell>
+														<cell
+															height="30px">
+															<label
+																id="lbHora3_2dia_ant" value="Hora: " />
+														</cell>
+														<cell
+															colspan="2">
+															<timebox
+																id="tbHora3_2dia_ant" cols="8" format="medium"
+																onCreate="self.value = new Date()" mold="rounded" />
+														</cell>
+													</row>
+												</rows>
+											</grid>
+										</groupbox>
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+					<groupbox mold="3d" visible="true"
+						id="gbxdatos_de_laexposicion">
+						<caption
+							label="
+											DATOS DE LA EXPOSICION: "
+							style="font-weight:bold" />
+						<grid>
+							<columns>
+								<column label="" width="10px" />
+								<column label="" width="130px" />
+								<column label="" width="150px" />
+								<column label="" width="130px" />
+								<column label="" width="150px" />
+								<column label="" width="130px" />
+								<column label="" width="150px" />
+							</columns>
+							<rows>
+								<!-- fila 48 -->
+								<row>
+									<cell></cell>
+									<cell colspan="3">
+										<label
+											id="lbNombre_lugar_implicado"
+											value="Nombre del lugar de consumo implicado: " />
+									</cell>
+									<cell colspan="3">
+										<textbox
+											id="tbxNombre_lugar_implicado" width="300px"
+											style="text-transform:uppercase" maxlength="20" />
+									</cell>
+								</row>
+								<!-- fila 49 -->
+								<row>
+									<cell></cell>
+									<cell colspan="3">
+										<label
+											id="lbDireccion_lugar_implicado"
+											value="Direccion lugar implicado: " />
+									</cell>
+									<cell colspan="3">
+										<textbox
+											id="tbxDireccion_lugar_implicado" width="300px"
+											style="text-transform:uppercase" maxlength="20" />
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+					<groupbox mold="3d" visible="true"
+						id="gbxdatos_delaexposicion">
+						<caption
+							label="
+											DATOS DE LA EXPOSICION: "
+							style="font-weight:bold" />
+						<grid>
+							<columns>
+								<column label="" width="10px" />
+								<column label="" width="130px" />
+								<column label="" width="150px" />
+								<column label="" width="130px" />
+								<column label="" width="150px" />
+								<column label="" width="130px" />
+								<column label="" width="150px" />
+							</columns>
+							<rows>
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label
+											id="lbCaso_asociado_brote" value="Caso asociado brote: " />
+									</cell>
+									<cell>
+										<radiogroup
+											id="rdbCaso_asociado_brote">
+											<radio label="Sí"
+												value="Si" />
+											<space />
+											<radio label="No" value="No"
+												checked="true" />
+										</radiogroup>
+									</cell>
+									<cell height="30px">
+										<label id="lbCaso_captado_por"
+											value="Caso captado por: " />
+									</cell>
+									<cell>
+										<radiogroup
+											id="rdbCaso_captado_por">
+											<radio label="Sí" value="1" />
+											<space />
+											<radio label="No" value="2"
+												checked="true" />
+										</radiogroup>
+									</cell>
+									<cell height="30px">
+										<label
+											id="lbRelacion_exposicion" value="Relacion exposicion: " />
+									</cell>
+									<cell>
+										<radiogroup
+											id="rdbRelacion_exposicion">
+											<radio label="Sí" value="1" />
+											<space />
+											<radio label="No" value="2"
+												checked="true" />
+										</radiogroup>
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+					<groupbox mold="3d" visible="true"
+						id="gbxdtos_delaexposicion">
+						<caption label="LABORATORIO: "
+							style="font-weight:bold" />
+						<grid>
+							<columns>
+								<column label="" width="10px" />
+								<column label="" width="130px" />
+								<column label="" width="150px" />
+								<column label="" width="130px" />
+								<column label="" width="150px" />
+								<column label="" width="130px" />
+								<column label="" width="150px" />
+							</columns>
+							<rows>
+								<row>
+									<cell></cell>
+									<cell colspan="3">
+										<label
+											id="lbRecolecto_muestra_biologica"
+											value="Recolecto muestra biologica: " />
+									</cell>
+									<cell>
+										<radiogroup
+											id="rdbRecolecto_muestra_biologica">
+											<radio label="Sí" value="1" />
+											<space />
+											<radio label="No" value="2"
+												checked="true" />
+										</radiogroup>
+									</cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label id="lbTipo_muestra"
+											value="Tipo muestra: " />
+									</cell>
+									<cell>
+										<radiogroup
+											id="rdbTipo_muestra">
+											<radio label="Sí" value="1" />
+											<space />
+											<radio label="No" value="2"
+												checked="true" />
+										</radiogroup>
+									</cell>
+									<cell height="30px">
+										<label id="lbCual_tipo_muestra"
+											value="Cual tipo muestra: " />
+									</cell>
+									<cell colspan="5">
+										<textbox
+											id="tbxCual_tipo_muestra" width="170px"
+											style="text-transform:uppercase" maxlength="20" />
+									</cell>
+								</row>
+								<row>
+									<cell colspan="9" width="100%">
+										<groupbox mold="3d"
+											closable="false" visible="true">
+											<grid>
+												<columns>
+													<column label=""
+														width="50px" />
+													<column label=""
+														width="150px" />
+													<column label=""
+														width="150px" />
+													<column label=""
+														width="150px" />
+													<column label=""
+														width="150px" />
+													<column label=""
+														width="150px" />
+												</columns>
+												<rows>
+													<row>
+														<cell></cell>
+														<cell
+															colspan="2">
+															<label
+																value="Agente identificado 1: " />
+														</cell>
+														<cell></cell>
+														<cell
+															colspan="2">
+															<label
+																value="Agente identificado 2: " />
+														</cell>
+													</row>
+													<row>
+														<cell></cell>
+														<cell>
+															<label
+																id="lbAgente_identificaco1" value="Código: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxAgente_identificaco1" width="120px"
+																style="text-transform:uppercase" maxlength="20" />
+														</cell>
+														<cell></cell>
+														<cell
+															height="30px">
+															<label
+																id="lbAgente_identificaco2" value="Código: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxAgente_identificaco2" width="120px"
+																style="text-transform:uppercase" maxlength="20" />
+														</cell>
+													</row>
+													<row>
+														<cell></cell>
+														<cell
+															colspan="2">
+															<label
+																value="Agente identificado 3: " />
+														</cell>
+														<cell></cell>
+														<cell
+															colspan="2">
+															<label
+																value="Agente identificado 4: " />
+														</cell>
+													</row>
+													<row>
+														<cell></cell>
+														<cell>
+															<label
+																id="lbAgente_identificaco3" value="Código: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxAgente_identificaco3" width="120px"
+																style="text-transform:uppercase" maxlength="20" />
+														</cell>
+														<cell></cell>
+														<cell
+															height="30px">
+															<label
+																id="lbAgente_identificaco4"
+																value="Código: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxAgente_identificaco4" width="120px"
+																style="text-transform:uppercase" maxlength="20" />
+														</cell>
+													</row>
+												</rows>
+											</grid>
+										</groupbox>
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+					<groupbox mold="3d" visible="true"
+						id="gbxdtos_delaxposicion">
+						<caption label="LABORATORIO: "
+							style="font-weight:bold" />
+						<grid>
+							<columns>
+								<column label="" width="10px" />
+								<column label="" width="130px" />
+								<column label="" width="150px" />
+								<column label="" width="130px" />
+								<column label="" width="150px" />
+								<column label="" width="130px" />
+								<column label="" width="150px" />
+							</columns>
+							<rows>
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label id="lbAgentes_pendiente"
+											value="Agentes pendiente: " />
+									</cell>
+									<cell>
+										<radiogroup
+											id="rdbAgentes_pendiente">
+											<radio label="Sí" value="1" />
+											<space />
+											<radio label="No" value="2"
+												checked="true" />
+										</radiogroup>
+									</cell>
+									<cell colspan="2">
+										<label
+											id="lbAgentes_no_detectaddo" value="Agentes no detectado: " />
+									</cell>
+									<cell>
+										<radiogroup
+											id="rdbAgentes_no_detectaddo">
+											<radio label="Sí" value="S" />
+											<space />
+											<radio label="No" value="N"
+												checked="true" />
+										</radiogroup>
+									</cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label id="lbAgente_otro"
+											value="Otro agente: " />
+									</cell>
+									<cell>
+										<radiogroup id="rdbAgente_otro"
+											onCheck="formFicha_epidemiologia_n8.ocultarCampo(rdbAgente_otro,tbxCual_agente);">
+											<radio label="Sí" value="S" />
+											<space />
+											<radio label="No" value="N"
+												checked="true" />
+										</radiogroup>
+										<cell>
+											<label id="lbCual_agente"
+												value="Cuál: ">
+											</label>
+										</cell>
+										<cell colspan="9">
+											<textbox id="tbxCual_agente"
+												style="text-transform:uppercase" width="150px" readonly="true">
+											</textbox>
+										</cell>
+									</cell>
+								</row>
+								<row>
+									<cell colspan="8" width="100%">
+										<groupbox mold="3d"
+											closable="false" visible="true">
+											<grid>
+												<columns>
+													<column label=""
+														width="10px" />
+													<column label=""
+														width="170px" />
+													<column label=""
+														width="170px" />
+													<column label=""
+														width="170px" />
+													<column label=""
+														width="170px" />
+													<column label=""
+														width="170px" />
+												</columns>
+												<rows>
+													<row>
+														<cell
+															colspan="9">
+															<radiogroup
+																id="rdbAgente_seleccionado" />
+														</cell>
+													</row>
+													<row>
+														<cell
+															visible="false">
+														</cell>
+														<cell
+															colspan="8">
+															<label
+																id="lbAgente_seleccionado"
+																value="Agente seleccionado: " />
+														</cell>
+													</row>
+													<row>
+														<cell></cell>
+														<cell>
+															<radio
+																label="Coliformes fecales" value="1"
+																id="lbColiformes_fecales"
+																radiogroup="rdbAgente_seleccionado" checked="true" />
+															<space />
+														</cell>
+														<cell>
+															<radio
+																label="Coliformes totales" value="2"
+																id="lbColiformes_totales"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+														<cell>
+															<radio
+																label="Bacillus cereus" value="3" id="lbBacillus_cereus"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+														<cell>
+															<radio
+																label="Bacillus anthracis" value="4"
+																id="lbBacillus_anthracis"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+														<cell>
+															<radio
+																label="Staphylococcus aureus" value="5"
+																id="lbStaphylococcus_aureus"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+													</row>
+													<row>
+														<cell></cell>
+														<cell>
+															<radio
+																label="Streptococcus sp" value="6"
+																id="lbStreptococcus_sp"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+														<cell>
+															<radio
+																label="Clostridium perfringens" value="7"
+																id="lbClostridium_perfringens"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+														<cell>
+															<radio
+																label="Aeromonas hydrophila" value="8"
+																id="lbAeromonas_hydrophila"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+														<cell>
+															<radio
+																label="Campylobacter jejuni" value="9"
+																id="lbCampylobacter_jejuni"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+														<cell>
+															<radio
+																label="Escherichia coli" value="10"
+																id="lbEscherichia_coli"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+													</row>
+													<row>
+														<cell></cell>
+														<cell>
+															<radio
+																label="Shigella sp" value="11" id="lbShigella_sp"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+														<cell>
+															<radio
+																label="Salmonella spp" value="12" id="lbSalmonella_spp"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+														<cell>
+															<radio
+																label="SalmonellaTyphi" value="13"
+																id="lbSalmonellaTyphi"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+														<cell>
+															<radio
+																label="SalmonellaParatyphi" value="14"
+																id="lbSalmonellaParatyphi"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+														<cell>
+															<radio
+																label="Clostridium botulinum" value="15"
+																id="lbClostridium_botulinum"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+													</row>
+													<row>
+														<cell></cell>
+														<cell>
+															<radio
+																label="Vibrio sp" value="15" id="lbVibrio_sp"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+														<cell>
+															<radio
+																label="Vibrio parahaemolyticus" value="16"
+																id="lbVVibrio_parahaemolyticus"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+														<cell>
+															<radio
+																label="Brucella abortus" value="17"
+																id="lbBrucella_abortus"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+														<cell>
+															<radio
+																label="Mycobacterium bovis" value="18"
+																id="lbMycobacterium_bovis"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+														<cell>
+															<radio
+																label="Listeria monocytogenes" value="19"
+																id="lbListeria_monocytogenes"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+														<cell>
+															<radio
+																label="Proteus sp" value="20" id="lbProteus_sp"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+													</row>
+													<row>
+														<cell></cell>
+														<cell>
+															<radio
+																label="Norovirus" value="21" id="lbNorovirus"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+														<cell>
+															<radio
+																label="Rotavirus" value="22" id="lbRotavirus"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+														<cell>
+															<radio
+																label="Parvovirus" value="23" id="lbParvovirus"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+														<cell>
+															<radio
+																label="Astrovirus" value="24" id="lbAstrovirus"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+														<cell>
+															<radio
+																label="Adenovirus" value="25" id="lbAdenovirus"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+													</row>
+													<row>
+														<cell></cell>
+														<cell>
+															<radio
+																label="Hepatitis A" value="26" id="lbHepatitis_A"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+														<cell>
+															<radio
+																label="Hepatitis E" value="27" id="lbHepatitis_E"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+														<cell>
+															<radio
+																label="Ascaris lumbricoides" value="28"
+																id="lbAscaris_lumbricoides"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+														<cell>
+															<radio
+																label="Micotinato sòdico" value="65"
+																id="lbMicotinato_sodico"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+														<cell>
+															<radio
+																label="Fasciola hepática" value="30"
+																id="lbFasciola_hepatica"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+													</row>
+													<row>
+														<cell></cell>
+														<cell>
+															<radio
+																label="Ta en ia saginata" value="31"
+																id="lbTa_en_ia_saginata"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+														<cell>
+															<radio
+																label="Cyclospora" value="32" id="lbCyclospora"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+														<cell>
+															<radio
+																label="Giardia duodenalis" value="33"
+																id="lbGiardia_duodenalis"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+														<cell>
+															<radio
+																label="Ta en ia solium" value="34"
+																id="lbTa_en_ia_solium"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+														<cell>
+															<radio
+																label="Trichinella spiralis" value="35"
+																id="lbTrichinella_spiralis"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+													</row>
+													<row>
+														<cell></cell>
+														<cell>
+															<radio
+																label="Balantidium coli" value="36"
+																id="lbBalantidium_coli"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+														<cell>
+															<radio
+																label="Cryptosporidium" value="37"
+																id="lbCryptosporidium"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+														<cell>
+															<radio
+																label="Isospora belli" value="38" id="lbIsospora_belli"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+														<cell>
+															<radio
+																label="Tr ichur is trichiura" value="39"
+																id="lbTr_ichur_is_trichiura"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+														<cell>
+															<radio
+																label="Uncinarias" value="40" id="lbUncinarias"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+													</row>
+													<row>
+														<cell></cell>
+														<cell>
+															<radio
+																label="Enterobius vermicularis" value="41"
+																id="lbEnterobius_vermicularis"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+														<cell>
+															<radio
+																label="Strongyloides stercolaris" value="42"
+																id="lbStrongyloides_stercolaris"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+														<cell>
+															<radio
+																label="Hymenolepis nana" value="43"
+																id="lbHymenolepis_nana"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+														<cell>
+															<radio
+																label="Hymenolepis diminuta" value="44"
+																id="lbHymenolepis_diminuta"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+														<cell>
+															<radio
+																label="Dipylidium caninum" value="45"
+																id="lbDipylidium_caninum"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+													</row>
+													<row>
+														<cell></cell>
+														<cell>
+															<radio
+																label="Entamoeba hartamanni" value="46"
+																id="lbEntamoeba_hartamanni"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+														<cell>
+															<radio
+																label="Entamoeba coli" value="47" id="lbEntamoeba_coli"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+														<cell>
+															<radio
+																label="Endolimax nana" value="48" id="lbEndolimax_nana"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+														<cell>
+															<radio
+																label="Iodamoeba butschlii" value="49"
+																id="lbIodamoeba_butschlii"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+														<cell>
+															<radio
+																label="Chilomastix mesnili" value="50"
+																id="lbChilomastix_mesnili"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+													</row>
+													<row>
+														<cell></cell>
+														<cell>
+															<radio
+																label="Trichomonas hominis" value="51"
+																id="lbTrichomonas_hominis"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+														<cell>
+															<radio
+																label="Antimonio" value="52" id="lbAntimonio"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+														<cell>
+															<radio
+																label="Cadmio" value="53" id="lbCadmio"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+														<cell>
+															<radio
+																label="Cobre" value="54" id="lbCobre"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+														<cell>
+															<radio
+																label="Fluoruro" value="55" id="lbFluoruro"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+													</row>
+													<row>
+														<cell></cell>
+														<cell>
+															<radio
+																label="Plomo" value="56" id="lbPlomo"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+														<cell>
+															<radio
+																label="Estaño" value="57" id="lbEstano"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+														<cell>
+															<radio
+																label="Zinc" value="58" id="lbZinc"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+														<cell>
+															<radio
+																label="Nitritos o Nitratos" value="59"
+																id="lbNitritos_o_Nitratos"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+														<cell>
+															<radio
+																label="Cloruros" value="60" id="lbCloruros"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+													</row>
+													<row>
+														<cell></cell>
+														<cell>
+															<radio
+																label="Hidroxido de sodio" value="61"
+																id="lbHidroxido_de_sodio"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+														<cell>
+															<radio
+																label="Organofosforados" value="62"
+																id="lbOrganofosforados"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+														<cell>
+															<radio
+																label="Carbamatos" value="63" id="lbCarbamatos"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+														<cell>
+															<radio
+																label="Acido okadaico" value="64" id="lbAcido_okadaico"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+														<cell>
+															<radio
+																label="Saxitoxina" value="65" id="lbSaxitoxina"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+													</row>
+													<row>
+														<cell></cell>
+														<cell>
+															<radio
+																label="Alcaloides" value="65" id="lbAlcaloides"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+														<cell>
+															<radio
+																label="Hidrocarburo clorado" value="65"
+																id="lbHidrocarburo_clorado"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+														<cell>
+															<radio
+																label="Mercurio" value="65" id="lbMercurio"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+														<cell>
+															<radio
+																label="Fostato de triortocresilo" value="65"
+																id="lbFostato_de_triortocresilo"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+														<cell>
+															<radio
+																label="Glutamato monosodico" value="65"
+																id="lbGlutamato_monosodico"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+													</row>
+													<row>
+														<cell></cell>
+														<cell
+															colspan="8">
+															<radio
+																label="Complejo Entamoeba histolytica/dispar" value="29"
+																id="lbComplejo_Entamoeba_histolytica_dispar"
+																radiogroup="rdbAgente_seleccionado" />
+														</cell>
+													</row>
+												</rows>
+											</grid>
+										</groupbox>
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+				</div>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.Hisc_historialDao">
+
+	<resultMap id="hisc_historialMap" type="hisc_historial">
+		<result column="total_consulta_externa" property="total_consulta_externa" />
+		<result column="total_psicologia" property="total_psicologia" />
+		<result column="total_psiquiatria" property="total_psiquiatria" />
+		<result column="total_adulto_mayor" property="total_adulto_mayor" />
+		<result column="total_alteracion_embarazo" property="total_alteracion_embarazo" />
+		<result column="total_alteracion_joven" property="total_alteracion_joven" />
+		<result column="total_hipertenso_diabetico" property="total_hipertenso_diabetico" />
+		<result column="total_planificacion_familiar" property="total_planificacion_familiar" />
+		<result column="total_menor_2mes" property="total_menor_2mes" />
+		<result column="total_menor_2mes_2anos" property="total_menor_2mes_2anos" />
+		<result column="total_menor_2anos_5anos" property="total_menor_2anos_5anos" />
+		<result column="total_menor_5anos_10anos" property="total_menor_5anos_10anos" />
+		<result column="total_odontologia1ra" property="total_odontologia1ra" />
+		<result column="total_odontologia_evolucion" property="total_odontologia_evolucion" />
+		<result column="total_visita_domiciliaria" property="total_visita_domiciliaria" />
+		<result column="total_aiepi_menor_2_meses" property="total_aiepi_menor_2_meses" />
+		<result column="total_aiepi_menor_2_meses_5_anos" property="total_aiepi_menor_2_meses_5_anos" />
+		<result column="total_agudeza_visual" property="total_agudeza_visual" />
+		<result column="total_servicios_amigables" property="total_servicios_amigables" />
+		<result column="total_terapia_fisica" property="total_terapia_fisica" />
+		<result column="total_terapia_respiratoria" property="total_terapia_respiratoria" />
+	</resultMap>
+
+	<select id="consultar_historial" resultMap="hisc_historialMap"
+		parameterType="java.util.Map">
+		select
+		(select count(1) from public.hisc_consulta_externa
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal =
+		#{codigo_sucursal}
+		and nro_identificacion = #{nro_identificacion} AND via_ingreso = #{via_ingreso_cons_externa}) as
+		total_consulta_externa,
+		
+		
+		(select count(1) from public.hisc_consulta_externa
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal =
+		#{codigo_sucursal}
+		and nro_identificacion = #{nro_identificacion} AND via_ingreso = #{via_ingreso_cons_especializada}) as
+		total_consulta_especializada,
+		
+		(select count(1) from public.hisc_fisioterapia
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal =
+		#{codigo_sucursal}
+		and nro_identificacion = #{nro_identificacion} AND via_ingreso = #{via_ingreso_terapia_fisica}) as
+		total_terapia_fisica,
+		
+		
+		(select count(1) from public.hisc_fisioterapia
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal =
+		#{codigo_sucursal}
+		and nro_identificacion = #{nro_identificacion} AND via_ingreso = #{via_ingreso_terapia_respiratoria}) as
+		total_terapia_respiratoria,
+		
+		
+		(select count(1) from public.psicologia
+		where
+		codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal =
+		#{codigo_sucursal}
+		and identificacion = #{identificacion}) as
+		total_psicologia,
+		(select count(1) from public.psiquiatria
+		where
+		codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal =
+		#{codigo_sucursal}
+		and identificacion = #{identificacion}) as
+		total_psiquiatria,
+		(select count(1) from public.adulto_mayor
+		where
+		codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal =
+		#{codigo_sucursal}
+		and identificacion = #{identificacion}) as
+		total_adulto_mayor,
+		(select count(1) from
+		public.hisc_deteccion_alt_embarazo
+		where codigo_empresa =
+		#{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and
+		identificacion = #{identificacion}) as total_alteracion_embarazo,
+		(select count(1) from public.alteracion_joven
+		where codigo_empresa =
+		#{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and
+		identificacion = #{identificacion}) as total_alteracion_joven,
+		(select
+		count(1) from public.hisc_hipertenso_diabetico
+		where codigo_empresa =
+		#{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and
+		identificacion = #{identificacion}) as total_hipertenso_diabetico,
+		(select count(1) from public.planificacion_familiar
+		where
+		codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal =
+		#{codigo_sucursal}
+		and identificacion = #{identificacion}) as
+		total_planificacion_familiar,
+		(select count(1) from
+		public.hisc_deteccion_alt_mn_2mes
+		where codigo_empresa =
+		#{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and
+		identificacion = #{identificacion}) as total_menor_2mes,
+		(select
+		count(1) from public.hisc_deteccion_alt_menor_2m_2a
+		where
+		codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal =
+		#{codigo_sucursal}
+		and identificacion = #{identificacion}) as
+		total_menor_2mes_2anos,
+		(select count(1) from
+		public.his_atencion_crecimiento_menor2_5
+		where codigo_empresa =
+		#{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and
+		identificacion = #{identificacion}) as total_menor_2anos_5anos,
+		(select count(1) from public.hisc_deteccion_alt_menor_5a_10a
+		where
+		codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal =
+		#{codigo_sucursal}
+		and identificacion = #{identificacion}) as
+		total_menor_5anos_10anos,
+		(select count(1) from public.odontologia
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal =
+		#{codigo_sucursal}
+		and identificacion = #{identificacion}) as
+		total_odontologia1ra,
+		(select count(1) from
+		public.evolucion_odontologia
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and identificacion =
+		#{identificacion}) as total_odontologia_evolucion,
+		(select count(1) from public.visita_domiciliaria
+		where codigo_empresa =
+		#{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and
+		identificacion = #{identificacion}) as total_visita_domiciliaria,
+		(select count(1) from public.hisc_aiepi_mn_2_meses
+		where codigo_empresa
+		= #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and
+		identificacion = #{identificacion}) as total_aiepi_menor_2_meses,
+		(select count(1) from
+		public.hisc_aiepi_atencion_del_nino_de_2_meses_a_5_anos
+		where
+		codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal =
+		#{codigo_sucursal}
+		and identificacion = #{identificacion}) as
+		total_aiepi_menor_2_meses_5_anos,
+		(select count(1) from
+		public.agudeza_visual
+		where
+		codigo_empresa = #{codigo_empresa}
+		and
+		codigo_sucursal =
+		#{codigo_sucursal}
+		and identificacion =
+		#{identificacion})
+		as total_agudeza_visual,
+		(select count(1) from
+		public.hisc_servicios_amigables
+		where
+		codigo_empresa = #{codigo_empresa}
+		and
+		codigo_sucursal =
+		#{codigo_sucursal}
+		and identificacion =
+		#{identificacion})
+		as total_servicios_amigables
+	</select>
+
+</mapper>

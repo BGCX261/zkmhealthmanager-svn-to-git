@@ -1,0 +1,1670 @@
+<?page title="Hisc_aiepi_mn_2_meses" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<?component name="informacionPacientes" macroURI="/WEB-INF/macros/informacionPacientes.zul"?>
+<?component name="impresionDiagnostica" macroURI="/WEB-INF/macros/impresionDiagnostica.zul"?>
+<?component name="cuadroAIEPI" macroURI="/WEB-INF/macros/cuadroAiepi.zul"?>
+<?component name="remision_interna" macroURI="/WEB-INF/macros/remision_interna.zul"?>
+<?component name="autorizaciones" macroURI="/pages/autorizaciones.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formHisc_aiepi_mn_2_meses" width="100%" height="97%"
+		use="healthmanager.controller.Hisc_aiepi_mn_2_mesesAction"
+		onCreate="formHisc_aiepi_mn_2_meses.mostrarIni();">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px; border: 1px
+			solid silver; } tr.z-row .z-cell{ background-image:none; }
+			tr.z-row td.z-row-hover{ background-image:none; }
+			.GridSinBorde tr.z-row td.z-row-inner, tr.z-row
+			.z-cell,div.z-grid { border: none; overflow: hidden; zoom:
+			1; border-top: none; border-left: none; border-right: none;
+			border-bottom: none; }
+		</style>
+
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="false" closable="false"
+			mold="3d" height="100%">
+			<caption label="Consultar Historias Clinicas "
+				style="font-weight: bold">
+				<toolbarbutton image="/images/add_perfil.png"
+					style="font-weight:bold;float:right;margin-right:50px"
+					label="PACIENTE ADMISIONADO"
+					id="toolbarbuttonPaciente_admisionado1" />
+			</caption>
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" height="90%" mold="paging"
+				pageSize="20" vflex="1">
+				<auxhead>
+					<auxheader colspan="6">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="120px" />
+							<space width="5px" />
+							<textbox id="tbxValue" width="120px"
+								onOK="formHisc_aiepi_mn_2_meses.buscarDatos();"
+								style="text-transform:uppercase" />
+							<separator />
+							<label value="Tipo de Historia :" />
+							<listbox id="lbxTipoHistoria" mold="select"
+								sclass="combobox" width="150px"
+								onSelect="formHisc_aiepi_mn_2_meses.buscarDatos()">
+								<listitem label="Todas" selected="true"
+									value="0" />
+								<listitem label="Primera Vez" value="1" />
+								<listitem label="Control" value="2" />
+							</listbox>
+							<toolbarbutton label="Consultar"
+								image="/images/Magnifier.gif"
+								onClick="formHisc_aiepi_mn_2_meses.buscarDatos();"
+								tooltiptext="Consultar Historia" />
+							<separator />
+							<toolbarbutton label="Nueva" visible="false"
+								image="/images/New16.gif"
+								onClick='formHisc_aiepi_mn_2_meses.accionForm(healthmanager.controller.ZKWindow.OpcionesFormulario.REGISTRAR,null);'
+								tooltiptext="Nueva Historia" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Codigo historia" width="150px" />
+					<column label="Identificacion" width="200px" />
+					<column label="Nombre" />
+					<column label="Fecha inicial" width="150px" />
+					<column label="Tipo Historia" align="center"
+						width="100px" />
+					<column label="Acciones" align="center"
+						width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+		<groupbox id="groupboxEditar" visible="true" closable="false"
+			mold="3d" height="100%">
+			<caption label="Registrar/Modificar Historias Clinicas"
+				style="font-weight: bold">
+				<toolbarbutton image="/images/add_perfil.png"
+					style="font-weight:bold;float:right;margin-right:50px"
+					label="PACIENTE ADMISIONADO"
+					id="toolbarbuttonPaciente_admisionado2" />
+			</caption>
+
+			<borderlayout width="100%" height="100%"
+				id="borderlayoutEditar" visible="true">
+				<north border="none" id="northEditar">
+					<div height="50px">
+						<toolbar width="100%" align="start">
+							<textbox id="tbxAccion" value="registrar"
+								visible="false" />
+							<toolbarbutton image="/images/Save16.gif"
+								label="Guardar Historia"
+								onClick="formHisc_aiepi_mn_2_meses.guardarDatos();"
+								id="btGuardar" />
+							<toolbarbutton image="/images/New16.gif"
+								label="Nueva Historia" id="btNew" visible="false" />
+							<space />
+							<toolbarbutton image="/images/trasladar.gif"
+								label="Cancelar"
+								onClick='formHisc_aiepi_mn_2_meses.accionForm(healthmanager.controller.ZKWindow.OpcionesFormulario.CONSULTAR,null);'
+								id="btnCancelar" />
+							<toolbarbutton image="/images/print_ico.gif"
+								label="Imprimir Historia clinica"
+								onClick="formHisc_aiepi_mn_2_meses.imprimir();" id="btImprimir"
+								visible="false" />
+							<space />
+							<label value="Formato impresión: "
+								visible="false" />
+							<listbox id="lbxFormato" mold="select"
+								width="150px" visible="false" sclass="combobox">
+								<listitem value="pdf" label="PDF"
+									selected="true" />
+								<listitem value="rtf" label="WORD" />
+							</listbox>
+						</toolbar>
+						<toolbarbutton image="/images/info_icon.png"
+							style="font-weight:bold;float:right;margin-right:50px"
+							label="Historia Clinica de Control"
+							id="toolbarbuttonTipo_historia" />
+					</div>
+				</north>
+
+				<center autoscroll="true" border="none">
+					<div align="center">
+
+						<!-- *************************** -->
+						<!-- *** Insertar/Actualizar *** -->
+						<!-- *************************** -->
+						<groupbox closable="false" width="900px"
+							mold="3d">
+							<grid sclass="GridSinBorde" hflex="1">
+								<columns>
+									<column />
+								</columns>
+								<rows>
+									<row>
+										<cell>
+											<groupbox mold="3d"
+												closable="false" visible="true" id="gbxIdentificacion">
+												<caption
+													label="IDENTIFICACIÓN" style="font-weight:bold" />
+												<informacionPacientes
+													id="infoPacientes" />
+												<hbox />
+												<label
+													value="¿El niño está registrado?" />
+												<space />
+												<radiogroup
+													id="rdbNino_registrado">
+													<radio
+														id="Nino_registrado1" label="SÍ" value="1" />
+													<space />
+													<radio
+														id="Nino_registrado2" label="NO" selected="true"
+														value="2" />
+												</radiogroup>
+											</groupbox>
+										</cell>
+									</row>
+									<row>
+										<cell>
+											<groupbox mold="3d"
+												closable="false" visible="true" id="gbxDatosPaciente">
+												<caption
+													label="DATOS DEL PACIENTE" style="font-weight:bold" />
+
+												<groupbox
+													id="grouboxAcompanante" closable="false">
+													<caption
+														label="Acompañante" />
+													<grid>
+														<columns>
+															<column />
+															<column
+																width="90px" />
+															<column
+																width="200px" />
+															<column
+																width="200px" />
+															<column />
+														</columns>
+														<rows>
+															<row>
+																<cell />
+																<cell>
+																	<label
+																		id="lbParentesco_acompanante" value="Relación: " />
+																</cell>
+																<cell
+																	colspan="2">
+																	<listbox
+																		id="lbxParentesco_acompanante" name="relacion_acomp"
+																		mold="select" width="120px" sclass="combobox"
+																		onSelect="formHisc_aiepi_mn_2_meses.onSeleccionarRelacionAcompaniante()" />
+																	<space />
+																	<textbox
+																		id="tbxOtro_acompanante" hflex="1"
+																		style="text-transform:uppercase" visible="false" />
+																</cell>
+																<cell />
+															</row>
+															<row>
+																<cell />
+																<cell>
+																	<label
+																		id="lbNombre_acompanante" value="Nombre: " />
+																</cell>
+																<cell>
+																	<textbox
+																		id="tbxNombres_acompanante" hflex="1"
+																		style="text-transform:uppercase" />
+																</cell>
+																<cell>
+																	<textbox
+																		id="tbxApellidos_acompanante" hflex="1"
+																		style="text-transform:uppercase" />
+																</cell>
+																<cell />
+															</row>
+															<row>
+																<cell />
+																<cell>
+																	<label
+																		id="lbId_acompanante" value="Identificación: " />
+																</cell>
+																<cell>
+																	<textbox
+																		id="tbxId_acompanante" hflex="1"
+																		style="text-transform:uppercase" />
+																</cell>
+																<cell>
+																	<label
+																		value="Teléfono: " />
+																	<space />
+																	<textbox
+																		id="tbxTelefono_acompanante" hflex="1"
+																		style="text-transform:uppercase" />
+																</cell>
+																<cell />
+															</row>
+														</rows>
+													</grid>
+												</groupbox>
+
+												<groupbox
+													id="grouboxMadre" closable="false">
+													<caption
+														label="Madre" />
+													<grid>
+														<columns>
+															<column />
+															<column
+																width="90px" />
+															<column
+																width="200px" />
+															<column
+																width="200px" />
+															<column />
+														</columns>
+														<rows>
+															<row>
+																<cell />
+																<cell>
+																	<label
+																		id="lbNombres_madre" value="Nombre: " />
+																</cell>
+																<cell>
+																	<textbox
+																		id="tbxNombres_madre" hflex="1"
+																		style="text-transform:uppercase" />
+																</cell>
+																<cell>
+																	<textbox
+																		id="tbxApellidos_madre" hflex="1"
+																		style="text-transform:uppercase" />
+																</cell>
+																<cell />
+															</row>
+															<row>
+																<cell />
+																<cell>
+																	<label
+																		id="lbId_madre" value="Identificación: " />
+																</cell>
+																<cell>
+																	<textbox
+																		id="tbxId_madre" hflex="1"
+																		style="text-transform:uppercase" />
+																</cell>
+																<cell>
+																	<label
+																		value="Teléfono: " />
+																	<space />
+																	<textbox
+																		id="tbxTelefono_madre" hflex="1"
+																		style="text-transform:uppercase" />
+																</cell>
+																<cell />
+															</row>
+															<row>
+																<cell />
+																<cell>
+																	<label
+																		id="lblOcupacion_madre" value="Ocupación:" />
+																</cell>
+																<cell
+																	colspan="2">
+																	<hlayout>
+																		<bandboxRegistros
+																			id="tbxOcupacion_madre" widthBandbox="60px"
+																			widthListbox="350px" heightListbox="300px"
+																			columnas="Codigo#65px|Nombre" />
+																		<textbox
+																			id="tbxInfoOcupacion_madre" width="280px"
+																			style="text-transform:uppercase" readonly="true" />
+																		<toolbarbutton
+																			id="btnLimpiarOcupacion_madre"
+																			image="/images/borrar.gif" />
+																	</hlayout>
+
+																</cell>
+																<cell />
+															</row>
+															<row>
+																<cell />
+																<cell>
+																	<label
+																		id="lbEdad_madre" value="Edad: " />
+																</cell>
+																<cell>
+																	<intbox
+																		constraint="no negative:Este valor no puede ser negativo"
+																		id="ibxEdad_madre" width="50px"
+																		style="text-transform:uppercase" />
+																</cell>
+																<cell
+																	colspan="2">
+																</cell>
+																<cell />
+															</row>
+
+														</rows>
+													</grid>
+												</groupbox>
+
+												<groupbox
+													id="grouboxPadre" closable="false">
+													<caption
+														label="Padre" />
+													<grid>
+														<columns>
+															<column />
+															<column
+																width="90px" />
+															<column
+																width="200px" />
+															<column
+																width="200px" />
+															<column />
+														</columns>
+														<rows>
+															<row>
+																<cell />
+																<cell>
+																	<label
+																		id="lbNombres_padre" value="Nombre: " />
+																</cell>
+																<cell>
+																	<textbox
+																		id="tbxNombres_padre" hflex="1"
+																		style="text-transform:uppercase" />
+																</cell>
+																<cell>
+																	<textbox
+																		id="tbxApellidos_padre" hflex="1"
+																		style="text-transform:uppercase" />
+																</cell>
+																<cell />
+															</row>
+															<row>
+																<cell />
+																<cell>
+																	<label
+																		id="lbId_padre" value="Identificación: " />
+																</cell>
+																<cell>
+																	<textbox
+																		id="tbxId_padre" hflex="1"
+																		style="text-transform:uppercase" />
+																</cell>
+																<cell>
+																	<label
+																		value="Teléfono: " />
+																	<space />
+																	<textbox
+																		id="tbxTelefono_padre" hflex="1"
+																		style="text-transform:uppercase" />
+																</cell>
+																<cell />
+															</row>
+															<row>
+																<cell />
+																<cell>
+																	<label
+																		id="lblOcupacion_padre" value="Ocupación:" />
+																</cell>
+																<cell
+																	colspan="2">
+																	<hlayout>
+																		<bandboxRegistros
+																			id="tbxOcupacion_padre" widthBandbox="60px"
+																			widthListbox="350px" heightListbox="300px"
+																			columnas="Codigo#65px|Nombre" />
+																		<textbox
+																			id="tbxInfoOcupacion_padre" width="280px"
+																			style="text-transform:uppercase" readonly="true" />
+																		<toolbarbutton
+																			id="btnLimpiarOcupacion_padre"
+																			image="/images/borrar.gif" />
+																	</hlayout>
+																</cell>
+																<cell />
+															</row>
+															<row>
+																<cell />
+																<cell>
+																	<label
+																		id="lbEdad_padre" value="Edad: " />
+																</cell>
+																<cell>
+																	<intbox
+																		constraint="no negative:Este valor no puede ser negativo"
+																		id="ibxEdad_padre" width="50px"
+																		style="text-transform:uppercase" />
+																</cell>
+																<cell
+																	colspan="2">
+																</cell>
+																<cell />
+															</row>
+														</rows>
+													</grid>
+												</groupbox>
+											</groupbox>
+										</cell>
+									</row>
+
+									<!-- fila 8 -->
+									<row>
+										<cell>
+											<groupbox mold="3d"
+												closable="false">
+												<caption
+													label="MOTIVO DE CONSULTA Y ENFERMEDAD ACTUAL "
+													style="font-weight:bold" />
+												<vbox width="100%">
+													<hbox hflex="1">
+														<label value="*"
+															style="color: red" tooltiptext="Campo obligatorio" />
+														<label
+															id="lbMotivo_consulta" value="Motivo de consulta: " />
+													</hbox>
+													<textbox
+														id="tbxMotivo_consulta" hflex="1" rows="9"
+														style="text-transform:uppercase" height="50px" />
+													<div
+														style="margin-top:5px">
+														<label
+															value="* " style="color: red"
+															tooltiptext="Campo obligatorio" />
+														<label
+															value="Enfermedad actual:  " />
+														<label
+															id="lbEnfermedad_actual" visible="true"
+															value=" (diligenciar fecha de inicio, presentación inicial o repetida, manera de
+																			 inicio, relacionado con evolución, síntomas asociados, tratamientos recibidos que presenta actualmente.)"
+															style="color:red" />
+													</div>
+													<radiogroup
+														id="rdbseleccion"
+														onCheck="formHisc_aiepi_mn_2_meses.seleccion(self)">
+
+														<radio
+															id="rdSeleccion1" label="Redacción libre" value="1"
+															checked="true" />
+														<space />
+														<radio
+															id="rdSeleccion2" label="Usar plantilla" value="2" />
+														<space />
+														<radio
+															id="rdSeleccion3" label="Usar en caso de dolor"
+															value="3" />
+													</radiogroup>
+													<toolbarbutton
+														image="/images/New16.gif"
+														tooltiptext="Limpia planilla y enfermedad actual"
+														label="Limpiar texto"
+														onClick="formHisc_aiepi_mn_2_meses.LimpiarPlantilla()" />
+
+													<grid
+														id="grid_en_caso_de_Dolor">
+
+														<columns>
+															<column
+																label="" width="25%" />
+															<column
+																label="" width="25%" />
+															<column
+																label="" width="10%" />
+															<column
+																label="" width="40%" />
+														</columns>
+														<rows>
+
+															<row>
+																<cell
+																	colspan="4">
+																	<textbox
+																		id="tbxEnfermedad_actual" hflex="1" rows="9"
+																		style="text-transform:uppercase" height="50px"
+																		visible="false" />
+																</cell>
+															</row>
+
+															<row
+																id="row2" visible="false">
+																<cell
+																	colspan="1">
+																	<label
+																		id="lbFecha_inicio" value="Fecha o tiempo de inicio"
+																		visible="false" />
+
+																</cell>
+																<cell
+																	colspan="3">
+																	<textbox
+																		id="tbxFecha_inicio" visible="false" width="98%" />
+																</cell>
+															</row>
+															<row
+																id="row3" visible="false">
+																<cell
+																	colspan="1">
+																	<label
+																		id="lbPrimera_presentacion" value="Presentación: "
+																		visible="false" />
+																</cell>
+																<cell
+																	colspan="1">
+																	<listbox
+																		id="lbxPrimera_presentacion" visible="false" hflex="1"
+																		mold="select"
+																		onSelect="formHisc_aiepi_mn_2_meses.onSeleccionarPresentacion()">
+																		<listitem
+																			value="S" label="Primera vez" selected="true" />
+																		<listitem
+																			value="N" label="Repetido" />
+																	</listbox>
+																</cell>
+																<cell
+																	colspan="4">
+																	<label
+																		id="lbVeces_repetido" value="Número de veces "
+																		visible="false" />
+																	<space />
+																	<spinner
+																		id="spinnerVeces_repetido" width="50px" step="1"
+																		constraint="no empty min 1" value="1" visible="false" />
+																</cell>
+															</row>
+															<row
+																id="row4" visible="false">
+																<cell
+																	colspan="1">
+
+																	<label
+																		id="lbMan_for_inicio"
+																		value="Manera o forma  de inicio:" visible="false" />
+																</cell>
+																<cell
+																	colspan="3">
+																	<textbox
+																		id="tbxManera_form_inicio" visible="false"
+																		width="98%" />
+																</cell>
+															</row>
+															<row
+																id="row5" visible="false">
+																<cell
+																	colspan="1">
+																	<label
+																		id="lbRelacionado" value="Relacionado con:   "
+																		visible="false" />
+																</cell>
+																<cell
+																	colspan="3">
+																	<textbox
+																		id="tbxRelacionado" visible="false" width="98%" />
+																</cell>
+															</row>
+
+															<row
+																id="row7" visible="false">
+																<cell
+																	colspan="1">
+																	<label
+																		id="lbsintomas_asociados"
+																		value="Síntomas (principales y asociados):    "
+																		visible="false" />
+																</cell>
+																<cell
+																	colspan="3">
+																	<textbox
+																		id="tbxSintomas_asociados" visible="false"
+																		width="98%" />
+																</cell>
+															</row>
+
+															<row
+																id="row6" visible="false">
+																<cell
+																	colspan="1">
+																	<label
+																		id="lbEvolucion_cuadro" value="Evolución del cuadro: "
+																		visible="false" />
+																</cell>
+																<cell
+																	colspan="3">
+																	<textbox
+																		id="tbxEvolucion" visible="false" width="98%" />
+																</cell>
+															</row>
+
+															<row
+																id="row8" visible="false">
+																<cell
+																	colspan="1">
+																	<label
+																		id="lbTratamiento_recibido"
+																		value="Tratamiento recibido:                 "
+																		visible="false" />
+																</cell>
+																<cell
+																	colspan="3">
+																	<textbox
+																		id="tbxTratamiento_recibido" visible="false"
+																		width="98%" />
+																</cell>
+															</row>
+															<row
+																id="row9" visible="false">
+																<cell
+																	colspan="1">
+																	<label
+																		id="lbActual_presenta"
+																		value="Actualmente se presenta con: " visible="false" />
+																</cell>
+																<cell
+																	colspan="3">
+																	<textbox
+																		id="tbxActualmente_presenta" visible="false"
+																		width="98%" />
+																</cell>
+															</row>
+															<row
+																id="row11" visible="false">
+																<cell
+																	colspan="1">
+																	<label
+																		id="lbLocalizacion" value="Localización:  "
+																		visible="false" style="color:red" />
+																</cell>
+																<cell
+																	colspan="3">
+																	<hbox
+																		visible="false" id="hbxLocalizacion">
+																		<checkbox
+																			label="Cabeza" id="cbxCabeza" name="cbxCabeza"
+																			visible="false" />
+																		<checkbox
+																			label="Cuello" id="cbxCuello" visible="false" />
+																		<checkbox
+																			label="Tórax" id="cbxToraz" visible="false" />
+																		<checkbox
+																			label="Abdomen" id="cbxAbdomen" visible="false" />
+
+																	</hbox>
+																	<textbox
+																		id="tbxlocalizacion" width="98%" visible="false" />
+																</cell>
+															</row>
+
+															<row
+																id="row10" visible="false">
+																<cell
+																	colspan="1">
+																	<label
+																		id="lbIrradiacion" value="Irradiación:      "
+																		visible="false" style="color:red" />
+																</cell>
+																<cell
+																	colspan="3">
+																	<textbox
+																		id="tbxIrradiacion" visible="false" width="98%" />
+																</cell>
+															</row>
+															<row
+																id="row12" visible="false">
+																<cell
+																	colspan="1">
+																	<label
+																		id="lbIntensidad" value="Intensidad: " visible="false"
+																		style="color:red" />
+																</cell>
+																<cell
+																	colspan="3">
+																	<listbox
+																		id="lbxIntensidad" name="intensidad" mold="select"
+																		visible="false">
+																	</listbox>
+																</cell>
+															</row>
+															<row
+																id="row13" visible="false">
+																<cell
+																	colspan="1">
+																	<label
+																		id="lbCaracteristicas_Dolor"
+																		value="Características del dolor:     "
+																		visible="false" style="color:red" />
+																</cell>
+																<cell
+																	colspan="3">
+																	<textbox
+																		id="tbxCaracteristicas_dolor" visible="false"
+																		width="98%" />
+																</cell>
+															</row>
+															<row
+																visible="false" id="row14">
+																<cell
+																	colspan="4">
+																	<vbox
+																		hflex="1">
+																		<toolbarbutton
+																			label="Generar Párrafo" image="/images/generar.png"
+																			onClick="formHisc_aiepi_mn_2_meses.generarParrafoEnfermedadActual()" />
+																		<textbox
+																			id="tbxParrafo_enfermedad_actual" rows="6" hflex="1" />
+																	</vbox>
+																</cell>
+															</row>
+														</rows>
+													</grid>
+												</vbox>
+											</groupbox>
+										</cell>
+									</row>
+
+									<row>
+										<cell>
+											<groupbox mold="3d"
+												closable="false">
+												<caption
+													label="ANTECEDENTES PATOLÓGICOS" />
+												<grid
+													sclass="GridSinBorde" style="border:none">
+													<columns>
+														<column
+															width="170px" />
+														<column
+															width="170px" />
+														<column />
+													</columns>
+													<rows>
+														<row>
+															<cell
+																colspan="3">
+																<label
+																	id="lbAnt_pat_como_fue_embarazo"
+																	value="¿Como fue el embarazo?" />
+															</cell>
+														</row>
+														<row>
+															<cell
+																colspan="3">
+																<textbox
+																	id="tbxAnt_pat_como_fue_embarazo" hflex="1" rows="3"
+																	style="text-transform:uppercase" maxlength="-1" />
+															</cell>
+														</row>
+														<row>
+															<cell>
+																<label
+																	id="lbAnt_pat_cuanto_duro_embarazo"
+																	value="¿Cuanto duró el embarazo?" />
+															</cell>
+															<cell>
+																<intbox
+																	constraint="no negative:Este valor no puede ser negativo"
+																	id="ibxAnt_pat_cuanto_duro_embarazo" width="30px" />
+																<space />
+																<label
+																	value="(Sem.)" />
+															</cell>
+															<cell>
+																<label
+																	id="lbHemoclasificacion" value="Hemoclasificación: " />
+																<space />
+																<textbox
+																	id="tbxAnt_pat_hemoclasificacion" width="50px"
+																	style="text-transform:uppercase" maxlength="3" />
+															</cell>
+														</row>
+														<row>
+															<cell
+																colspan="3">
+																<label
+																	id="lbAnt_pat_como_fue_parto"
+																	value="¿Como fue el parto?" />
+															</cell>
+														</row>
+														<row>
+															<cell
+																colspan="3">
+																<textbox
+																	id="tbxAnt_pat_como_fue_parto" hflex="1" rows="3"
+																	style="text-transform:uppercase" maxlength="-1" />
+															</cell>
+														</row>
+														<row>
+															<cell>
+																<label
+																	id="lbAnt_pat_cuanto_peso_nacer"
+																	value="¿Cuanto pesó al nacer?" />
+															</cell>
+															<cell>
+																<doublebox
+																	id="dbxAnt_pat_cuanto_peso_nacer" width="70px"
+																	locale="en" />
+																<space />
+																<label
+																	value="(grs)" />
+															</cell>
+															<cell>
+																<label
+																	id="lbAnt_pat_cuanto_midio_nacer"
+																	value="¿Cuanto midió al nacer?" />
+																<space />
+																<doublebox
+																	id="dbxAnt_pat_cuanto_midio_nacer" width="70px"
+																	locale="en" />
+																<space />
+																<label
+																	value="(cm)" />
+															</cell>
+														</row>
+														<row>
+															<cell
+																colspan="3">
+																<label
+																	id="lbAnt_pat_presento_problema_nacer"
+																	value="¿Presento algún problema al nacer?" />
+															</cell>
+														</row>
+														<row>
+															<cell
+																colspan="3">
+																<textbox
+																	id="tbxAnt_pat_presento_problema_nacer" hflex="1"
+																	rows="3" style="text-transform:uppercase"
+																	maxlength="-1" />
+															</cell>
+														</row>
+														<row>
+															<cell
+																colspan="3">
+																<label
+																	id="lbAnt_pat_enfermedades"
+																	value="¿Que enfermedades ha tenido?" />
+															</cell>
+														</row>
+														<row>
+															<cell
+																colspan="3">
+																<textbox
+																	id="tbxAnt_pat_enfermedades" hflex="1" rows="3"
+																	style="text-transform:uppercase" maxlength="-1" />
+															</cell>
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+
+									<row>
+										<cell>
+											<groupbox mold="3d"
+												closable="false">
+												<caption
+													label="SIGNOS VITALES">
+													<toolbarbutton
+														id="toolbarbuttonCargar_signos"
+														image="/images/refresh_m.png"
+														label="Cargar signos vitales"
+														onClick="formHisc_aiepi_mn_2_meses.cargarSignosVitalesEnfermera()" />
+												</caption>
+												<grid
+													sclass="GridSinBorde" style="border:none">
+													<columns>
+														<column
+															label="" />
+														<column label=""
+															width="155px" />
+														<column label=""
+															width="100px" />
+														<column label=""
+															width="85px" />
+														<column label=""
+															width="100px" />
+														<column label=""
+															width="120px" />
+														<column label=""
+															width="100px" />
+														<column label=""
+															width="90px" />
+														<column label=""
+															width="100px" />
+														<column
+															label="" />
+													</columns>
+													<rows>
+														<row>
+															<cell />
+															<cell>
+																<label
+																	value="* " style="color: red"
+																	tooltiptext="Campo obligatorio" />
+																<label
+																	id="lbPeso_1" value="Peso (grs): " />
+															</cell>
+															<cell>
+																<doublebox
+																	id="dbxSignos_vitales_peso" format="##0.###"
+																	width="70px" locale="en"
+																	onChange="formHisc_aiepi_mn_2_meses.calcularIMC(dbxSignos_vitales_peso,dbxSignos_vitales_talla,dbxSignos_vitales_imc);formHisc_aiepi_mn_2_meses.validarBotonesDE(2);formHisc_aiepi_mn_2_meses.autoOpcionesCuadros();" />
+															</cell>
+															<cell>
+																<label
+																	value="* " style="color: red"
+																	tooltiptext="Campo obligatorio" />
+																<label
+																	id="lbTalla" value="Talla (cm): " />
+															</cell>
+															<cell>
+																<doublebox
+																	id="dbxSignos_vitales_talla" format="##0.###"
+																	width="70px" locale="en"
+																	onChange="formHisc_aiepi_mn_2_meses.calcularIMC(dbxSignos_vitales_peso,dbxSignos_vitales_talla,dbxSignos_vitales_imc);formHisc_aiepi_mn_2_meses.validarBotonesDE(0);formHisc_aiepi_mn_2_meses.autoOpcionesCuadros()" />
+															</cell>
+															<cell>
+																<label
+																	value="* " style="color: red"
+																	tooltiptext="Campo obligatorio" />
+																<label
+																	id="lbPerimetro_cefalico" value="P.C. (cm): "
+																	tooltiptext="Perímetro Cefálico" />
+															</cell>
+															<cell>
+																<doublebox
+																	id="dbxSignos_vitales_pc" format="##0.###" width="70px"
+																	locale="en"
+																	onChange="formHisc_aiepi_mn_2_meses.validarBotonesDE(1);formHisc_aiepi_mn_2_meses.autoOpcionesCuadros()" />
+															</cell>
+															<cell>
+																<label
+																	id="lbImc" value="I.M.C: "
+																	tooltiptext="Índice de masa corporal" />
+															</cell>
+															<cell>
+																<doublebox
+																	id="dbxSignos_vitales_imc" format="##0.###"
+																	width="70px" locale="en" readonly="true" />
+															</cell>
+															<cell />
+														</row>
+
+														<row>
+															<cell />
+															<cell>
+																<label
+																	value="* " style="color: red"
+																	tooltiptext="Campo obligatorio" />
+																<label
+																	id="lbFrec_cardiaca" value="F.C. (min): "
+																	tooltiptext="Frecuencia Cardiaca" />
+															</cell>
+															<cell>
+																<doublebox
+																	id="dbxSignos_vitales_fc" format="##0.###" width="70px"
+																	locale="en"
+																	onChange="formHisc_aiepi_mn_2_meses.alertaFc(dbxSignos_vitales_fc);formHisc_aiepi_mn_2_meses.autoOpcionesCuadros()" />
+															</cell>
+															<cell>
+																<label
+																	value="* " style="color: red"
+																	tooltiptext="Campo obligatorio" />
+																<label
+																	id="lbFrec_respiratoria" value="F.R. (min): "
+																	tooltiptext="Frecuencia Respiratoria" />
+															</cell>
+															<cell>
+																<doublebox
+																	id="dbxSignos_vitales_fr" width="70px" format="##0.###"
+																	locale="en"
+																	onChange="formHisc_aiepi_mn_2_meses.alertaFr(dbxSignos_vitales_fr);formHisc_aiepi_mn_2_meses.autoOpcionesCuadros()" />
+															</cell>
+															<cell>
+																<label
+																	value="* " style="color: red"
+																	tooltiptext="Campo obligatorio" />
+																<label
+																	id="lbTemperatura" value="Temp. Axilar (°C): " />
+															</cell>
+															<cell>
+																<doublebox
+																	id="dbxSignos_vitales_taxilar" format="##0.###"
+																	width="70px" locale="en"
+																	onChange="formHisc_aiepi_mn_2_meses.alertaTemperatura(dbxSignos_vitales_taxilar);formHisc_aiepi_mn_2_meses.autoOpcionesCuadros()" />
+															</cell>
+															<cell>
+																<label
+																	id="lbOximetria" value="Oximetría (%): " />
+															</cell>
+															<cell>
+																<doublebox
+																	id="dbxSignos_vitales_oximetria" format="##0.###"
+																	width="70px" locale="en" maxlength="3" />
+															</cell>
+															<cell />
+														</row>
+														<row>
+															<cell />
+															<cell>
+																<label
+																	id="lbSintomaticos_respiratorio"
+																	value="Sintomáticos respiratorio: " />
+															</cell>
+															<cell
+																colspan="3">
+																<radiogroup
+																	id="rdbSignos_vitales_sintomaticos_respiratorio">
+																	<radio
+																		id="Sintomaticos_respiratorio1" label="SÍ" value="1" />
+																	<space />
+																	<radio
+																		id="Sintomaticos_respiratorio2" label="NO"
+																		selected="true" value="2" />
+																	<space />
+																	<radio
+																		id="Sintomaticos_respiratorio21"
+																		label="Riesgo no evaluado" selected="true" value="21" />
+																</radiogroup>
+															</cell>
+															<cell>
+																<label
+																	id="lbSintomaticos_piel" value="Sintomáticos piel: " />
+															</cell>
+															<cell
+																colspan="4">
+																<radiogroup
+																	id="rdbSignos_vitales_sintomaticos_piel">
+																	<radio
+																		id="Sintomaticos_piel1" label="SÍ" value="1" />
+																	<space />
+																	<radio
+																		id="Sintomaticos_piel2" label="NO" selected="true"
+																		value="2" />
+																</radiogroup>
+															</cell>
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+									<row>
+										<cell>
+											<groupbox mold="3d"
+												closable="false">
+												<grid
+													sclass="GridSinBorde" style="border:none">
+													<columns>
+														<column label=""
+															width="70px" />
+														<column label=""
+															width="180px" align="center" />
+														<column
+															label="" />
+														<column label=""
+															width="180px" align="center" />
+														<column
+															label="" />
+														<column label=""
+															width="180px" align="center" />
+														<column
+															label="" />
+														<column label=""
+															width="180px" align="center" />
+														<column label=""
+															width="70px" />
+													</columns>
+
+													<rows>
+														<row>
+															<cell />
+															<cell>
+																<button
+																	label="Calcular Peso/Edad" id="btnCalcularPesoEdad"
+																	hflex="1" disabled="true"
+																	onClick="formHisc_aiepi_mn_2_meses.calcularPesoEdad()"
+																	width="180px" />
+															</cell>
+															<cell />
+															<cell>
+																<button
+																	label="Calcular Talla/Edad" id="btnCalcularTallaEdad"
+																	hflex="1" disabled="true"
+																	onClick="formHisc_aiepi_mn_2_meses.calcularTallaEdad()"
+																	width="180px" />
+															</cell>
+															<cell />
+															<cell>
+																<button
+																	label="Calcular Peso/Talla" id="btnCalcularPesoTalla"
+																	hflex="1" disabled="true"
+																	onClick="formHisc_aiepi_mn_2_meses.calcularPesoTalla()"
+																	width="180px" />
+															</cell>
+															<cell />
+															<cell>
+																<button
+																	label="Calcular Per. Cefálico/Edad"
+																	id="btnCalcularPerimetroCefalicoEdad" hflex="1"
+																	disabled="true"
+																	onClick="formHisc_aiepi_mn_2_meses.calcularPerimetroCefalicoEdad()"
+																	width="180px" />
+															</cell>
+															<cell />
+														</row>
+														<row>
+															<cell />
+															<cell
+																height="30px">
+																<label
+																	id="lbP_e_de" value="P/E DE: " />
+																<space />
+																<doublebox
+																	id="dbxSignos_vitales_p_e_de" format="##0"
+																	width="160px" readonly="true"
+																	style="text-align:center;" />
+															</cell>
+															<cell />
+															<cell
+																height="30px">
+																<label
+																	id="lbT_e_de" value="T/E DE: " />
+																<space />
+																<doublebox
+																	id="dbxSignos_vitales_t_e_de" width="160px"
+																	readonly="true" format="##0"
+																	style="text-align:center;" />
+															</cell>
+															<cell />
+															<cell
+																height="30px">
+																<label
+																	id="lbP_t_de" value="P/T DE: " />
+																<space />
+																<doublebox
+																	id="dbxSignos_vitales_p_t_de" width="160px"
+																	readonly="true" format="##0"
+																	style="text-align:center;" />
+															</cell>
+															<cell />
+															<cell
+																height="30px">
+																<label
+																	id="lbPC_e_de" value="PC/E DE: " />
+																<space />
+																<doublebox
+																	id="dbxSignos_vitales_pc_e_de" width="160px"
+																	readonly="true" format="##0"
+																	style="text-align:center;" />
+															</cell>
+															<cell />
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+									<row>
+										<cell>
+											<groupbox mold="3d"
+												closable="false">
+												<grid
+													sclass="GridSinBorde" style="border:none">
+													<columns>
+														<column label=""
+															width="138px" />
+														<column
+															label="" />
+													</columns>
+													<rows>
+														<row>
+															<cell
+																colspan="2">
+																<groupbox
+																	id="gbxCuadro1" mold="3d" closable="false">
+																	<caption
+																		label="EVALUAR Y CLASIFICAR ENFERMEDAD MUY GRAVE O POSIBLE INFECCIÓN LOCAL PREGUNTAR A LA MADRE QUÉ PROBLEMAS TIENE EL NIÑO Y LUEGO:" />
+																	<vlayout>
+																		<cuadroAIEPI
+																			id="macroCuadroAIEPI1" />
+																		<label
+																			id="lbObservaciones_cuadro1" value="Observaciones" />
+																		<textbox
+																			id="tbxObservaciones_cuadro1" hflex="1" rows="4"
+																			style="text-transform:uppercase" maxlength="-1" />
+																	</vlayout>
+																</groupbox>
+															</cell>
+														</row>
+														<row>
+															<cell>
+																<label
+																	id="lbTiene_nino_diarrea"
+																	value="¿Tiene el niño diarrea?" />
+															</cell>
+															<cell>
+																<radiogroup
+																	id="rdbTiene_nino_diarrea"
+																	onCheck="gbxCuadro2.setVisible(rdbTiene_nino_diarrea.getSelectedIndex()==0)">
+																	<radio
+																		id="Tiene_nino_diarrea1" label="SÍ" value="1" />
+																	<space />
+																	<radio
+																		id="Tiene_nino_diarrea2" label="NO" selected="true"
+																		value="2" />
+																</radiogroup>
+															</cell>
+														</row>
+														<row>
+															<cell
+																colspan="2">
+																<groupbox
+																	id="gbxCuadro2" mold="3d" closable="false"
+																	visible="false">
+																	<caption
+																		label="EVALUAR Y CLASIFICAR AL MENOR DE 2 MESES CON DIARREA, PREGUNTAR: ¿TIENE EL LACTANTE DIARREA?:" />
+																	<vlayout>
+																		<cuadroAIEPI
+																			id="macroCuadroAIEPI2" />
+																		<label
+																			id="lbObservaciones_cuadro2" value="Observaciones" />
+																		<textbox
+																			id="tbxObservaciones_cuadro2" hflex="1" rows="4"
+																			style="text-transform:uppercase" maxlength="-1" />
+																	</vlayout>
+																</groupbox>
+															</cell>
+														</row>
+														<row>
+															<cell
+																colspan="2">
+																<groupbox
+																	id="gbxCuadro3" mold="3d" closable="false">
+																	<caption
+																		label="VERIFICAR EL CRECIMIENTO Y LAS PRÁCTICAS DE ALIMENTACIÓN DEL MENOR DE 2 MESES:" />
+																	<vlayout>
+																		<cuadroAIEPI
+																			id="macroCuadroAIEPI3" />
+																		<label
+																			id="lbObservaciones_cuadro3" value="Observaciones" />
+																		<textbox
+																			id="tbxObservaciones_cuadro3" hflex="1" rows="4"
+																			style="text-transform:uppercase" maxlength="-1" />
+																	</vlayout>
+																</groupbox>
+															</cell>
+														</row>
+														<row>
+															<cell
+																colspan="2">
+																<groupbox
+																	id="gbxCuadro4" mold="3d" closable="false">
+																	<caption
+																		label="EVALUAR Y CLASIFICAR EL DESARROLLO DE TODOS LOS MENORES DE 2 MESES:" />
+																	<vlayout>
+																		<cuadroAIEPI
+																			id="macroCuadroAIEPI4" />
+																		<label
+																			id="lbObservaciones_cuadro4" value="Observaciones" />
+																		<textbox
+																			id="tbxObservaciones_cuadro4" hflex="1" rows="4"
+																			style="text-transform:uppercase" maxlength="-1" />
+																	</vlayout>
+																</groupbox>
+															</cell>
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+
+									<row>
+										<cell>
+											<groupbox mold="3d"
+												closable="false">
+												<caption
+													label="VACUNALES" />
+												<grid>
+													<columns>
+														<column
+															width="20px" />
+														<column
+															width="90px" />
+														<column
+															width="45px" />
+														<column
+															width="90px" />
+														<column
+															width="45px" />
+														<column
+															width="95px" />
+														<column />
+														<column
+															width="90px" />
+														<column
+															width="115px" />
+														<column
+															width="20px" />
+													</columns>
+													<rows>
+														<row>
+															<cell
+																colspan="10">
+																<label
+																	style="font-weight:bold" value="Madre" />
+															</cell>
+														</row>
+														<row>
+															<cell />
+															<cell>
+																<label
+																	id="lbVacunales_madre_antitetanica1"
+																	value="Antitetánica #1" />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbVacunales_madre_antitetanica1" />
+															</cell>
+															<cell>
+																<label
+																	id="lbVacunales_madre_antitetanica2"
+																	value="Antitetánica #2" />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbVacunales_madre_antitetanica2" />
+															</cell>
+															<cell>
+																<label
+																	id="lbVacunales_madre_otras_vacunas"
+																	value="Otras vacunas:" />
+															</cell>
+															<cell>
+																<textbox
+																	id="tbxVacunales_madre_otras_vacunas" hflex="1"
+																	style="text-transform:uppercase" />
+															</cell>
+															<cell>
+																<label
+																	id="lbVacunales_madre_proxima_vacuna"
+																	value="Prox. vacuna:" />
+															</cell>
+															<cell>
+																<datebox
+																	id="dtbxVacunales_madre_proxima_vacuna"
+																	format="yyyy-MM-dd" readonly="true" />
+															</cell>
+															<cell />
+														</row>
+														<row>
+															<cell
+																colspan="10">
+																<label
+																	style="font-weight:bold" value="Niño/Niña" />
+															</cell>
+														</row>
+														<row>
+															<cell />
+															<cell>
+																<label
+																	id="lbVacunales_nino_bcg" value="BCG" />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbVacunales_nino_bcg" />
+															</cell>
+															<cell>
+																<label
+																	id="lbVacunales_nino_hepb1" value="Hepatitis B1" />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbVacunales_nino_hepb1" />
+															</cell>
+															<cell
+																colspan="2" />
+															<cell>
+																<label
+																	id="lbVacunales_nino_proxima_vacuna"
+																	value="Prox. vacuna:" />
+															</cell>
+															<cell>
+																<datebox
+																	id="dtbxVacunales_nino_proxima_vacuna"
+																	format="yyyy-MM-dd" readonly="true" />
+															</cell>
+															<cell />
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+
+									<row>
+										<cell>
+											<impresionDiagnostica
+												id="macroImpresion_diagnostica" />
+										</cell>
+									</row>
+
+									<row>
+										<cell>
+											<groupbox mold="3d"
+												closable="false">
+												<caption
+													label="PLANES Y MANEJOS" />
+												<div style=""
+													id="divModuloFarmacologico" visible="true">
+												</div>
+												<separator
+													height="10px" />
+												<div style=""
+													id="divModuloOrdenamiento" visible="true">
+												</div>
+												<autorizaciones
+													id="divModuloAutorizacion" widthW="900px" heightW="360px"
+													modo="1" idDiv="divModuloOrdenamiento" visibleM="false" />
+											</groupbox>
+										</cell>
+									</row>
+
+									<row>
+										<cell>
+											<groupbox mold="3d"
+												closable="false">
+												<grid>
+													<columns>
+														<column
+															width="5px" />
+														<column
+															width="187px" />
+														<column
+															width="120px" />
+														<column
+															width="200px" />
+														<column />
+														<column
+															width="5px" />
+													</columns>
+													<rows>
+														<row>
+															<cell />
+															<cell
+																colspan="4">
+																<label
+																	value="Volver de inmediato al servicio si presenta los siguientes signos de alarma:" />
+															</cell>
+															<cell />
+														</row>
+														<row>
+															<cell />
+															<cell
+																colspan="4">
+																<vbox>
+																	<radio
+																		id="rdRec1" label=" No puede beber o tomar del pecho"
+																		selected="true" disabled="true" />
+																	<radio
+																		id="rdRec2" label=" Letargico o inconciente"
+																		selected="true" disabled="true" />
+																	<radio
+																		id="rdRec3" label=" Vomita todo" selected="true"
+																		disabled="true" />
+																	<radio
+																		id="rdRec4" label=" convulsiones" selected="true"
+																		disabled="true" />
+																</vbox>
+															</cell>
+															<cell />
+														</row>
+
+														<row>
+															<cell />
+															<cell>
+																<label
+																	id="lbVolver_consulta_control"
+																	value="Volver a consulta de control en:" />
+															</cell>
+															<cell>
+																<datebox
+																	id="dtbxVolver_consulta_control" format="yyyy-MM-dd"
+																	readonly="true" />
+															</cell>
+															<cell>
+																<label
+																	id="lbVolver_consulta_nino_sano"
+																	value="Volver a consulta de niño sano en:" />
+															</cell>
+															<cell>
+																<datebox
+																	id="dtbxVolver_consulta_nino_sano" format="yyyy-MM-dd"
+																	readonly="true" />
+															</cell>
+															<cell />
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+									<row>
+										<cell>
+											<groupbox
+												closable="false">
+												<caption
+													label="RECOMENDACIONES" />
+												<grid>
+													<columns>
+														<column
+															width="10px" height="70px" />
+														<column />
+														<column />
+														<column />
+														<column />
+														<column />
+														<column />
+														<column />
+														<column
+															width="10px" />
+													</columns>
+													<rows>
+														<row>
+															<cell />
+															<cell>
+																<button
+																	id="btnAnexo0" label="Observación de lactancia materna"
+																	hflex="1" vflex="1"
+																	onClick="formHisc_aiepi_mn_2_meses.mostrarAnexo(0)"
+																	style="background:#95b3d7;font-weight:bold" />
+															</cell>
+															<cell>
+																<button
+																	id="btnAnexo1"
+																	label="Verificar los antecedentes de vacunación de todos los niños"
+																	hflex="1" vflex="1"
+																	onClick="formHisc_aiepi_mn_2_meses.mostrarAnexo(1)"
+																	style="background:#95b3d7;font-weight:bold;" />
+															</cell>
+															<cell>
+																<button
+																	id="btnAnexo2" label="Tratar la diarrea en la casa"
+																	hflex="1" vflex="1"
+																	onClick="formHisc_aiepi_mn_2_meses.mostrarAnexo(2)"
+																	style="background:#95b3d7;font-weight:bold;" />
+															</cell>
+															<cell>
+																<button
+																	id="btnAnexo3"
+																	label="Cuidados del niño con tos o resfriado en casa y medidas preventivas"
+																	hflex="1" vflex="1"
+																	onClick="formHisc_aiepi_mn_2_meses.mostrarAnexo(3)"
+																	style="background:#95b3d7;font-weight:bold;" />
+															</cell>
+															<cell>
+																<button
+																	id="btnAnexo4"
+																	label="Medidas preventivas para los niños con enfermedades febriles"
+																	hflex="1" vflex="1"
+																	onClick="formHisc_aiepi_mn_2_meses.mostrarAnexo(4)"
+																	style="background:#95b3d7;font-weight:bold;" />
+															</cell>
+															<cell>
+																<button
+																	id="btnAnexo5" label="Tratar la deshidratacion con sro"
+																	hflex="1" vflex="1"
+																	onClick="formHisc_aiepi_mn_2_meses.mostrarAnexo(5)"
+																	style="background:#95b3d7;font-weight:bold;" />
+															</cell>
+															<cell>
+																<button
+																	id="btnAnexo6" label="Medidas de buen trato" hflex="1"
+																	vflex="1"
+																	onClick="formHisc_aiepi_mn_2_meses.mostrarAnexo(6)"
+																	style="background:#95b3d7;font-weight:bold;" />
+															</cell>
+															<cell />
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+									<row>
+										<cell>
+											<remision_interna
+												id="macroRemision_interna" />
+										</cell>
+									</row>
+									<row>
+										<cell>
+											<groupbox mold="3d"
+												closable="false" visible="true" id="gbxRemisiones">
+												<caption
+													label="REMISION EXTERNA" />
+												<div style=""
+													id="divModuloRemisiones_externas" visible="true">
+												</div>
+											</groupbox>
+										</cell>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+					</div>
+				</center>
+			</borderlayout>
+		</groupbox>
+	</window>
+</zk>

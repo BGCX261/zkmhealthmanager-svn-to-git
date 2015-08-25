@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.reporte_revisionComiteIndividual">
+    <select id="select" resultType="java.util.HashMap" parameterType="java.util.Map">
+	    SELECT 	(detalle_rev.consecutivo::integer)::varchar AS caso,
+		detalle_rev.codigo_medicamento,
+		detalle_rev.autorizado,
+		to_char(detalle_rev.creacion_date, 'dd-MM-yyyy') AS fecha_solicitud,
+		detalle_rev.codigo_empresa,
+		detalle_rev.codigo_sucursal,
+		detalle_rev.criterio_a,
+		detalle_rev.criterio_b,
+		detalle_rev.criterio_c,
+		detalle_rev.criterio_d,
+		detalle_rev.criterio_e,
+		detalle_rev.autorizado,
+		p.apellido1,
+		p.apellido2,
+		p.nombre2,
+		p.nombre1,
+		p.nro_identificacion,
+		cie.nombre,
+		(detalle_solicitud.dosis_diaria * detalle_solicitud.dia_tto)::varchar AS cantidad,
+		'' AS posologia,
+		rev.comentarios,
+		rev.alternativas,
+		rev.consecutivo AS nro_acta,
+		
+		'' AS medicamento,
+		'' AS presentacion,
+        solicitud.nombre_solicita AS medico,
+		detalle_solicitud.dosis_diaria,
+		detalle_solicitud.dia_tto::varchar,
+		detalle_solicitud.codigo_medicamento,
+		to_char(round((((EXTRACT(EPOCH FROM now())-EXTRACT(EPOCH FROM p.fecha_nacimiento))/100)/864)/365)::real, '999') AS edad,
+        rev.nombre_presidente1,
+        rev.nombre_presidente2,
+		rev.nombre1
+		FROM
+		detalle_revision_comite AS detalle_rev
+		INNER JOIN revision_comite AS rev ON rev.codigo_empresa = detalle_rev.codigo_empresa AND rev.codigo_sucursal = detalle_rev.codigo_sucursal AND rev.consecutivo = detalle_rev.codigo_revision
+		INNER JOIN paciente AS p ON p.codigo_sucursal = rev.codigo_sucursal AND p.codigo_empresa = rev.codigo_empresa AND p.nro_identificacion = rev.nro_identificacion
+		INNER JOIN solicitud_tecnico AS solicitud ON solicitud.codigo_empresa = rev.codigo_empresa AND solicitud.codigo_sucursal = rev.codigo_sucursal AND solicitud.codigo = rev.codigo_solicitud
+		INNER JOIN cie ON cie.codigo = solicitud.diasnotico
+		INNER JOIN detalle_solicitud_tecnico AS detalle_solicitud ON detalle_solicitud.codigo_empresa = solicitud.codigo_empresa AND detalle_solicitud.codigo_sucursal = solicitud.codigo_sucursal AND detalle_solicitud.codigo_solicitud_tecnico = solicitud.codigo AND detalle_solicitud.codigo_medicamento = detalle_rev.codigo_medicamento
+    
+        WHERE detalle_rev.codigo_empresa = #{codigo_empresa}
+        AND detalle_rev.codigo_sucursal = #{codigo_sucursal}
+        <if test="acta != null">
+            AND rev.consecutivo::varchar = #{acta}  
+        </if>
+        <if test="caso != null">
+           AND detalle_rev.consecutivo::varchar = #{caso}
+        </if>
+        <if test="actas != null">
+            AND rev.consecutivo::varchar IN  
+            <foreach collection="actas" item="i" open="(" separator="," close=")">
+                #{i}
+            </foreach>
+        </if>
+        
+   </select>
+   
+</mapper>

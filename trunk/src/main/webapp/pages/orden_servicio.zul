@@ -1,0 +1,304 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formOrden_servicio" width="100%" height="100%"
+		use="healthmanager.controller.Orden_servicioAction">
+		<style src="estilo.css" />
+		<style>
+			body ,table{ margin:0; padding:0;
+
+			} .z-fieldset{ -moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; }
+
+			tr.z-row .z-cell{ background-image:none; }
+
+			tr.z-row td.z-row-inner{ background-image:none; }
+		</style>
+		<borderlayout width="100%" height="100%">
+			<center autoscroll="true" border="none">
+
+				<!-- *********************** -->
+				<!--        Principal        -->
+				<!-- *********************** -->
+				<groupbox id="groupboxPrincipal"
+					style="border:0;padding:2px" contentStyle="border:0;padding:2px">
+
+
+					<!-- *************************** -->
+					<!-- *** Insertar/Actualizar *** -->
+					<!-- *************************** -->
+					<groupbox visible="true" id="groupboxEditar"
+						closable="false" style="border:0;padding:0">
+						<!-- *************************** -->
+						<!-- **** Barra de Botones ***** -->
+						<!-- *************************** -->
+
+						<toolbar width="100%" align="start" id="toolbarGuardar">
+
+							<textbox id="tbxAccion" value="registrar"
+								visible="false" />
+							<textbox id="tbxCodigo_paciente" value=""
+								visible="false" />
+							<textbox id="tbxSexo_pct" value=""
+								visible="false" />
+							<textbox id="tbxFecha_nac" value=""
+								visible="false" />
+							<textbox id="tbxCodigo_administradora"
+								value="" visible="false" />
+							<textbox id="tbxId_plan" value=""
+								visible="false" />
+							<textbox id="tbxNro_ingreso" value=""
+								visible="false" />
+							<textbox id="tbxTipo_hc" value=""
+								visible="false" />
+
+							<toolbarbutton image="/images/Save16.gif"
+								label="Guardar Orden"
+								onClick="formOrden_servicio.guardarDatos();" id="btGuardar" />
+							<toolbarbutton image="/images/eliminar.gif"
+								label="Eliminar Orden"
+								onClick='formOrden_servicio.eliminarDatos(tbxCodigo_orden.getValue());'
+								id="btEliminar" />
+							<toolbarbutton image="/images/print_ico.gif"
+								label="Imprimir Orden"
+								onClick="formOrden_servicio.imprimir();"   
+								id="btImprimir" />
+							<space />
+
+							<label value="Formato impresión: " />
+							<listbox id="lbxFormato" mold="select"
+								width="150px" sclass="combobox">
+								<listitem value="pdf" label="PDF"
+									selected="true" />
+								<listitem value="rtf" label="WORD" />
+							</listbox>
+
+						</toolbar>
+						<div id="divcontenedorPametrizado"
+							visible="false" style="border:0px">
+							<hbox align="end">
+								<toolbarbutton
+									label="Adicionar Registro" image="/images/generar.png"
+									onClick="formOrden_servicio.openPcd()" id="btAdicionar2" />
+
+								<toolbarbutton
+									image="/images/print_ico.gif" label="Imprimir Orden"
+									onClick="formOrden_servicio.imprimir();"  
+									id="btImprimir2" />
+							</hbox>
+						</div>
+
+						<space />
+
+						<grid sclass="GridSinBorde" style="border:none"
+							height="110px" id="gridtabla">
+							<columns>
+								<column label="" width="92px" />
+								<column label="" width="182px" />
+								<column label="" width="68px" />
+								<column label="" width="175px" />
+								<column label="" width="60px" />
+								<column label="" />
+							</columns>
+
+							<rows>
+
+								<row>
+									<cell>
+										<label id="lbCodigo_ordenador"
+											value="Ordenador: " />
+									</cell>
+									<cell>
+										<bandbox
+											id="tbxCodigo_ordenador" autodrop="true" readonly="true"
+											width="170px"
+											onOpen='formOrden_servicio.buscarOrdenador(tbxValueOrdenador.getValue(),lbxOrdenador)'>
+											<bandpopup>
+												<vbox>
+													<toolbar>
+														<label
+															value="Buscar: " />
+														<textbox
+															id="tbxValueOrdenador"
+															onChanging='formOrden_servicio.buscarOrdenador(event.getValue(),lbxOrdenador)'
+															style="text-transform:uppercase;" />
+														<toolbarbutton
+															image="/images/borrar.gif" tooltiptext="Quitar"
+															onClick='formOrden_servicio.selectedOrdenador(new Listitem())' />
+													</toolbar>
+													<listbox
+														height="300px" width="600px" mold="paging" pageSize="8"
+														id="lbxOrdenador"
+														onSelect='formOrden_servicio.selectedOrdenador(self.getSelectedItem())'>
+														<listhead>
+															<listheader
+																label="Tipo Ident." width="65px" />
+															<listheader
+																label="Identificación" />
+															<listheader
+																label="Nombres" />
+															<listheader
+																label="Apellidos" />
+															<listheader
+																label="Especialidad" />
+														</listhead>
+													</listbox>
+												</vbox>
+											</bandpopup>
+										</bandbox>
+									</cell>
+									<cell colspan="2">
+										<textbox id="tbxNomOrdenador"
+											width="213px" style="text-transform:uppercase"
+											readonly="true" />
+									</cell>
+									<cell>
+										<label id="lbCodigo_orden"
+											value="Codigo: " />
+									</cell>
+									<cell>
+										<textbox id="tbxCodigo_orden"
+											width="120px" style="text-transform:uppercase"
+											readonly="true" />
+									</cell>
+								</row>
+
+								<row>
+									<cell>
+										<label id="lbCodigo_prestador"
+											value="Prestador: " />
+									</cell>
+									<cell>
+										<bandbox id="tbxId_prestador"
+											autodrop="true" readonly="true" width="170px"
+											onOpen='formOrden_servicio.buscarPrestador(tbxValuePrestador.getValue(),lbxPrestador)'>
+											<bandpopup>
+												<vbox>
+													<toolbar>
+														<label
+															value="Buscar: " />
+														<textbox
+															id="tbxValuePrestador"
+															onChanging='formOrden_servicio.buscarPrestador(event.getValue(),lbxPrestador)'
+															style="text-transform:uppercase;" />
+														<toolbarbutton
+															image="/images/borrar.gif" tooltiptext="Quitar"
+															onClick='formOrden_servicio.selectedPrestador(new Listitem())' />
+													</toolbar>
+													<listbox
+														height="300px" width="500px" mold="paging" pageSize="8"
+														id="lbxPrestador"
+														onSelect='formOrden_servicio.selectedPrestador(self.getSelectedItem())'>
+														<listhead>
+															<listheader
+																label="Codigo" width="75px" />
+															<listheader
+																label="Nombre" />
+														</listhead>
+													</listbox>
+												</vbox>
+											</bandpopup>
+										</bandbox>
+									</cell>
+									<cell colspan="2">
+										<textbox id="tbxNomPrestador"
+											width="213px" style="text-transform:uppercase"
+											readonly="true" />
+									</cell>
+									<cell>
+										<label id="lbFecha_orden"
+											value="Fecha: " />
+									</cell>
+									<cell>
+										<datebox id="dtbxFecha_orden"
+											onCreate="" format="yyyy-MM-dd" width="120px" />
+									</cell>
+								</row>
+
+								<row>
+									<cell>
+										<label id="lbCodigo_dx"
+											value="Diagnóstico: " />
+									</cell>
+									<cell>
+										<bandbox id="tbxCodigo_dx"
+											autodrop="true" readonly="true" width="170px"
+											onOpen="formOrden_servicio.buscarDx(tbxValueDx.getValue(),lbxDx)">
+											<bandpopup>
+												<vbox>
+													<toolbar>
+														<label
+															value="Buscar: " />
+														<textbox
+															id="tbxValueDx"
+															onChanging='formOrden_servicio.buscarDx(event.getValue(),lbxDx)'
+															style="text-transform:uppercase;" />
+														<toolbarbutton
+															image="/images/borrar.gif" tooltiptext="Quitar"
+															onClick='formOrden_servicio.selectedDx(new Listitem())' />
+													</toolbar>
+													<listbox
+														height="300px" width="600px" mold="paging" pageSize="8"
+														id="lbxDx"
+														onSelect='formOrden_servicio.selectedDx(self.getSelectedItem())'>
+														<listhead>
+															<listheader
+																label="Código" width="65px" />
+															<listheader
+																label="Nombre" />
+															<listheader
+																label="Sexo" width="65px" />
+															<listheader
+																label="Limite inf" width="75px" />
+															<listheader
+																label="Limite sup" width="75px" />
+														</listhead>
+													</listbox>
+												</vbox>
+											</bandpopup>
+										</bandbox>
+									</cell>
+									<cell colspan="2">
+										<textbox id="tbxNomDx"
+											width="213px" style="text-transform:uppercase"
+											readonly="true" />
+										<textbox id="tbxSexo_dx"
+											value="" visible="false" />
+										<textbox
+											id="tbxLimite_inferior_dx" value="" visible="false" />
+										<textbox
+											id="tbxLimite_superior_dx" value="" visible="false" />
+									</cell>
+									<cell colspan="2">
+										<button mold="trendy"
+											label="Adicionar Registro"
+											onClick="formOrden_servicio.openPcd();" id="btAdicionar" />
+									</cell>
+								</row>
+
+							</rows>
+						</grid>
+
+						<grid id="gridOrdenes" width="740px"
+							style="margin-top:3px" mold="paging" pageSize="20">
+							<columns sizable="true">
+								<column label="Codigo" align="center"
+									width="110px" />
+								<column label="Procedimiento"
+									align="center" />
+								<column label="Unds" align="center"
+									width="80px" />
+								<column label="Valor" align="center"
+									width="120px" visible="false"/>
+								<column label="" align="center"
+									width="28px" />
+							</columns>
+							<rows id="rowsOrdenes" width="100%" />
+						</grid>
+
+					</groupbox>
+				</groupbox>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

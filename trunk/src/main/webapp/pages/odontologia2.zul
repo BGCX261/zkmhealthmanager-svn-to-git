@@ -1,0 +1,4412 @@
+<?page title="Odontologia2" contentType="text/html;charset=UTF-8"?>
+<?component name="informacionPacientes" macroURI="/WEB-INF/macros/informacionPacientes.zul"?>
+<?component name="indiceDean" macroURI="/WEB-INF/macros/odontologia/indiceDean.zul" ?>
+<?component name="impresionDiagnostica" macroURI="/WEB-INF/macros/impresionDiagnostica.zul"?>
+<?component name="odontograma" macroURI="/WEB-INF/macros/odontologia/odontograma.zul" ?>
+<?component name="remision_interna" macroURI="/WEB-INF/macros/remision_interna.zul"?>
+<?component name="consentimiento_inf_odon" macroURI="/WEB-INF/macros/consentimiento_inf_odon.zul" ?>
+
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+
+	<window id="formOdontologia2" border="none" height="97%"
+		use="healthmanager.controller.Odontologia2Action"
+		onCreate="formOdontologia2.onCreate()">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border:
+			none;o' overflow: hidden; zoom: 1; border-top: none;
+			border-left: none; border-right: none; border-bottom: none;
+			}
+		</style>
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="FALSE" closable="false"
+			mold="3d" height="100%">
+			<caption label="Consultar Historias Clinicas "
+				style="font-weight: bold">
+				<toolbarbutton image="/images/add_perfil.png"
+					style="font-weight:bold;float:right;margin-right:50px"
+					label="PACIENTE ADMISIONADO"
+					id="toolbarbuttonPaciente_admisionado1" />
+			</caption>
+
+			<listbox id="lbxAtendida" mold="select" sclass="combobox"
+				width="150px" visible="false" />
+			<separator />
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" height="90%" mold="paging"
+				pageSize="20" vflex="1">
+				<auxhead>
+					<auxheader colspan="6">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="120px" />
+							<space width="5px" />
+							<textbox id="tbxValue" width="120px"
+								onOK="formOdontologia2.buscarDatos();"
+								style="text-transform:uppercase" />
+							<space />
+							<!-- o1 -->
+
+							<label value="Tipo" />
+							<space width="5px" />
+							<listbox id="lbxTipo_historia" mold="select"
+								width="120px" onSelect="formOdontologia2.buscarDatos()">
+								<listitem label="Todas" selected="true"
+									value="0" />
+								<listitem label="Primera Vez" value="1" />
+								<listitem label="Primera Vez" value="2" />
+							</listbox>
+
+
+							<space />
+							<toolbarbutton label="Consultar"
+								image="/images/Magnifier.gif"
+								onClick="formOdontologia2.buscarDatos();"
+								tooltiptext="Consultar Odontologia" />
+							<space width="5px" />
+							<toolbarbutton label="Nueva" visible="false"
+								image="/images/New16.gif"
+								onClick='formOdontologia2.accionForm(healthmanager.controller.ZKWindow.OpcionesFormulario.REGISTRAR,null);;'
+								tooltiptext="Nueva Odontologia" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Código historia" width="150px" />
+					<column label="Identificación" width="200px" />
+					<column label="Nombre" />
+					<column label="Fecha" width="150px" />
+					<column label="Tipo Historia" width="150px" />
+					<column label="Acciones" align="center"
+						width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+
+
+		<groupbox id="groupboxEditar" visible="TRUE" closable="false"
+			mold="3d" height="100%">
+			<caption label="Registrar/Modificar Historias Clinicas"
+				style="font-weight: bold">
+				<toolbarbutton image="/images/add_perfil.png"
+					style="font-weight:bold;float:right;margin-right:50px"
+					label="PACIENTE ADMISIONADO"
+					id="toolbarbuttonPaciente_admisionado2" />
+			</caption>
+
+			<borderlayout width="100%" height="100%"
+				id="borderlayoutEditar" visible="true">
+				<north border="none">
+					<div height="50px">
+						<toolbar width="100%" align="start">
+							<textbox id="tbxAccion" value="registrar"
+								visible="false" />
+							<toolbarbutton image="/images/Save16.gif"
+								label="Guardar " onClick="formOdontologia2.guardarDatos();"
+								id="btGuardar" />
+							<toolbarbutton image="/images/New16.gif"
+								label="Nueva"
+								onClick='formOdontologia2.accionForm(healthmanager.controller.ZKWindow.OpcionesFormulario.REGISTRAR,null);'
+								id="btNew" visible="false" />
+							<space />
+
+							<toolbarbutton image="/images/print_ico.gif"
+								label="Imprimir historia" onClick="formOdontologia2.imprimir();"
+								id="btImprimir" />
+							<space />
+							<toolbarbutton image="/images/print_ico.gif"
+								label="Imprimir remisión interna"
+								onClick="formOdontologia2.imprimirRemison();"
+								id="btImprimirRemision" />
+							<space />
+							<toolbarbutton image="/images/print_ico.gif"
+								label="Imprimir consentimeinto"
+								onClick="formOdontologia2.imprimirConsentimiento();"
+								id="btImprimirConsentimiento" />
+							<space />
+							<toolbarbutton image="/images/print_ico.gif"
+								label="Imprimir remision externa"
+								onClick="formOdontologia2.imprimirRemisionExterna();"
+								id="btImprimirRemisionExterna" />
+							<space />
+							<label value="Formato impresión: "
+								visible="true" />
+							<listbox id="lbxFormato" mold="select"
+								width="150px" visible="true" sclass="combobox">
+								<listitem value="pdf" label="PDF"
+									selected="true" />
+								<listitem value="rtf" label="WORD" />
+							</listbox>
+						</toolbar>
+						<toolbarbutton image="/images/info_icon.png"
+							style="font-weight:bold;float:right;margin-right:50px"
+							label="Historia Clinica de Primera vez"
+							id="toolbarbuttonTipo_historia" />
+					</div>
+				</north>
+				<center autoscroll="true" border="none">
+					<div align="center">
+
+						<!-- *************************** -->
+						<!-- *** Insertar/Actualizar *** -->
+						<!-- *************************** -->
+
+
+						<grid sclass="GridSinBorde" width="999px">
+							<columns>
+								<column label="" width="82px" />
+								<column label="" width="180px" />
+								<column label="" width="82px" />
+								<column label="" width="225px" />
+								<column label="" width="79px" />
+								<column label="" width="220px" />
+							</columns>
+							<rows>
+								<row>
+									<cell colspan="7">
+										<groupbox mold="3d">
+											<caption
+												label="IDENTIFICACIÓN" />
+											<informacionPacientes
+												id="infoPacientes" />
+											<space />
+											<label
+												id="lbNro_inscripcion" value="Nro inscripción: " />
+											<space width="3px" />
+											<textbox
+												id="tbxNro_inscripcion" value="1" width="148px"
+												style="text-transform:uppercase" maxlength="10" />
+										</groupbox>
+									</cell>
+								</row>
+								<row>
+									<cell colspan="7">
+										<groupbox closable="false"
+											visible="true" id="gbxDatosPaciente">
+											<caption
+												label="DATOS DEL PACIENTE" style="font-weight:bold" />
+											<grid>
+												<columns>
+													<column label=""
+														width="87px" />
+													<column label=""
+														width="110px" />
+													<column label=""
+														width="170px" />
+													<column label=""
+														width="200px" />
+													<column label=""
+														width="70px" />
+													<column label=""
+														width="130px" />
+													<column label=""
+														width="70px" />
+													<column label=""
+														width="140px" />
+												</columns>
+												<rows>
+													<row>
+														<cell>
+															<label
+																id="lbAcompaniante" value="Acompañante: " />
+														</cell>
+														<cell
+															colspan="2">
+															<textbox
+																id="tbxAcompaniante" width="245px"
+																style="text-transform:uppercase" />
+														</cell>
+														<cell>
+															<label
+																value="Cédula: " />
+															<space />
+															<textbox
+																id="tbxCedula_acomp" width="120px"
+																style="text-transform:uppercase" />
+														</cell>
+														<cell>
+															<label
+																id="lbRelacion" value="Relación: " />
+														</cell>
+														<cell>
+															<listbox
+																id="lbxRelacion" name="relacion_acomp" mold="select"
+																width="110px" sclass="combobox" />
+														</cell>
+														<cell>
+															<label
+																id="lbTel_acompaniante" value="Teléfono: " />
+														</cell>
+														<cell>
+															<doublebox
+																id="ibxTel_acompaniante" width="120px" format="#"
+																style="text-transform:uppercase" maxlength="10" />
+														</cell>
+													</row>
+												</rows>
+											</grid>
+										</groupbox>
+									</cell>
+								</row>
+
+								<row>
+									<cell colspan="7">
+										<groupbox closable="false"
+											visible="true">
+											<caption
+												label="DATOS DEL PRESTADOR" style="font-weight:bold" />
+											<grid>
+												<columns>
+													<column label=""
+														width="150px" />
+													<column label=""
+														width="110px" />
+													<column label=""
+														width="150px" />
+													<column label=""
+														width="425px" />
+												</columns>
+												<rows>
+													<row>
+														<cell />
+														<cell>
+															<label
+																value="* " style="color: red"
+																tooltiptext="Campo obligatorio" />
+															<label
+																id="lbCodigo_prestador1" value="Prestador: " />
+														</cell>
+														<cell>
+															<bandbox
+																id="tbxCodigo_prestador1" autodrop="true"
+																readonly="true" width="100px"
+																onOpen='formOdontologia2.buscarPrestador(tbxValuePrestador1.getValue(),lbxPrestador1)'>
+																<bandpopup>
+																	<vbox>
+																		<toolbar>
+																			<label
+																				value="Buscar: " />
+																			<textbox
+																				id="tbxValuePrestador1"
+																				onChanging='formOdontologia2.buscarPrestador(event.getValue(),lbxPrestador1)'
+																				style="text-transform:uppercase;" />
+																			<toolbarbutton
+																				image="/images/borrar.gif" tooltiptext="Quitar"
+																				onClick='formOdontologia2.selectedPrestador(new Listitem())' />
+																		</toolbar>
+																		<listbox
+																			height="300px" width="600px" mold="paging"
+																			pageSize="8" id="lbxPrestador1"
+																			onSelect='formOdontologia2.selectedPrestador(self.getSelectedItem())'>
+																			<listhead>
+																				<listheader
+																					label="Tipo Ident." width="65px" />
+																				<listheader
+																					label="Identificación" />
+																				<listheader
+																					label="Nombres" />
+																				<listheader
+																					label="Apellidos" />
+																				<listheader
+																					label="Especialidad" />
+																			</listhead>
+																		</listbox>
+																	</vbox>
+																</bandpopup>
+															</bandbox>
+														</cell>
+														<cell>
+															<textbox
+																id="tbxNomPrestador" width="360px"
+																style="text-transform:uppercase" readonly="true" />
+														</cell>
+
+													</row>
+												</rows>
+											</grid>
+										</groupbox>
+									</cell>
+								</row>
+								<!-- fila 3 -->
+								<row>
+									<cell colspan="7">
+										<groupbox mold="3d"
+											width="990px" closable="false">
+											<caption
+												label="MOTIVO DE CONSULTA Y ENFERMEDAD ACTUAL" />
+											<grid sclass="GridSinBorde"
+												style="border:none">
+												<columns>
+													<column label=""
+														width="" />
+												</columns>
+												<rows>
+
+													<!-- fila 6.3.1.2 -->
+													<row>
+														<cell>
+															<label
+																value="* " style="color: red"
+																tooltiptext="Campo obligatorio" />
+															<label
+																id="lbMotivo_consulta" value="Motivo de consulta: " />
+														</cell>
+													</row>
+													<!-- fila 6.3.1.3 -->
+													<row>
+														<cell>
+															<textbox
+																id="tbxMotivo_consulta" width="950px"
+																style="text-transform:uppercase" height="50px" rows="5"
+																maxlength="200" />
+														</cell>
+													</row>
+													<!-- fila 6.3.1.6 -->
+													<row>
+														<cell>
+															<label
+																value="* " style="color: red"
+																tooltiptext="Campo obligatorio" />
+															<label
+																id="lbEnfermedad_actual" value="Enfermedad actual: " />
+														</cell>
+													</row>
+													<!-- fila 6.3.1.5 -->
+													<row>
+														<cell>
+															<textbox
+																id="tbxEnfermedad_actual" width="950px"
+																style="text-transform:uppercase" height="50px" rows="5" />
+														</cell>
+													</row>
+												</rows>
+											</grid>
+										</groupbox>
+									</cell>
+								</row>
+
+								<!-- fila 4 -->
+								<row>
+									<cell colspan="7">
+										<groupbox mold="3d"
+											width="990px" closable="false">
+											<caption label="ANAMNESIS" />
+											<grid sclass="GridSinBorde"
+												style="border:none">
+												<columns>
+													<column label=""
+														width="100px" />
+													<column label=""
+														width="80px" />
+													<column label=""
+														width="240px" />
+													<column label=""
+														width="100px" />
+													<column label=""
+														width="80px" />
+													<column label=""
+														width="240px" />
+												</columns>
+												<rows>
+													<row>
+														<cell
+															colspan="4">
+															<groupbox
+																mold="3d" width="450px" closable="false">
+																<grid
+																	sclass="GridSinBorde" style="border:none">
+
+																	<columns>
+																		<column
+																			label="Antecedente" width="135px" />
+																		<column
+																			label="SÍ" width="35px" />
+																		<column
+																			label="NO" width="35px" />
+																		<column
+																			label="Observaciones" width="230px" />
+
+																	</columns>
+																	<rows>
+
+																		<!-- fila 12 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbAnam_tratamiento"
+																					value="1. Tratamiento Médico Actual: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbAnam_tratamiento"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxAnam_cual_tratamiento})">
+																					<radio
+																						id="Anam_tratamiento1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Anam_tratamiento2" checked="true" value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<textbox
+																					id="tbxAnam_cual_tratamiento" width="150px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+
+																		<!-- fila 14 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbAnam_toma_medicamentos"
+																					value="2. Toma de Medicamentos: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbAnam_toma_medicamentos"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxAnam_cual_toma_medicamentos})">
+																					<radio
+																						id="Anam_toma_medicamentos1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Anam_toma_medicamentos2" checked="true"
+																						value="2" />
+																					<space></space>
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<textbox
+																					id="tbxAnam_cual_toma_medicamentos" width="150px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+
+																		<!-- fila 16 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbAnam_alergias" value="3. Alergias: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbAnam_alergias"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxAnam_cual_alergias})">
+																					<radio
+																						id="Anam_alergias1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Anam_alergias2" checked="true" value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<textbox
+																					id="tbxAnam_cual_alergias" width="150px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+
+																		<!-- fila 18 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbAnam_cardiopatias" value="4. Cardiopatías: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbAnam_cardiopatias"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxAnam_cual_cardiopatias})">
+																					<radio
+																						id="Anam_cardiopatias1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Anam_cardiopatias2" checked="true" value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<textbox
+																					id="tbxAnam_cual_cardiopatias" width="150px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+
+																		<!-- fila 20 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbAnam_alteracion_presion"
+																					value="5. Alteración Presión Arterial: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbAnam_alteracion_presion"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxAnam_cual_alteracion_presion})">
+																					<radio
+																						id="Anam_alteracion_presion1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Anam_alteracion_presion2" checked="true"
+																						value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<textbox
+																					id="tbxAnam_cual_alteracion_presion" width="150px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+																	</rows>
+																</grid>
+															</groupbox>
+														</cell>
+														<cell
+															colspan="4">
+															<groupbox
+																mold="3d" width="450px" closable="false">
+																<grid
+																	sclass="GridSinBorde" style="border:none">
+
+																	<columns>
+																		<column
+																			label="Antecedente" width="135px" />
+																		<column
+																			label="SÍ" width="35px" />
+																		<column
+																			label="NO" width="35px" />
+																		<column
+																			label="Observaciones" width="230px" />
+
+																	</columns>
+																	<rows>
+
+																		<!-- fila 22 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbAnam_embarazo" value="6. Embarazo: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbAnam_embarazo"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxAnam_cual_embarazo, lbsemanas})">
+																					<radio
+																						id="Anam_embarazo1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Anam_embarazo2" checked="true" value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<label
+																					id="lbsemanas" value="Semanas: " visible="false" />
+																				<space></space>
+																				<textbox
+																					id="tbxAnam_cual_embarazo" width="70px"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+
+																		<!-- fila 24 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbAnam_diabetes" value="7. Diabetes: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbAnam_diabetes"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{lbxAnam_cual_diabetes})">
+																					<radio
+																						id="Anam_diabetes1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Anam_diabetes2" checked="true" value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<listbox
+																					id="lbxAnam_cual_diabetes" name="diabetes"
+																					mold="select" width="150px" sclass="combobox"
+																					visible="false" />
+																			</cell>
+																		</row>
+
+																		<!-- fila 26 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbAnam_hepatitis" value="8. Hepatitis: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbAnam_hepatitis"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{lbxAnam_cual_hepatitis})">
+																					<radio
+																						id="Anam_hepatitis1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Anam_hepatitis2" checked="true" value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<listbox
+																					id="lbxAnam_cual_hepatitis" name="hepatitis"
+																					mold="select" width="150px" sclass="combobox"
+																					visible="false" />
+																			</cell>
+																		</row>
+
+																		<!-- fila 28 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbAnam_irradiaciones"
+																					value="9. Irradiaciones: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbAnam_irradiaciones"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxAnam_cual_irradiaciones})">
+																					<radio
+																						id="Anam_irradiaciones1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Anam_irradiaciones2" checked="true" value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<textbox
+																					id="tbxAnam_cual_irradiaciones" width="150px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+
+																		<!-- fila 30 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbAnam_discracias"
+																					value="10. Discrasias Sanguíneas: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbAnam_discracias"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxAnam_cual_discracias})">
+																					<radio
+																						id="Anam_discracias1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Anam_discracias2" checked="true" value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<textbox
+																					id="tbxAnam_cual_discracias" width="150px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+																	</rows>
+																</grid>
+															</groupbox>
+														</cell>
+													</row>
+													<row>
+														<cell
+															colspan="4">
+															<groupbox
+																mold="3d" width="450px" closable="false">
+																<grid
+																	sclass="GridSinBorde" style="border:none">
+
+																	<columns>
+																		<column
+																			label="Antecedente" width="135px" />
+																		<column
+																			label="SÍ" width="35px" />
+																		<column
+																			label="NO" width="35px" />
+																		<column
+																			label="Observaciones" width="230px" />
+
+																	</columns>
+																	<rows>
+																		<!-- fila 32 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbAnam_fiebre_reumatica"
+																					value="11. Fiebre Reumática: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbAnam_fiebre_reumatica"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxAnam_cual_fiebre_reumatica})">
+																					<radio
+																						id="Anam_fiebre_reumatica1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Anam_fiebre_reumatica2" checked="true"
+																						value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<textbox
+																					id="tbxAnam_cual_fiebre_reumatica" width="150px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+
+																		<!-- fila 34 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbAnam_enfermedad_renal"
+																					value="12. Enfermedades Renales: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbAnam_enfermedad_renal"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxAnam_cual_enfermedad_renal})">
+																					<radio
+																						id="Anam_enfermedad_renal1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Anam_enfermedad_renal2" checked="true"
+																						value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<textbox
+																					id="tbxAnam_cual_enfermedad_renal" width="150px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+
+																		<!-- fila 36 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbAnam_inmunosupresion"
+																					value="13. Inmunosupresión: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbAnam_inmunosupresion"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxAnam_cual_inmunosupresion})">
+																					<radio
+																						id="Anam_inmunosupresion1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Anam_inmunosupresion2" checked="true"
+																						value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<textbox
+																					id="tbxAnam_cual_inmunosupresion" width="150px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+
+																		<!-- fila 38 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbAnam_trastornos"
+																					value="14. Trastornos Emocionales: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbAnam_trastornos"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxAnam_cual_trastornos})">
+																					<radio
+																						id="Anam_trastornos1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Anam_trastornos2" checked="true" value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<textbox
+																					id="tbxAnam_cual_trastornos" width="150px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+
+																		<!-- fila 40 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbAnam_patologia"
+																					value="15. Patología Respiratoria: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbAnam_patologia"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxAnam_cual_patologia})">
+																					<radio
+																						id="Anam_patologia1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Anam_patologia2" checked="true" value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<textbox
+																					id="tbxAnam_cual_patologia" width="150px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+																	</rows>
+																</grid>
+															</groupbox>
+														</cell>
+														<cell
+															colspan="4">
+															<groupbox
+																mold="3d" width="450px" closable="false">
+																<grid
+																	sclass="GridSinBorde" style="border:none">
+
+																	<columns>
+																		<column
+																			label="Antecedente" width="135px" />
+																		<column
+																			label="SÍ" width="35px" />
+																		<column
+																			label="NO" width="35px" />
+																		<column
+																			label="Observaciones" width="230px" />
+
+																	</columns>
+																	<rows>
+																		<!-- fila 42 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbAnam_trastornos_gastricos"
+																					value="16. Trastornos Gástricos: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbAnam_trastornos_gastricos"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxAnam_cual_trastornos_gastricos})">
+																					<radio
+																						id="Anam_trastornos_gastricos1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Anam_trastornos_gastricos2" checked="true"
+																						value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<textbox
+																					id="tbxAnam_cual_trastornos_gastricos"
+																					width="150px" style="text-transform:uppercase"
+																					visible="false"
+																					use="com.framework.macros.CampoObservacionesPopupMacro" />
+																			</cell>
+																		</row>
+
+																		<!-- fila 44 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbAnam_epilepsia" value="17. Epilepsia: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbAnam_epilepsia"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxAnam_cual_epilepsia})">
+																					<radio
+																						id="Anam_epilepsia1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Anam_epilepsia2" checked="true" value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<textbox
+																					id="tbxAnam_cual_epilepsia" width="150px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+
+																		<!-- fila 46 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbAnam_cirugias"
+																					value="18. Cirugías (Incluso Orales): " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbAnam_cirugias"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxAnam_cual_cirugias})">
+																					<radio
+																						id="Anam_cirugias1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Anam_cirugias2" checked="true" value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell
+																				colspan="5">
+																				<textbox
+																					id="tbxAnam_cual_cirugias" width="150px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+
+																		<!-- fila 48 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbAnam_protasis"
+																					value="19. Usa Prótesis (Incluso oral): " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbAnam_protasis"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{lbxAnam_cual_protasis})">
+																					<radio
+																						id="Anam_protasis1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Anam_protasis2" checked="true" value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<listbox
+																					id="lbxAnam_cual_protasis" name="protesis"
+																					mold="select" width="150px" sclass="combobox"
+																					visible="false" />
+																			</cell>
+																		</row>
+
+																		<!-- fila 50 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbAnam_otro" value="20. Otro: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbAnam_otro"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxAnam_cual_otros})">
+																					<radio
+																						id="Anam_otro1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Anam_otro2" checked="true" value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<textbox
+																					id="tbxAnam_cual_otros" width="150px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+																	</rows>
+																</grid>
+															</groupbox>
+														</cell>
+													</row>
+													<row>
+														<cell
+															colspan="8">
+															<groupbox
+																mold="3d" width="100%" closable="false">
+																<grid
+																	sclass="GridSinBorde" style="border:none">
+
+																	<columns>
+																		<column
+																			label="" width="250px" />
+																		<column
+																			label="" width="120px" />
+																		<column
+																			label="" width="250px" />
+																		<column
+																			label="" width="120px" />
+
+																	</columns>
+																	<rows>
+
+																		<!-- fila 52 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbSintoma_respiratorio"
+																					value="Sintomático Respiratorio: " />
+																			</cell>
+																			<cell>
+																				<radiogroup
+																					id="rdbSintoma_respiratorio"
+																					onCheck='formOdontologia2.validarSistomatico(self, "sistomático respiratorio");formOdontologia2.onSelccionarConsultaExtera(self);'>
+																					<radio
+																						id="Sintoma_respiratorio1" label="SÍ" value="1" />
+																					<space />
+																					<radio
+																						id="Sintoma_respiratorio2" label="NO"
+																						checked="true" value="2" />
+
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<label
+																					id="lbSintoma_piel" value="Sintomático de Piel: " />
+																			</cell>
+																			<cell
+																				colspan="10">
+																				<radiogroup
+																					id="rdbSintoma_piel"
+																					onCheck='formOdontologia2.validarSistomatico(self, "sintomático de piel");formOdontologia2.onSelccionarConsultaExtera(self);'>
+																					<radio
+																						id="Sintoma_piel1" label="SÍ" value="1" />
+																					<space />
+																					<radio
+																						id="Sintoma_piel2" label="NO" checked="true"
+																						value="2" />
+																				</radiogroup>
+																			</cell>
+																		</row>
+																	</rows>
+																</grid>
+															</groupbox>
+														</cell>
+													</row>
+												</rows>
+											</grid>
+										</groupbox>
+									</cell>
+								</row>
+								<row>
+									<cell colspan="7">
+										<groupbox>
+											<caption
+												label="Exámen Físico">
+												<toolbarbutton
+													id="toolbarbuttonCargar_signos"
+													image="/images/refresh_m.png" label="Cargar signos vitales"
+													onClick="formOdontologia2.cargarSignosVitalesEnfermera()" />
+											</caption>
+											<grid sclass="GridSinBorde"
+												style="border:none">
+												<columns>
+													<column width="" />
+													<column
+														width="200px" align="center" />
+													<column width="80px"
+														align="center" />
+
+													<column width="80px"
+														align="center" />
+
+													<column width="" />
+												</columns>
+												<rows>
+													<row>
+														<cell />
+														<cell>
+															<label
+																id="lbPresion" value="TA Sistólica / TA Diastólica " />
+														</cell>
+														<cell>
+															<label
+																id="lbTalla" value="Talla (cm) " />
+														</cell>
+														<cell>
+															<label
+																id="lbPeso" value="Peso (kg) " />
+														</cell>
+														<cell />
+													</row>
+													<row>
+														<cell />
+														<cell>
+															<doublebox
+																id="dbxPresion" width="50px" locale="en" format="#"
+																onChange="formOdontologia2.alarmaExamenFisicoFr()" />
+															<label
+																value=" / " />
+															<doublebox
+																id="dbxPresion2" width="50px" locale="en" format="#"
+																onChange="formOdontologia2.alarmaExamenFisicoFr()" />
+															<space />
+															<label
+																value="(mm/Hg)" />
+														</cell>
+														<cell>
+															<doublebox
+																id="dbxTalla" locale="en" width="50px" format="#" />
+														</cell>
+														<cell>
+															<doublebox
+																id="dbxPeso" locale="en" width="50px" format="#" />
+														</cell>
+														<cell />
+													</row>
+												</rows>
+											</grid>
+										</groupbox>
+									</cell>
+								</row>
+								<!-- fila 6 -->
+								<row>
+									<cell colspan="7">
+										<groupbox mold="3d"
+											width="990px" closable="false">
+											<caption
+												label="ANTECEDENTES FAMILIARES" />
+											<grid sclass="GridSinBorde"
+												style="border:none">
+												<columns>
+													<column label=""
+														width="15%" />
+													<column label=""
+														width="14%" />
+													<column label=""
+														width="33%" />
+													<column label=""
+														width="14%" />
+													<column label=""
+														width="33%" />
+													<column label=""
+														width="3%" />
+												</columns>
+												<rows>
+													<!-- fila 1 -->
+													<row>
+														<cell></cell>
+														<cell>
+															<label
+																id="lbAnte_fam_hipertension" value="1. Hipertensión: " />
+														</cell>
+														<cell>
+															<listbox
+																id="lbxAnte_fam_hipertension"
+																name="Ante_fam_hipertension" mold="select" width="170px"
+																sclass="combobox" />
+														</cell>
+														<cell>
+															<label
+																id="lbAnte_fam_obesos" value="7. Obesos: " />
+														</cell>
+														<cell>
+															<listbox
+																id="lbxAnte_fam_obesos" name="Ante_fam_obesos"
+																mold="select" width="170px" sclass="combobox" />
+														</cell>
+														<cell></cell>
+													</row>
+
+													<!-- fila 2 -->
+													<row>
+														<cell></cell>
+														<cell
+															height="30px">
+															<label
+																id="lbAnte_fam_ecv"
+																value="2. Enfermedad cardio vascular: " />
+														</cell>
+														<cell>
+															<listbox
+																id="lbxAnte_fam_ecv" name="Ante_fam_ecv" mold="select"
+																width="170px" sclass="combobox" />
+														</cell>
+														<cell
+															height="30px">
+															<label
+																id="lbAnte_fam_diabetes" value="8. Diabetes: " />
+														</cell>
+														<cell>
+															<listbox
+																id="lbxAnte_fam_diabetes" name="Ante_fam_diabetes"
+																mold="select" width="170px" sclass="combobox" />
+														</cell>
+														<cell></cell>
+													</row>
+
+													<!-- fila 3 -->
+													<row>
+														<cell></cell>
+														<cell
+															height="30px">
+															<label
+																id="lbAnte_fam_enf_coronaria"
+																value="3. Enf. Coronaria: " />
+														</cell>
+														<cell>
+															<listbox
+																id="lbxAnte_fam_enf_coronaria"
+																name="Ante_fam_enf_coronaria" mold="select"
+																width="170px" sclass="combobox" />
+														</cell>
+														<cell
+															height="30px">
+															<label
+																id="lbAnte_fam_enf_mental" value="9. Enf. Mental: " />
+														</cell>
+														<cell>
+															<listbox
+																id="lbxAnte_fam_enf_mental" name="Ante_fam_enf_mental"
+																mold="select" width="170px" sclass="combobox" />
+														</cell>
+														<cell></cell>
+													</row>
+
+													<!-- fila 4 -->
+													<row>
+														<cell></cell>
+														<cell
+															height="30px">
+															<label
+																id="lbAnte_fam_muerte_im_acv"
+																value="4. Muerte en &#60; 60 años (Infarto miocardio o Accidente cerebro vascular)" />
+														</cell>
+														<cell>
+															<listbox
+																id="lbxAnte_fam_muerte_im_acv"
+																name="Ante_fam_muerte_im_acv" mold="select"
+																width="170px" sclass="combobox" />
+														</cell>
+														<cell
+															height="30px">
+															<label
+																id="lbAnte_fam_cancer" value="10. Cáncer: " />
+														</cell>
+														<cell>
+															<listbox
+																id="lbxAnte_fam_cancer" name="Ante_fam_cancer"
+																mold="select" width="170px" sclass="combobox" />
+														</cell>
+														<cell></cell>
+													</row>
+
+													<!-- fila 5 -->
+													<row>
+														<cell></cell>
+														<cell
+															height="30px">
+															<label
+																id="lbAnte_fam_dislipidemia" value="5. Dislipidemia: " />
+														</cell>
+														<cell>
+															<listbox
+																id="lbxAnte_fam_dislipidemia"
+																name="Ante_fam_dislipidemia" mold="select" width="170px"
+																sclass="combobox" />
+														</cell>
+														<cell
+															height="30px">
+															<label
+																id="lbAnte_fam_hematologia" value="11. Hematología: " />
+														</cell>
+														<cell>
+															<listbox
+																id="lbxAnte_fam_hematologia" name="Ante_fam_hematologia"
+																mold="select" width="170px" sclass="combobox" />
+														</cell>
+														<cell></cell>
+													</row>
+
+													<!-- fila 6 -->
+													<row>
+														<cell></cell>
+														<cell
+															height="30px">
+															<label
+																id="lbAnte_fam_nefropatias" value="6. Nefropatías: " />
+														</cell>
+														<cell>
+															<listbox
+																id="lbxAnte_fam_nefropatias" name="Ante_fam_nefropatias"
+																mold="select" width="170px" sclass="combobox" />
+														</cell>
+														<cell
+															height="30px">
+															<label
+																id="lbAnte_fam_otros" value="12. Otros: " />
+														</cell>
+														<cell>
+															<listbox
+																id="lbxAnte_fam_otros" name="Ante_fam_otros"
+																mold="select" width="170px" sclass="combobox" />
+														</cell>
+														<cell></cell>
+													</row>
+
+
+													<!-- fila 13 -->
+													<row>
+														<cell
+															colspan="3">
+														</cell>
+														<cell
+															height="30px">
+															<label
+																id="lbAnte_fam_estecifique" value="Especifique: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxAnte_fam_estecifique" width="170px"
+																style="text-transform:uppercase" maxlength="100" />
+														</cell>
+														<cell></cell>
+													</row>
+
+													<!-- fila 14 -->
+													<row>
+														<cell></cell>
+														<cell
+															height="30px">
+															<label
+																id="lbAnte_fam_observaciones" value="Observaciones: " />
+														</cell>
+														<cell
+															colspan="5">
+															<textbox
+																id="tbxAnte_fam_observaciones" width="81%" rows="4"
+																style="text-transform:uppercase" maxlength="100" />
+														</cell>
+													</row>
+												</rows>
+											</grid>
+										</groupbox>
+									</cell>
+								</row>
+								<!-- fila 7 -->
+								<row>
+									<cell colspan="7">
+										<groupbox mold="3d"
+											width="990px" closable="false">
+											<caption
+												label="EXAMEN ESTOMATOLOGICO" />
+											<grid sclass="GridSinBorde"
+												style="border:none">
+												<columns>
+													<column label=""
+														width="100px" />
+													<column label=""
+														width="80px" />
+													<column label=""
+														width="240px" />
+													<column label=""
+														width="100px" />
+													<column label=""
+														width="80px" />
+													<column label=""
+														width="240px" />
+												</columns>
+												<rows>
+													<row>
+														<cell
+															colspan="8">
+															<groupbox
+																mold="3d" width="100%" closable="false">
+																<grid
+																	sclass="GridSinBorde" style="border:none">
+
+																	<columns>
+																		<column
+																			label="Tejidos Blandos" width="125px" />
+																		<column
+																			label="N" width="35px" />
+																		<column
+																			label="A" width="35px" />
+																		<column
+																			label="Observaciones" width="270px" />
+																		<column
+																			label="" width="125px" />
+																		<column
+																			label="N" width="35px" />
+																		<column
+																			label="A" width="35px" />
+																		<column
+																			label="Observaciones" width="270px" />
+
+																	</columns>
+																	<rows>
+
+																		<!-- fila 75 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbEsto_labio_sup" value="1. Labio Superior: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbEsto_labio_sup"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxEsto_cual_labio_sup})">
+																					<radio
+																						id="Esto_labio_sup2" value="2" selected="true" />
+																					<space></space>
+																					<radio
+																						id="Esto_labio_sup1" value="1" />
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<textbox
+																					id="tbxEsto_cual_labio_sup" width="155px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+
+																			<cell>
+																				<label
+																					id="lbEsto_paladar_duro" value="8. Paladar Duro: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbEsto_paladar_duro"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxEsto_cual_paladar_duro})">
+
+																					<radio
+																						id="Esto_paladar_duro2" value="2" selected="true" />
+																					<space></space>
+																					<radio
+																						id="Esto_paladar_duro1" value="1" />
+
+																				</radiogroup>
+																			</cell>
+																			<cell
+																				colspan="3">
+																				<textbox
+																					id="tbxEsto_cual_paladar_duro" width="155px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+
+																		<!-- fila 77 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbEsto_labio_inf" value="2. Labio Inferior: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbEsto_labio_inf"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxEsto_cual_labio_inf})">
+																					<radio
+																						id="Esto_labio_inf2" value="2" selected="true" />
+																					<space></space>
+																					<radio
+																						id="Esto_labio_inf1" value="1" />
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<textbox
+																					id="tbxEsto_cual_labio_inf" width="155px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+
+																			<cell>
+																				<label
+																					id="lbEsto_orofaringe" value="9. Orofaringe: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbEsto_orofaringe"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxEsto_cual_orofaringe})">
+																					<radio
+																						id="Esto_orofaringe2" value="2" selected="true" />
+																					<space></space>
+																					<radio
+																						id="Esto_orofaringe1" value="1" />
+																				</radiogroup>
+																			</cell>
+																			<cell
+																				colspan="3">
+																				<textbox
+																					id="tbxEsto_cual_orofaringe" width="155px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+
+																		<!-- fila 79 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbEsto_comisura" value="3. Comisura: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbEsto_comisura"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxEsto_cual_comisura})">
+																					<radio
+																						id="Esto_comisura2" value="2" selected="true" />
+																					<space></space>
+																					<radio
+																						id="Esto_comisura1" value="1" />
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<textbox
+																					id="tbxEsto_cual_comisura" width="155px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+
+																			<cell>
+																				<label
+																					id="lbEsto_lengua" value="10. Lengua: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbEsto_lengua"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxEsto_cual_lengua})">
+
+																					<radio
+																						id="Esto_lengua2" value="2" selected="true" />
+																					<space></space>
+																					<radio
+																						id="Esto_lengua1" value="1" />
+
+																				</radiogroup>
+																			</cell>
+																			<cell
+																				colspan="3">
+																				<textbox
+																					id="tbxEsto_cual_lengua" width="155px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+
+																		<!-- fila 81 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbEsto_mucosa" value="4. Mucosa Oral: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbEsto_mucosa"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxEsto_cual_mucosa})">
+
+																					<radio
+																						id="Esto_mucosa2" value="2" selected="true" />
+																					<space></space>
+																					<radio
+																						id="Esto_mucosa1" value="1" />
+
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<textbox
+																					id="tbxEsto_cual_mucosa" width="155px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+
+																			<cell>
+																				<label
+																					id="lbEsto_boca" value="11. Piso de Boca: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbEsto_boca"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxEsto_cual_boca})">
+
+																					<radio
+																						id="Esto_boca2" value="2" selected="true" />
+																					<space></space>
+																					<radio
+																						id="Esto_boca1" value="1" />
+
+																				</radiogroup>
+																			</cell>
+																			<cell
+																				colspan="3">
+																				<textbox
+																					id="tbxEsto_cual_boca" width="155px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+
+																		<!-- fila 83 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbEsto_surcos" value="5. Surcos Yúgales: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbEsto_surcos"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxEsto_cual_surcos})">
+
+																					<radio
+																						id="Esto_surcos2" value="2" selected="true" />
+																					<space></space>
+																					<radio
+																						id="Esto_surcos1" value="1" />
+
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<textbox
+																					id="tbxEsto_cual_surcos" width="155px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+
+																			<cell>
+																				<label
+																					id="lbEsto_reborde" value="12. Rebordes: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbEsto_reborde"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxEsto_cual_reborde})">
+
+																					<radio
+																						id="Esto_reborde2" value="2" selected="true" />
+																					<space></space>
+																					<radio
+																						id="Esto_reborde1" value="1" />
+
+																				</radiogroup>
+																			</cell>
+																			<cell
+																				colspan="3">
+																				<textbox
+																					id="tbxEsto_cual_reborde" width="155px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+
+																		<!-- fila 85 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbEsto_frenillo" value="6. Frenillos: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbEsto_frenillo"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxEsto_cual_frenillo})">
+
+																					<radio
+																						id="Esto_frenillo2" value="2" selected="true" />
+																					<space></space>
+																					<radio
+																						id="Esto_frenillo1" value="1" />
+
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<textbox
+																					id="tbxEsto_cual_frenillo" width="155px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																			<cell>
+																				<label
+																					id="lbEsto_salivares" value="13. G. Salivares: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbEsto_salivares"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxEsto_cual_salivares})">
+																					<radio
+																						id="Esto_salivares1" value="2" selected="true" />
+																					<space></space>
+																					<radio
+																						id="Esto_salivares2" value="1" />
+																				</radiogroup>
+																			</cell>
+																			<cell
+																				colspan="3">
+																				<textbox
+																					id="tbxEsto_cual_salivares" width="155px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+																		<!-- fila 87 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbEsto_paladar_blando"
+																					value="7. Paladar Blando: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbEsto_paladar_blando"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxEsto_cual_paladar_blando})">
+																					<radio
+																						id="Esto_paladar_blando1" value="2"
+																						selected="true" />
+																					<space></space>
+																					<radio
+																						id="Esto_paladar_blando2" value="1" />
+																				</radiogroup>
+																			</cell>
+																			<cell
+																				colspan="7">
+																				<textbox
+																					id="tbxEsto_cual_paladar_blando" width="155px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+																	</rows>
+																</grid>
+															</groupbox>
+														</cell>
+													</row>
+													<row>
+														<cell
+															colspan="4">
+															<groupbox
+																mold="3d" width="450px" closable="false">
+																<grid
+																	sclass="GridSinBorde" style="border:none">
+
+																	<columns>
+																		<column
+																			label="ATM - Oclusión" width="130px" />
+																		<column
+																			label="SÍ" width="35px" />
+																		<column
+																			label="NO" width="35px" />
+																		<column
+																			label="Observaciones" width="237px" />
+
+																	</columns>
+																	<rows>
+
+																		<!-- fila 101 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbEsto_dolor_muscular"
+																					value="14. Dolor Muscular " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbEsto_dolor_muscular"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxEsto_cual_dolor_muscular})">
+																					<radio
+																						id="Esto_dolor_muscular1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Esto_dolor_muscular2" checked="true"
+																						value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<textbox
+																					id="tbxEsto_cual_dolor_muscular" width="155px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+
+																		<!-- fila 103 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbEsto_dolor_articular"
+																					value="15. Dolor Articular: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbEsto_dolor_articular"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxEsto_cual_dolor_articular})">
+																					<radio
+																						id="Esto_dolor_articular1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Esto_dolor_articular2" checked="true"
+																						value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<textbox
+																					id="tbxEsto_cual_dolor_articular" width="155px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+
+																		<!-- fila 105 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbEsto_riudo_articular"
+																					value="16. Ruido Articular: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbEsto_riudo_articular"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxEsto_cual_ruido_articular})">
+																					<radio
+																						id="Esto_riudo_articular1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Esto_riudo_articular2" checked="true"
+																						value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<textbox
+																					id="tbxEsto_cual_ruido_articular" width="155px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+
+																		<!-- fila 107 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbEsto_alt_mov"
+																					value="17.Alteración Movimiento: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbEsto_alt_mov"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxEsto_cual_alt_mov})">
+																					<radio
+																						id="Esto_alt_mov1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Esto_alt_mov2" checked="true" value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<textbox
+																					id="tbxEsto_cual_alt_mov" width="155px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+
+																		<!-- fila 109 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbEsto_oclusion" value="18. Mal Oclusión: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbEsto_oclusion"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxEsto_cual_oclusion})">
+																					<radio
+																						id="Esto_oclusion1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Esto_oclusion2" checked="true" value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<textbox
+																					id="tbxEsto_cual_oclusion" width="155px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+
+																		<!-- fila 111 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbEsto_bruxismo" value="19. Bruxismo: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbEsto_bruxismo"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxEsto_cual_bruxismo})">
+																					<radio
+																						id="Esto_bruxismo1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Esto_bruxismo2" checked="true" value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<textbox
+																					id="tbxEsto_cual_bruxismo" width="155px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+
+																		<row>
+																			<cell
+																				colspan="4">
+																				<space></space>
+																			</cell>
+																		</row>
+																	</rows>
+																</grid>
+															</groupbox>
+														</cell>
+														<cell
+															colspan="4">
+															<groupbox
+																mold="3d" width="450px" closable="false">
+																<grid
+																	sclass="GridSinBorde" style="border:none">
+
+																	<columns>
+																		<column
+																			label="Tejidos Dentales" width="130px" />
+																		<column
+																			label="SÍ" width="35px" />
+																		<column
+																			label="NO" width="35px" />
+																		<column
+																			label="Observaciones" width="237px" />
+
+																	</columns>
+																	<rows>
+																		<!-- fila 113 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbEsto_forma" value="20. Forma: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbEsto_forma"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxEsto_cual_forma})">
+																					<radio
+																						id="Esto_forma1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Esto_forma2" checked="true" value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<textbox
+																					id="tbxEsto_cual_forma" width="155px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+
+																		<!-- fila 115 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbEsto_tamano" value="21. Tamaño: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbEsto_tamano"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxEsto_cual_tamano})">
+																					<radio
+																						id="Esto_tamano1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Esto_tamano2" checked="true" value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<textbox
+																					id="tbxEsto_cual_tamano" width="155px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+
+																		<!-- fila 117 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbEsto_numero" value="22. Número: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbEsto_numero"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxEsto_cual_numero})">
+																					<radio
+																						id="Esto_numero1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Esto_numero2" checked="true" value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<textbox
+																					id="tbxEsto_cual_numero" width="155px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+
+																		<!-- fila 119 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbEsto_color" value="23. Color: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbEsto_color"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxEsto_cual_color})">
+																					<radio
+																						id="Esto_color1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Esto_color2" checked="true" value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<textbox
+																					id="tbxEsto_cual_color" width="155px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+
+																		<!-- fila 121 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbEsto_posicion" value="24. Posición: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbEsto_posicion"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxEsto_cual_posicion})">
+																					<radio
+																						id="Esto_posicion1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Esto_posicion2" checked="true" value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<textbox
+																					id="tbxEsto_cual_posicion" width="155px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+
+																		<!-- fila 123 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbEsto_impactados" value="25. Impactados: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbEsto_impactados"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxEsto_cual_impactados})">
+																					<radio
+																						id="Esto_impactados1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Esto_impactados2" checked="true" value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<textbox
+																					id="tbxEsto_cual_impactados" width="155px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+
+																		<!-- fila 125 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbEsto_abfracciones" value="26. Abrasión: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbEsto_abfracciones"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxEsto_cual_abfracciones})">
+																					<radio
+																						id="Esto_abfracciones1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Esto_abfracciones2" checked="true" value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<textbox
+																					id="tbxEsto_cual_abfracciones" width="155px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+
+
+																	</rows>
+																</grid>
+															</groupbox>
+														</cell>
+													</row>
+
+													<row>
+														<cell
+															colspan="4">
+															<groupbox
+																mold="3d" width="450px" closable="false">
+																<grid
+																	sclass="GridSinBorde" style="border:none">
+
+																	<columns>
+																		<column
+																			label="Examen Periodontal" width="130px" />
+																		<column
+																			label="SÍ" width="35px" />
+																		<column
+																			label="NO" width="35px" />
+																		<column
+																			label="Observaciones" width="237px" />
+
+																	</columns>
+																	<rows>
+																		<!-- fila 127 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbEsto_inflamacion" value="27. Inflamación: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbEsto_inflamacion"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxEsto_cual_inflamacion})">
+																					<radio
+																						id="Esto_inflamacion1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Esto_inflamacion2" checked="true" value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<textbox
+																					id="tbxEsto_cual_inflamacion" width="155px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+
+																		<!-- fila 129 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbEsto_movilidad" value="28. Movilidad: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbEsto_movilidad"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxEsto_cual_movilidad})">
+																					<radio
+																						id="Esto_movilidad1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Esto_movilidad2" checked="true" value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<textbox
+																					id="tbxEsto_cual_movilidad" width="155px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+
+																		<!-- fila 131 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbEsto_recesiones" value="29. Recesiones: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbEsto_recesiones"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxEsto_cual_recesiones})">
+																					<radio
+																						id="Esto_recesiones1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Esto_recesiones2" checked="true" value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<textbox
+																					id="tbxEsto_cual_recesiones" width="155px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+
+																		<!-- fila 133 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbEsto_bolsas" value="30. Bolsa Periodontal: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbEsto_bolsas"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxEsto_cual_bolsas})">
+																					<radio
+																						id="Esto_bolsas1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Esto_bolsas2" checked="true" value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<textbox
+																					id="tbxEsto_cual_bolsas" width="155px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+
+																		<!-- fila 135 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbEsto_calculo" value="31. Cálculos: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbEsto_calculo"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxEsto_cual_calculo})">
+																					<radio
+																						id="Esto_calculo1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Esto_calculo2" checked="true" value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<textbox
+																					id="tbxEsto_cual_calculo" width="155px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+
+																		<!-- fila 137 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbEsto_abceso" value="32. Absceso: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbEsto_abceso"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxEsto_cual_abceso})">
+																					<radio
+																						id="Esto_abceso1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Esto_abceso2" checked="true" value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<textbox
+																					id="tbxEsto_cual_abceso" width="155px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+
+																		<!-- fila 139 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbEsto_sangrado" value="33. Sangrado: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbEsto_sangrado"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxEsto_cual_sangrado})">
+																					<radio
+																						id="Esto_sangrado1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Esto_sangrado2" checked="true" value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<textbox
+																					id="tbxEsto_cual_sangrado" width="155px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+
+																	</rows>
+																</grid>
+															</groupbox>
+														</cell>
+														<cell
+															colspan="4">
+															<groupbox
+																mold="3d" width="450px" closable="false">
+																<grid
+																	sclass="GridSinBorde" style="border:none">
+
+																	<columns>
+																		<column
+																			label="Examen Pulpar" width="130px" />
+																		<column
+																			label="SÍ" width="35px" />
+																		<column
+																			label="NO" width="35px" />
+																		<column
+																			label="Observaciones" width="237px" />
+
+																	</columns>
+																	<rows>
+
+																		<!-- fila 141 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbEsto_alt_vital"
+																					value="34. Alterac. Vitalidad: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbEsto_alt_vital"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxEsto_cual_alt_vital})">
+																					<radio
+																						id="Esto_alt_vital1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Esto_alt_vital2" checked="true" value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<textbox
+																					id="tbxEsto_cual_alt_vital" width="155px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+
+																		<!-- fila 143 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbEsto_percusion"
+																					value="35. Dolor Percusión: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbEsto_percusion"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxEsto_cual_percusion})">
+																					<radio
+																						id="Esto_percusion1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Esto_percusion2" checked="true" value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<textbox
+																					id="tbxEsto_cual_percusion" width="155px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+
+																		<!-- fila 145 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbEsto_mov_dental"
+																					value="36. Movilidad Dental: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbEsto_mov_dental"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxEsto_cual_mov_dental})">
+																					<radio
+																						id="Esto_mov_dental1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Esto_mov_dental2" checked="true" value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<textbox
+																					id="tbxEsto_cual_mov_dental" width="155px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+
+																		<!-- fila 147 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbEsto_fistula" value="37. Fístula: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbEsto_fistula"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxEsto_cual_fistula})">
+																					<radio
+																						id="Esto_fistula1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Esto_fistula2" checked="true" value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<textbox
+																					id="tbxEsto_cual_fistula" width="155px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+
+																		<!-- fila 149 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbEsto_diente" value="38. Diente Tratado: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbEsto_diente"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxEsto_cual_diente})">
+																					<radio
+																						id="Esto_diente1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Esto_diente2" checked="true" value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<textbox
+																					id="tbxEsto_cual_diente" width="155px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+
+																		<row>
+																			<cell
+																				colspan="4">
+																				<space></space>
+																			</cell>
+																		</row>
+
+																		<row>
+																			<cell
+																				colspan="4">
+																				<space></space>
+																			</cell>
+																		</row>
+
+																	</rows>
+																</grid>
+															</groupbox>
+														</cell>
+													</row>
+													<row>
+														<cell
+															colspan="4">
+															<groupbox
+																mold="3d" width="450px" closable="false">
+																<grid
+																	sclass="GridSinBorde" style="border:none">
+
+																	<columns>
+																		<column
+																			label="Hábitos Orales" width="130px" />
+																		<column
+																			label="SÍ" width="35px" />
+																		<column
+																			label="NO" width="35px" />
+																		<column
+																			label="Observaciones" width="237px" />
+
+																	</columns>
+																	<rows>
+
+																		<!-- fila 151 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbEsto_oral" value="39. Respiración Oral: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbEsto_oral"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxEsto_cual_oral})">
+																					<radio
+																						id="Esto_oral1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Esto_oral2" checked="true" value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<textbox
+																					id="tbxEsto_cual_oral" width="155px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+
+																		<!-- fila 153 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbEsto_digital" value="40. Succión Digital : " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbEsto_digital"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxEsto_cual_digital})">
+																					<radio
+																						id="Esto_digital1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Esto_digital2" checked="true" value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<textbox
+																					id="tbxEsto_cual_digital" width="155px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+
+																		<!-- fila 155 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbEsto_lengua_protactil"
+																					value="41. Lengua Protráctil: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbEsto_lengua_protactil"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxEsto_cual_lengua_protactil})">
+																					<radio
+																						id="Esto_lengua_protactil1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Esto_lengua_protactil2" checked="true"
+																						value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<textbox
+																					id="tbxEsto_cual_lengua_protactil" width="155px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+
+																		<!-- fila 157 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbEsto_queilosfagia" value="42. Onicofagía: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbEsto_queilosfagia"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxEsto_cual_queilosfagia})">
+																					<radio
+																						id="Esto_queilosfagia1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Esto_queilosfagia2" checked="true" value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<textbox
+																					id="tbxEsto_cual_queilosfagia" width="155px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+
+																		<!-- fila 159 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbEsto_fumador" value="43. Fumador: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbEsto_fumador"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxEsto_cual_fumador})">
+																					<radio
+																						id="Esto_fumador1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Esto_fumador2" checked="true" value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<textbox
+																					id="tbxEsto_cual_fumador" width="155px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+
+																		<!-- fila 161 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbEsto_alcohol" value="44. Alcohol: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbEsto_alcohol"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxEsto_cual_alcohol})">
+																					<radio
+																						id="Esto_alcohol1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Esto_alcohol2" checked="true" value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<textbox
+																					id="tbxEsto_cual_alcohol" width="155px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+
+																		<!-- fila 163 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbEsto_otro" value="45. Otro: " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbEsto_otro"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxEsto_cual_otros})">
+																					<radio
+																						id="Esto_otro1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Esto_otro2" checked="true" value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<textbox
+																					id="tbxEsto_cual_otros" width="155px"
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+																	</rows>
+																</grid>
+															</groupbox>
+														</cell>
+														<cell
+															colspan="4">
+														</cell>
+													</row>
+												</rows>
+											</grid>
+										</groupbox>
+									</cell>
+								</row>
+							</rows>
+						</grid>
+
+						<!-- Odontograma -->
+						<space height="20px" />
+						<odontograma id="odtodontograma" />
+
+						<space height="20px" />
+						<groupbox width="999px" mold="3d"
+							closable="false">
+							<caption label="FLOUROSIS"
+								style="font-weight: bold" />
+							<hbox>
+								<label value="PRESENTA FLOUROSIS" />
+								<radiogroup id="rdgPresenta_flourosis"
+									onCheck='groupboxClourosis.visible =  self.getSelectedItem().getValue().equals("S")'>
+									<radio label="SÍ" value="S"
+										selected="false" />
+									<radio label="NO" value="N"
+										selected="true" />
+								</radiogroup>
+							</hbox>
+						</groupbox>
+						<space height="20px" />
+						<groupbox width="999px" mold="3d"
+							id="groupboxClourosis" visible="false">
+							<caption
+								label="INDICE DE DEAN: MARCAR EL NUMERO CORRESPONDIENTE A LA CONDICION CLINICA DE LA LESION"
+								style="font-weight: bold" />
+							<hbox>
+								<grid height="90%" width="850px">
+									<columns sizable="true">
+										<column width="73px"
+											style="margin: 0px;padding:0px" />
+										<column width="73px"
+											style="margin: 0px;padding:0px" />
+										<column width="50px" />
+										<column width="73px" />
+										<column width="73px" />
+										<column width="73px" />
+										<column width="15px"
+											align="right" />
+										<column width="73px" />
+										<column width="73px" />
+										<column width="73px" />
+										<column width="50px" />
+										<column width="73px" />
+										<column width="73px" />
+									</columns>
+									<rows>
+										<row>
+											<cell>
+												<indiceDean
+													id="indiceDean16" number="16"
+													style="margin: 0px;padding:0px" />
+											</cell>
+											<cell>
+												<indiceDean
+													id="indiceDean15" number="15"
+													style="margin: 0px;padding:0px" />
+											</cell>
+											<cell />
+											<cell>
+												<indiceDean
+													id="indiceDean13" style="padding-rigth:0px" number="13" />
+											</cell>
+											<cell>
+												<indiceDean
+													id="indiceDean12" style="padding-rigth:0px" number="12" />
+											</cell>
+											<cell>
+												<indiceDean
+													id="indiceDean11" style="padding-rigth:0px" number="11" />
+											</cell>
+											<cell rowspan="5">
+												<space orient="vertical"
+													bar="true" width="2px" height="100%" />
+											</cell>
+											<cell>
+												<indiceDean
+													id="indiceDean21" style="padding-rigth:0px" number="21" />
+											</cell>
+											<cell>
+												<indiceDean
+													id="indiceDean22" style="padding-rigth:0px" number="22" />
+											</cell>
+											<cell>
+												<indiceDean
+													id="indiceDean23" style="padding-rigth:0px" number="23" />
+											</cell>
+											<cell />
+											<cell>
+												<indiceDean
+													id="indiceDean25" style="padding-rigth:0px" number="25" />
+											</cell>
+											<cell>
+												<indiceDean
+													id="indiceDean26" style="padding-rigth:0px" number="26" />
+											</cell>
+										</row>
+										<row>
+											<cell colspan="13">
+												<space bar="true"
+													orient="horizontal" width="100%" height="2px" />
+											</cell>
+										</row>
+										<row>
+											<cell>
+												<indiceDean
+													id="indiceDean46" style="padding-rigth:0px" number="46" />
+											</cell>
+											<cell />
+											<cell />
+											<cell />
+											<cell />
+											<cell />
+											<cell />
+											<cell />
+											<cell />
+											<cell />
+											<cell />
+											<cell>
+												<indiceDean
+													id="indiceDean36" style="padding-rigth:0px" number="36" />
+											</cell>
+										</row>
+									</rows>
+								</grid>
+								<space bar="true" orient="vertical"
+									width="2px" height="100%" />
+								<space />
+								<vbox width="100px">
+									<label style="font-weight: bold"
+										value="Convenciones" />
+									<label value="0 Normal" />
+									<label value="1 Dudoso" />
+									<label value="2 Muy leve" />
+									<label value="3 Leve" />
+									<label value="4 Moderada" />
+									<label value="5 Severa" />
+									<label value="9 No aplica" />
+								</vbox>
+							</hbox>
+							<space />
+							<hbox>
+								<radiogroup
+									id="rdgclasificacionlessiones">
+									<radio label="Dudoso"
+										style="font-weight: bold" value="01" />
+									<radio label="Muy leve"
+										style="font-weight: bold" value="02" />
+									<radio label="Leve"
+										style="font-weight: bold" value="03" />
+									<radio label="Moderada"
+										style="font-weight: bold" value="04" />
+									<radio label="Severa"
+										style="font-weight: bold" value="05" />
+								</radiogroup>
+							</hbox>
+						</groupbox>
+						<!-- DESPUES DE ODONTOGRAMA -->
+						<grid sclass="GridSinBorde" width="999px">
+							<columns>
+								<column label="" width="82px" />
+								<column label="" width="180px" />
+								<column label="" width="82px" />
+								<column label="" width="225px" />
+								<column label="" width="79px" />
+								<column label="" width="220px" />
+							</columns>
+							<rows>
+								<!-- fila 8 -->
+								<row>
+									<cell colspan="7">
+										<groupbox mold="3d"
+											width="990px" closable="false">
+											<caption
+												label="ACCIÓN PREVENTIVA" />
+											<grid sclass="GridSinBorde"
+												style="border:none">
+												<columns>
+													<column label=""
+														width="82px" />
+													<column label=""
+														width="180px" />
+													<column label=""
+														width="82px" />
+													<column label=""
+														width="225px" />
+													<column label=""
+														width="79px" />
+													<column label=""
+														width="195px" />
+												</columns>
+												<rows>
+													<row>
+														<cell
+															colspan="7">
+															<groupbox
+																mold="3d" width="100%" closable="false">
+																<grid
+																	sclass="GridSinBorde" style="border:none">
+
+																	<columns>
+																		<column
+																			label="" width="260px" />
+																		<column
+																			label="SÍ" width="35px" />
+																		<column
+																			label="NO" width="35px" />
+																		<column
+																			label="Frecuencia" width="430px" />
+
+																	</columns>
+																	<rows>
+																		<!-- fila 165 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbPrev_charla"
+																					value="1. Ha Recibido Charlas de Higiene Oral? " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbPrev_charla"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxPrev_frec_charla})">
+																					<radio
+																						id="Prev_charla1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Prev_charla2" checked="true" value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell
+																				colspan="7">
+																				<textbox
+																					id="tbxPrev_frec_charla" width="285px"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+
+																		<!-- fila 167 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbPrev_cepillado"
+																					value="2. Practica El Cepillado Diario? " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbPrev_cepillado"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxPrev_frec_cepillado})">
+																					<radio
+																						id="Prev_cepillado1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Prev_cepillado2" checked="true" value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell
+																				colspan="10">
+																				<textbox
+																					id="tbxPrev_frec_cepillado" width="285px"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+
+																		<!-- fila 169 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbPrev_seda" value="3. Usa Seda Dental? " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbPrev_seda"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxPrev_frec_seda})">
+																					<radio
+																						id="Prev_seda1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Prev_seda2" checked="true" value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<textbox
+																					id="tbxPrev_frec_seda" width="285px"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+
+																		<!-- fila 171 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbPrev_enjuague"
+																					value="4. Usa Enjuague Bucal? " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbPrev_enjuague"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxPrev_frec_enjuague})">
+																					<radio
+																						id="Prev_enjuague1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Prev_enjuague2" checked="true" value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell
+																				colspan="10">
+																				<textbox
+																					id="tbxPrev_frec_enjuague" width="285px"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+
+																		<!-- fila 173 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbPrev_fluor"
+																					value="5. Le Han Aplicado Flúor? " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbPrev_fluor"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxPrev_frec_fluor})">
+																					<radio
+																						id="Prev_fluor1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Prev_fluor2" checked="true" value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<textbox
+																					id="tbxPrev_frec_fluor" width="285px"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+
+																		<!-- fila 175 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbPrev_sellante"
+																					value="6. Le Han Aplicado Sellante? " />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<radiogroup
+																					id="rdbPrev_sellante"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{tbxPrev_frec_sellante})">
+																					<radio
+																						id="Prev_sellante1" value="1" />
+																					<space></space>
+																					<radio
+																						id="Prev_sellante2" checked="true" value="2" />
+																				</radiogroup>
+																			</cell>
+																			<cell
+																				colspan="10">
+																				<textbox
+																					id="tbxPrev_frec_sellante" width="285px"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+																		<!-- fila 177 -->
+																		<row>
+																			<cell
+																				colspan="4">
+																				<label
+																					id="lbPrev_observacions" value="Observaciones: " />
+																			</cell>
+																		</row>
+																		<row>
+																			<cell
+																				colspan="13">
+																				<textbox
+																					id="tbxPrev_observacions" width="923px" rows="4"
+																					style="text-transform:uppercase" />
+																			</cell>
+																		</row>
+																	</rows>
+																</grid>
+															</groupbox>
+														</cell>
+													</row>
+												</rows>
+											</grid>
+										</groupbox>
+									</cell>
+								</row>
+								<!-- fila 9 -->
+								<row>
+									<cell colspan="7">
+										<impresionDiagnostica
+											id="macroImpresion_diagnostica" />
+									</cell>
+								</row>
+
+								<!-- fila 10 -->
+								<row visible="false">
+									<cell colspan="7">
+										<groupbox mold="3d"
+											width="990px" closable="false">
+											<caption
+												label="Información de Fluorosis" />
+											<grid sclass="GridSinBorde"
+												style="border:none">
+												<columns>
+													<column label=""
+														width="82px" />
+													<column label=""
+														width="180px" />
+													<column label=""
+														width="152px" />
+													<column label=""
+														width="155px" />
+													<column label=""
+														width="79px" />
+													<column label=""
+														width="195px" />
+												</columns>
+												<rows>
+
+													<!-- fila 187 -->
+													<row>
+														<cell>
+															<label
+																id="lbFluorisis" value="Fluorosis: " />
+														</cell>
+														<cell>
+															<radiogroup
+																id="rdbFluorisis"
+																onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{lbTipo_fluorisis, lbxTipo_fluorisis})">
+																<radio
+																	id="Fluorisis1" label="SÍ" value="1" />
+																<space />
+																<radio
+																	id="Fluorisis2" label="NO" checked="true" value="2" />
+
+															</radiogroup>
+														</cell>
+														<cell>
+															<label
+																id="lbTipo_fluorisis" value="Tipo Fluorosis: "
+																visible="false" />
+														</cell>
+														<cell
+															colspan="3">
+															<listbox
+																id="lbxTipo_fluorisis" name="tipo_fluorosis"
+																mold="select" width="170px" sclass="combobox"
+																visible="false" />
+														</cell>
+													</row>
+
+												</rows>
+											</grid>
+										</groupbox>
+									</cell>
+								</row>
+
+
+								<!-- fila 11 -->
+								<row>
+									<cell colspan="7">
+										<groupbox mold="3d"
+											width="990px" closable="false">
+											<caption
+												label="PLAN DE TRATAMIENTO" />
+											<grid sclass="GridSinBorde"
+												style="border:none">
+												<columns>
+													<column label=""
+														width="90px" />
+													<column label=""
+														width="100px" />
+													<column label=""
+														width="80px" />
+													<column label=""
+														width="240px" />
+													<column label=""
+														width="100px" />
+													<column label=""
+														width="80px" />
+													<column label=""
+														width="240px" />
+												</columns>
+												<rows>
+													<row>
+														<cell></cell>
+														<cell
+															colspan="6">
+															<groupbox
+																width="820px" closable="false">
+																<caption
+																	label="Promoción y Prevención" />
+
+																<grid
+																	sclass="GridSinBorde" style="border:none">
+
+																	<columns>
+																		<column
+																			label="" width="180px" />
+																		<column
+																			label="" width="200px" />
+																		<column
+																			label="" width="100px" />
+																		<column
+																			label="" width="180px" />
+																		<column
+																			label="" width="140px" />
+
+																	</columns>
+																	<rows>
+
+																		<!-- fila 189 -->
+																		<row>
+																			<cell>
+																				<checkbox
+																					id="chbTra_educacion_oral"
+																					onCheck="" />
+																				<space></space>
+																				<label
+																					id="lbTra_educacion_oral"
+																					value="Educación en Salud Oral: " />
+																			</cell>
+																			<cell>
+																				<checkbox
+																					id="chbTra_control_placa"
+																					onCheck="" />
+																				<space></space>
+																				<label
+																					id="lbTra_control_placa"
+																					value="Control de Placa Bacteriana " />
+																			</cell>
+																			<cell>
+																				<checkbox
+																					id="chbTra_profilaxis" />
+																				<space></space>
+																				<label
+																					id="lbTra_profilaxis" value="Profilaxis "
+																					onCheck="" />
+																			</cell>
+																			<cell>
+																				<checkbox
+																					id="chbSellante"
+																					onCheck="formOdontologia2.mostrarComponente(chbSellante,tbxCant_sellante,lblCantidad)" />
+																				<space></space>
+																				<label
+																					id="lbSellante" value="Sellante " />
+																				<label
+																					value="cantidad" id="lblCantidad" visible="false" />
+																				<space />
+																				<textbox
+																					id="tbxCant_sellante" width="20px" maxlength="2"
+																					visible="false" />
+																			</cell>
+																			<cell>
+																				<checkbox
+																					id="chbFluor"
+																					onCheck="" />
+																				<space></space>
+																				<label
+																					id="lbFluor" value="Flúor " />
+																			</cell>
+																		</row>
+																		<!-- fila 199 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbTra_detartraje_supragingival"
+																					value="Detartraje Supragingival: " />
+																			</cell>
+																			<cell>
+																				<radiogroup
+																					id="rdbTra_detartraje_supragingival"
+																					onCheck="formOdontologia2.seleccion_radio(self, new AbstractComponent[]{chbTra_i, chbTra_ii, chbTra_iii, chbTra_iv, lbTra_i, lbTra_ii, lbTra_iii, lbTra_iv});">
+																					<radio
+																						id="Tra_detartraje_supragingival1" label="SÍ"
+																						value="1" />
+																					<space />
+																					<radio
+																						id="Tra_detartraje_supragingival2" label="NO"
+																						checked="true" value="2" />
+
+																				</radiogroup>
+																			</cell>
+																			<cell
+																				colspan="4">
+																				<checkbox
+																					id="chbTra_i" visible="false" />
+																				<label
+																					id="lbTra_i" value="I " visible="false" />
+																				<space></space>
+																				<checkbox
+																					id="chbTra_ii" visible="false" />
+																				<label
+																					id="lbTra_ii" value="II " visible="false" />
+																				<space></space>
+																				<checkbox
+																					id="chbTra_iii" visible="false" />
+																				<label
+																					id="lbTra_iii" value="III " visible="false" />
+																				<space></space>
+																				<checkbox
+																					id="chbTra_iv" visible="false" />
+																				<label
+																					id="lbTra_iv" value="IV " visible="false" />
+																			</cell>
+																		</row>
+																	</rows>
+																</grid>
+															</groupbox>
+														</cell>
+													</row>
+													<row>
+														<cell></cell>
+														<cell
+															colspan="3">
+															<groupbox
+																width="400px" closable="false">
+																<caption
+																	label="Cirugía" />
+																<grid
+																	sclass="GridSinBorde" style="border:none">
+
+																	<columns>
+																		<column
+																			label="" width="100px" />
+																		<column
+																			label="" width="100px" />
+																		<column
+																			label="" width="120px" />
+																	</columns>
+																	<rows>
+																		<!-- fila 205 -->
+																		<row>
+																			<cell>
+																				<listbox
+																					id="lbxTra_cirugia" name="cirugia" mold="select"
+																					width="90px" sclass="combobox">
+																					<attribute name="onSelect">
+	boolean estado = lbxTra_cirugia.getSelectedIndex() > 0;
+	lbTra_num_cirugia.setVisible(estado);
+	ibxCirugia_num_diente.setText("");
+	ibxCirugia_num_diente.setVisible(estado);
+</attribute>
+																				</listbox>
+																			</cell>
+																			<cell>
+																				<label
+																					id="lbTra_num_cirugia" value="Nro diente: "
+																					visible="false" />
+																			</cell>
+																			<cell
+																				colspan="2">
+																				<textbox
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					id="ibxCirugia_num_diente" width="100px"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+																	</rows>
+																</grid>
+															</groupbox>
+														</cell>
+														<cell
+															colspan="3">
+															<groupbox
+																width="400px" closable="false">
+																<caption
+																	label="Endodoncia" />
+
+																<grid
+																	sclass="GridSinBorde" style="border:none">
+
+																	<columns>
+
+																		<column
+																			label="" width="125px" />
+																		<column
+																			label="" width="100px" />
+																		<column
+																			label="" width="85px" />
+																		<column
+																			label="" width="70px" />
+
+																	</columns>
+																	<rows>
+
+																		<!-- fila 197 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbTra_endodoncia" value="Endodoncia: " />
+																			</cell>
+																			<cell
+																				colspan="4">
+																				<radiogroup
+																					id="rdbTra_endodoncia"
+																					onCheck="formOdontologia2.seleccionRadio(rdbTra_endodoncia,ibxEndodoncia_num_diente,lbTra_num_endodoncia);">
+																					<radio
+																						id="Tra_endodoncia1" label="SÍ" value="1" />
+																					<space />
+																					<radio
+																						id="Tra_endodoncia2" label="NO" checked="true"
+																						value="2" />
+																				</radiogroup>
+																			</cell>
+																		</row>
+																		<row>
+																			<cell
+																				colspan="1">
+																				<label
+																					id="lbTra_num_endodoncia" value="N° Diente: "
+																					visible="false" />
+																			</cell>
+																			<cell
+																				colspan="4">
+																				<textbox
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					id="ibxEndodoncia_num_diente" width="60px"
+																					style="text-transform:uppercase" visible="false" />
+																			</cell>
+																		</row>
+																	</rows>
+																</grid>
+															</groupbox>
+														</cell>
+														<cell />
+													</row>
+													<row>
+														<cell></cell>
+														<cell
+															colspan="3">
+															<groupbox
+																width="400px" closable="false">
+																<caption
+																	label="Operatoria" />
+
+																<grid
+																	sclass="GridSinBorde" style="border:none">
+
+																	<columns>
+																		<column
+																			label="" width="125px" />
+																		<column
+																			label="" width="125px" />
+																		<column
+																			label="" width="125px" />
+
+																	</columns>
+																	<rows>
+																		<!-- fila 192 -->
+																		<row>
+																			<cell>
+																				<checkbox
+																					id="chbTra_amalgamas"
+																					onCheck="formOdontologia2.seleccionCheck(chbTra_amalgamas,ibxNum_diente_traAmalgama,lbAmalgama);" />
+																				<space></space>
+																				<label
+																					id="lbTra_amalgamas" value="Amalgamas: " />
+																			</cell>
+																			<cell>
+																				<checkbox
+																					id="chbTra_resinas"
+																					onCheck="formOdontologia2.seleccionCheck(chbTra_resinas,ibxNro_diente_trRecinas,lbRecina);" />
+																				<space></space>
+																				<label
+																					id="lbTra_resinas" value="Resinas: " />
+																			</cell>
+																			<cell>
+																				<checkbox
+																					id="chbTra_ionimeros"
+																					onCheck="formOdontologia2.seleccionCheck(chbTra_ionimeros,ibxNro_diente_traIonimeros,lbIonimero);" />
+																				<space></space>
+																				<label
+																					id="lbTra_ionimeros" value="Ionimeros: " />
+																			</cell>
+																		</row>
+																		<row>
+																			<cell>
+																				<label
+																					value="N° Dientes: " id="lbAmalgama"
+																					visible="false" />
+																				<textbox
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					id="ibxNum_diente_traAmalgama" visible="false" />
+																			</cell>
+
+																			<cell>
+																				<label
+																					value="N° Dientes: " id="lbRecina" visible="false" />
+																				<textbox
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					id="ibxNro_diente_trRecinas" visible="false" />
+																			</cell>
+
+																			<cell>
+																				<label
+																					value="N° Dientes: " id="lbIonimero"
+																					visible="false" />
+																				<textbox
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					id="ibxNro_diente_traIonimeros" visible="false" />
+																			</cell>
+																		</row>
+																	</rows>
+																</grid>
+															</groupbox>
+														</cell>
+														<cell
+															colspan="3">
+															<groupbox
+																width="400px" closable="false">
+																<caption
+																	label="Prostodoncia" />
+
+																<grid
+																	sclass="GridSinBorde" style="border:none">
+
+																	<columns>
+																		<column
+																			label="" width="125px" />
+																		<column
+																			label="" width="100px" />
+																		<column
+																			label="" width="85px" />
+																		<column
+																			label="" width="70px" />
+
+																	</columns>
+																	<rows>
+
+																		<!-- fila 204 -->
+																		<row>
+																			<cell>
+																				<label
+																					id="lbTra_prostodoncia" value="Prostodoncia: " />
+																			</cell>
+																			<cell>
+																				<radiogroup
+																					id="rdbTra_prostodoncia"
+																					onCheck="formOdontologia2.seleccionRadio(rdbTra_prostodoncia,ibxProtodoncia_num_diente,lbTra_num_prostodoncia);">
+																					<radio
+																						id="Tra_prostodoncia1" label="SÍ" value="1" />
+																					<space />
+																					<radio
+																						id="Tra_prostodoncia2" label="NO" checked="true"
+																						value="2" />
+
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																			</cell>
+																			<cell>
+																			</cell>
+																		</row>
+																		<row>
+																			<cell
+																				colspan="1">
+																				<label
+																					id="lbTra_num_prostodoncia" value="N° Diente"
+																					visible="false">
+																				</label>
+																			</cell>
+																			<cell
+																				colspan="4">
+																				<textbox
+																					use="com.framework.macros.CampoObservacionesPopupMacro"
+																					id="ibxProtodoncia_num_diente" visible="false"
+																					width="50px" />
+																			</cell>
+																		</row>
+
+																	</rows>
+																</grid>
+															</groupbox>
+														</cell>
+													</row>
+													<!-- fila 207 -->
+													<row
+														visible="false">
+														<cell></cell>
+														<cell
+															colspan="7">
+															<label
+																id="lbTra_otros"
+																value=" Descripción de procedimientos a realizar" />
+														</cell>
+													</row>
+													<!-- fila 208 -->
+													<row
+														visible="false">
+														<cell></cell>
+														<cell
+															colspan="6">
+															<textbox
+																id="tbxRemision" width="820px" rows="4"
+																style="text-transform:uppercase" />
+														</cell>
+													</row>
+												</rows>
+											</grid>
+										</groupbox>
+									</cell>
+								</row>
+
+								<!-- perinatales -->
+								<row>
+									<cell colspan="7">
+										<groupbox mold="3d"
+											closable="false">
+											<caption
+												label="PROCEDIMIENTOS A REALIZAR" />
+											<div style=""
+												id="divModuloOrdenamiento" visible="true">
+											</div>
+										</groupbox>
+									</cell>
+								</row>
+								<!-- manuel -->
+								<row hflex="1">
+									<cell colspan="7">
+										<consentimiento_inf_odon
+											id="macroConsentimiento_inf_odon">
+										</consentimiento_inf_odon>
+									</cell>
+								</row>
+
+
+
+								<!-- fila 12 -->
+								<row>
+									<cell colspan="7">
+										<groupbox mold="3d"
+											width="990px" closable="false">
+											<caption label="PRONOSTICO" />
+											<grid sclass="GridSinBorde"
+												style="border:none">
+												<columns>
+													<column label=""
+														width="82px" />
+													<column label=""
+														width="180px" />
+													<column label=""
+														width="82px" />
+													<column label=""
+														width="225px" />
+													<column label=""
+														width="79px" />
+													<column label=""
+														width="195px" />
+												</columns>
+												<rows>
+
+													<!-- fila 209 -->
+													<row>
+														<cell>
+															<label
+																id="lbPronostico" value="Pronostico: " />
+														</cell>
+														<cell
+															colspan="8">
+															<textbox
+																id="tbxPronostico" width="700px" rows="5" />
+														</cell>
+													</row>
+
+												</rows>
+											</grid>
+										</groupbox>
+									</cell>
+								</row>
+
+								<!-- fila 13 -->
+								<row>
+									<cell colspan="7">
+										<groupbox mold="3d"
+											width="990px" closable="false">
+											<caption
+												label="PREGUNTAS RED DE BUEN TRATO" />
+											<grid sclass="GridSinBorde"
+												style="border:none">
+												<columns>
+													<column label=""
+														width="120px" />
+													<column label=""
+														width="82px" />
+													<column label=""
+														width="180px" />
+													<column label=""
+														width="122px" />
+													<column label=""
+														width="185px" />
+													<column label=""
+														width="79px" />
+													<column label=""
+														width="195px" />
+												</columns>
+												<rows>
+													<!-- fila 210 -->
+													<row>
+														<cell></cell>
+														<cell
+															colspan="3">
+															<label
+																id="lbViolencia"
+																value="Ha sufrido algún tipo de Violencia en su casa?  " />
+														</cell>
+														<cell>
+															<radiogroup
+																id="rdbViolencia"
+																onCheck="formOdontologia2.mostrarRedBuenTrato(rdbViolencia,rowTipo_violencia)">
+																<radio
+																	id="Violencia1" label="SÍ" value="1" />
+																<space />
+																<radio
+																	id="Violencia2" label="NO" checked="true" value="2" />
+															</radiogroup>
+														</cell>
+														<cell
+															colspan="3">
+														</cell>
+													</row>
+
+													<!-- fila 211 -->
+													<row
+														id="rowTipo_violencia" visible="false">
+														<cell
+															colspan="8">
+															<groupbox>
+																<grid>
+																	<columns>
+																		<column
+																			label="" width="140px" />
+																		<column
+																			label="" width="100px" />
+																		<column
+																			label="" width="150px" />
+																		<column
+																			label="" width="100px" />
+																		<column
+																			label="" width="150px" />
+																		<column
+																			label="" width="100px" />
+																		<column
+																			label="" width="200px" />
+																	</columns>
+																	<rows>
+																		<row>
+																			<cell></cell>
+																			<cell>
+																				<label
+																					id="lbFisico" value="Físico: " />
+																			</cell>
+																			<cell>
+																				<radiogroup
+																					id="rdbFisico">
+																					<radio
+																						id="Fisico1" label="SÍ" value="1" />
+																					<space />
+																					<radio
+																						id="Fisico2" label="NO" checked="true" value="2" />
+
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<label
+																					id="lbSexual" value="Sexual: " />
+																			</cell>
+																			<cell>
+																				<radiogroup
+																					id="rdbSexual">
+																					<radio
+																						id="Sexual1" label="SÍ" value="1" />
+																					<space />
+																					<radio
+																						id="Sexual2" label="NO" checked="true" value="2" />
+
+																				</radiogroup>
+																			</cell>
+																			<cell>
+																				<label
+																					id="lbEmocional" value="Emocional: " />
+																			</cell>
+																			<cell>
+																				<radiogroup
+																					id="rdbEmocional">
+																					<radio
+																						id="Emocional1" label="SÍ" value="1" />
+																					<space />
+																					<radio
+																						id="Emocional2" label="NO" checked="true"
+																						value="2" />
+																				</radiogroup>
+																			</cell>
+																		</row>
+																	</rows>
+																</grid>
+															</groupbox>
+														</cell>
+													</row>
+
+													<!-- fila 214 -->
+													<row>
+														<cell></cell>
+														<cell
+															colspan="3">
+															<label
+																id="lbRiesgo" value="¿Usted se siente en riesgo?   " />
+														</cell>
+														<cell>
+															<radiogroup
+																id="rdbRiesgo"
+																onCheck="formOdontologia2.mostrarRedBuenTrato(rdbRiesgo,rowRiesgo,tbxCual_riesgo)">
+																<radio
+																	id="Riesgo1" label="SÍ" value="1" />
+																<space />
+																<radio
+																	id="Riesgo2" label="NO" checked="true" value="2" />
+
+															</radiogroup>
+														</cell>
+														<cell
+															colspan="4">
+														</cell>
+													</row>
+													<row id="rowRiesgo"
+														visible="false">
+														<cell
+															colspan="8">
+															<groupbox>
+																<grid>
+																	<columns>
+																		<column
+																			width="100px" />
+																		<column
+																			width="100px" />
+																		<column
+																			width="700px" />
+																		<column />
+																	</columns>
+																	<rows>
+																		<row>
+																			<cell />
+																			<cell>
+																				<label
+																					value="Describa:" />
+																			</cell>
+																			<cell>
+																				<space />
+																				<textbox
+																					id="tbxCual_riesgo" width="650px" rows="4">
+																				</textbox>
+																			</cell>
+																			<cell />
+																		</row>
+																	</rows>
+																</grid>
+															</groupbox>
+														</cell>
+													</row>
+													<row>
+														<cell />
+														<cell
+															colspan="3">
+															<label
+																id="lbTema" value="¿Quiere Hablar del Tema? " />
+														</cell>
+														<cell
+															colspan="2">
+															<radiogroup
+																id="rdbTema"
+																onCheck="formOdontologia2.mostrarRedBuenTrato(rdbTema,rowHablar_tema,tbxDesc_hblar_tema)">
+																<radio
+																	id="Tema1" label="SÍ" value="1" />
+																<space />
+																<radio
+																	id="Tema2" label="NO" checked="true" value="2" />
+
+															</radiogroup>
+														</cell>
+														<cell
+															colspan="3">
+														</cell>
+													</row>
+													<row
+														id="rowHablar_tema" visible="false">
+														<cell
+															colspan="8">
+															<groupbox>
+																<grid>
+																	<columns>
+																		<column
+																			width="100px" />
+																		<column
+																			width="100px" />
+																		<column
+																			width="700px" />
+																		<column />
+																	</columns>
+																	<rows>
+																		<row>
+																			<cell />
+																			<cell>
+																				<label
+																					value="Describa:" />
+																			</cell>
+																			<cell>
+																				<space />
+																				<textbox
+																					id="tbxDesc_hblar_tema" width="650px" rows="4">
+																				</textbox>
+																			</cell>
+																			<cell />
+																		</row>
+																	</rows>
+																</grid>
+															</groupbox>
+														</cell>
+													</row>
+												</rows>
+											</grid>
+										</groupbox>
+									</cell>
+								</row>
+
+								<row>
+									<cell colspan="7">
+										<remision_interna
+											id="macroRemision_interna" />
+									</cell>
+								</row>
+								<row>
+									<cell colspan="7">
+										<groupbox mold="3d"
+											closable="false" visible="true" id="gbxRemisiones">
+											<caption label="REMISIONES" />
+											<div style=""
+												id="divModuloRemisiones_externas" visible="true">
+											</div>
+										</groupbox>
+									</cell>
+								</row>
+							</rows>
+						</grid>
+						<groupbox mold="3d" closable="false"
+							width="999px" id="groupVerificarSaludBucal" visible="false">
+							<caption label="COMPONENTE AIEPI"
+								style="font-weight:BOLD" />
+							<grid width="930px">
+								<columns sizable="true">
+									<column width="270px" />
+									<column width="100px" />
+									<column width="325px" />
+									<column width="230px" />
+								</columns>
+								<rows>
+									<row>
+										<cell align="left">
+											<label
+												value="¿Tiene dolor al comer-masticar?" />
+										</cell>
+										<cell>
+											<radiogroup
+												id="rdgaiepiDolorComer">
+												<radio value="S"
+													label="SÍ" selected="false" />
+												<radio value="N"
+													label="NO" selected="true" />
+											</radiogroup>
+										</cell>
+										<cell rowspan="16">
+											<h:p
+												style="font-size:14px;font-weight:normal" align="justify">
+												Inflamación dolorosa del
+												labio. No involucra
+												surco localizado,
+												generalizado,
+												Exudado-pus
+												<h:br />
+												Enrojecimiento
+												inflamacion encía
+												<h:br />
+												Deformación contorno de
+												encia
+												<h:br />
+												Vesiculas ulceras
+												placas: encias lengua
+												paladar
+												<h:br />
+												Fractura movilidad
+												desplazamiento
+												<h:br />
+												Extrusión intrusión
+												avulsión
+												<h:br />
+												Herida: mucosabucal
+												encia lengua
+												<h:br />
+												Manchas blancas Cafés
+												<h:br />
+												Caries cavitaciones
+												<h:br />
+												<h:br />
+												<h:br />
+												<h:br />
+												placa bacteriana
+											</h:p>
+											<space />
+											<vbox>
+												<label
+													value="OBSERVACIONES: " />
+												<textbox rows="9"
+													width="300px" id="tbxObservacionesAiepi" />
+											</vbox>
+										</cell>
+										<cell rowspan="17"
+											align="center">
+											<vbox align="start">
+												<checkbox
+													id="chkAiepiDiagCelulitis" label="CELULITIS FACIAL"
+													style="font-weight:bold" />
+												<checkbox
+													id="chkAiepiDiagEnfermedadbucalGrave"
+													label="ENFERMEDAD BUCAL GRAVE" style="font-weight:bold" />
+												<checkbox
+													id="chkAiepiDiagTraumaBucodental" label="TRAUMA BUCODENTAL"
+													style="font-weight:bold" />
+												<checkbox
+													id="chkAiepiDiagEstomatitis" label="ESTOMATITIS"
+													style="font-weight:bold" />
+												<space />
+												<checkbox
+													id="chkAiepiDiagEnfermedadDentalGingival"
+													label="ENFERMEDAD DENTAL Y GINGIVAL"
+													style="font-weight:bold" />
+
+												<space />
+												<radiogroup
+													id="RgroupRiesgoEnfermedadBucal" />
+												<radio
+													id="chkAiepiDiagAltoRiesgoEnfermadadBucal"
+													label="ALTO RIESGO DE ENFERMEDAD BUCAL"
+													radiogroup="RgroupRiesgoEnfermedadBucal"
+													style="font-weight:bold" />
+												<space />
+												<radio
+													id="chkAiepiDiagBajoRiesgoEnfermadadBucal"
+													label="BAJO RIESGO DE ENFERMEDAD BUCAL"
+													radiogroup="RgroupRiesgoEnfermedadBucal"
+													style="font-weight:bold" />
+											</vbox>
+										</cell>
+									</row>
+									<row>
+										<cell align="left">
+											<label
+												value="¿Tiene dolor en dientes?" />
+										</cell>
+										<cell>
+											<radiogroup
+												id="rdgaiepiDolorDientes">
+												<radio value="S"
+													label="SÍ" selected="false" />
+												<radio value="N"
+													label="NO" selected="true" />
+											</radiogroup>
+										</cell>
+									</row>
+									<row>
+										<cell align="left">
+											<label
+												value="¿Trauma en cara o boca?" />
+										</cell>
+										<cell>
+											<radiogroup
+												id="rdgaiepiTraumaCaraBoca">
+												<radio value="S"
+													label="SÍ" selected="false" />
+												<radio value="N"
+													label="NO" selected="true" />
+											</radiogroup>
+										</cell>
+									</row>
+									<row>
+										<cell align="left">
+											<label
+												value="¿Tienen padres/hermanos caries?" />
+										</cell>
+										<cell>
+											<radiogroup
+												id="rdgaiepiCariesPadresHermanos">
+												<radio value="S"
+													label="SÍ" selected="false" />
+												<radio value="N"
+													label="NO" selected="true" />
+											</radiogroup>
+										</cell>
+									</row>
+									<row>
+										<cell align="left">
+											<label
+												value="¿Cuando le limpia boca?" />
+										</cell>
+										<cell />
+									</row>
+									<row>
+										<cell align="left">
+											<space />
+											<label value="  Mañana:" />
+										</cell>
+										<cell>
+											<radiogroup
+												id="rdgaiepiManania">
+												<radio value="S"
+													label="SÍ" selected="false" />
+												<radio value="N"
+													label="NO" selected="true" />
+											</radiogroup>
+										</cell>
+									</row>
+									<row>
+										<cell align="left">
+											<space />
+											<label value="Medio dia:" />
+										</cell>
+										<cell>
+											<radiogroup
+												id="rdgaiepiMedioDia">
+												<radio value="S"
+													label="SÍ" selected="false" />
+												<radio value="N"
+													label="NO" selected="true" />
+											</radiogroup>
+										</cell>
+									</row>
+									<row>
+										<cell align="left">
+											<space />
+											<label value="Noche:" />
+										</cell>
+										<cell>
+											<radiogroup
+												id="rdgaiepiNoche">
+												<radio value="S"
+													label="SÍ" selected="false" />
+												<radio value="N"
+													label="NO" selected="true" />
+											</radiogroup>
+										</cell>
+									</row>
+									<row>
+										<cell align="left">
+											<label
+												value="¿Cómo supervisa limpiezá?" />
+										</cell>
+										<cell />
+									</row>
+									<row>
+										<cell align="left">
+											<space />
+											<label
+												value="Le limpia los Dientes:" />
+										</cell>
+										<cell>
+											<radiogroup
+												id="rdgaiepiLimpiaDientes">
+												<radio value="S"
+													label="SÍ" selected="false" />
+												<radio value="N"
+													label="NO" selected="true" />
+											</radiogroup>
+										</cell>
+									</row>
+									<row>
+										<cell align="left">
+											<space />
+											<label value="Niño solo:" />
+										</cell>
+										<cell>
+											<radiogroup
+												id="rdgaiepiNinioSolo">
+												<radio value="S"
+													label="SÍ" selected="false" />
+												<radio value="N"
+													label="NO" selected="true" />
+											</radiogroup>
+										</cell>
+									</row>
+									<row>
+										<cell align="left">
+											<label
+												value="¿Qué utiliza?" />
+										</cell>
+										<cell />
+									</row>
+									<row>
+										<cell align="left">
+											<space />
+											<label value="Cepillo:" />
+										</cell>
+										<cell>
+											<radiogroup
+												id="rdgaiepiCepillo">
+												<radio value="S"
+													label="SÍ" selected="false" />
+												<radio value="N"
+													label="NO" selected="true" />
+											</radiogroup>
+										</cell>
+									</row>
+									<row>
+										<cell align="left">
+											<space />
+											<label value="Crema:" />
+										</cell>
+										<cell>
+											<radiogroup
+												id="rdgaiepiCrema">
+												<radio value="S"
+													label="SÍ" selected="false" />
+												<radio value="N"
+													label="NO" selected="true" />
+											</radiogroup>
+										</cell>
+									</row>
+									<row>
+										<cell align="left">
+											<space />
+											<label value="Seda:" />
+										</cell>
+										<cell>
+											<radiogroup
+												id="rdgaiepiSeda">
+												<radio value="S"
+													label="SÍ" selected="false" />
+												<radio value="N"
+													label="NO" selected="true" />
+											</radiogroup>
+										</cell>
+									</row>
+									<row>
+										<cell align="left">
+											<label
+												value="¿Utiliza chupo o biberón?" />
+										</cell>
+										<cell>
+											<radiogroup
+												id="rdgaiepiChupoBiberon">
+												<radio value="S"
+													label="SÍ" selected="false" />
+												<radio value="N"
+													label="NO" selected="true" />
+											</radiogroup>
+										</cell>
+									</row>
+									<row>
+										<cell align="left">
+											<label
+												value="¿Cuándo fue la última consulta odontológica?" />
+										</cell>
+										<cell colspan="2">
+											<datebox width="380px"
+												id="tbxaiepiUltimaConsultaOdontologica" mold="rounded"
+												readonly="true" format="dd-MM-yyyy" />
+										</cell>
+									</row>
+									<row>
+										<cell colspan="3"
+											height="100px" />
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+					</div>
+				</center>
+			</borderlayout>
+		</groupbox>
+	</window>
+</zk>

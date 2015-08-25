@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Facturas_relacionadas_ripsDao">
+
+	<!--<typeAlias alias="facturacion_servicio" type="healthmanager.modelo.bean.Facturacion_servicio" 
+		/> -->
+
+	<!--<mapper resource="healthmanager/modelo/dao/xml/facturacion_servicioSQL.xml" 
+		/> -->
+
+	<resultMap id="facturas_relacionadas_ripsMap" type="facturas_relacionadas_rips">
+		<result column="codigo_registro" property="codigo_registro" />
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="codigo_administradora" property="codigo_administradora" />
+		<result column="id_contrato" property="id_contrato" />
+		<result column="facturas_relacionadas" property="facturas_relacionadas" />
+		<result column="fecha_inicial" property="fecha_inicial" />
+		<result column="fecha_final" property="fecha_final" />
+		<result column="creacion_date" property="creacion_date" />
+		<result column="creacion_user" property="creacion_user" />
+	</resultMap>
+
+	<insert id="crear" parameterType="facturas_relacionadas_rips">
+		<selectKey keyProperty="codigo_registro" resultType="java.lang.Long" >
+			INSERT INTO public.facturas_relacionadas_rips
+		(codigo_empresa,codigo_sucursal,
+		codigo_administradora,id_contrato,
+		facturas_relacionadas,fecha_inicial,fecha_final,
+		creacion_date,creacion_user)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{codigo_administradora},#{id_contrato},
+		#{facturas_relacionadas},#{fecha_inicial},#{fecha_final},
+		#{creacion_date},#{creacion_user})
+		RETURNING codigo_registro;
+		</selectKey>
+	</insert>
+
+	<update id="actualizar" parameterType="facturas_relacionadas_rips">
+		update
+		public.facturas_relacionadas_rips set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},
+		codigo_administradora =
+		#{codigo_administradora},id_contrato = #{id_contrato},
+		facturas_relacionadas =
+		#{facturas_relacionadas},fecha_inicial = #{fecha_inicial},
+		fecha_final
+		= #{fecha_final},creacion_date = #{creacion_date},
+		creacion_user =
+		#{creacion_user}
+		where codigo_registro =
+		#{codigo_registro}
+	</update>
+
+	<select id="consultar" parameterType="facturas_relacionadas_rips"
+		resultMap="facturas_relacionadas_ripsMap">
+		select codigo_registro,codigo_empresa,codigo_sucursal,
+		codigo_administradora,id_contrato,
+		facturas_relacionadas,fecha_inicial,fecha_final,
+		creacion_date,creacion_user 
+		from
+		public.facturas_relacionadas_rips
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+		<if test="codigo_registro != null">
+			and codigo_registro = #{codigo_registro}
+		</if>
+		<if test="codigo_empresa != null">
+			and codigo_empresa = #{codigo_empresa}
+		</if>
+		<if test="codigo_sucursal != null">
+			and codigo_sucursal = #{codigo_sucursal}
+		</if>
+		<if test="codigo_administradora != null">
+			and codigo_administradora = #{codigo_administradora}
+		</if>
+		<if test="id_contrato != null">
+			and id_contrato = #{id_contrato}
+		</if>
+		<if test="fecha_inicial != null">
+			and fecha_inicial = #{fecha_inicial}
+		</if>
+		<if test="fecha_final != null">
+			and fecha_final = #{fecha_final}
+		</if>
+		</trim> 
+		
+	</select>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="facturas_relacionadas_ripsMap">
+		select codigo_registro,codigo_empresa,codigo_sucursal,
+		codigo_administradora,id_contrato,
+		facturas_relacionadas,fecha_inicial,fecha_final,
+		creacion_date,creacion_user 
+		from
+		public.facturas_relacionadas_rips
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+		<if test="codigo_registro != null">
+			and codigo_registro = #{codigo_registro}
+		</if>
+		<if test="codigo_empresa != null">
+			and codigo_empresa = #{codigo_empresa}
+		</if>
+		<if test="codigo_sucursal != null">
+			and codigo_sucursal = #{codigo_sucursal}
+		</if>
+		<if test="codigo_administradora != null">
+			and codigo_administradora = #{codigo_administradora}
+		</if>
+		<if test="id_contrato != null">
+			and id_contrato = #{id_contrato}
+		</if>
+		<if test="fecha_inicial != null">
+			and fecha_inicial = #{fecha_inicial}
+		</if>
+		<if test="fecha_final != null">
+			and fecha_final = #{fecha_final}
+		</if>
+		<if test="id_factura_like != null">
+			and facturas_relacionadas like '${id_factura_like}'
+		</if>
+		</trim> 
+		<if test="limite_paginado != null">
+			${limite_paginado}
+		</if>
+	</select>
+
+</mapper>

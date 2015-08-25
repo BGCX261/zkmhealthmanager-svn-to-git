@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.UsuariosDao">
+
+	<resultMap id="usuariosMap" type="usuarios">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="codigo" property="codigo" />
+		<result column="login" property="login" />
+		<result column="password" property="password" />
+		<result column="nombres" property="nombres" />
+		<result column="apellidos" property="apellidos" />
+		<result column="nivel" property="nivel" />
+		<result column="creacion_date" property="creacion_date" />
+		<result column="ultimo_update" property="ultimo_update" />
+		<result column="delete_date" property="delete_date" />
+		<result column="creacion_user" property="creacion_user" />
+		<result column="ultimo_user" property="ultimo_user" />
+		<result column="delete_user" property="delete_user" />
+		<result column="tipo" property="tipo" />
+		<result column="entidad" property="entidad" />
+		<result column="codigo_ente" property="codigo_ente" />
+		<result column="cons_ente" property="cons_ente" />
+		<result column="activo" property="activo" />
+		<result column="rol" property="rol" />
+		<result column="direccion" property="direccion" />
+		<result column="tel_oficina" property="tel_oficina" />
+		<result column="tel_res" property="tel_res" />
+		<result column="celular" property="celular" />
+		<result column="registro_medico" property="registro_medico" />
+		<result column="tipo_med" property="tipo_med" />
+		<result column="codigo_especialidad" property="codigo_especialidad" />
+		<result column="tipo_medico" property="tipo_medico" />
+		<result column="email" property="email" />
+		<result column="departamento" property="departamento" />
+		<result column="municipio" property="municipio" />
+		<result column="firma" property="firma" />
+	</resultMap>
+
+	<insert id="crear" parameterType="usuarios">
+		insert into public.usuarios
+		(codigo_empresa,codigo_sucursal,
+		codigo,login,password,
+		nombres,apellidos,nivel,
+		creacion_date,ultimo_update,delete_date,
+		creacion_user,ultimo_user,delete_user,
+		tipo,entidad,codigo_ente,
+		cons_ente,activo,rol,
+		direccion,tel_oficina,tel_res,
+		celular,registro_medico,tipo_med,
+		codigo_especialidad,tipo_medico,email,departamento,municipio,
+		firma)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{codigo},#{login},#{password},
+		#{nombres},#{apellidos},#{nivel},
+		#{creacion_date},#{ultimo_update},#{delete_date},
+		#{creacion_user},#{ultimo_user},#{delete_user},
+		#{tipo},#{entidad},#{codigo_ente},
+		#{cons_ente},#{activo},#{rol},
+		#{direccion},#{tel_oficina},#{tel_res},
+		#{celular},#{registro_medico},#{tipo_med},
+		#{codigo_especialidad},#{tipo_medico},#{email},
+		#{departamento},#{municipio},
+		#{firma})
+	</insert>
+
+	<update id="actualizar" parameterType="usuarios">
+		update public.usuarios set
+		codigo_empresa = #{codigo_empresa},
+		codigo_sucursal =
+		#{codigo_sucursal},codigo = #{codigo},
+		login = #{login},password =
+		#{password},
+		nombres = #{nombres},apellidos = #{apellidos},
+		nivel =
+		#{nivel},creacion_date = #{creacion_date},
+		ultimo_update =
+		#{ultimo_update},delete_date = #{delete_date},
+		creacion_user =
+		#{creacion_user},ultimo_user = #{ultimo_user},
+		delete_user =
+		#{delete_user},tipo = #{tipo},
+		entidad = #{entidad},codigo_ente =
+		#{codigo_ente},
+		cons_ente = #{cons_ente},activo = #{activo},
+		rol =
+		#{rol},direccion = #{direccion},
+		tel_oficina = #{tel_oficina},tel_res =
+		#{tel_res},
+		celular = #{celular},registro_medico = #{registro_medico},
+		tipo_med = #{tipo_med},codigo_especialidad = #{codigo_especialidad},
+		tipo_medico = #{tipo_medico},email = #{email},
+		departamento =
+		#{departamento},
+		municipio = #{municipio},
+		firma = #{firma}
+		where
+		codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal =
+		#{codigo_sucursal}
+		and codigo = #{codigo}
+	</update>
+
+	<select id="consultar" resultMap="usuariosMap" parameterType="usuarios">
+		select codigo_empresa,codigo_sucursal,
+		codigo,login,password,nombres,
+		apellidos,nivel,creacion_date,ultimo_update,
+		delete_date,creacion_user,ultimo_user,delete_user,
+		tipo,entidad,codigo_ente,cons_ente,
+		activo,rol,direccion,tel_oficina,tel_res,
+		celular,registro_medico,tipo_med,codigo_especialidad,tipo_medico,email,departamento,municipio,firma
+		from public.usuarios
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">AND codigo_empresa = #{codigo_empresa}</if>
+			<if test="codigo_sucursal != null">AND codigo_sucursal = #{codigo_sucursal}</if>
+			<if test="codigo != null">AND codigo = #{codigo}</if>
+			<if test="login != null">AND login = #{login}</if>
+			<if test="password != null">AND password = #{password}</if>
+		</trim>
+	</select>
+
+	<delete id="eliminar" parameterType="usuarios">
+		delete from public.usuarios
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal =
+		#{codigo_sucursal} and codigo = #{codigo}
+	</delete>
+
+	<select id="getUsuarioByRol" resultType="java.util.HashMap"
+		parameterType="usuarios">
+		SELECT DISTINCT ON (codigo_usuario) codigo_usuario, rol, nombres,
+		apellidos, tipo_medico
+		from roles
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">AND codigo_empresa = #{codigo_empresa}</if>
+			<if test="codigo_sucursal != null">AND codigo_sucursal = #{codigo_sucursal}</if>
+			<if test="rol != null">AND rol = #{rol}</if>
+			<if test="rol_medico != null">AND rol IN ('05', '11', '12', '13', '14')</if>
+			<if test="paramTodo != null">AND (codigo_usuario like '${value}' or nombres like
+				'${value}'
+				or apellidos like '${value}')
+			</if>
+			<if test="parameter != null">AND ${parameter} like '${value}'</if>
+		</trim>
+		<if test="limit != null">
+			${limit}
+		</if>
+	</select>
+
+	<select id="listar" resultMap="usuariosMap" parameterType="java.util.Map">
+		select usuarios.codigo_empresa,usuarios.codigo_sucursal,
+		usuarios.codigo,usuarios.login,usuarios.password,usuarios.nombres,
+		usuarios.apellidos,usuarios.nivel,usuarios.creacion_date,usuarios.ultimo_update,
+		usuarios.delete_date,usuarios.creacion_user,usuarios.ultimo_user,usuarios.delete_user,
+		usuarios.tipo,usuarios.entidad,usuarios.codigo_ente,usuarios.cons_ente,
+		usuarios.activo,usuarios.rol,usuarios.direccion,usuarios.tel_oficina,usuarios.tel_res,
+		usuarios.celular,usuarios.registro_medico,usuarios.tipo_med,usuarios.codigo_especialidad,
+		usuarios.tipo_medico,usuarios.email,usuarios.departamento,usuarios.municipio,''
+		as firma
+		from public.usuarios
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">AND usuarios.codigo_empresa = #{codigo_empresa}</if>
+			<if test="codigo_sucursal != null">AND usuarios.codigo_sucursal = #{codigo_sucursal}</if>
+			<if test="tipo != null">AND usuarios.tipo = #{tipo}</if>
+			<if test="parameter != null">AND ${parameter} like '${value}'</if>
+			<if test="no_rol_medico != null">
+				AND (select count(1) from roles_usuarios ru where
+				ru.codigo_empresa = usuarios.codigo_empresa and
+				ru.codigo_sucursal =
+				usuarios.codigo_sucursal and ru.codigo_usuario = usuarios.codigo
+				and
+				ru.rol = '05') = 0
+			</if>
+			<if test="roles != null">
+				AND (select count(1) from roles_usuarios ru where ru.codigo_empresa
+				= usuarios.codigo_empresa and
+				ru.codigo_sucursal =
+				usuarios.codigo_sucursal and ru.codigo_usuario = usuarios.codigo
+				and
+				ru.rol IN
+				<foreach collection="roles" item="i" open="(" separator=","
+					close=")">
+					#{i}
+				</foreach>
+				) > 0
+			</if>
+			<if test="parametroTodo != null">
+				AND (usuarios.codigo ilike '%${parametroTodo}%'
+				or
+				(usuarios.nombres) ilike '%${parametroTodo}%'
+				or
+				(usuarios.apellidos) ilike '%${parametroTodo}%')
+			</if>
+			<if test="codigo_centro != null">
+				AND (select count(1) from roles_usuarios_caps rucaps where
+				rucaps.codigo_empresa = usuarios.codigo_empresa and
+				rucaps.codigo_sucursal = usuarios.codigo_sucursal and
+				rucaps.codigo_usuario = usuarios.codigo and
+				rucaps.codigo_centro =
+				#{codigo_centro}
+				<if test="roles != null">
+					and rucaps.rol IN
+					<foreach collection="roles" item="i" open="(" separator=","
+						close=")">
+						#{i}
+					</foreach>
+				</if>
+				) > 0
+			</if>
+		</trim>
+		<if test="limite_paginado != null">
+			${limite_paginado}
+		</if>
+		<if test="limite_paginado == null and limit != null">
+			${limit}
+		</if>
+	</select>
+
+	<select id="totalResultados" resultType="java.lang.Integer"
+		parameterType="java.util.Map">
+		select count(1)
+		from public.usuarios
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">AND usuarios.codigo_empresa = #{codigo_empresa}</if>
+			<if test="codigo_sucursal != null">AND usuarios.codigo_sucursal = #{codigo_sucursal}</if>
+			<if test="tipo != null">AND usuarios.tipo = #{tipo}</if>
+			<if test="parameter != null">AND ${parameter} like '${value}'</if>
+			<if test="no_rol_medico != null">
+				AND (select count(1) from roles_usuarios ru where
+				ru.codigo_empresa = usuarios.codigo_empresa and
+				ru.codigo_sucursal =
+				usuarios.codigo_sucursal and ru.codigo_usuario = usuarios.codigo
+				and
+				ru.rol = '05') = 0
+			</if>
+			<if test="roles != null">
+				AND (select count(1) from roles_usuarios ru where ru.codigo_empresa
+				= usuarios.codigo_empresa and
+				ru.codigo_sucursal =
+				usuarios.codigo_sucursal and ru.codigo_usuario = usuarios.codigo
+				and
+				ru.rol IN
+				<foreach collection="roles" item="i" open="(" separator=","
+					close=")">
+					#{i}
+				</foreach>
+				) > 0
+			</if>
+			<if test="parametroTodo != null">
+				AND (lower(usuarios.codigo) like '%${parametroTodo}%'
+				or
+				lower(usuarios.nombres) like '%${parametroTodo}%'
+				or
+				lower(usuarios.apellidos) like '%${parametroTodo}%')
+			</if>
+			<if test="codigo_centro != null">
+				AND (select count(1) from roles_usuarios_caps rucaps where
+				rucaps.codigo_empresa = usuarios.codigo_empresa and
+				rucaps.codigo_sucursal = usuarios.codigo_sucursal and
+				rucaps.codigo_usuario = usuarios.codigo and
+				rucaps.codigo_centro =
+				#{codigo_centro}
+				<if test="roles != null">
+					and rucaps.rol IN
+					<foreach collection="roles" item="i" open="(" separator=","
+						close=")">
+						#{i}
+					</foreach>
+				</if>
+				) > 0
+			</if>
+		</trim>
+	</select>
+
+</mapper>

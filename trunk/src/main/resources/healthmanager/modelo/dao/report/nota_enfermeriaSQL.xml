@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.nota_enfermeriaModel">
+    <select id="select" resultType="java.util.HashMap" parameterType="java.util.Map">
+    select p.apellido1 as apellido1_paciente,p.apellido2 as apellido2_paciente, 
+    p.nombre1 as nombre1_paciente,p.nombre2 as nombre2_paciente,ev.nro_identificacion,
+	a.nombre as administradora,de.fecha,de.consecutivo,
+    CASE WHEN ev.tipo = '3' THEN 'ASUNTO: ' || ' ' || trim(de.asunto) || '.<![CDATA[<br/>>]]>' || de.nota ELSE de.nota END
+	from nota_enfermeria ev
+	left join paciente p on
+	p.codigo_empresa = ev.codigo_empresa
+	and p.codigo_sucursal = ev.codigo_sucursal
+	and p.nro_identificacion = ev.nro_identificacion
+	left join administradora a on
+	a.codigo = ev.codigo_administradora
+	inner join detalle_nota_enf de on
+	de.codigo_empresa = ev.codigo_empresa
+	and de.codigo_sucursal = ev.codigo_sucursal
+	and de.codigo_nota = ev.codigo_nota
+	where ev.codigo_nota = #{codigo_nota}
+	and ev.codigo_empresa = #{codigo_empresa}
+	and ev.codigo_sucursal = #{codigo_sucursal}
+	order by de.fecha
+    </select>
+</mapper>

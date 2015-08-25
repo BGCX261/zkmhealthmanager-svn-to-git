@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.historia_clinica2Model">
+    <select id="select" resultType="java.util.HashMap" parameterType="java.util.Map">
+    SELECT h.nro_historia, h.nro_identificacion as id_pct,sexo.descripcion as sexo_pct,
+get_edad(pct.fecha_nacimiento,CURRENT_DATE, '0') as edad,
+ ad.codigo_cita as cod_cita, c.area_intervencion as area_intervencion, a1.descripcion as ante_fam_hipertension, a2.descripcion as ante_fam_ecv, a3.descripcion as ante_fam_enf_coronaria,
+ a4.descripcion as ante_fam_muerte_im_acv, a5.descripcion as ante_fam_dislipidemia,
+ a6.descripcion as ante_fam_nefropatias, a7.descripcion as ante_fam_obesos,
+a8.descripcion as ante_fam_diabetes, a9.descripcion as ante_fam_enf_mental, a10.descripcion as ante_fam_cancer,
+a11.descripcion as ante_fam_hematologia, a12.descripcion as ante_fam_otros,
+
+ant1.codigo_metodo_planificacion as ant1, ant2.codigo_metodo_planificacion as ant2,
+ant3.codigo_metodo_planificacion as ant3,
+ant4.codigo_metodo_planificacion as ant4, ant5.codigo_metodo_planificacion as ant5,
+ant6.codigo_metodo_planificacion as ant6, ant7.codigo_metodo_planificacion as ant7,
+ant8.codigo_metodo_planificacion as ant8, ant9.codigo_metodo_planificacion as ant9, ant10.codigo_metodo_planificacion as ant10,
+ant11.codigo_metodo_planificacion as ant11,
+
+ h.ante_fam_estecifique, h.ante_fam_observaciones,
+ h.ant_gin_fecha_ultima_regla, h.ant_gin_fecha_espectante_parto, h.ant_gin_actividad_sexual,
+ h.ant_gin_tiene_citologia, h.ant_gin_fecha_ultima_citologia, h.ant_gin_tiene_mamografia,
+ h.ant_gin_fecha_mamografia, h.ant_gin_tiene_planificacion, h.ant_gin_g, h.ant_gin_p, h.ant_gin_c,
+ h.ant_gin_a, h.ant_gin_v, h.ant_gin_menarca, h.ant_gin_e_menopaudia, h.ant_gin_ciclo_1, h.ant_gin_ciclo_2,
+ h.ant_gin_citologia_resultado, h.ant_gin_mamografia_resultado, h.ant_gin_fecha_incio_planificacion,
+ h.patologia_embarazo_parto, h.hab_frecuencia_alcohol, h.hab_licor_alcohol, h.hab_frecuencia_tabaquismo,
+ h.hab_ejercicio_cual, h.hab_tabaquismo, h.hab_alcohol, h.hab_ejercicio,
+ h.ant_nios_peso, h.ant_nios_talla, h.ant_nios_psicomotor, h.ant_nios_dieta, h.ant_nios_vacunas,
+ h.ant_gin_fecha_actividad_sexual, h.conf_fur, h.hab_ejercicio_horas_semana, h.hab_dietas, h.hab_dietas_frecuencia, h.hab_factores_psicologicos, h.hab_factores_psicologicos_cual, h.metodos_orales
+
+from historia_clinica_uci h
+left join paciente pct on (pct.codigo_empresa = h.codigo_empresa
+	and pct.codigo_sucursal = h.codigo_sucursal and pct.nro_identificacion = h.nro_identificacion)
+left join elemento sexo on (sexo.tipo = 'sexo' and sexo.codigo = pct.sexo)
+left join admision ad on (ad.nro_ingreso = h.nro_ingreso and ad.nro_identificacion = h.nro_identificacion)
+left join citas c on (c.codigo_cita = ad.codigo_cita)
+left join elemento a1 on (a1.tipo = 'ante_familiares'and a1.codigo = h.ante_fam_hipertension)
+left join elemento a2 on (a2.tipo = 'ante_familiares'and a2.codigo = h.ante_fam_ecv)
+left join elemento a3 on (a3.tipo = 'ante_familiares'and a3.codigo = h.ante_fam_enf_coronaria)
+left join elemento a4 on (a4.tipo = 'ante_familiares'and a4.codigo = h.ante_fam_muerte_im_acv)
+left join elemento a5 on (a5.tipo = 'ante_familiares'and a5.codigo = h.ante_fam_dislipidemia)
+left join elemento a6 on (a6.tipo = 'ante_familiares'and a6.codigo = h.ante_fam_nefropatias)
+left join elemento a7 on (a7.tipo = 'ante_familiares'and a7.codigo = h.ante_fam_obesos)
+left join elemento a8 on (a8.tipo = 'ante_familiares'and a8.codigo = h.ante_fam_diabetes)
+left join elemento a9 on (a9.tipo = 'ante_familiares'and a9.codigo = h.ante_fam_enf_mental)
+left join elemento a10 on (a10.tipo = 'ante_familiares'and a10.codigo = h.ante_fam_cancer)
+left join elemento a11 on (a11.tipo = 'ante_familiares'and a11.codigo = h.ante_fam_hematologia)
+left join elemento a12 on (a12.tipo = 'ante_familiares'and a12.codigo = h.ante_fam_otros)
+
+left join metodos_planificacion ant1 on (ant1.nro_historia = h.nro_historia and ant1.codigo_metodo_planificacion = '01')
+left join metodos_planificacion ant2 on (ant2.nro_historia = h.nro_historia and ant2.codigo_metodo_planificacion = '02')
+left join metodos_planificacion ant3 on (ant3.nro_historia = h.nro_historia and ant3.codigo_metodo_planificacion = '03')
+left join metodos_planificacion ant4 on (ant4.nro_historia = h.nro_historia and ant4.codigo_metodo_planificacion = '04')
+left join metodos_planificacion ant5 on (ant5.nro_historia = h.nro_historia and ant5.codigo_metodo_planificacion = '05')
+left join metodos_planificacion ant6 on (ant6.nro_historia = h.nro_historia and ant6.codigo_metodo_planificacion = '06')
+left join metodos_planificacion ant7 on (ant7.nro_historia = h.nro_historia and ant7.codigo_metodo_planificacion = '07')
+left join metodos_planificacion ant8 on (ant8.nro_historia = h.nro_historia and ant8.codigo_metodo_planificacion = '08')
+left join metodos_planificacion ant9 on (ant9.nro_historia = h.nro_historia and ant9.codigo_metodo_planificacion = '09')
+left join metodos_planificacion ant10 on (ant10.nro_historia = h.nro_historia and ant10.codigo_metodo_planificacion = '10')
+left join metodos_planificacion ant11 on (ant11.nro_historia = h.nro_historia and ant11.codigo_metodo_planificacion = '11')
+	where h.codigo_empresa = #{codigo_empresa}
+    and h.codigo_sucursal = #{codigo_sucursal}
+    and h.nro_historia = #{nro_historia}
+    </select>
+   
+</mapper>

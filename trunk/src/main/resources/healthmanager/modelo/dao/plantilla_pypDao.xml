@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.Plantilla_pypDao">
+
+	<resultMap id="plantilla_pypMap" type="plantilla_pyp">
+		<result column="area_intervencion" property="area_intervencion" />
+		<result column="codigo_pdc" property="codigo_pdc" />
+		<result column="nombre_pcd" property="nombre_pcd" />
+		<result column="porcentaje_cont" property="porcentaje_cont" />
+		<result column="porcentaje_sub" property="porcentaje_sub" />
+		<result column="id" property="id" />
+		<result column="validaciones" property="validaciones" />
+	</resultMap>
+
+	<insert id="crear" parameterType="plantilla_pyp">
+		insert into
+		public.plantilla_pyp (area_intervencion,codigo_pdc,
+		nombre_pcd,porcentaje_cont,porcentaje_sub,validaciones)
+
+		values
+		(#{area_intervencion},#{codigo_pdc},
+		#{nombre_pcd},#{porcentaje_cont},#{porcentaje_sub},
+		#{validaciones})
+	</insert>
+
+	<update id="actualizar" parameterType="plantilla_pyp">
+		update
+		public.plantilla_pyp set area_intervencion = #{area_intervencion},
+		codigo_pdc = #{codigo_pdc},nombre_pcd = #{nombre_pcd},
+		porcentaje_cont
+		= #{porcentaje_cont},porcentaje_sub = #{porcentaje_sub},
+		id =
+		#{id},validaciones = #{validaciones}
+		where id = #{id}
+	</update>
+
+	<select id="consultar" resultMap="plantilla_pypMap"
+		parameterType="plantilla_pyp">
+		select area_intervencion,codigo_pdc,
+		nombre_pcd,porcentaje_cont,porcentaje_sub,id,
+		validaciones
+		from
+		public.plantilla_pyp where id = #{id}
+	</select>
+
+	<delete id="eliminar" parameterType="plantilla_pyp">
+		delete from
+		public.plantilla_pyp
+		where id = #{id}
+	</delete>
+
+	<select id="listar" resultMap="plantilla_pypMap" parameterType="java.util.Map">
+		select area_intervencion,codigo_pdc,
+		nombre_pcd,porcentaje_cont,porcentaje_sub,id,
+		validaciones
+		from
+		public.plantilla_pyp
+		INNER JOIN public.pyp ON public.pyp.codigo =
+		public.plantilla_pyp.area_intervencion
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="area_intervencion != null">AND area_intervencion = #{area_intervencion}</if>
+			<if test="area_intervencion_in != null">
+				<foreach collection="area_intervencion_in" open="AND area_intervencion IN ("
+					item="i" separator="," close=")">
+						#{i}
+				</foreach>
+			</if>
+			<if test="parameter != null">AND ${parameter} like '${value}'</if>
+		</trim>
+		<if test="limite_paginado != null">
+			${limite_paginado}
+		</if>
+	</select>
+
+	<select id="listarMetasPyp" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+		SELECT
+		p_pyp.codigo_pdc,
+		p_pyp.nombre_pcd,
+		pyp.codigo AS
+		codigo_intervencion,
+		pyp.nombre AS area_intervencion,
+		p_pyp.porcentaje_cont,
+		p_pyp.porcentaje_sub,
+		p_pyp.id,
+		p_pyp.validaciones,
+		metas_pyp.metas,
+		'' as finalidad
+		FROM
+		public.plantilla_pyp AS p_pyp
+		INNER JOIN public.pyp AS pyp ON
+		pyp.codigo = p_pyp.area_intervencion
+		LEFT JOIN public.metas_pyp AS metas_pyp
+		ON metas_pyp.codigo_pcd = p_pyp.codigo_pdc AND
+		metas_pyp.area_intervencion = p_pyp.area_intervencion
+		AND
+		metas_pyp.codigo_empresa = #{codigo_empresa} AND
+		metas_pyp.codigo_sucursal = #{codigo_sucursal} AND metas_pyp.id_plan =
+		#{id_contrato} AND metas_pyp.codigo_administradora =
+		#{codigo_administradora}
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="filtrar_por_servicios != null">
+				<foreach collection="filtrar_por_servicios" index="index"
+					item="item" open="p_pyp.area_intervencion IN (" close=")"
+					separator=",">
+					#{item.codigo}
+				</foreach>
+			</if>
+		</trim>
+		ORDER BY
+		pyp.codigo ASC
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean"
+		parameterType="plantilla_pyp">
+		select count(*) != 0 from public.plantilla_pyp
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="area_intervencion != null">AND area_intervencion = #{area_intervencion}</if>
+			<if test="codigo_pdc != null">AND codigo_pdc = #{codigo_pdc}</if>
+			<if test="codigo_pdc_like != null">AND codigo_pdc like '${codigo_pdc_like}'</if>
+		</trim>
+	</select>
+</mapper>

@@ -1,0 +1,443 @@
+<?page title="His_triage" contentType="text/html;charset=UTF-8"?>
+<?component name="informacionPacientes" macroURI="/WEB-INF/macros/informacionPacientes.zul"?>
+<?component name="glasgow" macroURI="/WEB-INF/macros/glasgow.zul"?>
+<?component name="signosVitales" macroURI="/WEB-INF/macros/signosVitales.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formHis_triage" width="100%" height="98%"
+		use="healthmanager.controller.His_triageAction">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="false" closable="false"
+			mold="3d" height="100%">
+			<caption label="Consultar Historias Clinicas"
+				style="color: blue;font-weight: bold">
+				<toolbarbutton image="/images/add_perfil.png"
+					style="font-weight:bold;float:right;margin-right:50px"
+					label="PACIENTE ADMISIONADO"
+					id="toolbarbuttonPaciente_admisionado1" />
+			</caption>
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" height="90%" mold="paging"
+				pageSize="20" vflex="1">
+				<auxhead>
+					<auxheader colspan="4">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="120px" />
+							<separator />
+							<textbox id="tbxValue" width="120px"
+								onOK="formHis_triage.buscarDatos();"
+								style="text-transform:uppercase" />
+							<separator />
+							<toolbarbutton label="Consultar"
+								image="/images/Magnifier.gif"
+								onClick="formHis_triage.buscarDatos();"
+								tooltiptext="Consultar His triage" />
+							<separator />
+							<toolbarbutton label="Nueva" visible="false"
+								image="/images/New16.gif"
+								onClick='formHis_triage.accionForm(true,"registrar");'
+								tooltiptext="Nuevo His triage" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Código historia" width="150px" />
+					<column label="Identificación" width="200px" />
+					<column label="Nombre" />
+					<column label="Fecha" width="150px" />
+					<column label="Tipo Historia" width="150px" />
+					<column label="Acciones" align="center"
+						width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<groupbox id="groupboxEditar" visible="true" closable="false"
+			mold="3d" height="100%">
+			<caption label="Registrar/Modificar Triage"
+				style="font-weight: bold">
+				<toolbarbutton image="/images/add_perfil.png"
+					style="font-weight:bold;float:right;margin-right:50px"
+					label="PACIENTE ADMISIONADO"
+					id="toolbarbuttonPaciente_admisionado2" />
+			</caption>
+
+			<borderlayout width="100%" height="100%"
+				id="borderlayoutEditar" visible="true">
+				<north border="none" id="northEditar">
+					<div height="50px">
+						<toolbar width="100%" align="start">
+							<textbox id="tbxAccion" value="registrar"
+								visible="false" />
+							<toolbarbutton image="/images/Save16.gif"
+								label="Guardar Triage" onClick="formHis_triage.guardarDatos();"
+								id="btGuardar" />
+							<toolbarbutton image="/images/trasladar.gif"
+								label="Cancelar"
+								onClick='formHis_triage.accionForm(false,tbxAccion.getText());'
+								id="btnCancelar" />
+
+							<space />
+
+							<toolbarbutton
+								image="/images/print_ico16.gif" label="Imprimir Triage"
+								onClick="formHis_triage.imprimir(null);" id="btImprimir" />
+
+							<label value="Formato impresión: "
+								visible="false" />
+							<listbox id="lbxFormato" mold="select"
+								width="150px" visible="false" sclass="combobox">
+								<listitem value="pdf" label="PDF"
+									selected="true" />
+								<listitem value="rtf" label="WORD" />
+							</listbox>
+						</toolbar>
+						<toolbarbutton image="/images/info_icon.png"
+							style="font-weight:bold;float:right;margin-right:50px"
+							label="Historia Triage" id="toolbarbuttonTipo_historia" />
+					</div>
+				</north>
+
+				<center autoscroll="true" border="none">
+					<div align="center">
+
+						<!-- *************************** -->
+						<!-- *** Insertar/Actualizar *** -->
+						<!-- *************************** -->
+						<groupbox closable="false" width="800px"
+							mold="3d">
+
+							<groupbox mold="3d" closable="false"
+								visible="true" id="gbxIdentificacion">
+								<caption
+									label="GENERALIDADES DEL TRIAGE" style="font-weight:bold" />
+								<informacionPacientes
+									id="infoPacientes" />
+
+								<grid>
+									<columns visible="false">
+										<column width="110px" />
+										<column />
+										<column />
+										<column />
+										<column />
+										<column />
+									</columns>
+									<rows>
+										<row>
+											<cell>
+												<label value="* "
+													style="color: red" tooltiptext="Campo obligatorio" />
+												<label
+													value="Prestador: " />
+											</cell>
+											<cell colspan="5">
+												<bandbox
+													id="bandboxPrestador" width="170px" readonly="true"
+													disabled="false" value="000000000" />
+												<space />
+												<textbox
+													id="tbxNomPrestador" width="470px"
+													style="text-transform:uppercase" readonly="true"
+													value="MEDICO POR DEFECTO" />
+												<toolbarbutton
+													id="btnLimpiar_prestador" image="/images/borrar.gif"
+													visible="false" />
+											</cell>
+										</row>
+
+										<row>
+											<cell valign="middle">
+												<checkbox
+													id="chkAplica_acompaniante" label="Acompañante: "
+													checked="true"
+													onCheck="formHis_triage.onCheckAcompaniante()" />
+											</cell>
+											<cell colspan="2">
+												<textbox
+													id="tbxAcompanante" hflex="1"
+													style="text-transform:uppercase" />
+											</cell>
+											<cell colspan="3">
+
+												<label
+													value="Identificación: " />
+												<space />
+												<doublebox
+													id="dbxIdentificacion_acompanante" width="110px"
+													locale="en" format="#" style="text-transform:uppercase" />
+
+
+												<space />
+
+												<label id="lbRelacion"
+													value="Relación: " />
+												<space />
+												<listbox
+													id="lbxRelacion" name="relacion_acomp" mold="select"
+													width="100px" sclass="combobox" />
+
+
+											</cell>
+
+										</row>
+										<row>
+											<cell colspan="4">
+												<label value="Edad:" />
+												<space width="80px" />
+												<intbox
+													id="ibxEdad_acompanante" width="80px" maxlength="3" />
+												<space width="60px" />
+												<label
+													value="Escolaridad:" />
+												<space width="40px" />
+												<listbox
+													id="lbxEscolaridad_acompanante" mold="select" width="130px"
+													sclass="combobox" />
+											</cell>
+											<cell>
+												<space width="30px" />
+												<label value="Telefono" />
+											</cell>
+											<cell>
+												<doublebox
+													id="dbxTelefono_acompanante" width="100px" hflex="1"
+													format="#" maxlength="10" style="text-transform:uppercase" />
+											</cell>
+										</row>
+
+									</rows>
+								</grid>
+
+							</groupbox>
+
+							<separator />
+
+							<groupbox mold="3d" width="100%"
+								closable="false">
+								<caption label="TRIAGE" />
+								<grid sclass="GridSinBorde"
+									style="border:none">
+									<columns>
+										<column />
+
+									</columns>
+									<rows>
+
+										<row>
+											<cell>
+												<textbox id="tbxMotivo"
+													width="98%" rows="10" style="text-transform:uppercase" />
+											</cell>
+										</row>
+
+									</rows>
+								</grid>
+							</groupbox>
+
+							<separator id="sepAntesSigVitales" />
+
+							<groupbox mold="3d" closable="false"
+								id="gbxSigVitales">
+								<caption label="Signos Vitales">
+									<toolbarbutton
+										id="toolbarbuttonCargar_signos" image="/images/refresh_m.png"
+										label="Cargar signos vitales"
+										onClick="formHis_triage.cargarSignosVitalesEnfermera()"
+										visible="false" />
+								</caption>
+								<signosVitales id="mcSignosVitales"
+									anchoComp="45px" configTalla="C" configEdad="A" />
+							</groupbox>
+
+							<separator />
+
+							<groupbox id="gbxMacroGlasgow" mold="3d"
+								width="100%" closable="false">
+								<caption label="NIVEL DEL TRIAGE" />
+								<grid>
+									<columns visible="false">
+										<column />
+										<column />
+										<column />
+										<column />
+									</columns>
+									<rows>
+
+										<row>
+											<cell>
+												<button
+													id="btnMostrar_triage_i"
+													label="TRIAGE I. EMERGENCIAS ATENCION INMEDIATA SALA DE REANIMACION O PROCEDIMIENTO "
+													hflex="1" vflex="1"
+													onClick="formHis_triage.onMostrarTriage(1)"
+													style="background:#FF0000;font-weight:bold;font-size:12px;color:black" />
+
+
+											</cell>
+											<cell>
+												<button
+													id="btnMostrar_triage_ii"
+													label="TRIAGE II. URGENCIAS PACIENTES AGUDOS NO CRITICOS ATENCION HASTA  30 MINUTOS SIGUIENTES A SU INGRESO "
+													hflex="1" vflex="1"
+													onClick="formHis_triage.onMostrarTriage(2)"
+													style="background:orange;font-weight:bold;font-size:12px;color:black" />
+											</cell>
+											<cell>
+												<button
+													id="btnMostrar_triage_iii"
+													label="Triage III.URGENCIA RELATIVA ATENCION DE FILTRO 60 MINUTOS O MAS SIGUIENTES A SU INGRESO TENIENDO EN CUENTA ORDEN DE LLEGADA "
+													hflex="1" vflex="1"
+													onClick="formHis_triage.onMostrarTriage(3)"
+													style="background:yellow;font-weight:bold;font-size:12px;color:black" />
+											</cell>
+											<cell>
+												<button
+													id="btnMostrar_triage_iv"
+													label="Triage IV.NO URGENCIA REFERIDO A CONSULTA EXTERNA ATENCION PRIORITARIA ATENCION POR ORDEN DE LEGADA "
+													hflex="1" vflex="1"
+													onClick="formHis_triage.onMostrarTriage(4)"
+													style="background:green;font-weight:bold;font-size:12px;color:black" />
+											</cell>
+										</row>
+
+
+										<row>
+											<cell colspan="4">
+												<label value="*"
+													style="color:red" />
+												<label
+													value="Descripción: " />
+											</cell>
+										</row>
+
+										<row>
+											<cell colspan="4">
+												<textbox
+													id="tbxObservacion" width="98%" rows="25"
+													style="text-transform:uppercase" readonly="true" />
+											</cell>
+										</row>
+
+									</rows>
+								</grid>
+
+							</groupbox>
+
+							<separator />
+
+
+							<groupbox mold="3d" width="100%"
+								closable="false">
+
+								<grid>
+									<columns visible="false">
+										<column width="170px" />
+										<column />
+										<column />
+										<column />
+									</columns>
+									<rows>
+
+										<row>
+											<cell>
+												<label id="lbAdmitido"
+													value="Admitido: " />
+											</cell>
+											<cell>
+												<radiogroup
+													id="rdbAdmitido"
+													onCheck="formHis_triage.onSeleccionarRadio()">
+													<radio label="SÍ"
+														value="S" />
+													<space />
+													<radio label="NO"
+														value="N" />
+												</radiogroup>
+											</cell>
+											<cell colspan="2">
+												<label
+													id="lbAdmitido_si" value="Tipo de Urgencia: "
+													visible="false" />
+												<space></space>
+												<listbox
+													id="lbxAdmitido_si" name="admision_triage" mold="select"
+													width="120px" sclass="combobox" visible="false" />
+											</cell>
+										</row>
+
+
+										<row id="rowAdmitido_no"
+											visible="false">
+											<cell colspan="4">
+												<label
+													id="lbAdmitido_no" value="¿Porque? " />
+												<space></space>
+												<textbox
+													id="tbxAdmitido_no" width="98%" rows="3"
+													style="text-transform:uppercase" maxlength="-1" />
+											</cell>
+										</row>
+									</rows>
+								</grid>
+
+							</groupbox>
+
+							<separator />
+
+							<groupbox mold="3d" width="100%"
+								closable="false">
+								<caption label="ESCALA DE GLASGOW" />
+								<grid sclass="GridSinBorde"
+									style="border:none">
+									<columns>
+										<column />
+
+									</columns>
+									<rows>
+										<row>
+											<cell>
+												<button
+													id="btnMostrar_escala_glasgow"
+													label="Mostrar Escala de Glasgow" mold="trendy"
+													onClick="formHis_triage.onMostrarEscalaGlasgow()" />
+												<groupbox
+													id="gbxGlasgow" visible="false" closable="false">
+													<glasgow
+														id="macroGlasgow" />
+												</groupbox>
+											</cell>
+										</row>
+
+									</rows>
+								</grid>
+							</groupbox>
+
+						</groupbox>
+					</div>
+				</center>
+			</borderlayout>
+		</groupbox>
+	</window>
+</zk>

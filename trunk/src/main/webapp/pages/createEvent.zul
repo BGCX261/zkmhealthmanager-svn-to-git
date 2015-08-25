@@ -1,0 +1,142 @@
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<window width="400px" title="Asginar Evento" border="normal"
+	id="formaCrear" mode="popup" visible="true" closable="true"
+	use="healthmanager.controller.CrearEventoCita">
+	<grid fixedLayout="true">
+		<columns>
+			<column width="100px" />
+			<column />
+		</columns>
+		<rows>
+			<row>
+				Hora Inicio:
+				<div>
+					<datebox id="dtbxFecha_dia" width="170px"
+						mold="rounded" format="yyyy-MM-dd" buttonVisible="false"
+						readonly="true" />
+				</div>
+			</row>
+
+			<row>
+				Hora Inicio:
+				<div>
+					<hbox id="dtbinit" onCreate="self.setValue(new Date())"  width_="170" use="com.framework.macros.HoraTextBox"/>	
+					<listbox mold="select" id="ltbhorainit"
+						visible="false" onCreate="self.setSelectedIndex(0)">
+						<listitem forEach="${dateTime}" label="${each}" />
+					</listbox>
+					<checkbox id="chkAllDay" visible="false"
+						onCheck='ltbhorainit.visible = !self.checked;ltbhoraend.visible = !self.checked' />
+				</div>
+			</row>
+			<row id="rowEnd">
+				Hora fin:
+				<div>
+				    <hbox id="dtbend" width_="170" use="com.framework.macros.HoraTextBox"/>
+					<listbox mold="select" id="ltbhoraend"
+						visible="false" />
+				</div>
+			</row>
+
+			<row>
+				Rol:
+				<cell>
+					<listbox mold="select" id="lbxRoles" width="170px" onSelect="formaCrear.onSeleccionarRolMedico()"/> 
+				</cell>
+			</row>
+			<row id="rowRolEspecifico" visible="false"> 
+				Programa:
+				<cell>
+					<listbox mold="select" id="lbxRolesExcepciones"
+						width="170px" />
+				</cell>
+			</row>
+			<row id="rowcolor" visible="false">
+				Color:
+				<combobox id="cbbcolor" readonly="true" mold="rounded"
+					style="color:#D96666;font-weight: bold;"
+					onCreate="self.selectedIndex = 0">
+					<attribute name="onSelect">
+	switch (self.getSelectedIndex()) {
+	case 0:
+		self.style = "color:#D96666;font-weight: bold;";
+		break;
+	case 1:
+		self.style = "color:#668CD9;font-weight: bold;";
+		break;
+	case 2:
+		self.style = "color:#4CB052;font-weight: bold;";
+		break;
+	case 3:
+		self.style = "color:#BFBF4D;font-weight: bold;";
+		break;
+	case 4:
+		self.style = "color:#B373B3;font-weight: bold;";
+		break;
+	}
+</attribute>
+					<comboitem sclass="red" label="Red" value="#D96666" />
+					<comboitem sclass="blue" label="Blue"
+						value="#668CD9" />
+					<comboitem sclass="green" label="Green"
+						value="#4CB052" />
+					<comboitem sclass="khaki" label="Khaki"
+						value="#BFBF4D" />
+					<comboitem sclass="purple" label="Purple"
+						value="#B373B3" />
+				</combobox>
+			</row>
+			<row id="rowDescripcion" visible="false">
+				Descripción:
+				<textbox multiline="true" rows="3" width="200px"
+					id="txbDescripcion" />
+			</row>
+			<row>
+				Cita:
+				<checkbox id="ckbcitas" checked="true"
+					onCheck="rowDescripcion.visible = rowUbicacion.visible = rowcolor.visible = !self.checked" />
+			</row>
+
+			<row id="rowCodigoCentro">
+				Centro de Salud:
+				<cell>
+					<bandboxRegistros id="tbxCodigo_centro"
+						widthBandbox="170px" widthListbox="600px" heightListbox="300px"
+						columnas="Codigo#65px|Nombre" />
+					<toolbarbutton id="btnLimpiarCentro"
+						image="/images/borrar.gif" />
+				</cell>
+			</row>
+
+			<row id="rowCodigoSalud">
+				Consultorio:
+				<cell>
+					<bandboxRegistros id="tbxCodigo_consultorio"
+						widthBandbox="170px" widthListbox="600px" heightListbox="300px"
+						columnas="Codigo#65px|Nombre" />
+					<toolbarbutton id="btnLimpiarConsultorio"
+						image="/images/borrar.gif" />
+				</cell>
+			</row>
+
+			<row id="rowUbicacion" visible="false">
+				Ubicacion:
+				<textbox multiline="true" rows="3" width="200px"
+					id="txbUbicacion" />
+			</row>
+			<row>
+				<cell colspan="2">
+					<div align="center">
+						<button mold="trendy" id="okBtn"
+							onClick="formaCrear.addEvent()" label="Agregar" />
+						<button mold="trendy" id="cancelBtn"
+							label="Cancelar" onClick="formaCrear.onClose()" />
+						<button mold="trendy" id="eliminarBtn"
+							label="Eliminar" onClick="formaCrear.eliminarEvento()" />
+					</div>
+				</cell>
+
+			</row>
+		</rows>
+	</grid>
+</window>

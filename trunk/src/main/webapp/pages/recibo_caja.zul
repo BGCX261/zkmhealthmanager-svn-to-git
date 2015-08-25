@@ -1,0 +1,202 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+
+	<window id="formRecibo_caja" width="100%" height="100%"
+		use="healthmanager.controller.Recibo_cajaAction"  border="normal" title="GENERANDO RECIBO DE CAJA">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+		<borderlayout width="100%" height="100%">
+			<north>
+				<toolbar width="100%" align="start">
+					<hlayout valign="middle">
+						<toolbarbutton image="/images/Save16.gif"
+							label="Guardar" onClick="formRecibo_caja.guardarDatos();"
+							id="btGuardar" />
+						<toolbarbutton image="/images/print_ico.gif"
+							label="Imprimir" id="btImprimir"
+							onClick='formRecibo_caja.imprimir()' />
+						<toolbarbutton image="/images/eliminar.gif"
+							label="Anular" onClick='' id="btEliminar" visible="false" />
+						<space />
+						<label value="Formato impresión: " />
+						<listbox id="lbxFormato" mold="select"
+							width="150px" sclass="combobox">
+							<listitem value="pdf" label="PDF"
+								selected="true" />
+							<listitem value="rtf" label="WORD" />
+						</listbox>
+						<space />
+						<toolbarbutton image="/images/atras_.png"
+							label="Cerrar" onClick='formRecibo_caja.detach()' />
+					</hlayout>
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center">
+					<space />
+					<groupbox id="groupboxPrincipal" mold="3d"
+						width="807px">
+						<caption label="DATOS DEL PACIENTE" />
+
+						<grid sclass="GridSinBorde">
+							<columns>
+								<column value="" width="120px" />
+								<column value="" width="145px" />
+								<column value="" width="110px" />
+								<column value="" width="145px" />
+								<column value="" width="112px" />
+								<column value="" width="" />
+							</columns>
+							<rows>
+								<row>
+									<cell>
+										<label value="Identificación:" />
+									</cell>
+									<cell colspan="3">
+										<textbox
+											id="tbxNro_identificacion" width="100px"
+											style="text-transform:uppercase" readonly="true" />
+										<space width="5px" />
+										<textbox id="tbxNomPaciente"
+											hflex="1" style="text-transform:uppercase" readonly="true" />
+									</cell>
+									<cell>
+										<label value="Codigo Recibo:" />
+									</cell>
+									<cell>
+										<textbox id="tbxCodigo_recibo"
+											hflex="1" style="font-size:11px" readonly="true" />
+									</cell>
+								</row>
+								<row>
+									<cell>
+										<label value="Administradora:" />
+									</cell>
+									<cell colspan="3">
+										<textbox id="tbxAdministradora"
+											hflex="1" style="text-transform:uppercase;font-size:11px"
+											readonly="true" />
+									</cell>
+									<cell>
+										<label value="Fecha:" />
+									</cell>
+									<cell>
+										<datebox id="dtbxFecha"
+											onCreate="" format="yyyy-MM-dd" hflex="1"
+											onChange="" />
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+					<space height="5px" />
+					<listbox id="listboxDetalles" mold="paging"
+						width="805px" pageSize="20" height="210px">
+						<listhead>
+							<listheader label="Codigo" width="100px" />
+							<listheader label="Detalle" />
+							<listheader label="Cantidad" width="50px" />
+							<listheader label="Valor unit"
+								width="100px" />
+							<listheader label="Valor total"
+								width="100px" />
+						</listhead>
+						<listfoot>
+							<listfooter span="5" align="right">
+								<hlayout>
+									<label value="TOTAL:" />
+									<doublebox id="dbxTotal_dct"
+										format="#,##0.00" width="120px" value="0.00" readonly="true"
+										style="text-align:right;" onFocus="self.select();"
+										inplace="true" />
+								</hlayout>
+							</listfooter>
+						</listfoot>
+					</listbox>
+
+					<space height="5px" />
+					<groupbox width="807px" mold="3d" id="gbxPago">
+						<caption label="PAGO DE FACTURA"
+							style="font-weight: bold;" />
+						<grid>
+							<columns visible="false">
+								<column width="90px" />
+								<column width="120px" />
+								<column width="130px" />
+								<column width="120px" />
+								<column width="100px" />
+								<column />
+							</columns>
+							<rows>
+								<row>
+									<cell>
+										<label value="Subtotal" />
+									</cell>
+									<cell>
+										<doublebox id="dbxSubtotal"
+											format="#,##0.00" width="100px" value="0.00" readonly="true"
+											style="text-align:right;" />
+									</cell>
+									<cell>
+										<checkbox
+											id="chkAplica_descuento" label="Aplica descuento" onCheck="formRecibo_caja.onAplicaDescuento()" />
+									</cell>
+									<cell>
+										<doublebox id="dbxDescuento"
+											format="#,##0.00" width="100px" value="0.00" readonly="true"
+											style="text-align:right;" onChange="formRecibo_caja.calcularNetoPagar()" />
+									</cell>
+									<cell>
+										<label value="Quien autoriza" />
+									</cell>
+									<cell>
+										<textbox id="tbxQuienAutoriza"
+											style="text-transform:uppercase" hflex="1" readonly="true" />
+									</cell>
+								</row>
+								<row>
+									<cell>
+										<label value="Neto a pagar" />
+									</cell>
+									<cell>
+										<doublebox id="dbxNeto_pagar"
+											format="#,##0.00" width="100px" value="0.00" readonly="true"
+											style="text-align:right;" />
+									</cell>
+									<cell>
+										<label value="Efectivo" />
+									</cell>
+									<cell>
+										<doublebox id="dbxEfectivo"
+											format="#,##0.00" width="100px" value="0.00" readonly="false"
+											style="text-align:right;" onChange="formRecibo_caja.calcularCambio()" />
+									</cell>
+									<cell>
+										<label value="Cambio" />
+									</cell>
+									<cell>
+										<doublebox id="dbxCambio"
+											format="#,##0.00" width="100px" value="0.00" readonly="true"
+											style="text-align:right;"/>
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+
+					<space height="5px" />
+				</div>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

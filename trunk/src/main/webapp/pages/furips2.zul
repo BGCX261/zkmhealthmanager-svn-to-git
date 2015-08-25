@@ -1,0 +1,1827 @@
+<?page title="Furips2" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formFurips2" width="100%" height="97%"
+		use="healthmanager.controller.Furips2Action">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="true" closable="false"
+			mold="3d" height="90%">
+			<caption label="Consultar"
+				style="color: blue;font-weight: bold" />
+
+			<separator />
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" height="90%" mold="paging"
+				pageSize="20" vflex="1">
+				<auxhead>
+					<auxheader colspan="6">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<separator />
+							<textbox id="tbxValue" width="200px"
+								onOK="formFurips2.buscarDatos();"
+								style="text-transform:uppercase" />
+							<separator />
+							<button mold="trendy"
+								image="/images/Magnifier.gif"
+								onClick="formFurips2.buscarDatos();"
+								tooltiptext="Consultar Furips2" />
+							<separator />
+							<button mold="trendy"
+								image="/images/New16.gif"
+								onClick='formFurips2.accionForm(true,"registrar");'
+								tooltiptext="Nuevo Furips2" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Victima del Evento" />
+					<column label="Propietario" />
+					<column label="Conductor" />
+					<column label="Placa" width="100px" />
+					<column label="Dirección Ocurrecia" />
+					<column label="Acciones" align="center"
+						width="100px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<borderlayout width="100%" height="90%" id="groupboxEditar"
+			visible="false">
+			<north border="none">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<toolbarbutton image="/images/Save16.gif"
+						label="Guardar Furips" onClick="formFurips2.guardarDatos();"
+						id="btGuardar" />
+					<toolbarbutton image="/images/New16.gif"
+						label="Nuevo Furips"
+						onClick='formFurips2.accionForm(true,"registrar");' id="btNew" />
+					<space />
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Cancelar"
+						onClick='formFurips2.accionForm(false,tbxAccion.getText());'
+						id="btCancel" />
+					<toolbarbutton image="/images/Save16.gif"
+						label="Guardar" onClick="formFurips2.guardarTempFurrips()"
+						id="btGuardarTemp" visible="false" />
+					<toolbarbutton image="/images/cancelar_mini.png"
+						label="Cancelar" onClick="formFurips2.cancelarFurips()"
+						id="btCancelar" visible="false" />
+					<space />
+					<toolbarbutton image="/images/print_ico.gif"
+						label="Imprimir" onClick="formFurips2.imprimir();"
+						id="btImprimir" visible="false" />
+					<label value="Formato impresión: "
+						id="lbFormatoImpresion" visible="false" />
+					<listbox id="lbxFormato" mold="select" width="150px"
+						visible="false" sclass="combobox">
+						<listitem value="pdf" label="PDF"
+							selected="true" />
+						<listitem value="rtf" label="WORD" />
+					</listbox>
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center">
+					<space />
+					<!-- *************************** -->
+					<!-- *** Insertar/Actualizar *** -->
+					<!-- *************************** -->
+					<groupbox closable="false" width="814px"
+						mold="3d">
+						<caption label="REGISTRO DE FURIPS" />
+						<grid>
+							<columns>
+								<column label="" width="10px" />
+								<column label="" width="170px"
+									align="left" />
+								<column label="" width="220px"
+									align="left" />
+								<column label="" width="170px"
+									align="left" />
+								<column label="" width="220px"
+									align="left" />
+								<column label="" width="10px"
+									align="left" />
+							</columns>
+							<rows>
+								<row>
+									<cell />
+									<cell>
+										<label id="lbFecha_radicacion"
+											value="Fecha Radicación: " />
+									</cell>
+									<cell>
+										<datebox
+											id="dtbxFecha_radicacion" format="dd-MM-yyyy" width="132px" />
+										<space width="30px" />
+										<label id="lbRg" value="RG: " />
+										<checkbox id="cbxRg"
+											width="30px"
+											onCheck='tbxNro_radicacion_anterior.setValue("");tbxNro_radicacion_anterior.setReadonly(!self.isChecked())' />
+									</cell>
+									<cell>
+										<label id="lbNro_radicacion"
+											value="No. Radicado : " />
+									</cell>
+									<cell>
+										<textbox id="tbxNro_radicacion"
+											hflex="1" style="text-transform:uppercase" maxlength="-5" />
+									</cell>
+									<cell />
+								</row>
+								<row>
+									<cell />
+									<cell>
+										<label
+											id="lbNro_radicacion_anterior"
+											value="No. Radicado Anterior (Respuesta a glosa, marcar x en RG): "
+											style="font-size:10px" />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxNro_radicacion_anterior" hflex="1"
+											style="text-transform:uppercase" maxlength="-5"
+											readonly="true" />
+									</cell>
+									<cell>
+										<label id="lbNro_factura"
+											value="Nro Factura / Cuenta de cobro: "
+											style="font-size:10px" />
+									</cell>
+									<cell>
+										<textbox id="tbxNro_factura"
+											hflex="1" style="text-transform:uppercase" readonly="true" />
+									</cell>
+									<cell />
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+
+
+					<space height="5px" />
+					<groupbox closable="false" width="814px"
+						mold="3d">
+						<caption
+							label="I.  DATOS DE LA INSTITUCIÓN PRESTADORA DE SERVICIOS DE SALUD  " />
+						<grid>
+							<columns>
+								<column label="" width="10px" />
+								<column label="" width="170px"
+									align="left" />
+								<column label="" width="220px"
+									align="left" />
+								<column label="" width="170px"
+									align="left" />
+								<column label="" width="220px"
+									align="left" />
+								<column label="" width="10px"
+									align="left" />
+							</columns>
+							<rows>
+								<row>
+									<cell />
+									<cell>
+										<label value="Razón Social: " />
+									</cell>
+									<cell colspan="3">
+										<textbox id="tbxRazonSocial"
+											hflex="1" style="text-transform:uppercase" readonly="true" />
+									</cell>
+									<cell />
+								</row>
+								<row>
+									<cell />
+									<cell>
+										<label
+											value="Código Habilitación: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxCodigoHabilitacion" hflex="1"
+											style="text-transform:uppercase" readonly="true" />
+									</cell>
+									<cell align="right">
+										<label value="Nit: " />
+									</cell>
+									<cell>
+										<textbox id="tbxNit" hflex="1"
+											style="text-transform:uppercase" readonly="true" />
+									</cell>
+									<cell />
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+
+					<space height="5px" />
+					<groupbox closable="false" width="814px"
+						mold="3d">
+						<caption
+							label="II.  DATOS DE LA VICTIMA DEL EVENTO CATASTRÓFICO O ACCIDENTE DE TRANSITO " />
+						<grid>
+							<columns>
+								<column label="" width="10px" />
+								<column label="" width="170px"
+									align="left" />
+								<column label="" width="220px"
+									align="left" />
+								<column label="" width="170px"
+									align="left" />
+								<column label="" width="220px"
+									align="left" />
+								<column label="" width="10px"
+									align="left" />
+							</columns>
+							<rows>
+								<row>
+									<cell />
+									<cell>
+										<label value="1er Apellido : " />
+									</cell>
+									<cell>
+										<textbox id="tbxApellido1"
+											hflex="1" style="text-transform:uppercase" maxlength="-5"
+											readonly="true" />
+									</cell>
+									<cell>
+										<label value="2do. Apellido : " />
+									</cell>
+									<cell>
+										<textbox id="tbxApellido2"
+											hflex="1" style="text-transform:uppercase" maxlength="-5"
+											readonly="true" />
+									</cell>
+									<cell />
+								</row>
+								<row>
+									<cell />
+									<cell>
+										<label value="1er Nombre  : " />
+									</cell>
+									<cell>
+										<textbox id="tbxNombre1"
+											hflex="1" style="text-transform:uppercase" maxlength="-5"
+											readonly="true" />
+									</cell>
+									<cell>
+										<label value="2do. Nombre : " />
+									</cell>
+									<cell>
+										<textbox id="tbxNombre2"
+											hflex="1" style="text-transform:uppercase" maxlength="-5"
+											readonly="true" />
+									</cell>
+									<cell />
+								</row>
+
+								<row>
+									<cell />
+									<cell>
+										<label
+											value="Tipo de Documento: " />
+									</cell>
+									<cell>
+										<listbox id="lbxTipoDocumento"
+											name="ix_tipo_documento_medico" mold="select" width="98%"
+											sclass="combobox" disabled="true" />
+									</cell>
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label value="No. Documento: " />
+										<space width="30px" />
+										<toolbarbutton
+											id="btnLimpiarNroIdentificacion" image="/images/borrar.gif" />
+									</cell>
+									<cell>
+										<bandboxRegistros
+											id="tbxNro_identificacion" widthBandbox="210px"
+											widthListbox="500px" heightListbox="300px"
+											columnas="Tipo Ident#65px|Identificación|Nombres|Apellidos" />
+									</cell>
+									<cell />
+								</row>
+								<row>
+									<cell />
+									<cell>
+										<label
+											value="Fecha de Nacimiento: " />
+									</cell>
+									<cell>
+										<datebox
+											id="dtbxFecha_nacimiento" format="dd-MM-yyyy" hflex="1"
+											readonly="true" buttonVisible="false" />
+									</cell>
+									<cell>
+										<label value="Sexo: " />
+									</cell>
+									<cell>
+										<textbox id="tbxSexo" hflex="1"
+											style="text-transform:uppercase" readonly="true" />
+									</cell>
+									<cell />
+								</row>
+
+								<row>
+									<cell />
+									<cell>
+										<label
+											value="Dirección Residencia: " />
+									</cell>
+									<cell colspan="3">
+										<textbox id="tbxDireccion"
+											hflex="1" style="text-transform:uppercase" readonly="true" />
+									</cell>
+									<cell />
+								</row>
+
+								<row>
+									<cell />
+									<cell>
+										<label value="Departamento: " />
+									</cell>
+									<cell>
+										<listbox id="lbxDepartamento"
+											name="codigo_dpto" mold="select" hflex="1" sclass="combobox"
+											disabled="true"
+											onSelect="com.framework.util.Utilidades.listarMunicipios(lbxCodigo_municipio, self, formFurips2.getServiceLocator());" />
+									</cell>
+									<cell>
+										<label value="Municipio: " />
+									</cell>
+									<cell>
+										<listbox
+											id="lbxCodigo_municipio" name="codigo_municipio"
+											disabled="true" mold="select" hflex="1" sclass="combobox" />
+									</cell>
+									<cell />
+								</row>
+
+								<row>
+									<cell />
+									<cell>
+										<label value="Telefono: " />
+									</cell>
+									<cell>
+										<textbox id="tbxTelefono"
+											hflex="1" style="text-transform:uppercase" readonly="true" />
+									</cell>
+									<cell colspan="3" />
+								</row>
+								<row>
+									<cell />
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label
+											id="lbCondicion_accidentado"
+											value="Condición del Accidentado: " />
+									</cell>
+									<cell colspan="3">
+										<radiogroup
+											id="rdbCondicion_accidentado"
+											onCheck="formFurips2.onSeleccionarCondicionAccidentado(self.getSelectedItem())">
+											<radio label="Conductor"
+												value="01" />
+											<space width="15px" />
+											<radio label="Peatón"
+												value="02" />
+											<space width="15px" />
+											<radio label="Ocupante"
+												value="03" />
+											<space width="15px" />
+											<radio label="Ciclista"
+												value="04" />
+										</radiogroup>
+									</cell>
+									<cell />
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+
+					<space height="5px" />
+					<groupbox closable="false" width="814px"
+						mold="3d">
+						<caption
+							label="III. DATOS DEL SITIO DONDE OCURRIÓ EL EVENTO CATASTRÓFICO O EL ACCIDENTE DE TRANSITO " />
+						<grid>
+							<columns>
+								<column label="" width="10px" />
+								<column label="" width="170px"
+									align="left" />
+								<column label="" width="220px"
+									align="left" />
+								<column label="" width="170px"
+									align="left" />
+								<column label="" width="220px"
+									align="left" />
+								<column label="" width="10px"
+									align="left" />
+							</columns>
+							<rows>
+								<row>
+									<cell />
+									<cell>
+										<label id="lbNaturaleza_evento"
+											value="Naturaleza del Evento: " />
+									</cell>
+									<cell>
+										<checkbox
+											id="tbxNaturaleza_evento" label="Accidente de Tránsito"
+											hflex="1" onCheck="formFurips2.accionNaturalezaEvento()" />
+									</cell>
+									<cell colspan="3" />
+								</row>
+								<row>
+									<cell />
+									<cell>
+										<label id="lbEventos_naturales"
+											value="Naturales: " />
+									</cell>
+									<cell colspan="3">
+										<radiogroup
+											id="rdbEventosNaturales" />
+										<grid>
+											<columns>
+												<column />
+												<column />
+												<column />
+												<column />
+											</columns>
+											<rows>
+												<row>
+													<cell>
+														<radio
+															label="Sismo" value="01"
+															radiogroup="rdbEventosNaturales" />
+													</cell>
+													<cell>
+														<radio
+															label="Maremoto" value="02"
+															radiogroup="rdbEventosNaturales" />
+													</cell>
+													<cell>
+														<radio
+															label="Erupciones Volcánicas" style="font-size:10px"
+															value="03" radiogroup="rdbEventosNaturales" />
+													</cell>
+													<cell>
+														<radio
+															label="Huracán" value="04"
+															radiogroup="rdbEventosNaturales" />
+													</cell>
+												</row>
+												<row>
+													<cell>
+														<radio
+															label="Inundaciones" value="05"
+															radiogroup="rdbEventosNaturales" />
+													</cell>
+													<cell>
+														<radio
+															label="Avalancha" value="06"
+															radiogroup="rdbEventosNaturales" />
+													</cell>
+													<cell>
+														<radio
+															label="Deslizamiento de Tierra" style="font-size:10px"
+															value="07" radiogroup="rdbEventosNaturales" />
+													</cell>
+													<cell>
+														<radio
+															label="Incendio Natural" value="08"
+															radiogroup="rdbEventosNaturales" />
+													</cell>
+												</row>
+											</rows>
+										</grid>
+									</cell>
+									<cell />
+								</row>
+								<row>
+									<cell />
+									<cell>
+										<label
+											id="lbEventos_terroristas" value="Eventos terroristas: " />
+									</cell>
+									<cell colspan="3">
+										<radiogroup
+											id="rdbEventosTerroristas" />
+										<grid>
+											<columns>
+												<column />
+												<column />
+												<column />
+												<column />
+											</columns>
+											<rows>
+												<row>
+													<cell>
+														<radio
+															label="Explosión" value="01"
+															radiogroup="rdbEventosTerroristas" />
+													</cell>
+													<cell>
+														<radio
+															label="Masacre" value="02"
+															radiogroup="rdbEventosTerroristas" />
+													</cell>
+													<cell>
+														<radio
+															label="Mina Antipersonal" value="03"
+															radiogroup="rdbEventosTerroristas" />
+													</cell>
+													<cell>
+														<radio
+															label="Combate" value="04"
+															radiogroup="rdbEventosTerroristas" />
+													</cell>
+												</row>
+												<row
+													style="background-color:#ffffff">
+													<cell>
+														<radio
+															label="Incendio" value="05"
+															radiogroup="rdbEventosTerroristas" />
+													</cell>
+
+													<cell>
+														<radio
+															label="Ataques a Municipios" value="06"
+															radiogroup="rdbEventosTerroristas" />
+													</cell>
+												</row>
+											</rows>
+										</grid>
+									</cell>
+									<cell />
+								</row>
+								<row>
+									<cell />
+									<cell>
+										<checkbox id="cbxOtros"
+											label="Otros"
+											onCheck="formFurips2.accionOtrosEvento()" />
+										<space width="50px" />
+										<label
+											id="lbDescripcion_otro_evento" value="Cual? "
+											visible="false" />
+									</cell>
+									<cell id="cellOtroEvento"
+										colspan="3" visible="false">
+										<textbox
+											id="tbxDescripcion_otro_evento" hflex="1"
+											style="text-transform:uppercase" />
+									</cell>
+									<cell />
+								</row>
+								<row>
+									<cell />
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbDireccion_evento"
+											value="Dirección de la ocurrencia : " />
+									</cell>
+									<cell colspan="3">
+										<textbox
+											id="tbxDireccion_evento" hflex="1"
+											style="text-transform:uppercase" />
+									</cell>
+									<cell />
+								</row>
+								<row>
+									<cell />
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label
+											id="lbFecha_evento_accidentente"
+											value="Fecha Evento/Accidente: " />
+									</cell>
+									<cell>
+										<datebox
+											id="dtbxFecha_evento_accidentente" format="dd-MM-yyyy HH:mm"
+											hflex="1" />
+									</cell>
+									<cell colspan="3" />
+								</row>
+								<row>
+									<cell />
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label
+											id="lbCodigo_departamento_evento" value="Departamento: " />
+									</cell>
+									<cell>
+										<listbox
+											id="lbxCodigo_departamento_evento" name="codigo_dpto"
+											mold="select" hflex="1" sclass="combobox"
+											onSelect="com.framework.util.Utilidades.listarMunicipios(lbxCodigo_municipio_evento,self, formFurips2.getServiceLocator());" />
+									</cell>
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label
+											id="lbCodigo_municipio_evento" value="Municipio: " />
+									</cell>
+									<cell>
+										<listbox
+											id="lbxCodigo_municipio_evento" name="codigo_municipio"
+											mold="select" hflex="1" sclass="combobox" />
+									</cell>
+									<cell />
+								</row>
+								<row>
+									<cell />
+									<cell colspan="2">
+										<label
+											value="Descripción Breve del Evento Catastrófico o Accidente de Transito" />
+										<h:br />
+										<label
+											value="Enuncie las principales caracteristicas del evento / accidente: " />
+
+									</cell>
+									<cell colspan="2" align="right">
+										<radiogroup
+											id="rdbZonaDatosDondeOcurrio">
+											<label value="* "
+												style="color: red" tooltiptext="Campo obligatorio" />
+											<label value="Zona: " />
+											<radio label="Urbano"
+												value="U" />
+											<space width="15px" />
+											<radio label="Rural"
+												value="R" />
+										</radiogroup>
+									</cell>
+									<cell />
+								</row>
+								<row>
+									<cell />
+									<cell colspan="4">
+										<textbox
+											id="tbxDescripcion_breve_evento" hflex="1"
+											style="text-transform:uppercase" maxlength="-5" rows="3" />
+									</cell>
+									<cell />
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+
+					<space height="5px" />
+					<groupbox closable="false" width="814px" mold="3d"
+						id="groupDatiosVehiculo">
+						<caption
+							label="IV.   DATOS DEL VEHICULO DEL ACCIDENTE DE TRANSITO  " />
+						<grid>
+							<columns>
+								<column label="" width="10px" />
+								<column label="" width="170px"
+									align="left" />
+								<column label="" width="220px"
+									align="left" />
+								<column label="" width="170px"
+									align="left" />
+								<column label="" width="220px"
+									align="left" />
+								<column label="" width="10px"
+									align="left" />
+							</columns>
+							<rows>
+								<row>
+									<cell />
+									<cell>
+										<label
+											id="lbEstado_aseguramiento"
+											value="Estado de Aseguramiento: " />
+									</cell>
+									<cell colspan="3">
+										<radiogroup
+											id="rdbEstadoAseguramiento"
+											onCheck="formFurips2.accionEstadoAseguramiento()">
+											<radio label="Asegurado" id="radioAsegurado"
+												value="01" />
+											<space width="15px" />
+											<radio label="No Asegurado " id="radioNoAsegurado"
+												value="02" />
+											<space width="15px" />
+											<radio id="radioFantasma"
+												label="Vehículo fantasma" value="03" />
+											<space width="15px" />
+											<radio label="Póliza Falsa" id="radioPoliza"
+												value="04" />
+											<space width="15px" />
+											<radio id="radioFuga"
+												label="Vehículo en fuga" value="05" />
+										</radiogroup>
+									</cell>
+									<cell />
+								</row>
+								<row>
+									<cell />
+									<cell>
+										<label id="lbMarca_vehiculo"
+											value="Marca: " />
+									</cell>
+									<cell>
+										<textbox id="tbxMarca_vehiculo"
+											hflex="1" style="text-transform:uppercase" maxlength="-5" />
+									</cell>
+									<cell>
+										<label id="lbPlaca_vehiculo"
+											value="Placa: " />
+									</cell>
+									<cell>
+										<textbox id="tbxPlaca_vehiculo"
+											hflex="1" style="text-transform:uppercase" maxlength="-5" />
+									</cell>
+									<cell />
+								</row>
+								<row>
+									<cell />
+									<cell>
+										<label
+											id="lbTipo_servicio_vehiculo"
+											value="Tipo servicio vehiculo: " />
+									</cell>
+									<cell colspan="3">
+										<radiogroup
+											id="rdbTipo_servicio_vehiculo" />
+										<grid>
+											<columns>
+												<column />
+												<column width="20%" />
+												<column />
+												<column />
+											</columns>
+											<rows>
+												<row>
+													<cell>
+														<radio
+															label="Particular" value="01"
+															radiogroup="rdbTipo_servicio_vehiculo" />
+													</cell>
+													<cell>
+														<radio
+															label="Público" value="02"
+															radiogroup="rdbTipo_servicio_vehiculo" />
+													</cell>
+													<cell>
+														<radio
+															label="Oficial" value="03"
+															radiogroup="rdbTipo_servicio_vehiculo" />
+													</cell>
+													<cell>
+														<radio
+															label="Vehículo de emergencia" value="04"
+															radiogroup="rdbTipo_servicio_vehiculo"
+															style="font-size:10px" />
+													</cell>
+												</row>
+												<row
+													style="background-color:#ffffff">
+													<cell colspan="2">
+														<radio
+															label="Vehículo de servicio diplomático o consular"
+															value="05" radiogroup="rdbTipo_servicio_vehiculo"
+															style="font-size:10px" />
+													</cell>
+
+													<cell>
+														<radio
+															label="Vehículo de transporte masivo" value="06"
+															radiogroup="rdbTipo_servicio_vehiculo"
+															style="font-size:9px" />
+													</cell>
+													<cell>
+														<radio
+															label="Vehículo escolar" value="07"
+															radiogroup="rdbTipo_servicio_vehiculo" />
+													</cell>
+												</row>
+											</rows>
+										</grid>
+									</cell>
+									<cell />
+								</row>
+								<row>
+									<cell />
+									<cell>
+										<label
+											id="lbCodigo_aseguradora_vehiculo"
+											value="Código de la Aseguradora : " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxCodigo_aseguradora_vehiculo" hflex="1"
+											style="text-transform:uppercase" />
+									</cell>
+									<cell>
+										<label
+											value="Cobro Excedente Póliza: " />
+									</cell>
+									<cell>
+										<radiogroup
+											id="rdbCobroExcedentePoliza">
+											<radio label="SI" value="S" />
+											<space width="15px" />
+											<radio label="NO" value="N" />
+										</radiogroup>
+									</cell>
+									<cell />
+								</row>
+								<row>
+									<cell />
+									<cell>
+										<label
+											id="lbNro_poliza_vehiculo" value="No. de la Póliza: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxNro_poliza_vehiculo" hflex="1"
+											style="text-transform:uppercase" maxlength="-5" />
+									</cell>
+									<cell>
+										<label
+											id="lbIntervencion_autoridad_vehiculo"
+											value="Intervención de autoridad: " />
+									</cell>
+									<cell>
+										<radiogroup
+											id="rdbIntervencion_autoridad_vehiculo">
+											<radio label="SI" value="S" />
+											<space width="15px" />
+											<radio label="NO" value="N" />
+										</radiogroup>
+									</cell>
+								</row>
+								<row>
+									<cell />
+									<cell>
+										<label
+											id="lbVigencia_desde_vehiculo" value="Vigencia " />
+										<space width="30px" />
+										<label value="Desde: " />
+									</cell>
+									<cell>
+										<datebox
+											id="dtbxVigencia_desde_vehiculo" format="dd-MM-yyyy"
+											hflex="1" />
+									</cell>
+									<cell>
+										<label
+											id="lbVigencia_hasta_vehiculo" value="Hasta: " />
+									</cell>
+									<cell>
+										<datebox
+											id="dtbxVigencia_hasta_vehiculo" format="dd-MM-yyyy"
+											hflex="1" />
+									</cell>
+									<cell />
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+
+					<space height="5px" />
+					<groupbox closable="false" width="814px" mold="3d"
+						id="groupPropietario">
+						<caption
+							label="V. DATOS DEL PROPIETARIO DEL VEHÍCULO " />
+						<grid>
+							<columns>
+								<column label="" width="10px" />
+								<column label="" width="170px"
+									align="left" />
+								<column label="" width="220px"
+									align="left" />
+								<column label="" width="170px"
+									align="left" />
+								<column label="" width="220px"
+									align="left" />
+								<column label="" width="10px"
+									align="left" />
+							</columns>
+							<rows>
+								<row>
+									<cell />
+									<cell>
+										<label value="1er Apellido : " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxPropietario_apellido1" hflex="1"
+											style="text-transform:uppercase" maxlength="-5" />
+									</cell>
+									<cell>
+										<label value="2do. Apellido : " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxPropietario_apellido2" hflex="1"
+											style="text-transform:uppercase" maxlength="-5" />
+									</cell>
+									<cell />
+								</row>
+								<row>
+									<cell />
+									<cell>
+										<label value="1er Nombre  : " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxPropietario_nombre1" hflex="1"
+											style="text-transform:uppercase" maxlength="-5" />
+									</cell>
+									<cell>
+										<label value="2do. Nombre : " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxPropietario_nombre2" hflex="1"
+											style="text-transform:uppercase" maxlength="-5" />
+									</cell>
+									<cell />
+								</row>
+
+								<row>
+									<cell />
+									<cell>
+										<label
+											value="Tipo de Documento: " />
+									</cell>
+									<cell>
+										<listbox
+											id="lbxPropietario_tipoDocumento"
+											name="ix_tipo_documento_medico" mold="select" width="98%"
+											sclass="combobox" />
+									</cell>
+									<cell>
+										<label value="No. Documento: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxPropietario_nro_identificacion" hflex="1"
+											style="text-transform:uppercase" maxlength="-5" />
+									</cell>
+									<cell />
+								</row>
+
+								<row>
+									<cell />
+									<cell>
+										<label
+											value="Dirección Residencia: " />
+									</cell>
+									<cell colspan="3">
+										<textbox
+											id="tbxPropietario_direccion" hflex="1"
+											style="text-transform:uppercase" />
+									</cell>
+									<cell />
+								</row>
+
+								<row>
+									<cell />
+									<cell>
+										<label value="Departamento: " />
+									</cell>
+									<cell>
+										<listbox
+											id="lbxPropietario_codigo_departamento" name="codigo_dpto"
+											mold="select" hflex="1" sclass="combobox"
+											onSelect="com.framework.util.Utilidades.listarMunicipios(lbxPropietario_codigo_municipio,self, formFurips2.getServiceLocator());" />
+
+									</cell>
+									<cell>
+										<label value="Municipio: " />
+									</cell>
+									<cell>
+										<listbox
+											id="lbxPropietario_codigo_municipio" name="codigo_municipio"
+											mold="select" hflex="1" sclass="combobox" />
+									</cell>
+									<cell />
+								</row>
+
+								<row>
+									<cell />
+									<cell>
+										<label value="Telefono: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxPropietario_telefono" hflex="1"
+											style="text-transform:uppercase" />
+									</cell>
+									<cell colspan="3" />
+								</row>
+							</rows>
+							<foot>
+								<footer span="6" align="right">
+									<label value="Total Folios " />
+									<space />
+									<intbox
+										id="ibxPropietario_total_folios" maxlength="3" />
+								</footer>
+							</foot>
+						</grid>
+					</groupbox>
+
+
+					<space height="5px" />
+					<groupbox closable="false" width="814px" mold="3d"
+						id="groupConductor">
+						<caption
+							label="VI. DATOS DEL CONDUCTOR  DEL VEHÍCULO INVOLUCRADO EN EL ACCIDENTE DE TRANSITO " />
+						<grid>
+							<columns>
+								<column label="" width="10px" />
+								<column label="" width="170px"
+									align="left" />
+								<column label="" width="220px"
+									align="left" />
+								<column label="" width="170px"
+									align="left" />
+								<column label="" width="220px"
+									align="left" />
+								<column label="" width="10px"
+									align="left" />
+							</columns>
+							<rows>
+								<row>
+									<cell />
+									<cell>
+										<label value="1er Apellido : " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxConductor_apellido1" hflex="1"
+											style="text-transform:uppercase" maxlength="-5" />
+									</cell>
+									<cell>
+										<label value="2do. Apellido : " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxConductor_apellido2" hflex="1"
+											style="text-transform:uppercase" maxlength="-5" />
+									</cell>
+									<cell />
+								</row>
+								<row>
+									<cell />
+									<cell>
+										<label value="1er Nombre  : " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxConductor_nombre1" hflex="1"
+											style="text-transform:uppercase" maxlength="-5" />
+									</cell>
+									<cell>
+										<label value="2do. Nombre : " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxConductor_nombre2" hflex="1"
+											style="text-transform:uppercase" maxlength="-5" />
+									</cell>
+									<cell />
+								</row>
+
+								<row>
+									<cell />
+									<cell>
+										<label
+											value="Tipo de Documento: " />
+									</cell>
+									<cell>
+										<listbox
+											id="lbxConductor_tipodocumento"
+											name="ix_tipo_documento_medico" mold="select" width="98%"
+											sclass="combobox" />
+									</cell>
+									<cell>
+										<label value="No. Documento: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxConductor_nro_documento" hflex="1"
+											style="text-transform:uppercase" maxlength="-5" />
+									</cell>
+									<cell />
+								</row>
+
+								<row>
+									<cell />
+									<cell>
+										<label
+											value="Dirección Residencia: " />
+									</cell>
+									<cell colspan="3">
+										<textbox
+											id="tbxConductor_direccion_res" hflex="1"
+											style="text-transform:uppercase" />
+									</cell>
+									<cell />
+								</row>
+
+								<row>
+									<cell />
+									<cell>
+										<label value="Departamento: " />
+									</cell>
+									<cell>
+										<listbox
+											id="lbxConductor_codigo_departamento" name="codigo_dpto"
+											mold="select" hflex="1" sclass="combobox"
+											onSelect="com.framework.util.Utilidades.listarMunicipios(lbxConductor_codigo_municipio,self, formFurips2.getServiceLocator());" />
+
+									</cell>
+									<cell>
+										<label value="Municipio: " />
+									</cell>
+									<cell>
+										<listbox
+											id="lbxConductor_codigo_municipio" name="codigo_municipio"
+											mold="select" width="175px" sclass="combobox" />
+									</cell>
+									<cell />
+								</row>
+
+								<row>
+									<cell />
+									<cell>
+										<label value="Telefono: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxConductor_telefono" hflex="1"
+											style="text-transform:uppercase" />
+									</cell>
+									<cell colspan="3" />
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+
+
+					<space height="5px" />
+					<groupbox closable="false" width="814px"
+						mold="3d">
+						<caption label="VII. DATOS DE REMISION" />
+						<grid>
+							<columns>
+								<column label="" width="10px" />
+								<column label="" width="170px"
+									align="left" />
+								<column label="" width="220px"
+									align="left" />
+								<column label="" width="170px"
+									align="left" />
+								<column label="" width="220px"
+									align="left" />
+								<column label="" width="10px"
+									align="left" />
+							</columns>
+							<rows>
+								<row>
+									<cell />
+									<cell>
+										<label
+											id="lbRemision_tiporeferencia" value="Tipo Referencia: " />
+									</cell>
+									<cell>
+										<radiogroup
+											id="rdbRemision_tiporeferencia">
+											<radio label="Remisión"
+												value="01" />
+											<space width="15px" />
+											<radio
+												label="Orden de Servicio" value="02" />
+										</radiogroup>
+									</cell>
+									<cell>
+										<label id="lbRemision_fecha"
+											value="Fecha de Remisión: " />
+									</cell>
+									<cell>
+										<datebox id="dtbxRemision_fecha"
+											format="dd-MM-yyyy HH:mm" hflex="1" />
+									</cell>
+									<cell />
+								</row>
+								<row>
+									<cell />
+									<cell>
+										<label
+											id="lbRemision_prestador_remite"
+											value="Prestador que remite: " />
+									</cell>
+									<cell colspan="3">
+										<textbox
+											id="tbxRemision_prestador_remite" hflex="1"
+											style="text-transform:uppercase" maxlength="-5" />
+									</cell>
+									<cell />
+								</row>
+								<row>
+									<cell />
+									<cell>
+										<label
+											id="lbRemision_codigo_inscripcion_remite"
+											value="Código de Inscripción: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxRemision_codigo_inscripcion_remite" hflex="1"
+											style="text-transform:uppercase" maxlength="-5" />
+									</cell>
+									<cell colspan="3" />
+								</row>
+								<row>
+									<cell />
+									<cell>
+										<label
+											id="lbRemision_profesional" value="Profesional que remite: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxRemision_profesional" hflex="1"
+											style="text-transform:uppercase" maxlength="-5" />
+									</cell>
+									<cell>
+										<label
+											id="lbRemision_cargo_remite" value="Cargo: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxRemision_cargo_remite" hflex="1"
+											style="text-transform:uppercase" maxlength="-5" />
+									</cell>
+								</row>
+								<row>
+									<cell />
+									<cell>
+										<label
+											id="lbRemision_fecha_aceptacion"
+											value="Fecha de Aceptación: " />
+									</cell>
+									<cell>
+										<datebox
+											id="dtbxRemision_fecha_aceptacion" format="dd-MM-yyyy HH:mm"
+											hflex="1" />
+									</cell>
+									<cell colspan="3" />
+								</row>
+								<row>
+									<cell />
+									<cell>
+										<label
+											id="lbRemision_prestador_recibe"
+											value="Prestador que Recibe: " />
+									</cell>
+									<cell colspan="3">
+										<textbox
+											id="tbxRemision_prestador_recibe" hflex="1"
+											style="text-transform:uppercase" maxlength="-5" />
+									</cell>
+									<cell />
+								</row>
+								<row>
+									<cell />
+									<cell>
+										<label
+											id="lbRemision_codigo_inscripcion_recibe"
+											value="Código de Inscripción:: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxRemision_codigo_inscripcion_recibe" hflex="1"
+											style="text-transform:uppercase" maxlength="-5" />
+									</cell>
+									<cell colspan="3" />
+								</row>
+								<row>
+									<cell />
+									<cell>
+										<label
+											id="lbRemision_personal_recibe"
+											value="Profesional que recibe: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxRemision_personal_recibe" hflex="1"
+											style="text-transform:uppercase" maxlength="-5" />
+									</cell>
+									<cell>
+										<label
+											id="lbRemision_cargo_recibe" value="Remision cargo recibe: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxRemision_cargo_recibe" hflex="1"
+											style="text-transform:uppercase" maxlength="-5" />
+									</cell>
+									<cell />
+								</row>
+							</rows>
+						</grid>
+
+					</groupbox>
+
+
+					<space height="5px" />
+					<groupbox closable="false" width="814px"
+						mold="3d">
+						<caption
+							label="VIII. AMPARO DE TRANSPORTE Y MOVILIZACION DE LA VICTIMA  " />
+
+						<grid>
+							<columns visible="false">
+								<column label="" width="10px" />
+								<column label="" width="170px"
+									align="left" />
+								<column label="" width="220px"
+									align="left" />
+								<column label="" width="170px"
+									align="left" />
+								<column label="" width="220px"
+									align="left" />
+								<column label="" width="10px"
+									align="left" />
+							</columns>
+							<rows>
+								<row>
+									<cell />
+									<cell colspan="4">
+										<label
+											value="Diligenciar únicamente para el transporte desde el sitio del evento hasta la primera IPS  (trasnporte primario) y cuando se realiza en ambulancias de la misma IPS. " />
+									</cell>
+									<cell />
+								</row>
+								<row>
+									<cell />
+									<cell colspan="4">
+										<label
+											value="Datos de Vehículo" />
+									</cell>
+									<cell />
+								</row>
+								<row>
+									<cell />
+									<cell>
+										<label id="lbAmparo_placa_nro"
+											value=" Placa No.: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxAmparo_placa_nro" hflex="1"
+											style="text-transform:uppercase" maxlength="-5" />
+									</cell>
+									<cell colspan="3" />
+								</row>
+								<row>
+									<cell />
+									<cell>
+										<label
+											id="lbAmparo_transporto_victima_desde"
+											value="Transporto la víctima desde: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxAmparo_transporto_victima_desde" hflex="1"
+											style="text-transform:uppercase" maxlength="-5" />
+									</cell>
+									<cell>
+										<label
+											id="lbAmparo_transporto_victima_hasta" value="Hasta: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxAmparo_transporto_victima_hasta" hflex="1"
+											style="text-transform:uppercase" maxlength="-5" />
+									</cell>
+									<cell />
+								</row>
+								<row>
+									<cell />
+									<cell>
+										<label
+											id="lbAmparo_tipo_transporte" value="Tipo de Transporte: " />
+									</cell>
+									<cell colspan="2">
+										<radiogroup
+											id="rdbAmparo_tipo_transporte">
+											<radio
+												label="Ambulancia Básica" value="01" />
+											<space width="15px" />
+											<radio
+												label="Ambulancia Medicalizada" value="02" />
+										</radiogroup>
+									</cell>
+									<cell>
+										<label
+											id="lbAmparo_lugar_donde_recoje_victima"
+											value="Lugar donde recoge la Victima" />
+										<h:br />
+										<radiogroup
+											id="rdbAmparo_lugar_donde_recoje_victima">
+											<label value="Zona: " />
+											<radio label="Urbano"
+												value="U" />
+											<space width="15px" />
+											<radio label="Rural"
+												value="R" />
+										</radiogroup>
+									</cell>
+									<cell />
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+
+
+					<space height="5px" />
+					<groupbox closable="false" width="814px"
+						mold="3d">
+						<caption
+							label="IX. CERTIFICACION DE LA ATENCIÓN MEDICA DELA VICTIMA COMO PRUEBA DEL ACCIDENTE O EVENTO" />
+						<grid>
+							<columns>
+								<column label="" width="10px" />
+								<column label="" width="170px"
+									align="left" />
+								<column label="" width="220px"
+									align="left" />
+								<column label="" width="170px"
+									align="left" />
+								<column label="" width="220px"
+									align="left" />
+								<column label="" width="10px"
+									align="left" />
+							</columns>
+							<rows>
+								<row>
+									<cell />
+									<cell>
+										<label id="lbIx_fecha_ingreso"
+											value="Fecha de ingreso: " />
+									</cell>
+									<cell>
+										<datebox
+											id="dtbxIx_fecha_ingreso" format="dd-MM-yyyy HH:mm"
+											hflex="1" />
+									</cell>
+									<cell>
+										<label id="lbIx_fecha_egreso"
+											value="Fecha de egreso : " />
+									</cell>
+									<cell>
+										<datebox
+											id="dtbxIx_fecha_egreso" format="dd-MM-yyyy HH:mm" hflex="1" />
+									</cell>
+									<cell />
+								</row>
+								<row>
+									<cell />
+									<cell>
+										<label
+											id="lbIx_codigo_diagnostico_ingreso"
+											value="Código Diagnóstico principal de Ingreso: "
+											style="font-size:10px" />
+										<toolbarbutton
+											id="btnIx_codigo_diagnostico_ingresoLimpiar"
+											image="/images/borrar.gif" visible="false" />
+									</cell>
+									<cell>
+										<bandboxRegistros
+											id="tbxIx_codigo_diagnostico_ingreso" widthBandbox="210px"
+											widthListbox="500px" heightListbox="300px"
+											columnas="Codigo#65px|Nombre" />
+									</cell>
+									<cell>
+										<label
+											id="lbIx_codigo_diagnostico_egreso"
+											value="Código Diagnóstico principal de Egreso: "
+											style="font-size:10px" />
+										<toolbarbutton
+											id="btnIx_codigo_diagnostico_egresoLimpiar"
+											image="/images/borrar.gif" visible="false" />
+									</cell>
+									<cell>
+										<bandboxRegistros
+											id="tbxIx_codigo_diagnostico_egreso" widthBandbox="210px"
+											widthListbox="500px" heightListbox="300px"
+											columnas="Codigo#65px|Nombre" />
+									</cell>
+									<cell />
+								</row>
+								<row>
+									<cell />
+									<cell>
+										<label
+											id="lbIx_otro_codigo_diagnostico_ingreso"
+											value="Otro Código Diagnóstico de ingreso: "
+											style="font-size:10px" />
+										<toolbarbutton
+											id="btnIx_otro_codigo_diagnostico_ingresoLimpiar"
+											image="/images/borrar.gif" visible="false" />
+									</cell>
+									<cell>
+										<bandboxRegistros
+											id="tbxIx_otro_codigo_diagnostico_ingreso"
+											widthBandbox="210px" widthListbox="500px"
+											heightListbox="300px" columnas="Codigo#65px|Nombre" />
+									</cell>
+									<cell>
+										<label
+											id="lbIx_otro_codigo_diagnostico_egreso"
+											value="Otro código Diagnóstico principal de Egreso: "
+											style="font-size:10px" />
+										<toolbarbutton
+											id="btnIx_otro_codigo_diagnostico_egresoLimpiar"
+											image="/images/borrar.gif" visible="false" />
+									</cell>
+									<cell>
+										<bandboxRegistros
+											id="tbxIx_otro_codigo_diagnostico_egreso"
+											widthBandbox="210px" widthListbox="500px"
+											heightListbox="300px" columnas="Codigo#65px|Nombre" />
+									</cell>
+									<cell />
+								</row>
+								<row>
+									<cell />
+									<cell>
+										<label
+											id="lbIx_otro_codigo_diagnostico_ingreso2"
+											value="Otro Código Diagnóstico de ingreso: "
+											style="font-size:10px" />
+										<toolbarbutton
+											id="btnIx_otro_codigo_diagnostico_ingreso2Limpiar"
+											image="/images/borrar.gif" visible="false" />
+									</cell>
+									<cell>
+										<bandboxRegistros
+											id="tbxIx_otro_codigo_diagnostico_ingreso2"
+											widthBandbox="210px" widthListbox="500px"
+											heightListbox="300px" columnas="Codigo#65px|Nombre" />
+									</cell>
+									<cell>
+										<label
+											id="lbIx_otro_codigo_diagnostico_egreso2"
+											value="Otro código Diagnóstico principal de Egreso: "
+											style="font-size:10px" />
+										<toolbarbutton
+											id="btnIx_otro_codigo_diagnostico_egreso2Limpiar"
+											image="/images/borrar.gif" visible="false" />
+									</cell>
+									<cell>
+										<bandboxRegistros
+											id="tbxIx_otro_codigo_diagnostico_egreso2"
+											widthBandbox="210px" widthListbox="500px"
+											heightListbox="300px" columnas="Codigo#65px|Nombre" />
+									</cell>
+									<cell />
+								</row>
+								<row>
+									<cell />
+									<cell>
+										<label
+											id="lbIx_primer_apellido_medico"
+											value="1er Apellido del Médico o Profesional tratante: "
+											style="font-size:10px" />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxIx_primer_apellido_medico" hflex="1"
+											style="text-transform:uppercase" maxlength="-5"
+											readonly="true" />
+									</cell>
+									<cell>
+										<label
+											id="lbIx_segundo_apellido_medico"
+											value="2do. Apellido del Médico o Profesional tratante: "
+											style="font-size:10px" />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxIx_segundo_apellido_medico" hflex="1"
+											style="text-transform:uppercase" maxlength="-5"
+											readonly="true" />
+									</cell>
+									<cell />
+								</row>
+								<row>
+									<cell />
+									<cell>
+										<label
+											id="lbIx_primer_nombre_medico"
+											value="1er Nombre del Médico o Profesional tratante: "
+											style="font-size:10px" />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxIx_primer_nombre_medico" hflex="1"
+											style="text-transform:uppercase" maxlength="-5"
+											readonly="true" />
+									</cell>
+									<cell>
+										<label
+											id="lbIx_segundo_nombre_medico"
+											value="2do Nombre del Médico o Profesional tratante: "
+											style="font-size:10px" />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxIx_segundo_nombre_medico" hflex="1"
+											style="text-transform:uppercase" maxlength="-5"
+											readonly="true" />
+									</cell>
+									<cell />
+								</row>
+								<row>
+									<cell />
+									<cell>
+										<label
+											id="lbIx_tipo_documento_medico" value="Tipo Documento: " />
+									</cell>
+									<cell>
+										<listbox
+											id="lbxIx_tipo_documento_medico"
+											name="ix_tipo_documento_medico" mold="select" width="98%"
+											sclass="combobox" disabled="true" />
+									</cell>
+									<cell>
+										<label
+											id="lbIx_nro_documento_medico" value="No. Documento: " />
+										<toolbarbutton
+											image="/images/borrar.gif" id="btnlimpiarMedico"
+											visible="false" />
+									</cell>
+									<cell>
+										<bandboxRegistros
+											id="tbxIx_nro_documento_medico" widthBandbox="210px"
+											widthListbox="500px" heightListbox="300px"
+											columnas="Tipo Ident#65px|Identificación|Nombres|Apellidos" />
+									</cell>
+									<cell />
+								</row>
+								<row>
+									<cell />
+									<cell>
+										<label
+											id="lbIx_nro_registro_medico"
+											value="Número de Registro Médico: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxIx_nro_registro_medico" width="98%"
+											style="text-transform:uppercase" maxlength="-5"
+											readonly="true" />
+									</cell>
+									<cell colspan="3" />
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+
+
+					<space height="5px" />
+					<groupbox closable="false" width="814px"
+						mold="3d">
+						<caption label="X. AMPAROS  QUE RECLAMA  " />
+
+
+						<grid>
+							<columns>
+								<column label="" width="10px" />
+								<column label="" width="170px"
+									align="left" />
+								<column label="" width="170px"
+									align="left" />
+								<column label="VALOR TOTAL  FACTURADO"
+									width="220px" align="left" />
+								<column
+									label="VALOR RECLAMADO AL FOSYGA" width="220px" align="left" />
+								<column label="" width="10px"
+									align="left" />
+							</columns>
+							<rows>
+								<row>
+									<cell />
+									<cell colspan="2">
+										<label
+											id="lbGasto_medico_quirurgicos_valor_facturado"
+											value="GASTOS MEDICO QUIRURGICOS " />
+									</cell>
+									<cell>
+										<doublebox
+											id="dbxGasto_medico_quirurgicos_valor_facturado"
+											format="#,##0.00" hflex="1" style="text-align:right" />
+									</cell>
+									<cell>
+										<doublebox
+											id="dbxGasto_transporte_movilizacion_valor_facturado"
+											format="#,##0.00" hflex="1" style="text-align:right" />
+									</cell>
+									<cell />
+								</row>
+								<row>
+									<cell />
+									<cell colspan="2">
+										<label
+											value="GASTOS DE TRANSPORTE Y MOVILIZACION DE LA VICTIMA"
+											style="font-size:11px" />
+									</cell>
+									<cell>
+										<doublebox
+											id="dbxGasto_medico_quirurgicos_valor_reclamado"
+											format="#,##0.00" hflex="1" style="text-align:right" />
+									</cell>
+									<cell>
+										<doublebox
+											id="dbxGasto_transporte_movilizacion_valor_reclamado"
+											format="#,##0.00" hflex="1" style="text-align:right" />
+									</cell>
+									<cell />
+								</row>
+							</rows>
+							<foot>
+								<footer span="6">
+									<h:p align="justify"
+										style="font-size:11px">
+										El total facturado y reclamado
+										descrito en este numeral se debe
+										detallar y hacer descripcion de
+										las actividades, procedimientos,
+										medicamentos, insumos,
+										suministros y materiales, dentro
+										del anexo técnico numero 2.
+									</h:p>
+								</footer>
+							</foot>
+						</grid>
+					</groupbox>
+
+
+					<space height="5px" />
+					<groupbox closable="false" width="814px"
+						mold="3d">
+						<caption
+							label="XI. DECLARACION DE LA INSTITUCION PRESTADORA DE SERVICIOS DE SALUD. " />
+
+						<h:p align="justify" style="font-size:11px">
+							Como representante legal o Gerente de la
+							Institución Prestadora de Servicios de
+							Salud, declaró bajo la gravedad de juramento
+							que toda la información contenida en este
+							formulario es cierta y podrá se verificada
+							por la Dirección General de Financiamiento
+							del Ministerio de la Protección Social, por
+							el Administrador Fiduciario del Fondo de
+							Solidaridad y Garantía Fosyga, por la
+							Superintendencia Nacional de Salud o la
+							Contraloría General de la República con la
+							IPS y las aseguradoras, de no ser así,
+							acepto todas las consecuencias legales que
+							produzca esta situación.
+						</h:p>
+					</groupbox>
+				</div>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

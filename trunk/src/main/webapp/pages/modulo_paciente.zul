@@ -1,0 +1,499 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formModulo_paciente" width="100%" height="100%"
+		use="healthmanager.controller.Modulo_pacienteAction">
+		<style src="estilo.css" />
+		<style>
+			body ,table{ margin:0; padding:0;
+
+			} .z-fieldset{ -moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; }
+
+			tr.z-row .z-cell{ background-image:none; }
+
+			tr.z-row td.z-row-inner{ background-image:none; }
+		</style>
+
+		<groupbox id="groupboxConsultar" visible="true" closable="false"
+			mold="3d" height="100%">
+			<caption id="captionEncabezado"
+				style="color: blue;font-weight: bold" />
+
+
+			<listbox id="listboxAdmisiones" height="99%" vflex="1"
+				multiple="false" mold="paging" pageSize="20">
+
+				<auxhead>
+					<auxheader id="auxheaderAsistencial" colspan="10"
+						visible="false">
+						<hbox align="center">
+
+							<div id="divAsistencial" visible="false">
+								<label value="Estado:" visible="false" />
+								<listbox id="lbxAtendidas" mold="select"
+									visible="false" width="100px" sclass="combobox"
+									onSelect="formModulo_paciente.buscarDatos()">
+									<listitem value="2" label="Todas" />
+									<listitem value="0"
+										label="Pendientes" selected="true" />
+									<listitem value="1"
+										label="Atendidos" />
+
+								</listbox>
+								<space />
+								<label value="Admisión: "
+									visible="false" />
+								<listbox id="lbxEstado_admision"
+									onSelect="formModulo_paciente.buscarDatos()" mold="select"
+									width="100px" sclass="combobox" visible="false">
+									<listitem value="" label="Todas"
+										selected="true" />
+									<listitem value="1" label="Activo" />
+									<listitem value="2"
+										label="Terminada" />
+								</listbox>
+								<space />
+								<label value="Fecha Ingreso: "
+									visible="false" />
+								<datebox id="dtxFecha" readonly="true"
+									format="yyyy-MM-dd"
+									onChange="formModulo_paciente.buscarDatos()" visible="false" />
+								<space />
+								<label value="Buscar: " visible="false" />
+								<textbox id="tbxValueAdmision"
+									style="text-transform:uppercase;" width="170px"
+									onOK="formModulo_paciente.buscarDatos()" visible="false" />
+								<textbox id="tbxVia_ingreso"
+									visible="false" />
+
+								<space width="5px" />
+								<toolbarbutton label="Consultar"
+									onClick="formModulo_paciente.buscarDatos()"
+									image="/images/Magnifier.gif" tooltiptext="Consultar admitidos"
+									visible="false" />
+							</div>
+
+							<div id="divVisitaDomiciliaria"
+								visible="false">
+								<label
+									value="Criterios de B&#250;squeda :" />
+								<listbox id="lbxBuscar_paciente"
+									onSelect="formModulo_paciente.buscarDatos_VisitaDomiciliaria()"
+									mold="select" width="100px" sclass="combobox">
+									<listitem value="1"
+										label="Identificación" selected="true" />
+									<listitem value="2" label="Nombre" />
+								</listbox>
+								<space />
+								<label value="Buscar: " />
+								<textbox id="tbxValuePaciente"
+									style="text-transform:uppercase;" width="170px"
+									onOK="formModulo_paciente.buscarDatos_VisitaDomiciliaria()" />
+								<space width="5px" />
+								<toolbarbutton label="Consultar"
+									onClick="formModulo_paciente.buscarDatos_VisitaDomiciliaria()"
+									image="/images/Magnifier.gif" tooltiptext="Consultar paciente" />
+							</div>
+
+							<div id="divTuberculosis_lepra"
+								visible="false">
+								<label
+									value="Criterios de B&#250;squeda :" />
+								<listbox
+									id="lbxBuscar_paciente_tuberculosis"
+									onSelect="formModulo_paciente.buscarDatos_Tuberculosis_lepra()"
+									mold="select" width="100px" sclass="combobox">
+									<listitem value="1"
+										label="Identificación" selected="true" />
+									<listitem value="2" label="Nombre" />
+								</listbox>
+								<space />
+								<label value="Buscar: " />
+								<textbox
+									id="tbxValuePaciente_tuberculosis"
+									style="text-transform:uppercase;" width="170px"
+									onOK="formModulo_paciente.buscarDatos_Tuberculosis_lepra()" />
+								<space width="5px" />
+								<toolbarbutton label="Consultar"
+									visible="false"
+									onClick="formModulo_paciente.buscarDatos_Tuberculosis_lepra()"
+									image="/images/Magnifier.gif" tooltiptext="Consultar paciente" />
+							</div>
+						</hbox>
+					</auxheader>
+				</auxhead>
+
+				<listhead>
+					<listheader label="" width="2px" />
+					<listheader label="Estado" width="200px" />
+					<listheader label="Turno" width="100px" />
+					<listheader label="Servicio" width="300px" />
+					<listheader label="Datos del paciente"
+						width="350px" />
+					<listheader label="Prestador" width="350px" />
+				</listhead>
+			</listbox>
+		</groupbox>
+
+		<borderlayout id="borderlayoutEditar" width="100%" height="100%"
+			visible="false">
+			<west title="Información del Paciente" collapsible="true"
+				width="370px" autoscroll="true">
+				<vbox>
+					<groupbox
+						style="margin-right:5px;margin-left:5px;margin-top:5px" mold="3d"
+						closable="false" width="360px">
+						<caption>
+							<hlayout>
+								<toolbarbutton label=""
+									id="toolbarbuttonInformacion_paciente"
+									image="/images/add_perfil.png"
+									style="float:right;margin-right:10px;font-weight:bold;font-size:x-small" />
+								<toolbarbutton label="ATRAS"
+									image="/images/quit.png"
+									style="float:right;margin-right:10px;font-weight:bold;font-size:x-small"
+									onClick='formModulo_paciente.accionForm2("buscar")' />
+							</hlayout>
+						</caption>
+						<grid>
+							<columns>
+								<column width="105px" />
+								<column />
+							</columns>
+							<rows>
+								<row height="20px" visible="false">
+									<cell>
+										<label value="Ingreso"
+											style="font-size:x-small;font-weight:bold" />
+									</cell>
+									<cell>
+										<textbox id="tbxIngreso"
+											readonly="true" inplace="false" width="97%" />
+									</cell>
+								</row>
+
+								<row height="20px">
+									<cell>
+										<label value="Fecha de Ingreso"
+											style="font-size:x-small;font-weight:bold" />
+									</cell>
+									<cell>
+										<textbox id="tbxFecha_ingreso"
+											readonly="true" inplace="false" width="97%" />
+									</cell>
+								</row>
+								<row height="20px">
+									<cell>
+										<label
+											value="Nro Identificación"
+											style="font-size:x-small;font-weight:bold" />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxNro_identificacion" readonly="true" inplace="false"
+											width="97%" />
+									</cell>
+								</row>
+								<row height="20px">
+									<cell>
+										<label
+											value="Tipo Identificación"
+											style="font-size:x-small;font-weight:bold" />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxTipo_identificacion" readonly="true" inplace="false"
+											width="97%" />
+									</cell>
+								</row>
+								<row height="20px">
+									<cell>
+										<label value="Edad"
+											style="font-size:x-small;font-weight:bold" />
+									</cell>
+									<cell>
+										<textbox id="tbxEdad"
+											readonly="true" inplace="false" width="97%" />
+									</cell>
+								</row>
+								<row height="20px">
+									<cell>
+										<label value="Sexo"
+											style="font-size:x-small;font-weight:bold" />
+									</cell>
+									<cell>
+										<textbox id="tbxSexo"
+											readonly="true" inplace="false" width="97%" />
+									</cell>
+								</row>
+								<row height="20px">
+									<cell>
+										<label
+											value="Pertenencia étnica"
+											style="font-size:x-small;font-weight:bold" />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxPertencia_etnica" readonly="true" inplace="false"
+											width="97%" popup="popupPertenencia" />
+									</cell>
+
+
+								</row>
+								<row height="20px">
+									<cell>
+										<label value="Nivel Educativo"
+											style="font-size:x-small;font-weight:bold" />
+									</cell>
+									<cell>
+										<textbox id="tbxNivel_educativo"
+											readonly="true" inplace="false" width="97%"
+											popup="popupNiveleducativo" />
+									</cell>
+								</row>
+
+								<row height="20px">
+									<cell>
+										<label value="Aseguradora"
+											style="font-size:x-small;font-weight:bold" />
+									</cell>
+									<cell>
+										<textbox id="tbxAseguradora"
+											readonly="true" inplace="false" width="97%"
+											popup="popupAseguradora" />
+									</cell>
+								</row>
+								<row height="20px">
+									<cell>
+										<label value="Contrato"
+											style="font-size:x-small;font-weight:bold" />
+									</cell>
+									<cell>
+										<textbox id="tbxContrato"
+											readonly="true" inplace="false" width="97%" />
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+
+					<groupbox style="margin-right:5px;margin-left:5px"
+						mold="3d" id="gbxHistorias_clinicas" width="360px">
+						<caption label="Historias Clínicas"
+							style="font-weight:bold" />
+						<grid height="130px">
+							<columns visible="false">
+								<column />
+								<column />
+							</columns>
+							<rows>
+								<row>
+									<a label="Consulta Externa"
+										style="font-weight:bold" id="aConsulta_externa" />
+									<a label="Urgencia"
+										style="font-weight:bold" id="aUrgencia" />
+								</row>
+								<row>
+									<a label="P y P "
+										style="font-weight:bold" id="aPyp"
+										onClick="formModulo_paciente.abrirMenuPYP()" />
+									<a label="Odontología"
+										style="font-weight:bold" id="aOdontologia"
+										onClick="formModulo_paciente.abrirMenuOdontologia()" />
+								</row>
+								<row>
+									<a label="Salud Mental"
+										style="font-weight:bold" id="aSalud_mental"
+										onClick="formModulo_paciente.abrirMenuSaludMental()" />
+									<a
+										label="Imágenes, Resultados, ecografias"
+										style="font-weight:bold" id="aImagenesDiagnosticas" />
+								</row>
+								<row>
+									<a label="AIEPI"
+										style="font-weight:bold" id="aAiepi"
+										onClick="formModulo_paciente.abrirMenuAiepi()" />
+
+
+									<a label="Vacunación"
+										style="font-weight:bold" id="aVacunacionPai" />
+								</row>
+								<row>
+
+									<cell colspan="2">
+										<a
+											label="Historias versión anterior" style="font-weight:bold"
+											id="aSios" />
+									</cell>
+
+
+								</row>
+							</rows>
+						</grid>
+
+					</groupbox>
+
+				</vbox>
+			</west>
+			<center>
+				<div height="100%">
+					<tabbox id="tabboxContendor" width="100%"
+						height="100%" use="com.framework.macros.ContenedorPaginasMacro" />
+				</div>
+			</center>
+		</borderlayout>
+
+		<popup id="popupPYP">
+			<groupbox mold="3d" closable="false" width="400px"
+				style="margin-bottom:20px">
+				<caption label="Menú PYP" style="font-weight:bold" />
+				<grid>
+					<columns>
+						<column />
+						<column />
+					</columns>
+					<rows>
+						<row height="12px">
+							<a label="Adulto Mayor"
+								style="font-weight:bold" id="aPYP_adulto_mayor" />
+							<a label="Menor de 2 meses"
+								id="aPYP_menor_2mes" style="font-weight:bold" />
+						</row>
+
+						<row height="12px">
+							<a label="Alteración Embarazo"
+								id="aPYP_alteracion_embarazo" style="font-weight:bold" />
+							<a label="Menor de 2 Meses a 2 Años"
+								id="aPYP_menor_2mes_2anos" style="font-weight:bold" />
+						</row>
+						<row height="12px">
+							<a label="Alteración Joven"
+								id="aPYP_alteracion_joven" style="font-weight:bold" />
+							<a label="Menor de 2 a 5 Años"
+								id="aPYP_menor_2anos_5anos" style="font-weight:bold" />
+						</row>
+						<row height="12px">
+							<a label="Hipertenso-Diabético"
+								style="font-weight:bold" id="aPYP_hipertenso_diabetico" />
+							<a label="Menor de 5 a 10 Años"
+								id="aPYP_menor_5anos_10anos" style="font-weight:bold" />
+						</row>
+						<row height="12px">
+							<a label="Planificación Familiar"
+								id="aPYP_planificacion_familiar" style="font-weight:bold" />
+							<a label="Agudeza Visual"
+								style="font-weight:bold" id="aPYP_agudezVisual" />
+						</row>
+						<row height="12px">
+							<a label="Actividades pendientes"
+								id="aPYP_actividades_pendientes" style="font-weight:bold" />
+						</row>
+
+					</rows>
+				</grid>
+			</groupbox>
+		</popup>
+
+		<popup id="popupOdontologia">
+			<groupbox mold="3d" closable="false" width="400px"
+				style="">
+				<caption label="Menú Odontologia"
+					style="font-weight:bold" />
+				<grid>
+					<columns>
+						<column />
+						<column />
+					</columns>
+					<rows>
+						<row height="12px">
+							<a label="Historia Clinica Primera Vez"
+								style="font-weight:bold" id="aOdontologia_1ra" />
+							<a label="Historia Clinica Evolución"
+								id="aOdontologia_evolucion" style="font-weight:bold" />
+						</row>
+						<row height="12px">
+							<cell colspan="2">
+								<a
+									label="Registros Clinico de Higiene Oral"
+									style="font-weight:bold" id="aOdontologia_rcho" />
+							</cell>
+						</row>
+					</rows>
+				</grid>
+			</groupbox>
+		</popup>
+
+		<popup id="popupSaludMental">
+			<groupbox mold="3d" closable="false" width="400px"
+				style="">
+				<caption label="Menú Salud Mental"
+					style="font-weight:bold" />
+				<grid>
+					<columns>
+						<column />
+						<column />
+					</columns>
+					<rows>
+						<row height="12px">
+							<a label="Psiquiatría"
+								style="font-weight:bold" id="aPsicologia" />
+							<a label="Psicología" id="aPsiquiatria"
+								style="font-weight:bold" />
+						</row>
+						<row height="12px">
+							<cell colspan="2">
+								<a label="Visita Domiciliaria"
+									style="font-weight:bold" id="aVisita_domiciliaria" />
+							</cell>
+						</row>
+					</rows>
+				</grid>
+			</groupbox>
+		</popup>
+
+		<popup id="popupAiepi">
+			<groupbox mold="3d" closable="false" width="400px"
+				style="">
+				<caption label="Menú AIEPI" style="font-weight:bold" />
+				<grid>
+					<columns>
+						<column />
+						<column />
+					</columns>
+					<rows>
+						<row height="12px">
+							<a label="AIEPI Menor de 0 a 2 meses"
+								style="font-weight:bold" id="aAiepiMenor2mA" />
+							<a label="AIEPI Menor de 2 meses a 5 años"
+								style="font-weight:bold" id="aAiepiMenor2m5aA" />
+						</row>
+					</rows>
+				</grid>
+			</groupbox>
+		</popup>
+
+		<popup id="popupAseguradora"
+			onOpen="tbxPopup_aseguradora.setValue(tbxAseguradora.getValue())"
+			width="400px">
+			<textbox id="tbxPopup_aseguradora" hflex="1"
+				readonly="true" />
+		</popup>
+		<popup id="popupPertenencia"
+			onOpen="tbxPopup_pertenecia.setValue(tbxPertencia_etnica.getValue())"
+			width="400px">
+			<textbox id="tbxPopup_pertenecia" hflex="1" readonly="true" />
+		</popup>
+		<popup id="popupNiveleducativo"
+			onOpen="tbxPopup_niveleduca.setValue(tbxNivel_educativo.getValue())"
+			width="400px">
+			<textbox id="tbxPopup_niveleduca" hflex="1" readonly="true" />
+		</popup>
+
+		<div id="divPopups_traige" />
+
+		<timer id="timerConsultar" delay="5000" repeats="true"
+			onTimer="formModulo_paciente.buscarDatos()" />
+
+	</window>
+</zk>

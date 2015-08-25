@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.ConsultorioDao">
+
+	<!--<typeAlias alias="consultorio" type="healthmanager.modelo.bean.Consultorio" />-->
+
+	<!--<mapper resource="healthmanager/modelo/dao/xml/consultorioSQL.xml" />-->
+
+	<resultMap id="consultorioMap" type="consultorio">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="codigo_consultorio" property="codigo_consultorio" />
+		<result column="nombre" property="nombre" />
+		<result column="creacion_date" property="creacion_date" />
+		<result column="ultimo_update" property="ultimo_update" />
+		<result column="creacion_user" property="creacion_user" />
+		<result column="ultimo_user" property="ultimo_user" />
+		<result column="codigo_centro" property="codigo_centro" />
+	</resultMap>
+
+	<insert id="crear" parameterType="consultorio">
+		insert into public.consultorio (codigo_empresa,codigo_sucursal,
+		codigo_consultorio,nombre,creacion_date,
+		ultimo_update,creacion_user,ultimo_user,
+		codigo_centro)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{codigo_consultorio},#{nombre},#{creacion_date},
+		#{ultimo_update},#{creacion_user},#{ultimo_user},
+		#{codigo_centro})
+	</insert>
+
+	<update id="actualizar" parameterType="consultorio">
+		update public.consultorio set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},codigo_consultorio = #{codigo_consultorio},
+		nombre = #{nombre},creacion_date = #{creacion_date},
+		ultimo_update = #{ultimo_update},creacion_user = #{creacion_user},
+		ultimo_user = #{ultimo_user},codigo_centro = #{codigo_centro}
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and codigo_consultorio = #{codigo_consultorio}
+	</update>
+
+	<select id="consultar" parameterType="consultorio" resultMap="consultorioMap">
+		select codigo_empresa,codigo_sucursal,
+		codigo_consultorio,nombre,creacion_date,ultimo_update,
+		creacion_user,ultimo_user,codigo_centro
+		from public.consultorio where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_consultorio = #{codigo_consultorio}
+	</select>
+
+	<delete id="eliminar" parameterType="consultorio">
+		delete from public.consultorio
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_consultorio = #{codigo_consultorio}
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="consultorioMap">
+		select distinct cons.codigo_empresa,cons.codigo_sucursal,
+		cons.codigo_consultorio,cons.nombre,cons.creacion_date,cons.ultimo_update,
+		cons.creacion_user,cons.ultimo_user,cons.codigo_centro
+		from public.consultorio cons
+		left join consultorio_prestador cu on (cu.codigo_empresa = cons.codigo_empresa
+		and cu.codigo_sucursal = cons.codigo_sucursal 
+		and cu.codigo_consultorio = cons.codigo_consultorio)
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND cons.codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND cons.codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+			<if test="codigo_prestador != null">
+			AND cu.codigo_prestador = #{codigo_prestador}
+			</if>
+			<if test="codigo_centro != null">
+			AND cons.codigo_centro = #{codigo_centro}
+			</if>
+		</trim>
+		
+		order by cons.codigo_centro, cons.codigo_consultorio
+		
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from public.consultorio 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

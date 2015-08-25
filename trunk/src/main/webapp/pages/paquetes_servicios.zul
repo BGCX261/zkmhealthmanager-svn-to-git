@@ -1,0 +1,232 @@
+<?page title="Paquetes_servicios" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formPaquetes_servicios" width="100%" height="99%"
+		use="healthmanager.controller.Paquetes_serviciosAction">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="true" closable="false"
+			mold="3d" height="100%">
+			<caption label="Consultar paquetes de servicios"
+				style="color: blue;font-weight: bold" />
+
+			<separator />
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" height="100%" mold="paging"
+				pageSize="20" vflex="1">
+				<auxhead>
+					<auxheader colspan="6">
+						<hlayout valign="middle">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<separator />
+							<textbox id="tbxValue" width="200px"
+								onOK="formPaquetes_servicios.buscarDatos();"
+								style="text-transform:uppercase" />
+							<separator />
+							<toolbarbutton image="/images/Magnifier.gif"
+								label="Consultar Paquete servicio"
+								onClick="formPaquetes_servicios.buscarDatos();"
+								tooltiptext="Consultar Paquetes servicios" />
+							<separator />
+							<toolbarbutton image="/images/New16.gif"
+								label="Nuevo Paquete servicio"
+								onClick='formPaquetes_servicios.accionForm(true,"registrar");'
+								tooltiptext="Nuevo Paquetes servicios" />
+						</hlayout>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Código de paquete" width="120px" />
+					<column label="Cups de paquete" width="150px" />
+					<column label="Nombre del procedimiento" />
+					<column label="Via de ingreso" />
+					<column label="Valor" />
+					<column label="Acciones" align="center"
+						width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<borderlayout width="100%" height="90%" id="groupboxEditar"
+			visible="false">
+			<north border="none">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<toolbarbutton image="/images/Save16.gif"
+						label="Guardar Paquetes servicios"
+						onClick="formPaquetes_servicios.guardarDatos();" id="btGuardar" />
+					<toolbarbutton image="/images/New16.gif"
+						label="Nueva Paquetes servicios"
+						onClick='formPaquetes_servicios.accionForm(true,"registrar");'
+						id="btNew" />
+					<space />
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Cancelar"
+						onClick='formPaquetes_servicios.accionForm(false,tbxAccion.getText());'
+						id="btCancel" />
+					<toolbarbutton image="/images/print_ico.gif"
+						label="Imprimir Paquetes servicios"
+						onClick="formPaquetes_servicios.imprimir();" id="btImprimir"
+						visible="false" />
+					<space />
+					<label value="Formato impresión: " visible="false" />
+					<listbox id="lbxFormato" mold="select" width="150px"
+						visible="false" sclass="combobox">
+						<listitem value="pdf" label="PDF"
+							selected="true" />
+						<listitem value="rtf" label="WORD" />
+					</listbox>
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center">
+
+					<!-- *************************** -->
+					<!-- *** Insertar/Actualizar *** -->
+					<!-- *************************** -->
+					<groupbox closable="false" width="800px"
+						mold="3d">
+						<grid>
+							<auxhead>
+								<auxheader
+									label="MODULO DE PAQUETES DE SERVICIOS" colspan="3" />
+							</auxhead>
+							<columns visible="false">
+								<column width="150px" />
+								<column width="180px" />
+								<column />
+							</columns>
+
+							<rows>
+
+								<row>
+									<cell>
+										<longbox id="lgxId_paquete"
+											width="170px" style="text-transform:uppercase"
+											visible="false" />
+									</cell>
+									<cell></cell>
+									<cell>
+										<label
+											value="Valor del paquete de servicio"
+											style="font-weight:bold" />
+										<space />
+										<doublebox id="dbxValor_paquete"
+											width="210px" format="#,##0.00" />
+									</cell>
+
+								</row>
+
+								<row>
+									<cell>
+										<label
+											value="Código cups principal" style="font-weight:bold" />
+										<textbox
+											id="tbxId_procedimiento_principal" width="170px"
+											style="text-transform:uppercase" visible="false" />
+									</cell>
+									<cell>
+										<bandboxRegistros
+											id="bandboxCups_principal" widthBandbox="170px"
+											widthListbox="600px" heightListbox="300px"
+											columnas="Código cups#100px|Descripcion" />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxNombre_procedimiento" width="385px"
+											style="text-transform:uppercase" readonly="true" />
+										<toolbarbutton
+											id="btnLimpiarProcedimiento" image="/images/borrar.gif" />
+									</cell>
+								</row>
+								
+								<row>
+									<cell>
+										<label value="Nombre del paquete" style="font-weight:bold" />
+									</cell>
+									<cell colspan="2" >
+										<textbox id="tbxNombre_paquete" hflex="1" />
+									</cell>
+								</row>
+
+								<row>
+									<cell>
+										<label value="Vai de ingreso"
+											style="font-weight:bold" />
+									</cell>
+									<cell>
+										<listbox id="lbxVia_ingreso"
+											name="via_ingreso" mold="select" width="170px" />
+									</cell>
+									<cell />
+
+								</row>
+
+								<row>
+									<cell colspan="3">
+										<listbox
+											id="listboxDetalles_paquetes">
+											<auxhead>
+												<auxheader
+													colspan="5">
+													<hlayout
+														valign="middle">
+														<label
+															value="Tipo de servicio" />
+														<listbox
+															mold="select" id="lbxTipo_servicio" width="150px" />
+														<space />
+														<toolbarbutton
+															label="Agregar" image="/images/add.png"
+															tooltiptext="Agregar detalle"
+															onClick="formPaquetes_servicios.agregarDetalleServicio()" />
+													</hlayout>
+												</auxheader>
+											</auxhead>
+											<listhead>
+												<listheader
+													label="Código" width="100px" />
+												<listheader
+													label="Código cups/POSS" width="120px" />
+												<listheader
+													label="Nombre" />
+												<listheader label="Tipo"
+													width="150px" />
+												<listheader
+													width="30px" />
+											</listhead>
+										</listbox>
+									</cell>
+								</row>
+
+							</rows>
+
+						</grid>
+
+					</groupbox>
+				</div>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

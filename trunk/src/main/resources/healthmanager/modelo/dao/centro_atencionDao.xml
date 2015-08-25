@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Centro_atencionDao">
+
+	<resultMap id="centro_atencionMap" type="centro_atencion">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="codigo_centro" property="codigo_centro" />
+		<result column="nombre_centro" property="nombre_centro" />
+		<result column="direccion" property="direccion" />
+		<result column="telefonos" property="telefonos" />
+		<result column="id_coordinador" property="id_coordinador" />
+		<result column="nombre_coordinador" property="nombre_coordinador" />
+		<result column="observaciones" property="observaciones" />
+		<result column="creacion_date" property="creacion_date" />
+		<result column="ultimo_update" property="ultimo_update" />
+		<result column="creacion_user" property="creacion_user" />
+		<result column="ultimo_user" property="ultimo_user" />
+		<result column="laboratorios" property="laboratorios" />
+		<result column="centro_georeferencia" property="centro_georeferencia" />
+		<result column="triage_enfermera" property="triage_enfermera" />
+		<result column="cuenta_ingreso" property="cuenta_ingreso" />
+	</resultMap>
+
+	<insert id="crear" parameterType="centro_atencion">
+		insert into
+		public.centro_atencion (codigo_empresa,codigo_sucursal,
+		codigo_centro,nombre_centro,direccion,
+		telefonos,id_coordinador,nombre_coordinador,
+		observaciones,creacion_date,ultimo_update,
+		creacion_user,ultimo_user,laboratorios,centro_georeferencia,
+		triage_enfermera, cuenta_ingreso)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{codigo_centro},#{nombre_centro},#{direccion},
+		#{telefonos},#{id_coordinador},#{nombre_coordinador},
+		#{observaciones},#{creacion_date},#{ultimo_update},
+		#{creacion_user},#{ultimo_user},#{laboratorios},#{centro_georeferencia},
+		#{triage_enfermera}, #{cuenta_ingreso})
+	</insert>
+
+	<update id="actualizar" parameterType="centro_atencion">
+		update
+		public.centro_atencion set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},codigo_centro = #{codigo_centro},
+		nombre_centro = #{nombre_centro},direccion = #{direccion},
+		telefonos =
+		#{telefonos},id_coordinador = #{id_coordinador},
+		nombre_coordinador =
+		#{nombre_coordinador},observaciones = #{observaciones},
+		creacion_date =
+		#{creacion_date},ultimo_update = #{ultimo_update},
+		creacion_user =
+		#{creacion_user},ultimo_user = #{ultimo_user},
+		laboratorios =
+		#{laboratorios},centro_georeferencia = #{centro_georeferencia},
+		triage_enfermera = #{triage_enfermera}, cuenta_ingreso = #{cuenta_ingreso} 
+		where codigo_empresa =
+		#{codigo_empresa}
+		and codigo_sucursal =
+		#{codigo_sucursal}
+		and
+		codigo_centro = #{codigo_centro}
+	</update>
+
+	<select id="consultar" parameterType="centro_atencion"
+		resultMap="centro_atencionMap">
+		select codigo_empresa,codigo_sucursal,
+		codigo_centro,nombre_centro,direccion,telefonos,
+		id_coordinador,nombre_coordinador,observaciones,creacion_date,
+		ultimo_update,creacion_user,ultimo_user,
+		laboratorios,centro_georeferencia,triage_enfermera,cuenta_ingreso 
+		from
+		public.centro_atencion where codigo_empresa = #{codigo_empresa}
+		and
+		codigo_sucursal = #{codigo_sucursal} and codigo_centro =
+		#{codigo_centro}
+	</select>
+
+	<delete id="eliminar" parameterType="centro_atencion">
+		delete from
+		public.centro_atencion
+		where codigo_empresa = #{codigo_empresa}
+		and
+		codigo_sucursal = #{codigo_sucursal} and codigo_centro =
+		#{codigo_centro}
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="centro_atencionMap">
+		select codigo_empresa,codigo_sucursal,
+		codigo_centro,nombre_centro,direccion,telefonos,
+		id_coordinador,nombre_coordinador,observaciones,creacion_date,
+		ultimo_update,creacion_user,ultimo_user,
+		laboratorios,centro_georeferencia,triage_enfermera, cuenta_ingreso 
+		from
+		public.centro_atencion
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+				AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+				AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+
+			<if test="parameter != null">
+				AND ${parameter} like '${value}'
+			</if>
+
+			<if test="lista_centros !=null">
+				AND codigo_centro IN
+				<foreach collection="lista_centros" item="i" open="("
+					separator="," close=")">
+					#{i}
+				</foreach>
+			</if>
+
+			<if test="paramTodo != null">
+				AND (lower(codigo_centro) like '%${paramTodo}%'
+				or
+				lower(nombre_centro) like '%${paramTodo}%')
+			</if>
+			<if test="paramOportunidad != null">
+			AND (codigo_centro like '${value}' or nombre_centro like '${value}')
+			</if>
+		    
+			<if test="rol_usuario != null and usuario != null">
+				AND EXISTS (SELECT codigo_empresa FROM
+				roles_usuarios_caps WHERE
+				codigo_empresa = #{codigo_empresa} AND
+				codigo_sucursal =
+				#{codigo_sucursal}
+				AND codigo_centro =
+				public.centro_atencion.codigo_centro AND
+				codigo_usuario = #{usuario}
+				AND rol = #{rol_usuario})
+			</if>
+			<if test="parametroTodo != null">AND (lower(codigo_centro) like '%${parametroTodo}%'
+				or
+				lower(nombre_centro) like '%${parametroTodo}%')</if>
+		</trim>
+		
+		<if test="parameter != null">
+			order by ${parameter} 
+		</if>
+		
+		<if test="parameter == null">
+			order by codigo_centro
+		</if>
+	
+		<if test="limite_paginado != null">
+			${limite_paginado}
+		</if>
+	</select>
+	
+	<select id="totalResultados" parameterType="java.util.Map" resultType="java.lang.Integer">
+		select count(1) 
+		from
+		public.centro_atencion
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+				AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+				AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+
+			<if test="parameter != null">
+				AND ${parameter} like '${value}'
+			</if>
+
+			<if test="lista_centros !=null">
+				AND codigo_centro IN
+				<foreach collection="lista_centros" item="i" open="("
+					separator="," close=")">
+					#{i}
+				</foreach>
+			</if>
+
+			<if test="paramTodo != null">
+				AND (lower(codigo_centro) like '%${paramTodo}%'
+				or
+				lower(nombre_centro) like '%${paramTodo}%')
+			</if>
+			<if test="paramOportunidad != null">
+			AND (codigo_centro like '${value}' or nombre_centro like '${value}')
+			</if>
+		    
+			<if test="rol_usuario != null and usuario != null">
+				AND EXISTS (SELECT codigo_empresa FROM
+				roles_usuarios_caps WHERE
+				codigo_empresa = #{codigo_empresa} AND
+				codigo_sucursal =
+				#{codigo_sucursal}
+				AND codigo_centro =
+				public.centro_atencion.codigo_centro AND
+				codigo_usuario = #{usuario}
+				AND rol = #{rol_usuario})
+			</if>
+			<if test="parametroTodo != null">AND (lower(codigo_centro) like '%${parametroTodo}%'
+				or
+				lower(nombre_centro) like '%${parametroTodo}%')</if>
+		</trim>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist from public.centro_atencion
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+				AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+				AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+				AND ${parameter} like '${value}'
+			</if>
+
+		</trim>
+		<if test="limit != null">
+			${limit}
+		</if>
+	</select>
+
+</mapper>

@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="listado_admisiones" pageWidth="612" pageHeight="792" whenNoDataType="AllSectionsNoDetail" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="7f0cfda8-56d1-4722-838e-ff31b9eb4670">
+	<property name="ireport.zoom" value="2.9230756500000186"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="87"/>
+	<parameter name="codigo_empresa" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="codigo_sucursal" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="empresa" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="id" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="direccion" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="telefono" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="imagen" class="java.io.InputStream">
+		<defaultValueExpression><![CDATA[null]]></defaultValueExpression>
+	</parameter>
+	<parameter name="resolucion" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="tipo" class="java.lang.String">
+		<defaultValueExpression><![CDATA["1"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="nombre_reporte" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+	ad.fecha_ingreso,
+	ad.nro_identificacion,
+	(pa.apellido1||' '||pa.apellido2||' '||pa.nombre1||' '||pa.nombre2) as paciente,
+	ev.descripcion as ingreso,
+	am.nombre as administradora,
+'' AS facturado,
+'' as atentido,
+elemento.descripcion AS marca
+
+FROM
+	admision ad
+LEFT JOIN paciente pa ON (
+	pa.codigo_empresa = ad.codigo_empresa
+	AND pa.codigo_sucursal = ad.codigo_sucursal
+	AND pa.nro_identificacion = ad.nro_identificacion
+)
+LEFT JOIN elemento ev ON (
+	ev.codigo = ad.via_ingreso and
+	ev.tipo = 'via_ingreso'
+)LEFT JOIN administradora am ON(
+	am.codigo = ad.codigo_administradora and
+	am.codigo_empresa = ad.codigo_empresa and
+	am.codigo_sucursal = ad.codigo_sucursal
+)LEFT JOIN elemento elemento ON(elemento.tipo='marca_admision' and elemento.codigo=ad.marca_admision)]]>
+	</queryString>
+	<field name="fecha_cita" class="java.sql.Timestamp"/>
+	<field name="nro_identificacion" class="java.lang.String"/>
+	<field name="paciente" class="java.lang.String"/>
+	<field name="via" class="java.lang.String"/>
+	<field name="prestador" class="java.lang.String"/>
+	<field name="estado" class="java.lang.String"/>
+	<group name="consecutivo" isStartNewPage="true">
+		<groupExpression><![CDATA[""]]></groupExpression>
+		<groupHeader>
+			<band height="18">
+				<textField>
+					<reportElement x="0" y="0" width="71" height="18" uuid="ebc1e369-a8e7-4e69-8898-d4e4ad615c2c"/>
+					<box leftPadding="2">
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["FECHA Y HORA"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="71" y="0" width="75" height="18" uuid="325c193b-3288-4de2-ab1c-f9ea0ab2393b"/>
+					<box leftPadding="2">
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["IDENTIFICACION"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="146" y="0" width="231" height="18" uuid="bdeb54a1-c095-4d5d-9efe-70b459b31fdc"/>
+					<box leftPadding="2">
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["PACIENTE"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="521" y="0" width="51" height="18" uuid="744a5d0f-a3c0-45e9-827b-959bca880403"/>
+					<box leftPadding="2">
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["ESTADO"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="377" y="0" width="144" height="18" uuid="b488f97e-7473-4742-b041-0e4d1d4427e5"/>
+					<box leftPadding="2">
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["VIA DE INGRESO"]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<pageHeader>
+		<band height="60">
+			<textField>
+				<reportElement x="101" y="0" width="271" height="14" uuid="0026ac38-67d5-4711-bcfb-ba7ccb4bf584"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{empresa}]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame" isUsingCache="true" onErrorType="Icon">
+				<reportElement x="0" y="0" width="101" height="47" uuid="50a67e6c-e84c-469e-ae8d-0ac1d4c9b3ab"/>
+				<imageExpression><![CDATA[$P{imagen}]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="100" y="25" width="272" height="11" uuid="8c31d317-4b59-4e24-9f71-a0b1fcb0096c"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Dirección: "+$P{direccion}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="101" y="36" width="271" height="11" uuid="28a1796e-b3d1-40ad-94f5-fb67e99af423"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Telefono: "+$P{telefono}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="372" y="0" width="201" height="47" uuid="a349a25f-f5bf-4a5a-b790-06618cb930e1"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{nombre_reporte}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="101" y="14" width="271" height="11" uuid="f6c1cbee-6762-4749-bbe4-1dcfbd4a4e23"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{id}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="16">
+			<textField pattern="dd/MM/yyyy h:mm a" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="71" height="16" uuid="cbe61d93-fa09-4d63-9230-7b0a91e91e3b"/>
+				<box leftPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fecha_cita}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="71" y="0" width="75" height="16" isPrintWhenDetailOverflows="true" uuid="a369cdf7-4f50-461a-91e6-3c6d3e078fa7"/>
+				<box leftPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
+					<font fontName="SansSerif" size="7" pdfFontName="Helvetica" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nro_identificacion}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="146" y="0" width="231" height="16" isPrintWhenDetailOverflows="true" uuid="88a0ec13-795e-431f-82e5-782dd0a85520"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle" markup="html">
+					<font fontName="SansSerif" size="8" pdfFontName="Helvetica" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{paciente}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="521" y="0" width="51" height="16" isPrintWhenDetailOverflows="true" uuid="7dda3b8e-4451-4414-8ee8-7d946cdbfeb4"/>
+				<box leftPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
+					<font fontName="SansSerif" size="7" pdfFontName="Helvetica" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{estado}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="377" y="0" width="144" height="16" isPrintWhenDetailOverflows="true" uuid="145bd9ac-93dc-44b5-bc94-b8f4cdba9ac8"/>
+				<box leftPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
+					<font fontName="SansSerif" size="7" pdfFontName="Helvetica" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{via}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="20">
+			<textField evaluationTime="Report">
+				<reportElement x="528" y="3" width="40" height="16" uuid="8bd60274-0908-4528-93c8-5b299b9b02c2"/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="yyyy-MM-dd hh:mm:ss aa">
+				<reportElement x="1" y="4" width="156" height="16" uuid="c36da1c5-5986-4a96-a783-b94b704e1904"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="448" y="4" width="80" height="16" uuid="2ebc03ec-e47f-4b1d-9af9-ced642ee0bb9"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="23">
+			<textField pattern="yyyy-MM-dd hh:mm:ss aa">
+				<reportElement x="448" y="3" width="120" height="16" uuid="9d3a9b76-c17e-4699-9c15-8a9f56e3f17b"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Cant. Citas: "+$V{REPORT_COUNT}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

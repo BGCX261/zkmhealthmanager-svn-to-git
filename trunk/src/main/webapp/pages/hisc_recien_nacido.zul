@@ -1,0 +1,1391 @@
+<?page title="Hisc_recien_nacido" contentType="text/html;charset=UTF-8"?>
+<?component name="impresionDiagnostica" macroURI="/WEB-INF/macros/impresionDiagnostica.zul"?>
+<?component name="informacionPacientes" macroURI="/WEB-INF/macros/informacionPacientes.zul"?>
+<?component name="capurro" macroURI="/WEB-INF/macros/capurro.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formHisc_recien_nacido" width="100%" height="97%"
+		use="healthmanager.controller.Hisc_recien_nacidoAction">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="false" closable="false"
+			mold="3d" height="98%">
+			<caption label="Consultar"
+				style="color: blue;font-weight: bold" />
+			<toolbarbutton image="/images/add_perfil.png"
+				style="font-weight:bold;float:right;margin-right:50px"
+				label="PACIENTE ADMISIONADO"
+				id="toolbarbuttonPaciente_admisionado1" />
+
+			<separator />
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" height="90%" mold="paging"
+				pageSize="20" vflex="1">
+				<auxhead>
+					<auxheader colspan="4">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<separator />
+							<textbox id="tbxValue" width="200px"
+								onOK="formHisc_recien_nacido.buscarDatos();"
+								style="text-transform:uppercase" />
+							<separator />
+							<button mold="trendy"
+								image="/images/Magnifier.gif"
+								onClick="formHisc_recien_nacido.buscarDatos();"
+								tooltiptext="Consultar Hisc recien nacido" />
+							<separator />
+							<button mold="trendy"
+								image="/images/New16.gif"
+								onClick='formHisc_recien_nacido.accionForm(healthmanager.controller.ZKWindow.OpcionesFormulario.REGISTRAR,null);'
+								tooltiptext="Nuevo Hisc recien nacido" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Codigo historia" />
+					<column label="Identificacion" />
+					<column label="Fecha inicial" />
+					<column label="Acciones" align="center"
+						width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<groupbox id="groupboxEditar" visible="true" closable="false"
+			mold="3d" height="100%">
+			<caption label="Registrar/Modificar Historia"
+				style="font-weight: bold">
+				<toolbarbutton image="/images/add_perfil.png"
+					style="font-weight:bold;float:right;margin-right:50px"
+					label="PACIENTE ADMISIONADO"
+					id="toolbarbuttonPaciente_admisionado2" />
+			</caption>
+
+			<borderlayout width="100%" height="100%"
+				id="borderlayoutEditar" visible="true">
+				<north border="none">
+					<div height="50px">
+						<toolbar width="100%" align="start">
+							<textbox id="tbxAccion" value="registrar"
+								visible="false" />
+							<toolbarbutton image="/images/Save16.gif"
+								label="Guardar Hisc recien nacido"
+								onClick="formHisc_recien_nacido.guardarDatos();" id="btGuardar" />
+							<toolbarbutton image="/images/New16.gif"
+								label="Nueva Hisc recien nacido" id="btNew" />
+							<space />
+							<toolbarbutton image="/images/trasladar.gif"
+								label="Cancelar"
+								onClick='formHisc_recien_nacido.accionForm(healthmanager.controller.ZKWindow.OpcionesFormulario.CONSULTAR,null);'
+								id="btnCancelar" />
+							<toolbarbutton image="/images/print_ico.gif"
+								label="Imprimir Hisc recien nacido"
+								onClick="formHisc_recien_nacido.imprimir();" id="btImprimir"
+								visible="false" />
+							<space />
+							<label value="Formato impresión: "
+								visible="false" />
+							<listbox id="lbxFormato" mold="select"
+								width="150px" visible="false" sclass="combobox">
+								<listitem value="pdf" label="PDF"
+									selected="true" />
+								<listitem value="rtf" label="WORD" />
+							</listbox>
+						</toolbar>
+						<toolbarbutton image="/images/info_icon.png"
+							style="font-weight:bold;float:right;margin-right:50px"
+							id="toolbarbuttonTipo_historia" visible="true" />
+					</div>
+				</north>
+				<center autoscroll="true" border="none">
+					<div align="center">
+
+						<!-- *************************** -->
+						<!-- *** Insertar/Actualizar *** -->
+						<!-- *************************** -->
+						<groupbox closable="false" width="800px"
+							mold="3d">
+
+							<groupbox mold="3d" closable="false" visible="true"
+								id="gbxIdentificacion">
+								<caption label="IDENTIFICACIÓN"
+									style="font-weight:bold" />
+								<informacionPacientes
+									id="infoPacientes" />
+								<grid>
+									<columns>
+										<column width="15%" label="" />
+										<column width="54%" />
+										<column />
+										<column width="17%"/>
+									</columns>
+									<rows>
+										<row>
+											<cell>
+												<label id="lbNom_padre"
+													value="Nombre del Padre" />
+											</cell>
+											<cell>
+												<textbox
+													id="tbxNombre_padre" hflex="1"
+													style="text-transform:uppercase" maxlength="200" />
+											</cell>
+											<cell>
+												<label
+													id="lbTelefono_padre" value="Teléfono " />
+											</cell>
+											<cell>
+												<intbox
+													id="ibxTelefono" hflex="1" style="text-transform:uppercase"
+													maxlength="20" />
+											</cell>
+										</row>
+									</rows>
+								</grid>
+							</groupbox>
+
+							<groupbox mold="3d" closable="false">
+								<caption label="ANTECEDENTES PERSONALES"
+									style="font-weight:bold" />
+
+								<grid>
+									<columns>
+										<column />
+									</columns>
+									<rows>
+										<row>
+											<cell>
+												<label
+													value="ANTECEDENTES PATOLÓGICOS MATERNOS" />
+											</cell>
+										</row>
+										<row>
+											<cell>
+												<textbox
+													id="tbxAnte_patologicos_materno" hflex="1" rows="4"
+													style="text-transform:uppercase" maxlength="-1" />
+											</cell>
+										</row>
+										<row>
+											<cell>
+												<label
+													value="ANTECEDENTES PATOLÓGICOS PATERNOS" />
+											</cell>
+										</row>
+										<row>
+											<cell>
+												<textbox
+													id="tbxAnte_patologicos_paternos" hflex="1" rows="4"
+													style="text-transform:uppercase" maxlength="-1" />
+											</cell>
+										</row>
+									</rows>
+								</grid>
+							</groupbox>
+							<groupbox>
+								<grid sclass="GridSinBorde"
+									style="border:none">
+									<columns>
+										<column label="" width="5px" />
+										<column label="" />
+										<column label="" />
+										<column label="" />
+										<column label="" />
+										<column label="" />
+									</columns>
+									<rows>
+										<row>
+											<cell />
+											<cell align="center">
+												<label
+													value="Número de embarazos" style="color:red" />
+											</cell>
+
+											<cell align="center">
+												<label
+													value="Número de partos" style="color:red" />
+											</cell>
+
+											<cell align="center">
+												<label
+													value="Número de abortos" style="color:red" />
+											</cell>
+
+											<cell align="center">
+												<label
+													value="Número de cesareas" style="color:red" />
+											</cell>
+											<cell align="center">
+												<label
+													value="Nacidos vivos" style="color:red" />
+											</cell>
+										</row>
+										<row>
+											<cell />
+											<cell align="center">
+												<label
+													id="lbPerinatales_g" value="G: " style="color:red" />
+												<intbox
+													constraint="no negative:Este valor no puede ser negativo"
+													id="ibxPerinatales_g" width="50px"
+													style="text-transform:uppercase" />
+											</cell>
+											<cell align="center">
+												<label
+													id="lbPerinatales_p" value="P: " style="color:red" />
+												<intbox
+													constraint="no negative:Este valor no puede ser negativo"
+													id="ibxPerinatales_p" width="50px"
+													style="text-transform:uppercase" />
+											</cell>
+											<cell align="center">
+												<label
+													id="lbPerinatales_a" value="A: " style="color:red" />
+												<intbox
+													constraint="no negative:Este valor no puede ser negativo"
+													id="ibxPerinatales_a" width="50px"
+													style="text-transform:uppercase" />
+											</cell>
+											<cell align="center">
+												<label
+													id="lbPerinatales_c" value="C: " style="color:red" />
+												<intbox
+													constraint="no negative:Este valor no puede ser negativo"
+													id="ibxPerinatales_c" width="50px"
+													style="text-transform:uppercase" />
+											</cell>
+											<cell align="center">
+												<label
+													id="lbPerinatales_v" value="V: " style="color:red" />
+												<intbox
+													constraint="no negative:Este valor no puede ser negativo"
+													id="ibxPerinatales_v" width="50px"
+													style="text-transform:uppercase" />
+											</cell>
+										</row>
+										<row>
+											<cell colspan="6">
+												<label
+													value="COMPLICACIONES DEL EMBARAZO" />
+											</cell>
+										</row>
+										<row>
+											<cell colspan="6">
+												<textbox
+													id="tbxComp_embarazo" hflex="1" rows="4"
+													style="text-transform:uppercase" maxlength="-1" />
+											</cell>
+										</row>
+										<row>
+											<cell colspan="6">
+												<label
+													value="COMPLICACIONES DEL TRABAJO DE PARTO" />
+											</cell>
+										</row>
+										<row>
+											<cell colspan="6">
+												<textbox
+													id="tbxComp_trabajo_parto" hflex="1" rows="4"
+													style="text-transform:uppercase" maxlength="-1" />
+											</cell>
+										</row>
+										<row>
+											<cell colspan="6">
+												<label
+													value="COMPLICACIONES DEL PARTO" />
+											</cell>
+										</row>
+										<row>
+											<cell colspan="6">
+												<textbox
+													id="tbxComp_del_parto" hflex="1" rows="4"
+													style="text-transform:uppercase" maxlength="-1" />
+											</cell>
+										</row>
+
+									</rows>
+								</grid>
+							</groupbox>
+							<groupbox mold="3d" closable="false">
+								<caption label="EXÁMEN FÍSICO"
+									style="font-weight:bold" />
+
+								<grid>
+									<columns>
+										<column label="VITALIDAD" />
+									</columns>
+									<rows>
+										<row>
+											<cell align="center">
+												<label
+													id="lbReanimacion" value="Reanimación: " />
+												<space width="15px" />
+												<radiogroup
+													id="rdbReanimacion">
+													<radio label="SÍ"
+														value="S" />
+													<space width="15px" />
+													<radio label="NO"
+														value="N" checked="true" />
+												</radiogroup>
+											</cell>
+										</row>
+									</rows>
+								</grid>
+
+								<groupbox mold="3d" closable="false">
+									<grid id="gridPuntaje_apgar">
+										<columns>
+											<column width="17%" />
+											<column />
+											<column />
+											<column />
+											<column />
+											<column />
+											<column />
+										</columns>
+										<rows>
+											<row
+												style="border: 1px solid #aaaaaa">
+												<cell colspan="4"
+													align="center">
+													<label
+														value="PUNTAJE APGAR" style="font-weight:bold" />
+												</cell>
+												<cell colspan="3"
+													align="center">
+													<label
+														value="EDAD GESTACIONAL" style="font-weight:bold" />
+												</cell>
+											</row>
+											<row
+												style="border: 1px solid #aaaaaa">
+												<cell align="center">
+													<label
+														value="SIGNOS" style="font-weight:bold" />
+												</cell>
+												<cell align="center">
+													<label value="0"
+														style="font-weight:bold" />
+												</cell>
+												<cell align="center">
+													<label value="1"
+														style="font-weight:bold" />
+												</cell>
+												<cell align="center">
+													<label value="2"
+														style="font-weight:bold" />
+												</cell>
+												<cell align="center"
+													hflex="1" style="background:green">
+													<radiogroup
+														id="rdbEdad_gestacional"
+														onCheck="formHisc_recien_nacido.onChequearEdadGestacional()" />
+													<radio
+														label="1 Minuto" id="rdbMinuto1"
+														radiogroup="rdbEdad_gestacional" value="SE"
+														checked="true" />
+												</cell>
+												<cell align="center"
+													hflex="1" style="background:green">
+													<radio
+														label="5 Minutos" id="rdbMinuto5"
+														radiogroup="rdbEdad_gestacional" value="N" />
+												</cell>
+
+												<cell align="center"
+													hflex="1" style="background:yellow">
+													<radio
+														label="10 Minutos" id="rdbMinuto10"
+														radiogroup="rdbEdad_gestacional" value="SS" />
+												</cell>
+											</row>
+
+											<row
+												style="border: 1px solid #aaaaaa" id="rowFila1_apgar">
+												<cell align="center">
+													<label
+														value="Frecuencia Respiratoria" style="font-weight:bold" />
+												</cell>
+												<cell align="center">
+													<vlayout>
+														<label
+															value="Ausente" />
+														<radiogroup
+															onCheck='formHisc_recien_nacido.onChequearPuntajeApgar(self,rowFila1_apgar)'
+															id="rdbFrecue_rep0" />
+														<radio value="0"
+															radiogroup="rdbFrecue_rep0" />
+													</vlayout>
+												</cell>
+												<cell align="center">
+													<vlayout>
+														<label
+															value="Lenta e Irregular" />
+														<radio
+															radiogroup="rdbFrecue_rep0" value="1" />
+													</vlayout>
+												</cell>
+												<cell align="center">
+													<vlayout>
+														<label
+															value="Buena, fuerte" />
+														<radio
+															radiogroup="rdbFrecue_rep0" value="2" />
+													</vlayout>
+												</cell>
+												<cell align="center">
+													<intbox
+														inplace="true" width="30px" style="text-align:center"
+														readonly="true" id="ibxFrecue_rep1_min" />
+												</cell>
+												<cell align="center">
+													<intbox
+														inplace="true" width="30px" style="text-align:center"
+														readonly="true" id="ibxFrecue_rep5_min" />
+												</cell>
+
+												<cell align="center">
+													<intbox
+														inplace="true" width="30px" style="text-align:center"
+														readonly="true" id="ibxFrecue_rep10_min" />
+												</cell>
+											</row>
+
+											<row
+												style="border: 1px solid #aaaaaa" id="rowFila2_apgar">
+												<cell align="center">
+													<label
+														value="Frecuencia Cardíaca" style="font-weight:bold" />
+												</cell>
+												<cell align="center">
+													<vlayout>
+														<label
+															value="Ausente" />
+														<radiogroup
+															onCheck='formHisc_recien_nacido.onChequearPuntajeApgar(self,rowFila2_apgar)'
+															id="rdbFrecue_card0" />
+														<radio value="0"
+															radiogroup="rdbFrecue_card0" />
+													</vlayout>
+												</cell>
+												<cell align="center">
+													<vlayout>
+														<label
+															value="Menor a 100/min" />
+														<radio
+															radiogroup="rdbFrecue_card0" value="1" />
+													</vlayout>
+												</cell>
+												<cell align="center">
+													<vlayout>
+														<label
+															value="Mayor a 100/min" />
+														<radio
+															radiogroup="rdbFrecue_card0" value="2" />
+													</vlayout>
+												</cell>
+												<cell align="center">
+													<intbox
+														inplace="true" width="30px" style="text-align:center"
+														readonly="true" id="ibxFrecue_card1_min" />
+												</cell>
+												<cell align="center">
+													<intbox
+														inplace="true" width="30px" style="text-align:center"
+														readonly="true" id="ibxFrecue_card5_min" />
+												</cell>
+
+												<cell align="center">
+													<intbox
+														inplace="true" width="30px" style="text-align:center"
+														readonly="true" id="ibxFrecue_card10_min" />
+												</cell>
+											</row>
+
+											<row
+												style="border: 1px solid #aaaaaa" id="rowFila3_apgar">
+												<cell align="center">
+													<label
+														value="Muscular" style="font-weight:bold" />
+												</cell>
+												<cell align="center">
+													<vlayout>
+														<label
+															value="Fláccido, Sin movimiento" />
+														<radiogroup
+															onCheck='formHisc_recien_nacido.onChequearPuntajeApgar(self,rowFila3_apgar)'
+															id="rdbMuscular0" />
+														<radio value="0"
+															radiogroup="rdbMuscular0" />
+													</vlayout>
+												</cell>
+												<cell align="center">
+													<vlayout>
+														<label
+															value="Alguna flexión, poco movimiento" />
+														<radio
+															radiogroup="rdbMuscular0" value="1" />
+													</vlayout>
+												</cell>
+												<cell align="center">
+													<vlayout>
+														<label
+															value="Movimientos activos" />
+														<radio
+															radiogroup="rdbMuscular0" value="2" />
+													</vlayout>
+												</cell>
+												<cell align="center">
+													<intbox
+														inplace="true" width="30px" style="text-align:center"
+														readonly="true" id="ibxMuscular1_min" />
+												</cell>
+												<cell align="center">
+													<intbox
+														inplace="true" width="30px" style="text-align:center"
+														readonly="true" id="ibxMuscular5_min" />
+												</cell>
+
+												<cell align="center">
+													<intbox
+														inplace="true" width="30px" style="text-align:center"
+														readonly="true" id="ibxMuscular10_min" />
+												</cell>
+											</row>
+
+
+											<row
+												style="border: 1px solid #aaaaaa" id="rowFila4_apgar">
+												<cell align="center">
+													<label
+														value="Reflejo" style="font-weight:bold" />
+												</cell>
+												<cell align="center">
+													<vlayout>
+														<label
+															value="Ausente, Sin respuesta" />
+														<radiogroup
+															onCheck='formHisc_recien_nacido.onChequearPuntajeApgar(self,rowFila4_apgar)'
+															id="rdbReflejo0" />
+														<radio value="0"
+															radiogroup="rdbReflejo0" />
+
+													</vlayout>
+												</cell>
+												<cell align="center">
+													<vlayout>
+														<label
+															value="Muecas, llanto debil" />
+														<radio
+															radiogroup="rdbReflejo0" value="1" />
+													</vlayout>
+												</cell>
+												<cell align="center">
+													<vlayout>
+														<label
+															value="Llora o estornuda" />
+														<radio
+															radiogroup="rdbReflejo0" value="2" />
+													</vlayout>
+												</cell>
+												<cell align="center">
+													<intbox
+														inplace="true" width="30px" style="text-align:center"
+														readonly="true" id="ibxReflejo1_min" />
+												</cell>
+												<cell align="center">
+													<intbox
+														inplace="true" width="30px" style="text-align:center"
+														readonly="true" id="ibxReflejo5_min" />
+												</cell>
+
+												<cell align="center">
+													<intbox
+														inplace="true" width="30px" style="text-align:center"
+														readonly="true" id="ibxReflejo10_min" />
+												</cell>
+											</row>
+
+											<row
+												style="border: 1px solid #aaaaaa" id="rowFila5_apgar">
+												<cell align="center">
+													<label
+														value="Color Piel" style="font-weight:bold" />
+												</cell>
+												<cell align="center">
+													<vlayout>
+														<label
+															value="Coloración Azul o pálido" />
+														<radiogroup
+															onCheck='formHisc_recien_nacido.onChequearPuntajeApgar(self,rowFila5_apgar)'
+															id="rdbColor_piel0" />
+														<radio value="0"
+															radiogroup="rdbColor_piel0" />
+
+													</vlayout>
+												</cell>
+												<cell align="center">
+													<vlayout>
+														<label
+															value="Acrocianosis, tono azulado" />
+														<radio
+															radiogroup="rdbColor_piel0" value="1" />
+													</vlayout>
+												</cell>
+												<cell align="center">
+													<vlayout>
+														<label
+															value="Rosado completamente" />
+														<radio
+															radiogroup="rdbColor_piel0" value="2" />
+													</vlayout>
+												</cell>
+												<cell align="center">
+													<intbox
+														inplace="true" width="30px" style="text-align:center"
+														readonly="true" id="ibxColor_piel1_min" />
+												</cell>
+												<cell align="center">
+													<intbox
+														inplace="true" width="30px" style="text-align:center"
+														readonly="true" id="ibxColor_piel5_min" />
+												</cell>
+
+												<cell align="center">
+													<intbox
+														inplace="true" width="30px" style="text-align:center"
+														readonly="true" id="ibxColor_piel0_min" />
+												</cell>
+											</row>
+
+											<row
+												style="border: 1px solid #aaaaaa">
+												<cell colspan="4"
+													align="right">
+													<label
+														id="lbResultado_apgar" value="Puntuación de Apgar: "
+														style="font-weight:bold" />
+													<space />
+												</cell>
+												<cell align="center">
+													<textbox
+														id="tbxResultado_apgar1" width="50px" readonly="true"
+														style="text-transform:uppercase" maxlength="10" />
+												</cell>
+												<cell align="center">
+													<textbox
+														id="tbxResultado_apgar5" width="50px" readonly="true"
+														style="text-transform:uppercase" maxlength="10" />
+												</cell>
+												<cell align="center">
+													<textbox
+														id="tbxResultado_apgar10" width="50px" readonly="true"
+														style="text-transform:uppercase" maxlength="10" />
+												</cell>
+											</row>
+										</rows>
+									</grid>
+								</groupbox>
+							</groupbox>
+
+							<groupbox closable="false">
+								<caption label="MADUREZ" />
+								<capurro id="macroCapurro" />
+							</groupbox>
+
+							<groupbox mold="3d" closable="false">
+								<caption label="VACUNALES"
+									style="font-weight:bold" />
+								<grid>
+									<columns>
+										<column />
+										<column width="5%" label="SÍ" />
+										<column width="5%" label="NO" />
+										<column />
+										<column width="5%" label="SÍ" />
+										<column width="5%" label="NO" />
+										<column />
+										<column width="5%" label="SÍ" />
+										<column width="5%" label="NO" />
+									</columns>
+									<rows>
+										<row>
+											<cell>
+												<label id="lbBcg"
+													value="BCG " />
+												<radiogroup id="rdbBcg" />
+											</cell>
+											<cell>
+												<radio label=""
+													value="S" radiogroup="rdbBcg" />
+											</cell>
+											<cell>
+												<radio label=""
+													value="N" radiogroup="rdbBcg" checked="true" />
+											</cell>
+
+											<cell>
+												<space />
+												<label id="lbHep_b1"
+													value="HEPATITIS B1 " />
+												<radiogroup
+													id="rdbHep_b1" />
+											</cell>
+											<cell>
+												<radio label=""
+													value="S" radiogroup="rdbHep_b1" />
+											</cell>
+											<cell>
+												<radio label=""
+													value="N" radiogroup="rdbHep_b1" checked="true" />
+											</cell>
+
+
+											<cell>
+												<space />
+												<label id="lbVitamina_k"
+													value="VITAMINA K " />
+												<radiogroup
+													id="rdbVitamina_k" />
+											</cell>
+											<cell>
+												<radio label=""
+													value="S" radiogroup="rdbVitamina_k" />
+											</cell>
+											<cell>
+												<radio label=""
+													value="N" radiogroup="rdbVitamina_k" checked="true" />
+											</cell>
+										</row>
+									</rows>
+								</grid>
+							</groupbox>
+
+							<groupbox mold="3d" closable="false">
+								<caption label="MEDIDAS ANTROPOMEDICAS" />
+								<grid sclass="GridSinBorde"
+									style="border:none">
+									<columns>
+										<column label="" width="85px" />
+										<column label="" width="100px" />
+										<column label="" width="85px" />
+										<column label="" width="100px" />
+										<column label="" width="120px" />
+										<column label="" width="100px" />
+										<column label="" width="100px" />
+										<column label="" width="80px" />
+									</columns>
+									<rows>
+										<row>
+											<cell>
+												<label value="* "
+													style="color: red" tooltiptext="Campo obligatorio" />
+												<label id="lbPeso_1"
+													value="Peso (kg): " />
+											</cell>
+											<cell>
+												<doublebox
+													id="dbxExamen_fisico_peso" width="60px" locale="en"
+													onChange="formHisc_recien_nacido.calcularIMC(dbxExamen_fisico_peso,dbxExamen_fisico_talla,dbxImc)" />
+											</cell>
+											<cell>
+												<label value="* "
+													style="color: red" tooltiptext="Campo obligatorio" />
+												<label id="lbTalla"
+													value="Talla (cm): " />
+											</cell>
+											<cell>
+												<doublebox
+													id="dbxExamen_fisico_talla" width="60px" locale="en"
+													onChange="formHisc_recien_nacido.calcularIMC(dbxExamen_fisico_peso,dbxExamen_fisico_talla,dbxImc)" />
+											</cell>
+											<cell>
+												<label value="* "
+													style="color: red" tooltiptext="Campo obligatorio" />
+												<label
+													id="lbPerimetro_cefalico" value="P.C. (cm): "
+													tooltiptext="Perímetro Cefálico" />
+											</cell>
+											<cell>
+												<doublebox
+													id="dbxExamen_fisico_perimetro_cflico" width="60px"
+													locale="en" />
+											</cell>
+											<cell>
+												<label value="* "
+													style="color: red" tooltiptext="Campo obligatorio" />
+												<label id="lbImc"
+													value="I.M.C. (kg/m&#178;): "
+													tooltiptext="Indice de masa corporal" />
+											</cell>
+											<cell>
+												<doublebox id="dbxImc"
+													width="60px" locale="en" readonly="true" />
+											</cell>
+										</row>
+
+										<row>
+											<cell>
+												<label value="* "
+													style="color: red" tooltiptext="Campo obligatorio" />
+												<label
+													id="lbFrec_cardiaca" value="F.C. (min): "
+													tooltiptext="Frecuencia Cardiaca" />
+											</cell>
+											<cell>
+												<doublebox
+													id="dbxExamen_fisico_fc" width="60px" locale="en"
+													onChange="formHisc_recien_nacido.alarmaExamenFisicoFc()" />
+											</cell>
+											<cell>
+												<label value="* "
+													style="color: red" tooltiptext="Campo obligatorio" />
+												<label
+													id="lbFrec_respiratoria" value="F.R. (min): "
+													tooltiptext="Frecuencia Respiratoria" />
+											</cell>
+											<cell>
+												<doublebox
+													id="dbxExamen_fisico_fr" width="60px" locale="en"
+													onChange="formHisc_recien_nacido.alarmaExamenFisicoRespiracion()" />
+											</cell>
+											<cell>
+												<label value="* "
+													style="color: red" tooltiptext="Campo obligatorio" />
+												<label
+													id="lbTemperatura" value="Temperatura (°C): " />
+											</cell>
+											<cell>
+												<doublebox
+													id="dbxExamen_fisico_temp" width="60px" locale="en"
+													onChange="formHisc_recien_nacido.alarmaExamenFisicoTemperatura()" />
+											</cell>
+											<cell>
+												<label value="* "
+													style="color: red" tooltiptext="Campo obligatorio" />
+												<label id="lbP_t"
+													value="P.T. (cm): " />
+											</cell>
+											<cell>
+												<doublebox id="dbxP_t"
+													width="60px" locale="en" />
+											</cell>
+										</row>
+										<row>
+											<cell colspan="5">
+												<label
+													id="lbSintomaticos_respiratorio"
+													value="Sintomáticos respiratorio: " />
+												<space width="15px" />
+												<radiogroup
+													id="rdbSintomaticos_respiratorio">
+													<radio
+														id="Sintomaticos_respiratorio1" label="SÍ" value="1" />
+													<space />
+													<radio
+														id="Sintomaticos_respiratorio2" label="NO" selected="true"
+														value="2" />
+													<space />
+													<radio
+														id="Sintomaticos_respiratorio21"
+														label="Riesgo no evaluado" selected="true" value="21" />
+												</radiogroup>
+											</cell>
+											<cell colspan="3">
+												<label
+													id="lbSintomaticos_piel" value="Sintomáticos piel: " />
+												<space width="15px" />
+												<radiogroup
+													id="rdbSintomaticos_piel">
+													<radio
+														id="Sintomaticos_piel1" label="SÍ" value="1" />
+													<space />
+													<radio
+														id="Sintomaticos_piel2" label="NO" selected="true"
+														value="2" />
+												</radiogroup>
+											</cell>
+										</row>
+									</rows>
+								</grid>
+							</groupbox>
+							<groupbox mold="3d" closable="false">
+								<caption
+									label="CURVAS Y TABLAS DE CRECIMIENTO (OMS)" />
+								<grid sclass="GridSinBorde"
+									style="border:none">
+									<columns>
+										<column label="" width="14px" />
+										<column label="" />
+										<column label="" />
+										<column label="" />
+										<column label="" />
+									</columns>
+
+									<rows>
+										<row>
+											<cell></cell>
+											<cell>
+												<button
+													label="Calcular Talla/Edad"
+													onClick="formHisc_recien_nacido.calcularTallaEdad()"
+													width="180px" />
+											</cell>
+											<cell>
+												<button
+													label="Calcular Peso/Talla"
+													onClick="formHisc_recien_nacido.calcularPesoTalla()"
+													width="180px" />
+											</cell>
+											<cell>
+												<button
+													label="Calcular IMC/Edad"
+													onClick="formHisc_recien_nacido.calcularImcEdad()"
+													width="180px" />
+											</cell>
+											<cell>
+												<button
+													label="Calcular P. Cefálico/Edad"
+													onClick="formHisc_recien_nacido.calcularPerimetroCefalicoEdad()"
+													width="180px" />
+											</cell>
+										</row>
+										<row>
+											<cell></cell>
+											<cell height="30px">
+												<label id="lbT_e_de"
+													value="T/E DE:" />
+												<space />
+												<doublebox
+													id="dbxDesviacion_estandar1" width="170px" readonly="true" format="##0" style="text-align:center;" />
+											</cell>
+
+											<cell height="30px">
+												<label id="lbP_t_de"
+													value="P/T DE:" />
+												<space />
+												<doublebox
+													id="dbxDesviacion_estandar2" width="170px" readonly="true" format="##0" style="text-align:center;" />
+											</cell>
+
+											<cell height="30px">
+												<label id="lbI_e_de"
+													value="IMC/E DE: " />
+												<space />
+												<doublebox
+													id="dbxDesviacion_estandar3" width="170px" readonly="true" format="##0" style="text-align:center;" />
+											</cell>
+
+											<cell height="30px">
+												<label id="lbPC_e_de"
+													value="PC/E DE:" />
+												<space />
+												<doublebox
+													id="dbxDesviacion_estandar4" width="170px" readonly="true" format="##0" style="text-align:center;" />
+											</cell>
+										</row>
+
+									</rows>
+								</grid>
+							</groupbox>
+
+							<groupbox closable="false">
+								<caption
+									label="Otros Hallazgos al Exámen Físico" />
+
+								<grid sclass="GridSinBorde"
+									style="border:none" width="100%">
+									<columns>
+										<column />
+									</columns>
+									<rows>
+										<row>
+											<cell>
+												<div width="100%"
+													align="left">
+													<label
+														id="lbFisico_cabeza_cara" value="Cabeza y Cara: " />
+													<space width="97px" />
+													<listbox
+														mold="select" width="130px" id="lbxCabezacara_list"
+														onSelect="formHisc_recien_nacido.onSeleccionarAntecendestes1(lbxCabezacara_list,tbxCabeza_cara)">
+														<listitem
+															label="NORMAL" value="S" selected="true" />
+														<listitem
+															label="ANORMAL" value="N" />
+														<listitem
+															label="NO EXPLORADO" value="RNE" />
+													</listbox>
+													<space width="5px" />
+													<textbox
+														id="tbxCabeza_cara" width="98%"
+														style="text-transform:uppercase" rows="2" />
+												</div>
+											</cell>
+										</row>
+
+										<row>
+											<cell>
+												<div width="100%"
+													align="left">
+													<label id="lbPiel"
+														value="Piel: " />
+													<space
+														width="157px" />
+													<listbox
+														mold="select" width="130px" id="lbxPiel_faneras_list"
+														onSelect="formHisc_recien_nacido.onSeleccionarAntecendestes1(lbxPiel_faneras_list,tbxPiel)">
+														<listitem
+															label="NORMAL" value="S" selected="true" />
+														<listitem
+															label="ANORMAL" value="N" />
+														<listitem
+															label="NO EXPLORADO" value="RNE" />
+													</listbox>
+													<space width="5px" />
+													<textbox
+														id="tbxPiel" width="98%" style="text-transform:uppercase"
+														rows="2" />
+												</div>
+											</cell>
+										</row>
+										<row>
+											<cell>
+												<div width="100%"
+													align="left">
+													<label id="lbTorax"
+														value="Torax y pulmonares: " />
+													<space width="70px" />
+													<listbox
+														mold="select" width="130px" id="lbxTorax_list"
+														onSelect="formHisc_recien_nacido.onSeleccionarAntecendestes1(lbxTorax_list,tbxTorax_pulmonares)">
+														<listitem
+															label="NORMAL" value="S" selected="true" />
+														<listitem
+															label="ANORMAL" value="N" />
+														<listitem
+															label="NO EXPLORADO" value="RNE" />
+													</listbox>
+													<space width="5px" />
+													<textbox
+														id="tbxTorax_pulmonares" width="98%"
+														style="text-transform:uppercase" rows="2" />
+												</div>
+											</cell>
+										</row>
+										<row>
+											<cell>
+												<div width="100%"
+													align="left">
+													<label
+														id="lbFisico_cuello" value="Cuello: " />
+													<space
+														width="142px" />
+													<listbox
+														mold="select" width="130px" id="lbxCuello_list"
+														onSelect="formHisc_recien_nacido.onSeleccionarAntecendestes1(lbxCuello_list,tbxCuello)">
+														<listitem
+															label="NORMAL" value="S" selected="true" />
+														<listitem
+															label="ANORMAL" value="N" />
+														<listitem
+															label="NO EXPLORADO" value="RNE" />
+													</listbox>
+													<space width="5px" />
+													<textbox
+														id="tbxCuello" width="98%"
+														style="text-transform:uppercase" rows="2" />
+												</div>
+											</cell>
+										</row>
+										<row>
+											<cell>
+												<div width="100%"
+													align="left">
+													<label
+														id="lbVascular" value="Corazón y sistema Vascular: " />
+													<space width="25px" />
+													<listbox
+														mold="select" width="130px" id="lbxVascular_list"
+														onSelect="formHisc_recien_nacido.onSeleccionarAntecendestes1(lbxVascular_list,tbxCorazon_vascular)">
+														<listitem
+															label="NORMAL" value="S" selected="true" />
+														<listitem
+															label="ANORMAL" value="N" />
+														<listitem
+															label="NO EXPLORADO" value="RNE" />
+													</listbox>
+													<space width="5px" />
+													<textbox
+														id="tbxCorazon_vascular" width="98%"
+														style="text-transform:uppercase" rows="2" />
+												</div>
+											</cell>
+										</row>
+
+										<row
+											id="rowFisico_examen_mama">
+											<cell>
+												<div width="100%"
+													align="left">
+													<label id="lbAdomen"
+														value="Abdomen: " />
+													<space
+														width="124px" />
+													<listbox
+														mold="select" width="130px" id="lbxAdomen_list"
+														onSelect="formHisc_recien_nacido.onSeleccionarAntecendestes1(lbxAdomen_list,tbxAbdomen)">
+														<listitem
+															label="NORMAL" value="S" selected="true" />
+														<listitem
+															label="ANORMAL" value="N" />
+														<listitem
+															label="NO EXPLORADO" value="RNE" />
+													</listbox>
+													<space width="5px" />
+													<textbox
+														id="tbxAbdomen" width="98%"
+														style="text-transform:uppercase" rows="2" />
+												</div>
+											</cell>
+										</row>
+
+										<row>
+											<cell>
+												<div width="100%"
+													align="left">
+													<label
+														id="lbGenitales" value="Genitales: " />
+													<space
+														width="125px" />
+													<listbox
+														mold="select" width="130px" id="lbxGenitales_list"
+														onSelect="formHisc_recien_nacido.onSeleccionarAntecendestes1(lbxGenitales_list,tbxGenitales)">
+														<listitem
+															label="NORMAL" value="S" selected="true" />
+														<listitem
+															label="ANORMAL" value="N" />
+														<listitem
+															label="NO EXPLORADO" value="RNE" />
+													</listbox>
+													<space width="5px" />
+													<textbox
+														id="tbxGenitales" width="98%"
+														style="text-transform:uppercase" rows="2" />
+												</div>
+											</cell>
+										</row>
+										<row>
+											<cell>
+												<div width="100%"
+													align="left">
+													<label id="lbAno"
+														value="Ano: " />
+													<space
+														width="156px" />
+													<listbox
+														mold="select" width="130px" id="lbxAno_list"
+														onSelect="formHisc_recien_nacido.onSeleccionarAntecendestes1(lbxAno_list,tbxAno)">
+														<listitem
+															label="NORMAL" value="S" selected="true" />
+														<listitem
+															label="ANORMAL" value="N" />
+														<listitem
+															label="NO EXPLORADO" value="RNE" />
+													</listbox>
+													<space width="5px" />
+													<textbox id="tbxAno"
+														width="98%" style="text-transform:uppercase" rows="2" />
+												</div>
+											</cell>
+										</row>
+										<row>
+											<cell>
+												<div width="100%"
+													align="left">
+													<label
+														id="lbMuscular" value="Muscular: " />
+													<space
+														width="128px" />
+													<listbox
+														mold="select" width="130px" id="lbxMuscular_list"
+														onSelect="formHisc_recien_nacido.onSeleccionarAntecendestes1(lbxMuscular_list,tbxSistema_muscular)">
+														<listitem
+															label="NORMAL" value="S" selected="true" />
+														<listitem
+															label="ANORMAL" value="N" />
+														<listitem
+															label="NO EXPLORADO" value="RNE" />
+													</listbox>
+													<space width="5px" />
+													<textbox
+														id="tbxSistema_muscular" width="98%"
+														style="text-transform:uppercase" rows="2" />
+												</div>
+											</cell>
+										</row>
+										<row>
+											<cell>
+												<div width="100%"
+													align="left">
+													<label
+														id="lbNeurologico" value="Neurológico: " />
+													<space
+														width="110px" />
+													<listbox
+														mold="select" width="130px" id="lbxNeurologico_list"
+														onSelect="formHisc_recien_nacido.onSeleccionarAntecendestes1(lbxNeurologico_list,tbxNeurologico)">
+														<listitem
+															label="NORMAL" value="S" selected="true" />
+														<listitem
+															label="ANORMAL" value="N" />
+														<listitem
+															label="NO EXPLORADO" value="RNE" />
+													</listbox>
+													<space width="5px" />
+													<textbox
+														id="tbxNeurologico" width="98%"
+														style="text-transform:uppercase" rows="2" />
+												</div>
+											</cell>
+										</row>
+
+									</rows>
+								</grid>
+
+							</groupbox>
+
+							<separator />
+							<groupbox mold="3d"	closable="false">
+							<caption label="Consejería de lactancia materna"/>
+								<grid>
+									<columns>
+										<column width="30px" align="center"/>
+										<column/>
+									</columns>
+									<rows>
+										<row>
+											<cell>
+												<radio label= "" selected="true" disabled="true" />
+											</cell>
+											<cell>
+												<label value="Lactancia materna exclusiva hasta los seis meses y en los menores de 2 años continuar con lactancia materna y alimentación complementaria."/>
+											</cell>
+										</row>
+										<row>
+											<cell>
+												<radio label= "" selected="true" disabled="true" />
+											</cell>
+											<cell>
+												<label value="No dar al recién nacido leches de formula u otro líquidos tales como dextrosas o aguas azucaradas, a no ser que exista una indicación médica, en el caso en el que medico lo prescribía deberá consignar en la historia clínica la razón que justifica la prescripción."/>
+											</cell>
+										</row>
+										<row>
+											<cell>
+												<radio label= "" selected="true"	disabled="true" />
+											</cell>
+											<cell>
+												<label value="Se educa a la madre sobre las técnicas adecuadas para iniciación y mantenimiento de la lactancia." />
+											</cell>
+										</row>
+										<row>
+											<cell>
+												<radio label= "" selected="true"	disabled="true" />
+											</cell>
+											<cell>
+												<label value=" Se educa a la madre en técnicas de como extraerse la leche y facilitar los medios para su recolección y conservación, en caso separación forzosa de niño/a."/>
+											</cell>
+										</row>
+										<row>
+											<cell>
+												<radio label= "" selected="true"	disabled="true" />
+											</cell>
+											<cell>
+												<label value=" Se educa sobre importancia de alimentación al seno, a libre demanda (cada vez que el bebe quiera) tanto en el día como en la noche y sin suministrar ni agua ni biberones."/>
+											</cell>
+										</row>
+									</rows>
+								</grid>
+							</groupbox>
+							<separator />
+							<impresionDiagnostica
+								id="macroImpresion_diagnostica" />
+
+							<separator />
+
+							<groupbox mold="3d" closable="false">
+								<caption label="PLANES Y MANEJOS" />
+								<div style=""
+									id="divModuloFarmacologico" visible="true">
+								</div>
+
+								<separator height="10px" />
+
+								<div style="" id="divModuloOrdenamiento"
+									visible="true">
+								</div>
+
+							</groupbox>
+							<groupbox closable="false">
+								<grid sclass="GridSinBorde"
+									style="border:none">
+									<columns>
+										<column />
+									</columns>
+									<rows>
+										<row>
+											<cell>
+												<label id="lbConducta"
+													value="Conducta: " />
+											</cell>
+										</row>
+										<row>
+											<cell>
+												<textbox
+													id="tbxConducta" hflex="1" rows="4"
+													style="text-transform:uppercase" maxlength="-1" />
+											</cell>
+										</row>
+										<row>
+									<cell>
+										<groupbox mold="3d"
+											closable="false" visible="true" id="gbxRemisiones">
+											<caption label="REMISIONES" />
+											<div style=""
+												id="divModuloRemisiones_externas" visible="true">
+											</div>
+										</groupbox>
+									</cell>
+								</row>
+									</rows>
+								</grid>
+							</groupbox>
+
+						</groupbox>
+					</div>
+				</center>
+			</borderlayout>
+		</groupbox>
+	</window>
+</zk>

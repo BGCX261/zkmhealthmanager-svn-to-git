@@ -1,0 +1,4603 @@
+<?page title="Alteracion_joven" contentType="text/html;charset=UTF-8"?>
+<?component name="informacionPacientes" macroURI="/WEB-INF/macros/informacionPacientes.zul"?>
+<?component name="impresionDiagnostica" macroURI="/WEB-INF/macros/impresionDiagnostica.zul"?>
+<?component name="remision_interna" macroURI="/WEB-INF/macros/remision_interna.zul"?>
+<?component name="agudeza_visual" macroURI="/WEB-INF/macros/agudeza_visual.zul"?>
+<?component name="tanner" macroURI="/WEB-INF/macros/tanner.zul"?>
+<?component name="autorizaciones" macroURI="/pages/autorizaciones.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formAlteracion_joven" width="100%" height="98%"
+		use="healthmanager.controller.Alteracion_jovenAction"
+		onCreate="formAlteracion_joven.init();">
+
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="false" closable="false"
+			mold="3d" height="98%">
+			<caption label="Consultar Historias Clínicas "
+				style="font-weight: bold">
+				<toolbarbutton image="/images/add_perfil.png"
+					style="font-weight:bold;float:right;margin-right:50px"
+					label="PACIENTE ADMISIONADO"
+					id="toolbarbuttonPaciente_admisionado1" />
+			</caption>
+
+			<listbox id="lbxAtendida" mold="select" sclass="combobox"
+				width="150px" visible="false" />
+
+			<separator />
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" height="90%" mold="paging"
+				pageSize="20" vflex="1">
+				<auxhead>
+					<auxheader colspan="5">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="120px" />
+							<space width="5px" />
+							<textbox id="tbxValue" width="120px"
+								onOK="formAlteracion_joven.buscarDatos();"
+								style="text-transform:uppercase" />
+							<space />
+							<label value="Tipo" />
+							<space width="5px" />
+							<listbox id="lbxTipo_historia" mold="select"
+								width="120px" onSelect="formAlteracion_joven.buscarDatos()">
+								<listitem label="Todas" selected="true"
+									value="0" />
+								<listitem label="Primera Vez" value="1" />
+								<listitem label="Control" value="2" />
+							</listbox>
+							<space />
+							<toolbarbutton label="Consultar"
+								image="/images/Magnifier.gif"
+								onClick="formAlteracion_joven.buscarDatos();"
+								tooltiptext="Consultar Alteracion joven" />
+							<space width="5px" />
+							<button mold="trendy"
+								image="/images/New16.gif"
+								onClick='formAlteracion_joven.accionForm(healthmanager.controller.ZKWindow.OpcionesFormulario.REGISTRAR,null);'
+								tooltiptext="Nuevo" visible="false" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Código historia" width="150px" />
+					<column label="Identificación" width="200px" />
+					<column label="Nombre" />
+					<column label="Fecha" width="150px" />
+					<column label="Tipo Historia" width="150px" />
+					<column label="Acciones" align="center"
+						width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<groupbox id="groupboxEditar" visible="true" closable="false"
+			mold="3d" height="100%">
+			<caption label="Registrar/Modificar Historias Clínicas"
+				style="font-weight: bold">
+				<toolbarbutton image="/images/add_perfil.png"
+					style="font-weight:bold;float:right;margin-right:50px"
+					label="PACIENTE ADMISIONADO"
+					id="toolbarbuttonPaciente_admisionado2" />
+			</caption>
+
+			<borderlayout width="100%" height="100%"
+				id="borderlayoutEditar" visible="true">
+				<north border="none" id="northEditar">
+					<div height="50px">
+						<toolbar width="100%" align="start">
+							<textbox id="tbxAccion" value="registrar"
+								visible="false" />
+							<toolbarbutton image="/images/Save16.gif"
+								label="Guardar Alteración Joven"
+								onClick="formAlteracion_joven.guardarDatos();" id="btGuardar" />
+							<toolbarbutton image="/images/New16.gif"
+								label="Nuevo"
+								onClick='formAlteracion_joven.accionForm(healthmanager.controller.ZKWindow.OpcionesFormulario.REGISTRAR,null);'
+								id="btNew" visible="false" />
+							<space />
+							<toolbarbutton image="/images/trasladar.gif"
+								label="Cancelar"
+								onClick='formAlteracion_joven.accionForm(healthmanager.controller.ZKWindow.OpcionesFormulario.CONSULTAR,null);'
+								id="btnCancelar" visible="false" />
+							<toolbarbutton image="/images/print_ico.gif"
+								label="Imprimir Histpria" onClick="formAlteracion_joven.imprimir();"
+								id="btnImprimir" visible="false"/>
+							<space />
+							<label value="Formato impresión: "
+								visible="false" />
+							<listbox id="lbxFormato" mold="select"
+								width="150px" visible="false" sclass="combobox">
+								<listitem value="pdf" label="PDF"
+									selected="true" />
+								<listitem value="rtf" label="WORD" />
+							</listbox>
+
+						</toolbar>
+						<toolbarbutton image="/images/info_icon.png"
+							style="font-weight:bold;float:right;margin-right:50px"
+							label="Historia Clínica de Control"
+							id="toolbarbuttonTipo_historia" />
+					</div>
+				</north>
+				<center autoscroll="true" border="none">
+					<div align="center">
+
+						<!-- *************************** -->
+						<!-- *** Insertar/Actualizar *** -->
+						<!-- *************************** -->
+						<groupbox closable="false" width="905px"
+							mold="3d">
+							<grid sclass="GridSinBorde" hflex="1">
+								<columns>
+									<column label="" width="82px" />
+									<column label="" width="180px" />
+									<column label="" width="82px" />
+									<column label="" width="225px" />
+									<column label="" width="79px" />
+									<column label="" />
+								</columns>
+								<rows>
+									<row>
+										<cell colspan="6">
+											<groupbox mold="3d">
+												<caption
+													label="IDENTIFICACIÓN" />
+												<informacionPacientes
+													id="infoPacientes" />
+												<space />
+												<hlayout>
+													<label
+														id="lbNro_inscripcion" value="Nro inscripción: " />
+													<space width="3px" />
+													<textbox
+														id="tbxNro_inscripcion" value="1" width="125px"
+														style="text-transform:uppercase" maxlength="10"
+														readonly="false" />
+													<space />
+
+													<label
+														id="lbAdolecencia" value="Adolescencia: " />
+
+													<radiogroup
+														id="rdbAdolecencia">
+														<radio
+															id="Adolecencia1" label="Inicial" value="1"
+															disabled="true" />
+														<space />
+														<radio
+															id="Adolecencia2" label="Media" value="2"
+															disabled="true" />
+														<space />
+														<radio
+															id="Adolecencia3" label="Tardía" value="3"
+															disabled="true" />
+														<space />
+														<radio
+															id="Adolecencia4" label="Adulto Joven" value="4"
+															disabled="true" />
+														<radio
+															id="Adolecencia5" label="Adulto Joven" value="4"
+															disabled="true" visible="false" />
+													</radiogroup>
+													<space />
+													<label id="lbLee"
+														value="Lee: " />
+
+													<radiogroup
+														id="rdbLee">
+														<radio id="Lee1"
+															label="SÍ" checked="true" value="2" />
+														<space />
+														<space />
+														<space />
+														<radio id="Lee2"
+															label="NO" value="1" />
+														<space />
+													</radiogroup>
+												</hlayout>
+											</groupbox>
+										</cell>
+									</row>
+									<row id="rowServicios_amigable"
+										visible="false">
+										<cell colspan="6">
+											<groupbox width="100%"
+												closable="false">
+												<caption
+													label="INGRESAR A SERVICIO AMIGABLE" />
+												<grid
+													sclass="GridSinBorde" style="border:none">
+													<columns>
+														<column label=""
+															width="100%" />
+													</columns>
+													<rows>
+														<row>
+															<cell>
+																<label
+																	value="¿Desea ingresar a servico amigable?">
+																</label>
+																<radiogroup
+																	id="rdbServicios_amigables">
+																	<radio
+																		id="Servicios_amigables" label="SÍ" value="1" />
+																	<radio
+																		id="Servicios_amigables2" label="NO" value="2"
+																		checked="true" />
+																	<space />
+																</radiogroup>
+															</cell>
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+
+									<!-- fila 5 -->
+									<row>
+										<cell colspan="6">
+											<groupbox mold="3d"
+												width="100%" closable="false">
+												<caption
+													label="MOTIVO DE CONSULTA Y ENFERMEDAD ACTUAL" />
+												<grid
+													sclass="GridSinBorde" style="border:none">
+													<columns>
+														<column label=""
+															width="100%" />
+													</columns>
+													<rows>
+														<row>
+															<cell>
+																<label
+																	value="* " style="color: red"
+																	tooltiptext="Campo obligatorio" />
+																<label
+																	value="Motivo consulta" />
+																<textbox
+																	id="tbxMotivo_consulta" width="99%" rows="4"
+																	style="text-transform:uppercase" />
+															</cell>
+														</row>
+														<row>
+															<cell>
+																<label
+																	value="* " style="color: red"
+																	tooltiptext="Campo obligatorio" />
+																<label
+																	value="Enfermedad actual" />
+																<textbox
+																	id="tbxEnfermedad_actual" width="99%" rows="4"
+																	style="text-transform:uppercase" />
+															</cell>
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+									<!-- fila 8 -->
+									<row>
+										<cell colspan="6">
+											<groupbox mold="3d"
+												width="100%" closable="false">
+												<caption
+													label="ANTECEDENTES  MÉDICOS  Y SITUACIÓN PERSONAL" />
+												<grid
+													sclass="GridSinBorde" style="border:none">
+													<columns>
+														<column label=""
+															width="150px" />
+
+														<column label=""
+															width="160px" />
+														<column label=""
+															width="140px" />
+														<column label=""
+															width="160px" />
+														<column label=""
+															width="180px" />
+													</columns>
+													<rows>
+														<row>
+															<cell
+																colspan="8">
+																<groupbox
+																	mold="3d">
+																	<grid
+																		sclass="GridSinBorde" style="border:none">
+																		<columns>
+
+																			<column
+																				label="" width="110px" />
+																			<column
+																				label="" width="10px" />
+
+																			<column
+																				label="" width="90px" />
+																			<column
+																				label="" width="140px" />
+																			<column
+																				label="" width="60px" />
+																			<column
+																				label="" width="140px" />
+																			<column
+																				label="" width="70px" />
+																			<column
+																				label="" width="140px" />
+
+																		</columns>
+																		<rows>
+
+																			<row>
+																				<cell
+																					colspan="9">
+																					<label
+																						value="* " style="color: red"
+																						tooltiptext="Campo obligatorio" />
+																					<label
+																						id="lbMedicos" value="Médicos: " />
+																					<space />
+																					<space />
+																					<textbox
+																						rows="5" id="tbxMedicos" width="830px"
+																						style="text-transform:uppercase" />
+																				</cell>
+																			</row>
+
+																			<row>
+																				<cell
+																					colspan="9">
+																					<label
+																						value="* " style="color: red"
+																						tooltiptext="Campo obligatorio" />
+																					<label
+																						id="lbQuirurguicos" value="Quirúrgicos : " />
+																					<space />
+																					<space />
+																					<textbox
+																						rows="5" id="tbxQuirurguicos" width="830px"
+																						style="text-transform:uppercase" />
+																				</cell>
+																			</row>
+
+																			<row>
+																				<cell
+																					colspan="9">
+																					<label
+																						value="* " style="color: red"
+																						tooltiptext="Campo obligatorio" />
+																					<label
+																						id="lbAlerguicos" value="Alérgicos: " />
+																					<space />
+																					<space />
+																					<textbox
+																						rows="5" id="tbxAlerguicos" width="830px"
+																						style="text-transform:uppercase" />
+																				</cell>
+																			</row>
+
+																			<row>
+																				<cell
+																					colspan="9">
+																					<label
+																						value="* " style="color: red"
+																						tooltiptext="Campo obligatorio" />
+																					<label
+																						id="lbHospitalizacion" value="Hospitalización: " />
+																					<space />
+																					<space />
+																					<textbox
+																						rows="5" id="tbxHospitalizacion" width="830px"
+																						style="text-transform:uppercase" />
+																				</cell>
+																			</row>
+
+																			<row>
+																				<cell
+																					colspan="9">
+																					<label
+																						value="* " style="color: red"
+																						tooltiptext="Campo obligatorio" />
+																					<label
+																						id="lbTraumatico" value="Traumáticos: " />
+																					<space />
+																					<space />
+																					<textbox
+																						rows="5" id="tbxTraumatico" width="830px"
+																						style="text-transform:uppercase" />
+																				</cell>
+																			</row>
+																		</rows>
+																	</grid>
+																</groupbox>
+															</cell>
+														</row>
+														<row>
+															<cell
+																colspan="8">
+																<groupbox
+																	mold="3d">
+																	<grid
+																		sclass="GridSinBorde" style="border:none">
+																		<columns>
+																			<column
+																				label="" width="70px" />
+																			<column
+																				label="" width="165px" />
+																			<column
+																				label="" width="180px" />
+																			<column
+																				label="" width="200px" />
+																			<column
+																				label="" width="140px" />
+
+																		</columns>
+																		<rows>
+																			<row>
+																				<cell />
+																				<cell>
+																					<label
+																						value="Ha sido victima de: " />
+																				</cell>
+																				<cell>
+																					<label
+																						id="lbAbuso_sexual" value="Abuso Sexual: " />
+																					<space />
+																					<checkbox
+																						id="chbAbuso_sexual" />
+																				</cell>
+
+																				<cell>
+																					<label
+																						id="lbMaltrato_fisico" value="Maltrato físico: " />
+																					<space />
+																					<checkbox
+																						id="chbMaltrato_fisico" />
+																				</cell>
+
+																				<cell
+																					colspan="2">
+																					<label
+																						id="lbMaltrato_psicologico"
+																						value="Maltrato psicológico: " />
+																					<space />
+																					<checkbox
+																						id="chbMaltrato_psicologico" />
+																				</cell>
+																			</row>
+																		</rows>
+																	</grid>
+																</groupbox>
+															</cell>
+														</row>
+														<row>
+															<cell
+																colspan="8">
+																<groupbox
+																	mold="3d">
+																	<grid
+																		sclass="GridSinBorde" style="border:none">
+																		<columns>
+
+																			<column
+																				label="" width="230px" />
+																			<column
+																				label="" width="100px" />
+																			<column
+																				label="" width="100px" />
+																		</columns>
+																		<rows>
+																			<row>
+																				<cell>
+																					<checkbox
+																						id="chbCancer"
+																						onFocus="tbxCual_tabaquismo.focus();"
+																						onCheck="formAlteracion_joven.deshabilitar_conCheck(self, new AbstractComponent[]{tbxCual_tabaquismo})" />
+
+																					<label
+																						id="lbCancer" value="Cáncer: " />
+																				</cell>
+																				<cell
+																					colspan="4">
+																					<label
+																						id="lbCual_tabaquismo" value="¿Cuál? " />
+																					<space />
+																					<textbox
+																						id="tbxCual_tabaquismo" width="543px" hflex=""
+																						style="text-transform:uppercase" readonly="true" />
+																				</cell>
+																			</row>
+																			<row>
+																				<cell>
+																					<label
+																						id="lbDiscapacidad" value="Discapacidad: " />
+
+																					<radiogroup
+																						id="rdbDiscapacidad"
+																						onCheck="formAlteracion_joven.seleccion_radio(self, new AbstractComponent[]{lbCual_discapacidad, tbxCual_discapacidad})">
+																						<radio
+																							id="Discapacidad1" label="SÍ" value="1" />
+																						<space />
+																						<radio
+																							id="Discapacidad2" label="NO" checked="true"
+																							value="2" />
+																						<space />
+																					</radiogroup>
+																				</cell>
+																				<cell
+																					colspan="4">
+																					<label
+																						id="lbCual_discapacidad" value="¿Cuál? "
+																						visible="false" />
+																					<space />
+
+																					<textbox
+																						id="tbxCual_discapacidad" width="543px" hflex="1"
+																						style="text-transform:uppercase" visible="false" />
+																				</cell>
+																			</row>
+
+																		</rows>
+																	</grid>
+																</groupbox>
+															</cell>
+														</row>
+
+														<row>
+															<cell
+																colspan="8">
+																<groupbox
+																	mold="3d">
+																	<grid
+																		sclass="GridSinBorde" style="border:none">
+																		<columns>
+
+																			<column
+																				label="" width="110px" />
+																			<column
+																				label="" width="110px" />
+																			<column
+																				label="" width="120px" />
+																			<column
+																				label="" width="100px" />
+																			<column
+																				label="" width="130px" />
+																			<column
+																				label="" width="130px" />
+
+																		</columns>
+																		<rows>
+
+																			<row>
+																				<cell />
+
+
+
+																			</row>
+																			<row>
+																				<cell>
+																					<label
+																						id="lbEjercicio_fisico"
+																						value="Ejercicio físico: " />
+																				</cell>
+																				<cell>
+																					<radiogroup
+																						id="rdbEjercicio_fisico"
+																						onCheck="formAlteracion_joven.seleccion_radio(self, new AbstractComponent[]{lbCual_ejercicio, tbxCual_ejercicio, row2, lbFrecuencia, ibxFrecuencia, lbIntensidad, ibxIntensidad})">
+																						<radio
+																							id="Ejercicio_fisico1" label="SÍ" value="1" />
+																						<space />
+																						<radio
+																							id="Ejercicio_fisico2" label="NO" checked="true"
+																							value="2" />
+																						<space />
+																					</radiogroup>
+																				</cell>
+																				<cell
+																					colspan="7">
+																					<label
+																						id="lbCual_ejercicio" value="¿Cuál? "
+																						visible="false" />
+																					<space></space>
+																					<textbox
+																						id="tbxCual_ejercicio" width="553px"
+																						style="text-transform:uppercase" visible="false" />
+																				</cell>
+																			</row>
+
+																			<row
+																				id="row2" visible="false">
+
+																				<cell
+																					colspan="2">
+																					<label
+																						id="lbFrecuencia" value="Frecuencia Semanal: "
+																						visible="false" />
+																				</cell>
+																				<cell
+																					colspan="2">
+																					<intbox
+																						constraint="no negative:Este valor no puede ser negativo"
+																						id="ibxFrecuencia" width="70px"
+																						style="text-transform:uppercase" visible="false" />
+
+																				</cell>
+																				<cell
+																					colspan="5">
+																					<label
+																						id="lbIntensidad"
+																						value="Intensidad horaria diaria: "
+																						visible="false" />
+																					<space></space>
+																					<intbox
+																						constraint="no negative:Este valor no puede ser negativo"
+																						id="ibxIntensidad" width="70px"
+																						style="text-transform:uppercase" visible="false" />
+																				</cell>
+																			</row>
+																		</rows>
+																	</grid>
+																</groupbox>
+															</cell>
+														</row>
+														<row>
+															<cell
+																colspan="8">
+																<groupbox
+																	mold="3d" width="100%" closable="false">
+																	<caption
+																		label="HABITOS Y TENDENCIAS SEXUALES" />
+																	<grid
+																		sclass="GridSinBorde" style="border:none">
+																		<columns>
+																			<column
+																				label="" width="10px" />
+																			<column
+																				label="" width="140px" />
+																			<column
+																				label="" width="150px" />
+																			<column
+																				label="" width="130px" />
+																			<column
+																				label="" width="130px" />
+																			<column
+																				label="" width="180px" />
+																			<column
+																				label="" width="100px" />
+
+																		</columns>
+																		<rows>
+																			<row>
+																				<cell
+																					colspan="8">
+																					<groupbox
+																						mold="3d">
+																						<grid
+																							sclass="GridSinBorde" style="border:none">
+																							<columns>
+																								<column
+																									label="" />
+																							</columns>
+																							<rows>
+																								<row>
+																									<cell>
+																										<label
+																											id="lbTabaquismo_personal"
+																											value="Tabaquismo: " />
+																										<space />
+																										<radiogroup
+																											id="rdbTabaquismo_personal"
+																											onCheck="formAlteracion_joven.seleccion_tabaquismo2()">
+																											<radio
+																												id="Tabaquismo3" label="SÍ" value="1" />
+																											<space />
+																											<radio
+																												id="Tabaquismo4" label="NO" checked="true"
+																												value="2" />
+																											<space />
+																										</radiogroup>
+																										<space />
+																										<radiogroup
+																											id="rdbActivopasivo2"
+																											onCheck="formAlteracion_joven.seleccion_activo_pasivo2()"
+																											visible="false">
+																											<radio
+																												id="activo_pasivo3" value="1"
+																												label="Activo" />
+																											<space />
+																											<radio
+																												id="activo_pasivo4" value="2" label="Pasivo"
+																												checked="true" />
+																											<space />
+																										</radiogroup>
+																										<space
+																											width="60px" />
+																										<label
+																											id="lbFecha_hasta2" value="Hasta: "
+																											visible="false" />
+																										<space></space>
+																										<datebox
+																											id="dtbxFecha_hasta2"
+																											onCreate="self.value = new Date();"
+																											format="yyyy-MM-dd" width="100px"
+																											visible="false" />
+																										<space
+																											width="60px" />
+																										<label
+																											id="lbNo_cigarros2"
+																											value="No. Cigarros / Dias: "
+																											visible="false" />
+																										<space />
+																										<intbox
+																											constraint="no negative:Este valor no puede ser negativo"
+																											id="ibxNo_cigarros2" width="40px"
+																											visible="false" />
+																									</cell>
+																									<cell />
+																								</row>
+																							</rows>
+																						</grid>
+																					</groupbox>
+																				</cell>
+																			</row>
+																			<row>
+																				<cell />
+																				<cell>
+																					<label
+																						value="Edad inicio tabaco:">
+																					</label>
+																				</cell>
+																				<cell>
+																					<intbox
+																						id="ibxEdad_inicio_tabaco" width="80px"
+																						maxlength="2">
+																					</intbox>
+																				</cell>
+																				<cell>
+																					<label
+																						value="Edad inicio alcohol:">
+																					</label>
+																				</cell>
+																				<cell>
+																					<intbox
+																						id="ibxEdad_inicio_alcohol" width="100px"
+																						maxlength="2">
+																					</intbox>
+																				</cell>
+																				<cell>
+																					<label
+																						value="¿Sueño normal?">
+																					</label>
+																				</cell>
+																				<cell>
+																					<radiogroup
+																						id="rdbSuenio"
+																						onCheck="formAlteracion_joven.alarmaTendenciaSexual(rdbSuenio)">
+																						<radio
+																							id="Suenio" label="SÍ" value="1" checked="true" />
+																						<space />
+																						<radio
+																							id="Suenio2" label="NO" value="2" />
+																						<space />
+																					</radiogroup>
+																				</cell>
+																			</row>
+																			<row>
+																				<cell
+																					colspan="3">
+																					<checkbox
+																						onFocus="tbxCual_personal.focus()"
+																						onCheck="formAlteracion_joven.deshabilitar_conCheck(self, new AbstractComponent[]{tbxCual_personal})"
+																						id="chbAlcoholismo_personaal" />
+																					<space />
+																					<label
+																						id="lbAlcoholismo_personaal" value="Alcoholismo " />
+																					<space />
+																					<checkbox
+																						onFocus="tbxCual_personal.focus()"
+																						onCheck="formAlteracion_joven.deshabilitar_conCheck(self, new AbstractComponent[]{tbxCual_personal})"
+																						id="chbDrogadiccion_personal" />
+																					<space />
+																					<label
+																						id="lbDrogadiccion_personal"
+																						value="Drogadicción " />
+																				</cell>
+																				<cell
+																					colspan="4">
+																					<label
+																						id="lbCual_personal" value="¿Cuál? " />
+																					<space />
+																					<textbox
+																						id="tbxCual_personal" width="543px" hflex="1"
+																						style="text-transform:uppercase" readonly="true" />
+																				</cell>
+																				<cell />
+																			</row>
+																			<row>
+																				<cell></cell>
+																				<cell>
+																					<label
+																						value="Alimentación adecuada">
+																					</label>
+																				</cell>
+																				<cell>
+																					<radiogroup
+																						id="rdbAlimentacion"
+																						onCheck="formAlteracion_joven.alarmaTendenciaSexual(rdbAlimentacion)">
+																						<radio
+																							id="Alimentacion" label="SÍ" value="1"
+																							checked="true" />
+																						<space />
+																						<radio
+																							id="Alimentacion2" label="NO" value="2" />
+																						<space />
+																					</radiogroup>
+																				</cell>
+																				<cell>
+																					<label
+																						value="Comida por día:">
+																					</label>
+																				</cell>
+																				<cell>
+																					<intbox
+																						id="ibxComida" width="100px" maxlength="2"
+																						hflex="1">
+																					</intbox>
+																				</cell>
+																				<cell>
+																					<label
+																						value="Comida por día con familia:">
+																					</label>
+																				</cell>
+																				<cell>
+																					<intbox
+																						id="ibxComida_familia" width="80px"
+																						maxlength="1">
+																					</intbox>
+																				</cell>
+
+																			</row>
+																			<row>
+																				<cell></cell>
+																				<cell>
+																					<label
+																						value="¿Conduce vehículo?">
+																					</label>
+																				</cell>
+																				<cell>
+																					<radiogroup
+																						id="rdbConduce_vehiculo"
+																						onCheck="formAlteracion_joven.habilitarTexboxRadio(rdbConduce_vehiculo,tbxCual_vehiculo); formAlteracion_joven.alarmaTendenciaSexual(rdbConduce_vehiculo)">
+																						<radio
+																							id="Conduce_vehiculo" label="SÍ" value="2" />
+																						<space />
+																						<radio
+																							id="Conduce_vehiculo2" label="NO" value="1"
+																							checked="true" />
+																						<space />
+																					</radiogroup>
+																				</cell>
+																				<cell>
+																					<label
+																						value="¿Cuál?:" />
+																				</cell>
+																				<cell
+																					colspan="3">
+																					<textbox
+																						id="tbxCual_vehiculo" width="370px"
+																						readonly="true">
+																					</textbox>
+																				</cell>
+																			</row>
+																			<row>
+																				<cell></cell>
+																				<cell>
+																					<label
+																						value="Orientación sexual:">
+																					</label>
+																				</cell>
+																				<cell>
+																					<listbox
+																						id="lbxOrientacion_sexual" width="100px"
+																						mold="select" name="orientacion_sexual"
+																						sclass="combobox" />
+																				</cell>
+
+																				<cell>
+																					<space />
+																					<label
+																						value="* " style="color: red"
+																						tooltiptext="Campo obligatorio" />
+																					<label
+																						id="lbTendencias_sexuales"
+																						value="Tendencias Sexuales: " />
+																				</cell>
+																				<cell
+																					colspan="3">
+																					<listbox
+																						id="lbxTendencias_sexuales" width="170px"
+																						mold="select" name="tendencia_sexual" />
+																				</cell>
+																			</row>
+																			<row>
+																				<cell />
+																				<cell>
+																					<label
+																						value="¿Otro tóxico?">
+																					</label>
+																				</cell>
+																				<cell>
+																					<radiogroup
+																						id="rdbOtro_toxico"
+																						onCheck="formAlteracion_joven.habilitarTexboxRadio(rdbOtro_toxico,tbxCual_toxico); formAlteracion_joven.alarmaTendenciaSexual(rdbOtro_toxico)">
+																						<radio
+																							id="Otro_toxico" label="SÍ" value="2" />
+																						<space />
+																						<radio
+																							id="Otro_toxico2" label="NO" value="1"
+																							checked="true" />
+																						<space />
+																					</radiogroup>
+																				</cell>
+																				<cell>
+																					<label
+																						value="¿Cuál?">
+																					</label>
+																				</cell>
+																				<cell
+																					colspan="4">
+
+																					<textbox
+																						id="tbxCual_toxico" readonly="true" rows="2"
+																						hflex="1" />
+																				</cell>
+																			</row>
+																			<row>
+																				<cell
+																					colspan="8">
+																					<groupbox
+																						mold="3d">
+																						<grid
+																							sclass="GridSinBorde" style="border:none">
+																							<columns>
+
+																								<column
+																									label="" width="300px" />
+																								<column
+																									label="" width="160px" />
+																								<column
+																									label="" width="150px" />
+																								<column
+																									label="" width="50px" />
+																								<column
+																									label="" width="150px" />
+
+																							</columns>
+																							<rows>
+																								<row
+																									style="border: 1px solid #aaaaaa">
+																									<cell>
+																										<label
+																											id="lbVida_sexual" value="Vida sexual: " />
+																										<radiogroup
+																											id="rdbVida_sexual"
+																											onCheck="formAlteracion_joven.deshabilitar_conRadio(self,new AbstractComponent[]{Activa_pasiva21,Activa_pasiva22})">
+																											<radio
+																												id="Vida_sexual1" label="SÍ" value="S"
+																												onCheck="formAlteracion_joven.seleccionarActividadSexual()" />
+																											<space />
+																											<radio
+																												id="Vida_sexual2" label="NO" checked="true"
+																												value="N"
+																												onCheck="formAlteracion_joven.seleccionarActividadSexual()" />
+																										</radiogroup>
+																										<space />
+																										<radiogroup
+																											id="rdbActiva_pasiva2" />
+																										<radio
+																											visible="false" id="Activa_pasiva21"
+																											label="Activa" value="1"
+																											onCheck="formAlteracion_joven.seleccionarActividadSexual()"
+																											radiogroup="rdbActiva_pasiva2" />
+																										<space />
+																										<radio
+																											visible="false" id="Activa_pasiva22"
+																											checked="true" label="Pasiva" value="2"
+																											onCheck="formAlteracion_joven.seleccionarActividadSexual()"
+																											radiogroup="rdbActiva_pasiva2" />
+
+																									</cell>
+																									<cell>
+																										<label
+																											id="lbEdad_inicio" value="Edad de inicio: " />
+																										<space></space>
+																										<intbox
+																											constraint="no negative:Este valor no puede ser negativo"
+																											id="ibxEdad_inicio" width="30px"
+																											style="text-transform:uppercase"
+																											readonly="true" />
+																									</cell>
+
+
+																									<cell
+																										colspan="4" align="center">
+																										<label
+																											value="Tamizaje de cancer de cuello uterino:" />
+																										<space />
+																										<listbox
+																											id="lbxTamizaje_cuello"
+																											name="tamizaje_cancer_cuello_uterino"
+																											mold="select" width="270px" disabled="true" />
+																									</cell>
+
+																								</row>
+																								<row>
+																									<cell>
+																										<label
+																											id="lbPromiscuidad" value="Promiscuidad: " />
+																										<space></space>
+																										<radiogroup
+																											id="rdbPromiscuidad">
+																											<radio
+																												id="Promiscuidad1" label="SÍ" value="1"
+																												onCheck="formAlteracion_joven.onCambioPromiscuidad()" />
+																											<space />
+																											<radio
+																												id="Promiscuidad2" label="NO" checked="true"
+																												value="2"
+																												onCheck="formAlteracion_joven.onCambioPromiscuidad()" />
+																											<space />
+																										</radiogroup>
+																									</cell>
+
+																									<cell
+																										colspan="5">
+																										<label
+																											id="lbNo_parejas" value="No parejas: " />
+																										<space></space>
+																										<intbox
+																											constraint="no negative:Este valor no puede ser negativo"
+																											id="ibxNo_parejas" width="30px"
+																											style="text-transform:uppercase"
+																											readonly="true" />
+																									</cell>
+																								</row>
+																							</rows>
+																						</grid>
+																					</groupbox>
+																				</cell>
+																			</row>
+																			<row>
+																				<cell
+																					colspan="8">
+																					<groupbox
+																						mold="3d">
+																						<grid
+																							sclass="GridSinBorde" style="border:none">
+																							<columns>
+
+																								<column
+																									label="" width="200px" />
+																								<column
+																									label="" width="200px" />
+																								<column
+																									label="" width="190px" />
+
+																							</columns>
+																							<rows>
+																								<row>
+																									<cell>
+																										<label
+																											id="lbPreservativos"
+																											value=" Usa preservativos: " />
+																										<space />
+																										<checkbox
+																											id="chbPreservativos"
+																											onCheck="formAlteracion_joven.seleccion_check2(self, chbPreservativos, new AbstractComponent[]{tbxCual_preservativo})" />
+
+
+																									</cell>
+																									<cell>
+																										<label
+																											id="lbAnticonceptivos"
+																											value="Usa Anticonceptivos: " />
+																										<space />
+																										<checkbox
+																											id="chbAnticonceptivos"
+																											onCheck="formAlteracion_joven.seleccion_check2(self, chbAnticonceptivos, new AbstractComponent[]{tbxCual_preservativo})" />
+																									</cell>
+																									<cell
+																										colspan="2">
+																										<label
+																											id="lbCual_preservativo" value="¿Cuál? " />
+																										<space></space>
+																										<textbox
+																											id="tbxCual_preservativo" width="370px"
+																											style="text-transform:uppercase"
+																											readonly="true" />
+																									</cell>
+																								</row>
+																							</rows>
+																						</grid>
+																					</groupbox>
+																				</cell>
+																			</row>
+																			<row>
+																				<cell
+																					colspan="7">
+																					<label
+																						value="Observaciones" />
+																					<textbox
+																						id="tbxObservaciones_habitos" width="99%" rows="4"
+																						style="text-transform:uppercase" />
+																				</cell>
+																			</row>
+
+																		</rows>
+																	</grid>
+																</groupbox>
+															</cell>
+														</row>
+														<row>
+															<cell
+																colspan="8">
+																<groupbox
+																	mold="3d" closable="false">
+																	<caption
+																		label="VACUNALES" />
+																	<grid
+																		sclass="GridSinBorde" style="border:none">
+																		<columns>
+																			<column />
+																			<column
+																				label="" width="25%" />
+																			<column />
+																			<column />
+																			<column />
+																			<column />
+																			<column />
+																			<column />
+																			<column />
+																			<column />
+																			<column />
+																			<column />
+																			<column />
+																			<column />
+																			<column />
+																			<column />
+																			<column />
+																			<column />
+																			<column />
+																			<column />
+																			<column />
+																			<column />
+																		</columns>
+																		<rows>
+																			<row
+																				style="border: 1px solid #aaaaaa">
+																				<cell></cell>
+																				<cell
+																					align="center">
+																					<label
+																						value="Inmunizaciones">
+																					</label>
+																				</cell>
+																				<cell></cell>
+																				<cell></cell>
+																				<cell></cell>
+																				<cell></cell>
+																				<cell></cell>
+																				<cell></cell>
+																				<cell></cell>
+																				<cell></cell>
+																				<cell></cell>
+																				<cell></cell>
+																				<cell></cell>
+																				<cell></cell>
+																				<cell></cell>
+																				<cell></cell>
+																				<cell></cell>
+																				<cell></cell>
+																				<cell></cell>
+																				<cell></cell>
+																				<cell></cell>
+																				<cell></cell>
+																			</row>
+																			<row
+																				style="border: 1px solid #aaaaaa">
+																				<cell>
+																					<checkbox
+																						id="chbTetano">
+																					</checkbox>
+																				</cell>
+																				<cell>
+																					<label
+																						value="Tétanos y difteria - Td" />
+																				</cell>
+																				<cell
+																					colspan="20">
+																					<label
+																						value="Refuerzo, en gestante.En municipios de rieszgo iniciar o continuar PAI" />
+																				</cell>
+																			</row>
+																			<row
+																				style="border: 1px solid #aaaaaa">
+																				<cell>
+																					<checkbox
+																						id="chbSarampion">
+																					</checkbox>
+																				</cell>
+																				<cell>
+																					<label
+																						value="Sarampión-Rubéola-MR" />
+																				</cell>
+																				<cell
+																					colspan="20">
+																					<label
+																						value="Refuerzo a los 10 años, posparto o posaborto si no está vacunada " />
+																				</cell>
+																			</row>
+																			<row
+																				style="border: 1px solid #aaaaaa">
+																				<cell>
+																					<checkbox
+																						id="chbFiebre_amarilla">
+																					</checkbox>
+																				</cell>
+																				<cell>
+																					<label
+																						value="Fiebre amarilla" />
+																				</cell>
+																				<cell
+																					colspan="20">
+																					<label
+																						value="Dosis Unicas" />
+																				</cell>
+																			</row>
+																			<row
+																				style="border: 1px solid #aaaaaa">
+																				<cell>
+																					<checkbox
+																						id="chbvph">
+																					</checkbox>
+																				</cell>
+																				<cell>
+																					<label
+																						value="Virus Papiloma Humano" />
+																				</cell>
+																				<cell
+																					colspan="20">
+
+																				</cell>
+																			</row>
+																		</rows>
+																	</grid>
+																</groupbox>
+															</cell>
+														</row>
+
+														<row>
+															<cell
+																colspan="8">
+																<groupbox
+																	mold="3d" closable="false">
+																	<caption
+																		label="RELACIONES  ESCOLARES  Y LABORALES" />
+																	<grid
+																		sclass="GridSinBorde" style="border:none">
+																		<columns>
+																			<column
+																				label="" width="5px" />
+																			<column
+																				label="" width="180px" />
+																			<column
+																				label="" width="100px" />
+																			<column
+																				label="" width="180px" />
+																			<column
+																				label="" width="100px" />
+																			<column
+																				label="" width="180px" />
+																			<column
+																				label="" width="100px" />
+																		</columns>
+																		<rows>
+																			<row>
+																				<cell />
+																				<cell>
+																					<label
+																						value="¿Estudia?">
+																					</label>
+																				</cell>
+																				<cell>
+																					<radiogroup
+																						id="rdbEstudia"
+																						onCheck="formAlteracion_joven.alarmaTendenciaTrabajo(rdbEstudia)">
+																						<radio
+																							id="Estudia1" label="SÍ" value="1"
+																							checked="true" />
+																						<space />
+																						<radio
+																							id="Estudia2" label="NO" value="2" />
+																						<space />
+																					</radiogroup>
+																				</cell>
+																				<cell>
+																					<label
+																						value="Grados cursados">
+																					</label>
+																				</cell>
+																				<cell>
+																					<intbox
+																						id="ibxGrado_cursado" width="50px"
+																						maxlength="2">
+																					</intbox>
+																				</cell>
+																				<cell>
+																					<label
+																						value="Años aprobados">
+																					</label>
+																				</cell>
+																				<cell>
+																					<intbox
+																						id="ibxAnios_aprobados" width="50px"
+																						maxlength="2">
+																					</intbox>
+																				</cell>
+																			</row>
+																			<row>
+																				<cell></cell>
+																				<cell>
+																					<label
+																						value="¿Problemas en la escuela?">
+																					</label>
+																				</cell>
+																				<cell
+																					colspan="5">
+																					<radiogroup
+																						id="rdbProblemas_escuela"
+																						onCheck="formAlteracion_joven.alarmaTendenciaTrabajo(rdbProblemas_escuela)">
+																						<radio
+																							id="Problemas_escuela1" label="SÍ" value="2" />
+																						<space />
+																						<radio
+																							id="Problemas_escuela2" label="NO" checked="true"
+																							value="1" />
+																						<space />
+																					</radiogroup>
+																				</cell>
+
+																			</row>
+																			<row>
+																				<cell></cell>
+																				<cell>
+																					<label
+																						value="Años repetidos">
+																					</label>
+																				</cell>
+																				<cell>
+																					<intbox
+																						id="ibxAnios_repetidos" width="80px"
+																						onChange="formAlteracion_joven.alarmaTendenciaTrabajo(ibxAnios_repetidos,tbxCausas_anios_repetidos)">
+																					</intbox>
+																				</cell>
+																				<cell>
+																					<label
+																						value="Causas años repetidos">
+																					</label>
+																				</cell>
+																				<cell
+																					colspan="4">
+																					<textbox
+																						id="tbxCausas_anios_repetidos" width="350px"
+																						readonly="true">
+																					</textbox>
+																				</cell>
+																			</row>
+																			<row>
+																				<cell></cell>
+																				<cell>
+																					<label
+																						value="¿Deserción Exclusión?">
+																					</label>
+																				</cell>
+																				<cell>
+																					<radiogroup
+																						id="rdbDesercion"
+																						onCheck="formAlteracion_joven.habilitarTexboxRadio(rdbDesercion,tbxCausa_desercion);formAlteracion_joven.alarmaTendenciaTrabajo(rdbDesercion) ">
+																						<radio
+																							id="Desercion1" label="SÍ" value="2" />
+																						<space />
+																						<radio
+																							id="Desercion2" label="NO" checked="true"
+																							value="1" />
+																						<space />
+																					</radiogroup>
+																				</cell>
+																				<cell>
+																					<label
+																						value="Causa:">
+																					</label>
+																				</cell>
+																				<cell
+																					colspan="4">
+																					<textbox
+																						id="tbxCausa_desercion" width="350px"
+																						readonly="true">
+																					</textbox>
+																				</cell>
+																			</row>
+																			<row>
+																				<cell></cell>
+																				<cell>
+																					<label
+																						value="¿Educación no formal?">
+																					</label>
+																				</cell>
+																				<cell>
+																					<radiogroup
+																						id="rdbEdu_formal"
+																						onCheck="formAlteracion_joven.habilitarTexboxRadio(rdbEdu_formal,tbxCual_edu_formal)">
+																						<radio
+																							id="Edu_formal2" label="SÍ" value="2" />
+																						<space />
+																						<radio
+																							id="Edu_formal3" label="NO" checked="true"
+																							value="1" />
+																						<space />
+																					</radiogroup>
+																				</cell>
+																				<cell>
+																					<label
+																						value="Cuál:">
+																					</label>
+																				</cell>
+																				<cell
+																					colspan="4">
+																					<textbox
+																						id="tbxCual_edu_formal" width="350px"
+																						readonly="true">
+																					</textbox>
+																				</cell>
+																				<cell></cell>
+																			</row>
+																			<row>
+																				<cell
+																					colspan="8">
+																					<groupbox
+																						mold="3d">
+																						<grid
+																							sclass="GridSinBorde" style="border:none">
+																							<columns>
+
+																								<column
+																									label="" width="230px" />
+																								<column
+																									label="" width="90px" />
+																								<column
+																									label="" width="140px" />
+																								<column
+																									label="" width="60px" />
+																								<column
+																									label="" width="140px" />
+
+																							</columns>
+																							<rows>
+																								<row>
+																									<cell
+																										colspan="2">
+																										<label
+																											value="Pertenece a grupo juvenil" />
+																										<space />
+																										<radiogroup
+																											id="rdbGrupo_juvenil"
+																											onCheck="formAlteracion_joven.deshabilitar_conRadio(self,new AbstractComponent[]{tbxCual_grupo})">
+																											<radio
+																												onFocus="tbxCual_grupo.focus()"
+																												id="Grupo_juvenil1" label="SÍ" value="S" />
+																											<space />
+																											<radio
+																												id="Grupo_juvenil2" label="NO"
+																												checked="true" value="2" />
+																										</radiogroup>
+																									</cell>
+																									<cell
+																										colspan="4">
+																										<textbox
+																											id="tbxCual_grupo" width="99%"
+																											style="text-transform:uppercase"
+																											readonly="true" />
+																									</cell>
+																								</row>
+																							</rows>
+																						</grid>
+																					</groupbox>
+																				</cell>
+																			</row>
+																			<row>
+																				<cell
+																					colspan="8">
+																					<label
+																						value="Observaciones" />
+																					<textbox
+																						id="tbxObservaciones_edu" width="99%" rows="4"
+																						style="text-transform:uppercase" />
+																				</cell>
+																			</row>
+																			<row>
+																				<cell></cell>
+																				<cell>
+																					<label
+																						value="Trabajo actividad">
+																					</label>
+																				</cell>
+																				<cell>
+																					<listbox
+																						id="lbxTrabajo_actividad" mold="select"
+																						width="95px">
+																						<listitem
+																							label="Trabaja" value="1" />
+																						<listitem
+																							label="Desocupado" value="2" />
+																						<listitem
+																							label="No, y no busca" value="3" />
+																						<listitem
+																							label="Busca una vez" value="4" />
+																					</listbox>
+																				</cell>
+																				<cell>
+																					<label
+																						value="Edad inicio trabajo:">
+																					</label>
+																				</cell>
+																				<cell>
+																					<intbox
+																						id="ibxEdad_inicio_trabajo" width="80px"
+																						maxlength="3">
+																					</intbox>
+																				</cell>
+																				<cell>
+																					<label
+																						value="Horas de trabajo:">
+																					</label>
+																				</cell>
+																				<cell>
+																					<intbox
+																						id="ibxTrabajo_horas" width="80px">
+																					</intbox>
+																				</cell>
+																			</row>
+																			<row>
+																				<cell></cell>
+																				<cell>
+																					<label
+																						value="Horario de trabajo">
+																					</label>
+																				</cell>
+																				<cell>
+																					<listbox
+																						id="lbxHorario_trabajo" mold="select"
+																						width="95px">
+																						<listitem
+																							label="--seleccione--" value="7" selected="true" />
+																						<listitem
+																							label="Mañana" value="1" />
+																						<listitem
+																							label="Tarde" value="1" />
+																						<listitem
+																							label="todo el dia" value="2" />
+																						<listitem
+																							label="Noche" value="3" />
+																						<listitem
+																							label="N/C" value="4" />
+																						<listitem
+																							label="Noche" value="5" />
+																						<listitem
+																							label="Fin de semana" value="6" />
+																					</listbox>
+																				</cell>
+																				<cell>
+																					<label
+																						value="Trabajo insaludable">
+																					</label>
+																				</cell>
+																				<cell>
+																					<listbox
+																						id="lbxTrabajo_insaludable" mold="select"
+																						width="95px">
+																						<listitem
+																							label="NO" value="1" selected="true" />
+																						<listitem
+																							label="SÍ" value="3" />
+																						<listitem
+																							label="N/C" value="2" />
+																					</listbox>
+																				</cell>
+																				<cell>
+																					<label
+																						value="Trabajo legalizado">
+																					</label>
+																				</cell>
+																				<cell
+																					colspan="3">
+																					<listbox
+																						id="lbxTrabajo_legalizado" mold="select"
+																						width="95px">
+																						<listitem
+																							label="SÍ" value="1" selected="true" />
+																						<listitem
+																							label="NO" value="2" />
+																						<listitem
+																							label="N/C" value="3" />
+																					</listbox>
+																				</cell>
+																			</row>
+																			<row>
+																				<cell></cell>
+																				<cell>
+																					<label
+																						value="Razon de trabajo">
+																					</label>
+																				</cell>
+																				<cell>
+																					<listbox
+																						id="lbxRazon_trabajo" mold="select" width="95px"
+																						onSelect="formAlteracion_joven.habilitarlistbox(lbxRazon_trabajo,tbxOtra_razon_trabajo)">
+																						<listitem
+																							label="Economia" value="0" />
+																						<listitem
+																							label="Autonomia" value="1" />
+																						<listitem
+																							label="Me guasta" value="2" />
+																						<listitem
+																							label="Otra" value="3" />
+																						<listitem
+																							label="N/C" value="4" selected="true" />
+																					</listbox>
+																				</cell>
+																				<cell>
+																					<label
+																						value="Cuál">
+																					</label>
+																				</cell>
+																				<cell
+																					colspan="4">
+																					<textbox
+																						id="tbxOtra_razon_trabajo" width="350px"
+																						readonly="true">
+																					</textbox>
+																				</cell>
+																			</row>
+																			<row>
+																				<cell
+																					colspan="2">
+																					<label
+																						value="Tipo de trabajo" />
+																				</cell>
+																				<cell
+																					colspan="2">
+																					<radiogroup
+																						id="rbdTipo_trab_padre_sustituto">
+																						<radio
+																							id="Tipo_trab_padre_sustituto" label="Ninguno"
+																							checked="true" value="1" />
+																						<space />
+																						<radio
+																							id="Tipo_trab_padre_sustituto2"
+																							label="No estable" value="2" />
+																						<space />
+																						<radio
+																							id="Tipo_trab_padre_sustituto3" label="Estable"
+																							value="3" />
+																						<space />
+																					</radiogroup>
+																				</cell>
+																			</row>
+
+																			<row>
+																				<cell
+																					colspan="8">
+																					<label
+																						value="Observaciones" />
+																					<textbox
+																						id="tbxObservaciones_trab" width="99%" rows="4"
+																						style="text-transform:uppercase" />
+																				</cell>
+																			</row>
+																		</rows>
+																	</grid>
+																</groupbox>
+															</cell>
+														</row>
+														<row>
+															<cell>
+																<label
+																	value="* " style="color: red"
+																	tooltiptext="Campo obligatorio" />
+																<label
+																	id="lbReligion" value="Religión: " />
+															</cell>
+															<cell
+																colspan="7">
+																<textbox
+																	id="tbxReligion" width="99%"
+																	style="text-transform:uppercase" />
+															</cell>
+														</row>
+														<row>
+															<cell
+																colspan="8">
+																<label
+																	value="* " style="color: red"
+																	tooltiptext="Campo obligatorio" />
+																<label
+																	id="lbAntecedentes_judiciales"
+																	value="Antecedentes judiciales: " />
+															</cell>
+														</row>
+
+														<row>
+															<cell
+																colspan="8">
+																<textbox
+																	id="tbxAntecedentes_judiciales" width="99%" rows="4"
+																	style="text-transform:uppercase" />
+															</cell>
+
+														</row>
+														<row>
+															<cell
+																colspan="8">
+																<groupbox
+																	closable="false">
+																	<caption
+																		label="SITUACIÓN PSICOEMOCIONAL" />
+																	<grid
+																		sclass="GridSinBorde" style="border:none">
+																		<columns>
+																			<column
+																				label="" width="" />
+																			<column
+																				label="" width="" />
+																			<column
+																				label="" width="23%" />
+																		</columns>
+																		<rows>
+																			<row
+																				style="border: 1px solid #aaaaaa">
+																				<cell
+																					colspan="3">
+																					<label
+																						style="font-weight:bold;" value="Imagen corporal" />
+																					<radiogroup
+																						id="rdbImagen_corporal" />
+																				</cell>
+																			</row>
+																			<row
+																				style="border: 1px solid #aaaaaa">
+																				<cell>
+																					<radio
+																						label="Conforme" checked="true"
+																						radiogroup="rdbImagen_corporal" value="1" />
+																				</cell>
+																				<cell>
+																					<radio
+																						label="Crea preocupación" value="2"
+																						radiogroup="rdbImagen_corporal" />
+																				</cell>
+																				<cell>
+																					<radio
+																						label="Impide relación con demás" value="3"
+																						radiogroup="rdbImagen_corporal" />
+																				</cell>
+																			</row>
+																			<row
+																				style="border: 1px solid #aaaaaa">
+																				<cell
+																					colspan="3">
+																					<label
+																						style="font-weight:bold;" value="Auto percepción" />
+																					<radiogroup
+																						id="rdbAutopercepcion" />
+																				</cell>
+																			</row>
+																			<row
+																				style="border: 1px solid #aaaaaa">
+																				<cell>
+																					<radio
+																						label="Triste" radiogroup="rdbAutopercepcion"
+																						value="1" />
+																				</cell>
+																				<cell>
+																					<radio
+																						label="Nervioso" value="2"
+																						radiogroup="rdbAutopercepcion" />
+																				</cell>
+																				<cell>
+																					<radio
+																						label="Muy tímido" value="3"
+																						radiogroup="rdbAutopercepcion" />
+																				</cell>
+																			</row>
+																			<row
+																				style="border: 1px solid #aaaaaa">
+																				<cell>
+																					<radio
+																						label="Alegre" checked="true"
+																						radiogroup="rdbAutopercepcion" value="1" />
+																				</cell>
+																				<cell />
+																				<cell>
+																					<radio
+																						label="Otro" value="3"
+																						radiogroup="rdbAutopercepcion" />
+																				</cell>
+																			</row>
+
+																			<row
+																				style="border: 1px solid #aaaaaa">
+																				<cell
+																					colspan="3">
+																					<label
+																						style="font-weight:bold;"
+																						value="Referente adulto" />
+																					<radiogroup
+																						id="rdbReferente_adulto" />
+																				</cell>
+																			</row>
+																			<row
+																				style="border: 1px solid #aaaaaa">
+																				<cell>
+																					<radio
+																						label="Padre" radiogroup="rdbReferente_adulto"
+																						value="1" />
+																				</cell>
+																				<cell>
+																					<radio
+																						label="Madre" value="2"
+																						radiogroup="rdbReferente_adulto" />
+																				</cell>
+																				<cell>
+																					<radio
+																						label="Fuera del hogar" value="3"
+																						radiogroup="rdbReferente_adulto" />
+																				</cell>
+																			</row>
+																			<row
+																				style="border: 1px solid #aaaaaa">
+																				<cell>
+																					<radio
+																						label="Ninguno" checked="true"
+																						radiogroup="rdbReferente_adulto" value="1" />
+																				</cell>
+																				<cell />
+																				<cell>
+																					<radio
+																						label="Otro Familiares" value="3"
+																						radiogroup="rdbReferente_adulto" />
+																				</cell>
+																			</row>
+																			<row
+																				style="border: 1px solid #aaaaaa">
+																				<cell
+																					colspan="3">
+																					<label
+																						style="font-weight:bold;"
+																						value="Proyectos de Vida" />
+																					<radiogroup
+																						id="rdbProyectos_de_vida" />
+																				</cell>
+																			</row>
+																			<row
+																				style="border: 1px solid #aaaaaa">
+																				<cell>
+																					<radio
+																						label="Confuso" checked="true"
+																						radiogroup="rdbProyectos_de_vida" value="1" />
+																				</cell>
+																				<cell>
+																					<radio
+																						label="Claro" value="2"
+																						radiogroup="rdbProyectos_de_vida" />
+																				</cell>
+																				<cell>
+																					<radio
+																						label="Ausente" value="3"
+																						radiogroup="rdbProyectos_de_vida" />
+																				</cell>
+																			</row>
+																			<row>
+																				<cell
+																					colspan="3">
+																					<label
+																						value="Observaciones" />
+																					<textbox
+																						style="text-transform:uppercase"
+																						id="tbxObservaciones1" rows="4" width="99%" />
+																				</cell>
+																			</row>
+																		</rows>
+																	</grid>
+																</groupbox>
+															</cell>
+														</row>
+														<row>
+															<cell
+																colspan="8">
+																<groupbox
+																	closable="false">
+																	<caption
+																		label="VIDA SOCIAL" />
+																	<grid
+																		sclass="GridSinBorde" style="border:none">
+																		<columns>
+																			<column />
+																			<column />
+																			<column
+																				width="25%" />
+																		</columns>
+																		<rows>
+																			<row
+																				style="border: 1px solid #aaaaaa">
+																				<cell
+																					colspan="2">
+																					<label
+																						style="font-weight:bold;" value="Aceptación:" />
+																					<space
+																						width="30px" />
+																					<radiogroup
+																						id="rdbAceptacion" />
+																					<radio
+																						label="Aceptado" checked="true"
+																						radiogroup="rdbAceptacion" value="1" />
+																					<space
+																						width="30px" />
+																					<radio
+																						label="Ignorado" value="2"
+																						radiogroup="rdbAceptacion" />
+																					<space
+																						width="30px" />
+																					<radio
+																						label="Rechazado" value="3"
+																						radiogroup="rdbAceptacion" />
+																					<space
+																						width="30px" />
+																					<radio
+																						label="No sabe" radiogroup="rdbAceptacion"
+																						value="1" />
+																				</cell>
+																				<cell>
+																					<label
+																						style="font-weight:bold;" value="Novio(a):" />
+																					<space />
+																					<radiogroup
+																						id="rdbNovio" />
+																					<radio
+																						label="SÍ" checked="true" radiogroup="rdbNovio"
+																						value="1" />
+																					<space
+																						width="30px" />
+																					<radio
+																						label="NO" value="2" radiogroup="rdbNovio" />
+																				</cell>
+																			</row>
+																			<row
+																				style="border: 1px solid #aaaaaa">
+																				<cell>
+																					<label
+																						style="font-weight:bold;" value="Amigos:" />
+																					<space
+																						width="50px" />
+																					<radiogroup
+																						id="rdbAmigos" />
+																					<radio
+																						label="SÍ" checked="true" radiogroup="rdbAmigos"
+																						value="1" />
+																					<space
+																						width="72px" />
+																					<radio
+																						label="NO" value="2" radiogroup="rdbAmigos" />
+																				</cell>
+																				<cell>
+																					<label
+																						style="font-weight:bold;"
+																						value="Actividad grupal:" />
+																					<space />
+																					<radiogroup
+																						id="rdbActividad_grupal" />
+																					<radio
+																						label="SÍ" checked="true"
+																						radiogroup="rdbActividad_grupal" value="1" />
+																					<space />
+																					<radio
+																						label="NO" value="2"
+																						radiogroup="rdbActividad_grupal" />
+																				</cell>
+																				<cell>
+																					<label
+																						style="font-weight:bold;" value="Televisión:" />
+																					<space
+																						width="15px" />
+																					<intbox
+																						id="ibxTelevision" width="40px"
+																						style="text-transform:uppercase" />
+																					<label
+																						value="horas por día" />
+																				</cell>
+																			</row>
+																			<row
+																				style="border: 1px solid #aaaaaa">
+																				<cell>
+																					<label
+																						style="font-weight:bold;"
+																						value="Pertenece a Equipo deportivo:" />
+																					<space
+																						width="32px" />
+																					<radiogroup
+																						id="rdbEquipo_deportivo"
+																						onCheck="formAlteracion_joven.deshabilitar_conRadio(self,new AbstractComponent[]{tbxCual_equipo})">
+																						<radio
+																							onFocus="tbxCual_equipo.focus()"
+																							id="Equipo_deportivo1" label="SÍ" value="S" />
+																						<space />
+																						<radio
+																							id="Equipo_deportivo2" label="NO" checked="true"
+																							value="2" />
+																					</radiogroup>
+																				</cell>
+																				<cell>
+																					<textbox
+																						id="tbxCual_equipo" width="99%"
+																						style="text-transform:uppercase" readonly="true" />
+																				</cell>
+
+																				<cell>
+																					<label
+																						style="font-weight:bold;" value="Deporte:" />
+																					<space
+																						width="15px" />
+																					<intbox
+																						id="ibxDeporte" width="40px"
+																						style="text-transform:uppercase" />
+																					<label
+																						value="horas por día" />
+																				</cell>
+																			</row>
+																			<row
+																				style="border: 1px solid #aaaaaa">
+																				<cell>
+																					<label
+																						style="font-weight:bold;"
+																						value="Otras actividades:" />
+																					<space
+																						width="96px" />
+																					<radiogroup
+																						id="rdbOtras_actividades"
+																						onCheck="formAlteracion_joven.deshabilitar_conRadio(self,new AbstractComponent[]{tbxCual})">
+																						<radio
+																							onFocus="tbxCual.focus()" id="Otras_actividades1"
+																							label="SÍ" value="S" />
+																						<space />
+																						<radio
+																							id="Otras_actividades2" label="NO" checked="true"
+																							value="2" />
+																					</radiogroup>
+																				</cell>
+																				<cell
+																					colspan="2">
+																					<textbox
+																						id="tbxCual" width="99%"
+																						style="text-transform:uppercase" readonly="true" />
+																				</cell>
+																			</row>
+																			<row>
+																				<cell
+																					colspan="3">
+																					<label
+																						value="Observaciones" />
+																					<textbox
+																						id="tbxObservaciones2" width="99%" rows="4"
+																						style="text-transform:uppercase" />
+																				</cell>
+																			</row>
+																		</rows>
+																	</grid>
+																</groupbox>
+															</cell>
+														</row>
+														<row
+															id="rowObstetricos" visible="true">
+															<cell
+																colspan="8">
+																<groupbox
+																	closable="false">
+																	<caption
+																		label="GINECO-OBSTETRICO" />
+																	<grid
+																		sclass="GridSinBorde" style="border:none">
+																		<columns>
+																			<column />
+																		</columns>
+																		<rows>
+																			<row>
+																				<cell>
+																					<groupbox>
+																						<grid
+																							sclass="GridSinBorde" style="border:none">
+																							<columns>
+																								<column
+																									label="" align="center" />
+																								<column
+																									label="" align="center" />
+																								<column
+																									label="" align="center" />
+																								<column
+																									label="" align="center" />
+																								<column
+																									label="" align="center" />
+
+																							</columns>
+																							<rows>
+																								<row>
+																									<cell>
+																										<label
+																											value="G: Número de embarazos"
+																											style="color:red" />
+																									</cell>
+																									<cell>
+																										<label
+																											value="P: Número de partos"
+																											style="color:red" />
+																									</cell>
+																									<cell>
+																										<label
+																											value="A: Número de abortos"
+																											style="color:red" />
+																									</cell>
+																									<cell>
+																										<label
+																											value="C: Número de cesáreas"
+																											style="color:red" />
+																									</cell>
+																									<cell>
+																										<label
+																											value="V: Hijos vivos" style="color:red" />
+																									</cell>
+																								</row>
+																								<row>
+																									<cell>
+																										<label
+																											id="lbObstetricos_g" value="G: " />
+																										<intbox
+																											constraint="no negative:Este valor no puede ser negativo"
+																											id="ibxObstetricos_g" width="50px"
+																											style="text-transform:uppercase" />
+																									</cell>
+																									<cell>
+																										<label
+																											id="lbObstetricos_p" value="P: " />
+																										<intbox
+																											constraint="no negative:Este valor no puede ser negativo"
+																											id="ibxObstetricos_p" width="50px"
+																											style="text-transform:uppercase" />
+																									</cell>
+																									<cell>
+																										<label
+																											id="lbObstetricos_a" value="A: " />
+																										<intbox
+																											constraint="no negative:Este valor no puede ser negativo"
+																											id="ibxObstetricos_a" width="50px"
+																											style="text-transform:uppercase" />
+																									</cell>
+																									<cell>
+																										<label
+																											id="lbObstetricos_c" value="C: " />
+																										<intbox
+																											constraint="no negative:Este valor no puede ser negativo"
+																											id="ibxObstetricos_c" width="50px"
+																											style="text-transform:uppercase" />
+																									</cell>
+																									<cell>
+																										<label
+																											id="lbNo_hijos" value="V: " />
+																										<intbox
+																											constraint="no negative:Este valor no puede ser negativo"
+																											id="ibxNo_hijos" width="50px"
+																											style="text-transform:uppercase" />
+																									</cell>
+																								</row>
+																							</rows>
+																						</grid>
+																					</groupbox>
+																				</cell>
+																			</row>
+																			<row>
+																				<cell
+																					hflex="1">
+																					<grid
+																						sclass="GridSinBorde" style="border:none">
+																						<columns>
+																							<column
+																								label="" align="center" />
+																							<column
+																								label="" align="center" />
+																							<column
+																								label="" align="center" />
+																							<column
+																								label="" align="center" />
+																							<column
+																								label="" align="center" />
+
+																						</columns>
+																						<rows>
+																							<row
+																								style="border: 1px solid #aaaaaa">
+																								<cell>
+																									<label
+																										value="Menarca" />
+																								</cell>
+																								<cell>
+																									<label
+																										value="Fecha última mestruación" />
+																								</cell>
+																								<cell>
+																									<label
+																										value="Ciclos regulares" />
+																								</cell>
+																								<cell>
+																									<label
+																										value="Dismenorrea" />
+																								</cell>
+																								<cell>
+																									<label
+																										value="Flujo patologíco secreción peneana" />
+																								</cell>
+																							</row>
+																							<row
+																								style="border: 1px solid #aaaaaa">
+																								<cell>
+																									<space />
+																									<datebox
+																										id="dtbxMenarca"
+																										onCreate="self.value = new Date();"
+																										format="yyyy-MM" width="100px" />
+																								</cell>
+																								<cell>
+																									<vlayout>
+																										<radiogroup
+																											id="rdbConoce_corresponde" />
+																										<radio
+																											id="Conoce_corresponde1" label="No conoce"
+																											checked="true" value="1"
+																											radiogroup="rdbConoce_corresponde" />
+																										<space
+																											hflex="1" />
+																										<radio
+																											id="Conoce_corresponde2"
+																											label="No corresponde" value="2"
+																											radiogroup="rdbConoce_corresponde" />
+																										<space
+																											hflex="1" />
+																										<datebox
+																											id="dtbxFum"
+																											onCreate="self.value = new Date();"
+																											format="yyyy-MM-dd" width="100px" />
+																										<space
+																											hflex="1" />
+																										<radiogroup
+																											id="rdbEs_confiable" />
+																										<radio
+																											id="Es_confiable1" label="No confiable"
+																											checked="true" value="1"
+																											radiogroup="rdbEs_confiable" />
+																										<space
+																											hflex="1" />
+																										<radio
+																											id="Es_confiable2" label="confiable"
+																											value="2" radiogroup="rdbEs_confiable" />
+
+																									</vlayout>
+																								</cell>
+																								<cell>
+																									<vlayout>
+																										<radiogroup
+																											id="rdbCiclos_regulares" />
+																										<radio
+																											id="Ciclos_regulares1" label="SÍ"
+																											checked="true" value="1"
+																											radiogroup="rdbCiclos_regulares" />
+																										<space
+																											hflex="1" />
+																										<radio
+																											id="Ciclos_regulares2" radiogroup="rdbCiclos_regulares" label="NO" value="2" />
+																										<space
+																											hflex="1" />
+																										<radio
+																											id="Ciclos_regulares3" radiogroup="rdbCiclos_regulares" label="No conoce"
+																											value="3" />
+																									</vlayout>
+																								</cell>
+																								<cell>
+																									<radiogroup
+																										id="rdbDismenorrea" />
+																									<radio
+																										radiogroup="rdbDismenorrea" label="SÍ"
+																										value="1" />
+																									<space
+																										hflex="1" />
+																									<radio
+																										radiogroup="rdbDismenorrea" label="NO"
+																										value="2" checked="true" />
+																									<space
+																										hflex="1" />
+																									<radio
+																										radiogroup="rdbDismenorrea" label="No conoce"
+																										value="3" />
+																								</cell>
+																								<cell>
+																									<space />
+																									<radiogroup
+																										id="rdbFlujo_patologico">
+																										<radio
+																											id="Flujo_patologico1" label="SÍ"
+																											checked="true" value="1"
+																											radiogroup="rdbFlujo_patologico" />
+																										<space
+																											hflex="1" />
+																										<radio
+																											id="Flujo_patologico2" label="NO" value="2"
+																											radiogroup="rdbFlujo_patologico" />
+																									</radiogroup>
+																								</cell>
+																							</row>
+																						</rows>
+																					</grid>
+																				</cell>
+																			</row>
+
+																			<row>
+																				<cell>
+																					<groupbox
+																						mold="3d">
+																						<grid
+																							sclass="GridSinBorde" style="border:none">
+																							<columns>
+
+																								<column
+																									label="" width="210px" />
+																								<column
+																									label="" width="120px" />
+																								<column
+																									label="" width="200px" />
+
+																							</columns>
+																							<rows>
+																								<row>
+																									<cell>
+																										<label
+																											id="lbEts"
+																											value="Infección de Transmisión Sexual: " />
+																									</cell>
+																									<cell>
+																										<radiogroup
+																											id="rdbEts"
+																											onCheck="formAlteracion_joven.seleccion_radio(self, new AbstractComponent[]{lbCual_ets, tbxCual_ets})">
+																											<radio
+																												id="Ets1" label="SÍ" value="1" />
+																											<space />
+																											<radio
+																												id="Ets2" label="NO" checked="true"
+																												value="2" />
+																											<space />
+																										</radiogroup>
+																									</cell>
+																									<cell
+																										colspan="2">
+																										<label
+																											id="lbCual_ets" value="¿Cuál?: "
+																											visible="false" />
+																										<space></space>
+																										<textbox
+																											id="tbxCual_ets" width="400px"
+																											style="text-transform:uppercase"
+																											visible="false" />
+																									</cell>
+																								</row>
+
+																							</rows>
+																						</grid>
+																					</groupbox>
+																				</cell>
+																			</row>
+
+																			<row>
+																				<cell>
+																					<label
+																						value="Observaciones" />
+																					<textbox
+																						style="text-transform:uppercase"
+																						id="tbxObservacione3" rows="4" width="99%" />
+
+																				</cell>
+																			</row>
+
+																		</rows>
+																	</grid>
+																</groupbox>
+															</cell>
+														</row>
+														<row
+															id="rowObstetricos2">
+															<cell
+																colspan="8">
+																<groupbox
+																	closable="false">
+																	<caption
+																		label="GINECO-OBSTETRICO" />
+																	<grid
+																		sclass="GridSinBorde" style="border:none">
+																		<columns>
+																			<column
+																				label="" width="38%" />
+																			<column
+																				label="" width="" />
+																		</columns>
+																		<rows>
+																			<row>
+																				<cell />
+																				<cell>
+																					<label
+																						value="Espermarca" />
+																					<space />
+																					<datebox
+																						id="dtbxEsperma"
+																						onCreate="self.value = new Date();"
+																						format="yyyy-MM" width="100px" />
+																				</cell>
+																			</row>
+																		</rows>
+																	</grid>
+																</groupbox>
+															</cell>
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+
+									<!-- fila 10 -->
+									<row>
+										<cell colspan="6">
+											<groupbox mold="3d"
+												width="100%" closable="false">
+												<caption
+													label="EXAMEN FÍSICO" />
+												<grid
+													sclass="GridSinBorde" style="border:none">
+													<columns>
+														<column label=""
+															width="33%" />
+														<column label=""
+															width="33%" />
+														<column label=""
+															width="34%" />
+													</columns>
+													<rows>
+														<row>
+															<cell
+																colspan="3">
+																<groupbox>
+																	<caption
+																		label="Signos Vitales">
+																		<toolbarbutton
+																			id="toolbarbuttonCargar_signos"
+																			image="/images/refresh_m.png"
+																			label="Cargar signos vitales"
+																			onClick="formAlteracion_joven.cargarSignosVitalesEnfermera()" />
+																	</caption>
+																	<grid
+																		sclass="GridSinBorde" style="border:none">
+																		<columns>
+																			<column
+																				width="" />
+																			<column
+																				width="200px" align="center" />
+																			<column
+																				width="80px" align="center" />
+																			<column
+																				width="80px" align="center" />
+																			<column
+																				width="80px" align="center" />
+																			<column
+																				width="80px" align="center" />
+																			<column
+																				width="80px" align="center" />
+																			<column
+																				width="" />
+																		</columns>
+																		<rows>
+																			<row>
+																				<cell />
+																				<cell>
+																					<label
+																						value="* " style="color: red"
+																						tooltiptext="Campo obligatorio" />
+																					<label
+																						id="lbPresion"
+																						value="TA Sistólica / TA Diastólica " />
+																				</cell>
+																				<cell>
+																					<label
+																						value="* " style="color: red"
+																						tooltiptext="Campo obligatorio" />
+																					<label
+																						id="lbCardiaca" value=" FC (min) " />
+																				</cell>
+																				<cell>
+																					<label
+																						value="* " style="color: red"
+																						tooltiptext="Campo obligatorio" />
+																					<label
+																						id="lbRespiratoria" value="FR (min) " />
+																				</cell>
+																				<cell>
+																					<label
+																						value="* " style="color: red"
+																						tooltiptext="Campo obligatorio" />
+																					<label
+																						id="lbTalla" value="Talla (cm) " />
+																				</cell>
+																				<cell>
+																					<label
+																						value="* " style="color: red"
+																						tooltiptext="Campo obligatorio" />
+																					<label
+																						id="lbPeso" value="Peso (kg) " />
+																				</cell>
+																				<cell>
+																					<label
+																						value="* " style="color: red"
+																						tooltiptext="Campo obligatorio" />
+																					<label
+																						id="lbInd_masa" value="IMC: " />
+																				</cell>
+																				<cell />
+																			</row>
+																			<row>
+																				<cell />
+																				<cell>
+																					<doublebox
+																						id="dbxPresion" width="50px" format="0"
+																						locale="en"
+																						onChange="formAlteracion_joven.calcularTA(dbxPresion,dbxPresion2) "
+																						onBlur="formAlteracion_joven.calcularTA(dbxPresion,dbxPresion2)" />
+																					<label
+																						value=" / " />
+																					<doublebox
+																						id="dbxPresion2" width="50px" format="0"
+																						locale="en"
+																						onChange="formAlteracion_joven.calcularTA(dbxPresion,dbxPresion2)"
+																						onBlur="formAlteracion_joven.calcularTA(dbxPresion,dbxPresion2)" />
+																					<space />
+																					<label
+																						value="(mm/Hg)" />
+																				</cell>
+																				<cell>
+																					<doublebox
+																						id="dbxCardiaca" width="50px" locale="en"
+																						onChange="formAlteracion_joven.calcularFrecuenciaCardiaca(dbxCardiaca)"
+																						onBlur="formAlteracion_joven.calcularFrecuenciaCardiaca(dbxCardiaca)" />
+																				</cell>
+																				<cell>
+																					<doublebox
+																						id="dbxRespiratoria" width="50px" locale="en"
+																						onChange="formAlteracion_joven.calcularFrecuenciaRespiratoria(dbxRespiratoria)"
+																						onBlur="formAlteracion_joven.calcularFrecuenciaRespiratoria(dbxRespiratoria)" />
+																				</cell>
+																				<cell>
+																					<doublebox
+																						id="dbxTalla" locale="en" width="50px"
+																						value="0.00"
+																						onChange="formAlteracion_joven.calcularIMC(dbxPeso,dbxTalla,dbxImc)"
+																						onBlur="formAlteracion_joven.calcularIMC(dbxPeso,dbxTalla,dbxImc)" />
+																				</cell>
+																				<cell>
+																					<doublebox
+																						id="dbxPeso" locale="en" width="50px" value="0.00"
+																						onChange="formAlteracion_joven.calcularIMC(dbxPeso,dbxTalla,dbxImc)"
+																						onBlur="formAlteracion_joven.calcularIMC(dbxPeso,dbxTalla,dbxImc)" />
+																				</cell>
+																				<cell>
+																					<doublebox
+																						id="dbxImc" readonly="true" locale="en"
+																						width="50px" value="0.00" />
+																				</cell>
+																				<cell />
+																			</row>
+																		</rows>
+																	</grid>
+																</groupbox>
+															</cell>
+														</row>
+
+														<row>
+															<cell
+																colspan="6">
+																<groupbox
+																	mold="3d">
+																	<grid
+																		sclass="GridSinBorde" style="border:none">
+																		<columns>
+																			<column
+																				label="" width="5px" />
+																			<column
+																				label="" width="105px" />
+																			<column
+																				label="" width="150px" />
+																			<column
+																				label="" width="28px" />
+																			<column
+																				label="" width="105px" />
+																			<column
+																				label="" width="150px" />
+																			<column
+																				label="" width="30px" />
+																			<column
+																				label="" width="120px" />
+																			<column
+																				label="" width="150px" />
+																		</columns>
+																		<rows>
+																			<row>
+																				<cell />
+																				<cell>
+																					<label
+																						value="Piel" style="font-weight:bold">
+																					</label>
+																				</cell>
+																				<cell>
+																					<radiogroup
+																						id="rdbPiel"
+																	onCheck='com.framework.util.FormularioUtil.mostrarObservaciones(rdbPiel,"2",tbxObservaciones_piel,row1);'>
+																						<radio
+																							id="Piel1" label="Normal" checked="true"
+																							value="1" />
+																						<space />
+																						<radio
+																							id="Piel2" label="Anormal" value="2" />
+																						<space />
+																					</radiogroup>
+																				</cell>
+																				<cell />
+																				<cell>
+																					<label
+																						value="Cabeza:" style="font-weight:bold" />
+																				</cell>
+																				<cell>
+																					<radiogroup
+																						id="rdbCabeza"
+																	onCheck='com.framework.util.FormularioUtil.mostrarObservaciones(rdbCabeza,"2",tbxObservaciones_cabeza,row1);'>
+																						<radio
+																							id="Cabeza1" label="Normal" checked="true"
+																							value="1" />
+																						<space />
+																						<radio
+																							id="Cabeza2" label="Anormal" value="2" />
+																						<space />
+																					</radiogroup>
+																				</cell>
+																				<cell />
+																				<cell>
+																					<label
+																						value="Boca y dientes:" style="font-weight:bold" />
+																				</cell>
+																				<cell>
+																					<radiogroup
+																						id="rdbBoca_diente"
+																	onCheck='com.framework.util.FormularioUtil.mostrarObservaciones(rdbBoca_diente,"2",tbxObservaciones_boca,row1);'>
+																						<radio
+																							id="Boca_diente1" label="Normal" checked="true"
+																							value="1" />
+																						<space />
+																						<radio
+																							id="Boca_diente2" label="Anormal" value="2" />
+																						<space />
+																					</radiogroup>
+
+																				</cell>
+																			</row>
+																				
+														<row  id="row1" visible="false">
+															<cell colspan="3"><textbox id="tbxObservaciones_piel" width="98%" style="text-transform:uppercase" maxlength="-1" rows="2" visible="false"/></cell>
+															<cell colspan="3"><textbox id="tbxObservaciones_cabeza" width="98%" style="text-transform:uppercase" maxlength="-1" rows="2" visible="false"/></cell>
+															<cell colspan="3"><textbox id="tbxObservaciones_boca" width="98%" style="text-transform:uppercase" maxlength="-1" rows="2" visible="false"/></cell>
+														</row >
+																			<row>
+																				<cell />
+																				<cell>
+																					<label
+																						value="Cuello y tiroides:"
+																						style="font-weight:bold" />
+																				</cell>
+																				<cell>
+																					<radiogroup
+																						id="rdbCuello_tiroides"
+																	onCheck='com.framework.util.FormularioUtil.mostrarObservaciones(rdbCuello_tiroides,"2",tbxObservaciones_cuello,row2_);'>
+																						<radio
+																							id="Cuello_tiroides1" label="Normal"
+																							checked="true" value="1" />
+																						<space />
+																						<radio
+																							id="Cuello_tiroides2" label="Anormal" value="2" />
+																						<space />
+																					</radiogroup>
+																				</cell>
+																					<cell />
+																				<cell>
+																					<label
+																						value="Torax y mamas:" style="font-weight:bold" />
+																				</cell>
+																				<cell>
+																					<radiogroup
+																						id="rdbTorax_mamas"
+																	onCheck='com.framework.util.FormularioUtil.mostrarObservaciones(rdbTorax_mamas,"2",tbxObservaciones_masas,row2_);'>
+																						<radio
+																							id="Torax_mamas1" label="Normal" checked="true"
+																							value="1" />
+																						<space />
+																						<radio
+																							id="Torax_mamas" label="Anormal" value="2" />
+																						<space />
+																					</radiogroup>
+																				</cell>
+																				<cell />
+																				<cell>
+																					<label
+																						value="Cardio Pulmorar:" style="font-weight:bold" />
+																				</cell>
+																				<cell>
+																					<radiogroup
+																						id="rdbCardio_pulmorar"
+																	onCheck='com.framework.util.FormularioUtil.mostrarObservaciones(rdbCardio_pulmorar,"2",tbxObservaciones_torax,row2_);'>
+																						<radio
+																							id="Cardio_Pulmorar1" label="Normal"
+																							checked="true" value="1" />
+																						<space />
+																						<radio
+																							id="Cardio_Pulmorar2" label="Anormal" value="2" />
+																						<space />
+																					</radiogroup>
+																				</cell>
+																			</row>
+																			
+														<row id="row2_" visible="false">
+															<cell colspan="3"><textbox id="tbxObservaciones_cuello" rows="2" width="98%" style="text-transform:uppercase" maxlength="-1" visible="false"/></cell>
+															<cell colspan="3"><textbox id="tbxObservaciones_masas" rows="2" width="98%" style="text-transform:uppercase" maxlength="-1" visible="false"/></cell>
+															<cell colspan="3"><textbox id="tbxObservaciones_torax" rows="2" width="98%" style="text-transform:uppercase" maxlength="-1" visible="false"/></cell>
+														</row >
+																			
+																			<row>
+																				<cell />
+																				<cell>
+																					<label
+																						value="Genito urinario:" style="font-weight:bold" />
+																				</cell>
+																				<cell>
+																					<radiogroup
+																						id="rdbGenito_urinario"
+																	onCheck='com.framework.util.FormularioUtil.mostrarObservaciones(rdbGenito_urinario,"2",tbxObservaciones_genito,row3);'>
+																						<radio
+																							id="Genito_urinario1" label="Normal"
+																							checked="true" value="1" />
+																						<space />
+																						<radio
+																							id="Genito_urinario2" label="Anormal" value="2" />
+																						<space />
+																					</radiogroup>
+																				</cell>
+																				<cell />
+																				<cell>
+																					<label
+																						value="Abdomen:" style="font-weight:bold" />
+																				</cell>
+																				<cell>
+																					<radiogroup
+																						id="rdbAbdomen"
+																	onCheck='com.framework.util.FormularioUtil.mostrarObservaciones(rdbAbdomen,"2",tbxObservaciones_abdomen,row3);'>
+																						<radio
+																							id="Abdomen1" label="Normal" checked="true"
+																							value="1" />
+																						<space />
+																						<radio
+																							id="Abdomen2" label="Anormal" value="2" />
+																						<space />
+																					</radiogroup>
+																				</cell>
+																				<cell />
+																				<cell>
+																					<label
+																						value="Columna:" style="font-weight:bold" />
+																				</cell>
+																				<cell>
+																					<radiogroup
+																						id="rdbColumna"
+																	onCheck='com.framework.util.FormularioUtil.mostrarObservaciones(rdbColumna,"2",tbxObservaciones_columna,row3);'>
+																						<radio
+																							id="Columna1" label="Normal" checked="true"
+																							value="1" />
+																						<space />
+																						<radio
+																							id="Columna2" label="Anormal" value="2" />
+																						<space />
+																					</radiogroup>
+																				</cell>
+																			</row>
+																			
+														<row id="row3" visible="false" >
+															<cell colspan="3"><textbox id="tbxObservaciones_genito" width="98%" style="text-transform:uppercase" maxlength="-1" rows="2" visible="false"/></cell>
+															<cell colspan="3"><textbox id="tbxObservaciones_abdomen" width="98%" style="text-transform:uppercase" maxlength="-1" rows="2" visible="false"/></cell>
+															<cell colspan="3"><textbox id="tbxObservaciones_columna" width="98%" style="text-transform:uppercase" maxlength="-1" rows="2" visible="false"/></cell>
+														</row >
+																			<row>
+																				<cell />
+																				<cell>
+																					<label
+																						value="Extremidades:" style="font-weight:bold" />
+																				</cell>
+																				<cell>
+																					<radiogroup
+																						id="rdbExtremidades"
+																	onCheck='com.framework.util.FormularioUtil.mostrarObservaciones(rdbExtremidades,"2",tbxObservaciones_extremidades,row4);'>
+																						<radio
+																							id="Extremidades1" label="Normal" checked="true"
+																							value="1" />
+																						<space />
+																						<radio
+																							id="Extremidades2" label="Anormal" value="2" />
+																						<space />
+																					</radiogroup>
+																				</cell>
+																				<cell />
+																				<cell>
+																					<label
+																						value="Neurológico:" style="font-weight:bold">
+																					</label>
+																				</cell>
+																				<cell>
+																					<radiogroup
+																						id="rdbExamen_neurologico"
+																	onCheck='com.framework.util.FormularioUtil.mostrarObservaciones(rdbExamen_neurologico,"2",tbxObservaciones_neurologico,row4);'>
+																						<radio
+																							id="Examen_neurologico1" label="Normal"
+																							checked="true" value="1" />
+																						<space />
+																						<radio
+																							id="Examen_neurologico2" label="Anormal"
+																							value="2" />
+																						<space />
+																					</radiogroup>
+																				</cell>
+																				<cell />
+																				<cell>
+																					<label
+																						value="Aspecto general:" style="font-weight:bold" />
+																				</cell>
+																				<cell>
+																					<radiogroup
+																						id="rdbAspecto_generar"
+																	onCheck='com.framework.util.FormularioUtil.mostrarObservaciones(rdbAspecto_generar,"2",tbxObservaciones_general,row4);'>
+																						<radio
+																							id="Aspecto_generar1" label="Normal"
+																							checked="true" value="1" />
+																						<space />
+																						<radio
+																							id="Aspecto_generar2" label="Anormal" value="2" />
+																						<space />
+																					</radiogroup>
+																				</cell>
+																			</row>
+																			
+														<row id="row4" visible="false" >
+															<cell colspan="3"><textbox id="tbxObservaciones_extremidades" width="98%" style="text-transform:uppercase" maxlength="-1" rows="2" visible="false"/></cell>
+															<cell colspan="3"><textbox id="tbxObservaciones_neurologico" width="98%" style="text-transform:uppercase" maxlength="-1" rows="2" visible="false"/></cell>
+															<cell colspan="3"><textbox id="tbxObservaciones_general" width="98%" style="text-transform:uppercase" maxlength="-1" rows="2" visible="false"/></cell>
+														</row >
+																			<row>
+																				<cell />
+																				<cell>
+																					<label
+																						value="Agudeza visual:" style="font-weight:bold" />
+
+																				</cell>
+																				<cell>
+																					<radiogroup
+																						id="rdbAgudeza_visual"
+																	onCheck='com.framework.util.FormularioUtil.mostrarObservaciones(rdbAgudeza_visual,"2",tbxObservaciones_visual,row5);'>
+																						<radio
+																							id="Agudeza_visual1" label="Normal"
+																							checked="true" value="1" />
+																						<space />
+																						<radio
+																							id="Agudeza_visual2" label="Anormal" value="2" />
+																						<space />
+																					</radiogroup>
+																				</cell>
+																				<cell />
+																				<cell>
+																					<label
+																						value="Agudeza auditiva:"
+																						style="font-weight:bold">
+																					</label>
+																				</cell>
+																				<cell>
+																					<radiogroup
+																						id="rdbAgudeza_auditival"
+																	onCheck='com.framework.util.FormularioUtil.mostrarObservaciones(rdbAgudeza_auditival,"2",tbxObservaciones_auditiva,row5);'>
+																						<radio
+																							id="Agudeza_auditiva1" label="Normal"
+																							checked="true" value="1" />
+																						<space />
+																						<radio
+																							id="Agudeza_auditiva2" label="Anormal" value="2" />
+																						<space />
+																					</radiogroup>
+																				</cell>
+																				<cell />
+																				<cell>
+																					<label
+																						value="Extremidades:" style="font-weight:bold" visible="false" />
+																				</cell>
+																				<cell>
+																					<radiogroup
+																						id="rdbNeurologico" visible="false">
+																						<radio
+																							id="Neurologico1" label="Normal" checked="true"
+																							value="1" />
+																						<space />
+																						<radio
+																							id="Neurologico2" label="Anormal" value="2" />
+																						<space />
+																					</radiogroup>
+																				</cell>
+																				
+																			</row>
+																			
+														<row id="row5" visible="false" >
+															<cell colspan="3"><textbox id="tbxObservaciones_visual" width="98%" style="text-transform:uppercase" maxlength="-1" rows="2" visible="false"/></cell>
+															<cell colspan="3"><textbox id="tbxObservaciones_auditiva" width="98%" style="text-transform:uppercase" maxlength="-1" rows="2" visible="false"/></cell>
+															<cell colspan="3"></cell>
+														</row >
+																			<row
+																				id="rowVolumentesticular" visible="false">
+																				<cell />
+																				<cell
+																					colspan="2">
+																					<label
+																						value="Volumen testicular izq:">
+																					</label>
+																					<doublebox
+																						id="dbxVolumen_tes_izq" width="100px">
+																					</doublebox>
+																				</cell>
+																				<cell />
+																				<cell
+																					colspan="2">
+																					<label
+																						value="Volumen testicular der:">
+																					</label>
+																					<doublebox
+																						id="dbxVolumen_tes_der" width="100px">
+																					</doublebox>
+																				</cell>
+																				<cell
+																					colspan="4">
+																				</cell>
+																			</row>
+																		</rows>
+																	</grid>
+																</groupbox>
+															</cell>
+														</row>
+														<row>
+															<cell
+																colspan="3">
+																<label
+																	value="* " style="color: red"
+																	tooltiptext="Campo obligatorio" />
+																<label
+																	id="lbOtros_hallagos" value="Otros Hallazgos:  " />
+															</cell>
+														</row>
+
+														<row>
+															<cell
+																colspan="4">
+																<textbox
+																	id="tbxOtros_hallagos" width="99%" rows="3"
+																	style="text-transform:uppercase" />
+															</cell>
+														</row>
+
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+
+									<!-- fila 6 -->
+									<row>
+										<cell colspan="6">
+											<groupbox mold="3d"
+												width="100%" closable="false">
+												<caption
+													label="ANTECEDENTES DEL ENTORNO FAMILIAR" />
+												<grid
+													sclass="GridSinBorde" style="border:none">
+													<columns>
+														<column label=""
+															width="5%" />
+														<column label=""
+															width="20%" />
+														<column label=""
+															width="16%" />
+														<column label=""
+															width="21%" />
+														<column label=""
+															width="19%" />
+														<column label=""
+															width="20%" />
+														<column label=""
+															width="18%" />
+													</columns>
+
+													<rows>
+														<row>
+															<cell
+																colspan="8">
+																<groupbox
+																	closable="false">
+																	<caption
+																		label="¿Con quién vive?" />
+																	<grid
+																		sclass="GridSinBorde" style="border:none">
+																		<columns>
+																			<column
+																				label="" width="100px" />
+																			<column
+																				label="" width="180px" />
+																			<column
+																				label="" width="180px" />
+																			<column
+																				label="" width="380px" />
+																		</columns>
+																		<rows>
+																			<row>
+																				<cell />
+																				<cell>
+																					<checkbox
+																						id="chbConvive_madre" label="Madre" />
+																					<space></space>
+																				</cell>
+																				<cell>
+																					<checkbox
+																						id="chbConvive_padre" label="Padre" />
+																					<space></space>
+																				</cell>
+																				<cell>
+																					<checkbox
+																						id="chbConvive_madrasta" label="Madrasta" />
+																					<space></space>
+																				</cell>
+																			</row>
+																			<row>
+																				<cell />
+																				<cell>
+																					<checkbox
+																						id="chbConvive_padrasto" label="Padrasto" />
+																					<space></space>
+																				</cell>
+																				<cell>
+																					<checkbox
+																						id="chbConvive_hermanos" label="Hermanos" />
+																					<space></space>
+																				</cell>
+																				<cell>
+																					<checkbox
+																						id="chbConvive_pareja" label="Pareja" />
+																					<space></space>
+																				</cell>
+																			</row>
+																			<row>
+																				<cell />
+																				<cell>
+																					<checkbox
+																						id="chbConvive_hijo" label="Hijo" />
+																					<space></space>
+																				</cell>
+																				<cell>
+																					<checkbox
+																						id="chbConvive_otros" label="Otros"
+																						onCheck="formAlteracion_joven.habilitarTexboxChecbo(chbConvive_otros,tbxConvive_cual)" />
+																					<space></space>
+																				</cell>
+																				<cell>
+																					<label
+																						value="Cuál:">
+																					</label>
+																					<space />
+																					<textbox
+																						id="tbxConvive_cual" readonly="true"
+																						width="200px" />
+																					<space></space>
+																				</cell>
+																			</row>
+																		</rows>
+																	</grid>
+																</groupbox>
+															</cell>
+														</row>
+														<row>
+															<cell />
+															<cell
+																colspan="2">
+																<label
+																	id="lbDependecia" value="¿Depende Económicamente? " />
+															</cell>
+															<cell>
+																<radiogroup
+																	id="rdbDependecia">
+																	<radio
+																		id="Dependecia1" label="SÍ" value="1" />
+																	<space />
+																	<radio
+																		id="Dependecia2" label="NO" checked="true" value="2" />
+																	<space />
+																</radiogroup>
+															</cell>
+															<cell
+																colspan="2">
+																<label
+																	id="lbPersonas_cargo"
+																	value="¿Tiene personas económicamente a su cargo? " />
+															</cell>
+															<cell>
+																<radiogroup
+																	id="rdbPersonas_cargo">
+																	<radio
+																		id="Personas_cargo1" label="SÍ" value="1" />
+																	<space />
+																	<radio
+																		id="Personas_cargo2" label="NO" checked="true"
+																		value="2" />
+																	<space />
+																</radiogroup>
+															</cell>
+
+														</row>
+
+														<row>
+															<cell />
+															<cell
+																colspan="2">
+																<label
+																	id="lbPersonas_cuidado"
+																	value="¿Tiene personas a su cuidado? " />
+															</cell>
+															<cell>
+																<radiogroup
+																	id="rdbPersonas_cuidado"
+																	onCheck="formAlteracion_joven.seleccion_radio(self, new AbstractComponent[]{lbCuantas_quienes, tbxCuantas_quienes})">
+																	<radio
+																		id="Personas_cuidado1" label="SÍ" value="1" />
+																	<space />
+																	<radio
+																		id="Personas_cuidado2" label="NO" checked="true"
+																		value="2" />
+																	<space />
+																</radiogroup>
+															</cell>
+															<cell>
+																<label
+																	id="lbCuantas_quienes" value="¿Cuántas y Quiénes? "
+																	visible="false" />
+															</cell>
+															<cell
+																colspan="2">
+																<textbox
+																	id="tbxCuantas_quienes" width="220px"
+																	style="text-transform:uppercase" visible="false" />
+															</cell>
+														</row>
+														<row>
+															<cell />
+															<cell>
+																<label
+																	id="lbOcupacion_padre" value="Ocupación Padre: " />
+															</cell>
+															<cell
+																colspan="2">
+																<hlayout>
+																	<bandbox
+																		id="tbxNombre_padre" autodrop="true" readonly="true"
+																		width="226px"
+																		onOpen='formAlteracion_joven.buscarOcupaciones(tbxOcupacion_padre.getValue(),lbxCodigo_ocupacion_padre);'>
+																		<bandpopup>
+																			<vbox>
+																				<toolbar>
+																					<label
+																						value="Buscar: " />
+																					<textbox
+																						id="tbxValueOcupaciones_Padre"
+																						onChanging='formAlteracion_joven.buscarOcupaciones(event.getValue(),lbxCodigo_ocupacion_padre)'
+																						style="text-transform:uppercase;" />
+																					<toolbarbutton
+																						image="/images/borrar.gif" tooltiptext="Quitar"
+																						onClick='formAlteracion_joven.selectedOcupaciones(new Listitem());' />
+																				</toolbar>
+																				<listbox
+																					height="300px" width="600px" mold="paging"
+																					pageSize="8" id="lbxCodigo_ocupacion_padre"
+																					onSelect='formAlteracion_joven.selectedOcupaciones(self.getSelectedItem());'>
+																					<listhead>
+																						<listheader
+																							label="Codigo" width="150px" />
+																						<listheader
+																							label="Nombre" width="450px" />
+																					</listhead>
+																				</listbox>
+																			</vbox>
+																		</bandpopup>
+																	</bandbox>
+																	<space></space>
+																	<textbox
+																		id="tbxOcupacion_padre" width="200px"
+																		style="text-transform:uppercase" visible="false" />
+																	<space></space>
+																</hlayout>
+															</cell>
+
+															<cell>
+																<label
+																	id="lbEducativo_padre" value="Nivel Educativo Padre: " />
+															</cell>
+															<cell
+																colspan="2">
+																<hlayout>
+																	<bandbox
+																		id="tbxNombre_Educativo_padre" autodrop="true"
+																		readonly="true" width="226px"
+																		onOpen='formAlteracion_joven.buscarCodigo_educativo(tbxNombre_Educativo_padre.getValue(),lbxCodigo_educativo_padre);'>
+																		<bandpopup>
+																			<vbox>
+																				<toolbar>
+																					<label
+																						value="Buscar: " />
+																					<textbox
+																						id="tbxValueCodigo_educativo_padre"
+																						onChanging='formAlteracion_joven.buscarCodigo_educativo(event.getValue(),lbxCodigo_educativo_padre)'
+																						style="text-transform:uppercase;" />
+																					<toolbarbutton
+																						image="/images/borrar.gif" tooltiptext="Quitar"
+																						onClick='formAlteracion_joven.selectedCodigo_educativo_padre(new Listitem());' />
+																				</toolbar>
+																				<listbox
+																					height="300px" width="600px" mold="paging"
+																					pageSize="8" id="lbxCodigo_educativo_padre"
+																					onSelect='formAlteracion_joven.selectedCodigo_educativo_padre(self.getSelectedItem());'>
+																					<listhead>
+																						<listheader
+																							label="Codigo" width="150px" />
+																						<listheader
+																							label="Nombre" width="450px" />
+																					</listhead>
+																				</listbox>
+																			</vbox>
+																		</bandpopup>
+																	</bandbox>
+																	<textbox
+																		id="tbxEducativo_padre" width="20px"
+																		style="text-transform:uppercase" visible="false" />
+																</hlayout>
+															</cell>
+
+														</row>
+														<row>
+															<cell />
+															<cell
+																colspan="2">
+																<label
+																	value="¿Tipo de trabajo Del padre?" />
+															</cell>
+															<cell
+																colspan="5">
+																<radiogroup
+																	id="rdbTipo_trab_relacion_escolar3">
+																	<radio
+																		id="Tipo_trab_relacion_escolar" label="Ninguno"
+																		checked="true" value="1" />
+																	<space />
+																	<radio
+																		id="Tipo_trab_relacion_escolar2" label="No estable"
+																		value="2" />
+																	<space />
+																	<radio
+																		id="rdbTipo_trab_relacion_escolar1" label="Estable"
+																		value="3" />
+																	<space />
+																</radiogroup>
+															</cell>
+														</row>
+
+														<row>
+															<cell />
+															<cell>
+																<label
+																	id="lbOcupacion_madre" value="Ocupación Madre: " />
+															</cell>
+															<cell
+																colspan="2">
+																<hlayout>
+																	<bandbox
+																		id="tbxNombre_madre" autodrop="true" readonly="true"
+																		width="226px"
+																		onOpen='formAlteracion_joven.buscarOcupaciones(tbxOcupacion_madre.getValue(),lbxCodigo_ocupacion_madre);'>
+																		<bandpopup>
+																			<vbox>
+																				<toolbar>
+																					<label
+																						value="Buscar: " />
+																					<textbox
+																						id="tbxValueOcupaciones_Madre"
+																						onChanging='formAlteracion_joven.buscarOcupaciones(event.getValue(),lbxCodigo_ocupacion_madre)'
+																						style="text-transform:uppercase;" />
+																					<toolbarbutton
+																						image="/images/borrar.gif" tooltiptext="Quitar"
+																						onClick='formAlteracion_joven.selectedOcupacion_madre(new Listitem());' />
+																				</toolbar>
+																				<listbox
+																					height="300px" width="600px" mold="paging"
+																					pageSize="8" id="lbxCodigo_ocupacion_madre"
+																					onSelect='formAlteracion_joven.selectedOcupacion_madre(self.getSelectedItem());'>
+																					<listhead>
+																						<listheader
+																							label="Codigo" width="150px" />
+																						<listheader
+																							label="Nombre" width="450px" />
+																					</listhead>
+																				</listbox>
+																			</vbox>
+																		</bandpopup>
+																	</bandbox>
+																	<space></space>
+																	<textbox
+																		id="tbxOcupacion_madre" width="200px"
+																		style="text-transform:uppercase" visible="false" />
+																</hlayout>
+															</cell>
+
+
+															<cell>
+																<label
+																	id="lbEducativo_madre" value="Nivel Educativo Madre: " />
+															</cell>
+															<cell
+																colspan="2">
+																<hlayout>
+																	<bandbox
+																		id="tbxNombre_Educativo_madre" autodrop="true"
+																		readonly="true" width="226px"
+																		onOpen='formAlteracion_joven.buscarCodigo_educativo(tbxNombre_Educativo_madre.getValue(),lbxCodigo_educativo_madre);'>
+																		<bandpopup>
+																			<vbox>
+																				<toolbar>
+																					<label
+																						value="Buscar: " />
+																					<textbox
+																						id="tbxValueCodigo_educativo_madre"
+																						onChanging='formAlteracion_joven.buscarCodigo_educativo(event.getValue(),lbxCodigo_educativo_madre)'
+																						style="text-transform:uppercase;" />
+																					<toolbarbutton
+																						image="/images/borrar.gif" tooltiptext="Quitar"
+																						onClick='formAlteracion_joven.selectedCodigo_educativo_madre(new Listitem());' />
+																				</toolbar>
+																				<listbox
+																					height="300px" width="600px" mold="paging"
+																					pageSize="8" id="lbxCodigo_educativo_madre"
+																					onSelect='formAlteracion_joven.selectedCodigo_educativo_madre(self.getSelectedItem());'>
+																					<listhead>
+																						<listheader
+																							label="Codigo" width="150px" />
+																						<listheader
+																							label="Nombre" width="450px" />
+																					</listhead>
+																				</listbox>
+																			</vbox>
+																		</bandpopup>
+																	</bandbox>
+																	<textbox
+																		id="tbxEducativo_madre" width="20px"
+																		style="text-transform:uppercase" visible="false" />
+																</hlayout>
+															</cell>
+														</row>
+														<row>
+															<cell />
+															<cell
+																colspan="2">
+																<label
+																	value="¿Tipo de trabajo de la madre?" />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbTipo_trab_madre_sustituta">
+																	<radio
+																		id="Tipo_trab_madre_sustituta" label="Ninguno"
+																		checked="true" value="1" />
+																	<space />
+																	<radio
+																		id="Tipo_trab_madre_sustituta2" label="No estable"
+																		value="2" />
+																	<space />
+																	<radio
+																		id="Tipo_trab_madre_sustituta3" label="Estable"
+																		value="3" />
+																	<space />
+																</radiogroup>
+															</cell>
+														</row>
+
+														<row>
+															<cell
+																colspan="7">
+																<label
+																	value="* " style="color: red"
+																	tooltiptext="Campo obligatorio" />
+																<label
+																	id="lbRelaciones"
+																	value="Describa las relaciones Familiares y Convivientes: " />
+																<textbox
+																	id="tbxRelaciones" width="98%" rows="3"
+																	style="text-transform:uppercase" />
+															</cell>
+														</row>
+
+														<row>
+															<cell
+																colspan="7">
+																<label
+																	value="* " style="color: red"
+																	tooltiptext="Campo obligatorio" />
+																<label
+																	id="lbSituaciones"
+																	value="Describa otras situaciones en el Entorno Familiar: " />
+																<textbox
+																	id="tbxSituaciones" width="98%" rows="3"
+																	style="text-transform:uppercase" />
+															</cell>
+														</row>
+														<row>
+															<cell
+																colspan="8">
+																<groupbox
+																	mold="3d">
+																	<grid
+																		sclass="GridSinBorde" style="border:none">
+																		<columns>
+																			<column
+																				label="" width="10px" />
+																			<column
+																				label="" width="170px" />
+																			<column
+																				label="" width="240px" />
+																			<column
+																				label="" width="170px" />
+																			<column
+																				label="" width="240px" />
+																		</columns>
+																		<rows>
+																			<row
+																				visible="false">
+																				<cell />
+																				<cell>
+																					<label
+																						value="Transtornos psicológicos" />
+																				</cell>
+																				<cell>
+																					<radiogroup
+																						id="rdbTrans_psicologicos">
+																						<radio
+																							id="Trans_psicologicos" label="SÍ" value="1" />
+																						<space />
+																						<radio
+																							id="Trans_psicologicos2" label="NO" value="2"
+																							checked="true" />
+																						<space />
+																						<radio
+																							id="Trans_psicologicos3" label="NO SÉ" value="3" />
+																						<space />
+																					</radiogroup>
+																				</cell>
+																				<cell>
+																					<label
+																						value="Alcohol droga" />
+																				</cell>
+																				<cell>
+																					<radiogroup
+																						id="rdbAlcohol_droga">
+																						<radio
+																							id="Alcohol_droga" label="SÍ" value="1" />
+																						<space />
+																						<radio
+																							id="Alcohol_droga2" label="NO" value="2"
+																							checked="true" />
+																						<space />
+																						<radio
+																							id="Alcohol_droga3" label="NO SÉ" value="3" />
+																						<space />
+																					</radiogroup>
+																				</cell>
+																			</row>
+																			<row>
+																				<cell />
+																				<cell>
+																					<label
+																						value="Violencia intrafamiliar" />
+																				</cell>
+																				<cell>
+																					<radiogroup
+																						id="rdbViolencia_intrafamili">
+																						<radio
+																							id="Violencia_intrafamili" label="SÍ"
+																							checked="true" value="1" />
+																						<space />
+																						<radio
+																							id="Violencia_intrafamili2" label="NO" value="2"
+																							checked="true" />
+																						<space />
+																						<radio
+																							id="Violencia_intrafamili3" label="NO SÉ"
+																							value="3" />
+																						<space />
+																					</radiogroup>
+																				</cell>
+																				<cell>
+																					<label
+																						value="Madre adolescente" />
+																				</cell>
+																				<cell>
+																					<radiogroup
+																						id="rdbMadre_adolesc">
+																						<radio
+																							id="Madre_adolesc" label="SÍ" value="1" />
+																						<space />
+																						<radio
+																							id="Madre_adolesc2" label="NO" value="2"
+																							checked="true" />
+																						<space />
+																						<radio
+																							id="Madre_adolesc3" label="NO SÉ" value="3" />
+																						<space />
+																					</radiogroup>
+																				</cell>
+																			</row>
+																			<row>
+																				<cell />
+																				<cell>
+																					<label
+																						value="Judiciales" />
+																				</cell>
+																				<cell>
+																					<radiogroup
+																						id="rdbJudiciales">
+																						<radio
+																							id="Judiciales" label="SÍ" value="1" />
+																						<space />
+																						<radio
+																							id="Judiciales2" label="NO" value="2"
+																							checked="true" />
+																						<space />
+																						<radio
+																							id="Judiciales3" label="NO SÉ" value="3" />
+																						<space />
+																					</radiogroup>
+																				</cell>
+																				<cell>
+																					<label
+																						value="Otros" />
+																				</cell>
+																				<cell>
+																					<radiogroup
+																						id="rdbOtros"
+																						onCheck="formAlteracion_joven.habilitarTexboxRadio(rdbOtros,tbxCual_otro)">
+																						<radio
+																							id="Otros" label="SÍ" value="2" />
+																						<space />
+																						<radio
+																							id="Otros2" label="NO" value="1" checked="true" />
+																						<space />
+																						<radio
+																							id="Otros3" label="NO SÉ" value="3" />
+																						<space />
+																					</radiogroup>
+																				</cell>
+																			</row>
+																			<row>
+																				<cell />
+																				<cell>
+																					<label
+																						value="¿Cúal?">
+																					</label>
+																				</cell>
+																				<cell
+																					colspan="4">
+																					<textbox
+																						id="tbxCual_otro" width="550px" readonly="true"
+																						rows="3">
+																					</textbox>
+																				</cell>
+																			</row>
+																		</rows>
+																	</grid>
+																</groupbox>
+															</cell>
+														</row>
+														<row>
+															<cell
+																colspan="8">
+																<label
+																	value="Observaciones" />
+																<textbox
+																	id="tbxObservaciones_antec_famili" width="99%" rows="4"
+																	style="text-transform:uppercase" />
+															</cell>
+														</row>
+
+														<row>
+															<cell
+																colspan="8">
+																<groupbox
+																	mold="3d">
+																	<grid
+																		sclass="GridSinBorde" style="border:none">
+																		<columns>
+																			<column
+																				label="" width="10px" />
+																			<column
+																				label="" width="130px" />
+																			<column
+																				label="" width="288px" />
+																			<column
+																				label="" width="130px" />
+																			<column
+																				label="" width="290px" />
+																		</columns>
+																		<rows>
+																			<row>
+																				<cell />
+																				<cell>
+																					<label
+																						value="Percepción familiar">
+																					</label>
+																				</cell>
+																				<cell>
+																					<listbox
+																						id="lbxPercepcion_familia" mold="select"
+																						width="120px">
+																						<listitem
+																							label="Buena" value="0" />
+																						<listitem
+																							label="Regular" value="1" />
+																						<listitem
+																							label="Mala" value="2" />
+																						<listitem
+																							label="No hay percepcion" value="3"
+																							selected="true" />
+																					</listbox>
+																				</cell>
+																				<cell>
+																					<label
+																						value="¿Donde vive?">
+																					</label>
+																				</cell>
+																				<cell>
+																					<listbox
+																						id="lbxVive_instituto" mold="select"
+																						width="120px">
+																						<listitem
+																							label="En instituto" value="0" />
+																						<listitem
+																							label="En la calle" value="1" />
+																						<listitem
+																							label="Solo" value="2" />
+																						<listitem
+																							label="Comparte cama" value="3" selected="true" />
+																					</listbox>
+																				</cell>
+																			</row>
+																			<row>
+																				<cell />
+																				<cell>
+																					<label
+																						value="Energía eléctrica" />
+																				</cell>
+																				<cell>
+																					<radiogroup
+																						id="rdbEnergia_electrica">
+																						<radio
+																							id="Energia_electrica1" label="SÍ" checked="true"
+																							value="1" />
+																						<space />
+																						<radio
+																							id="Energia_electrica2" label="NO" value="2" />
+																						<space />
+																					</radiogroup>
+																				</cell>
+																				<cell>
+																					<label
+																						value="Agua:" />
+																				</cell>
+																				<cell>
+																					<radiogroup
+																						id="rdbAgua_hogar">
+																						<radio
+																							id="Agua_hogar" label="En el hogar"
+																							checked="true" value="1" />
+																						<space />
+																						<radio
+																							id="Agua_hogar2" label="Fuera del hogar"
+																							value="2" />
+																						<space />
+																					</radiogroup>
+																				</cell>
+																			</row>
+																			<row>
+																				<cell></cell>
+																				<cell>
+																					<label
+																						value="Número de cuartos">
+																					</label>
+																				</cell>
+																				<cell>
+																					<intbox
+																						id="ibxNumero_cuartos" width="50px"
+																						maxlength="3">
+																					</intbox>
+																				</cell>
+																				<cell>
+																					<label
+																						value="Excreta:" />
+																				</cell>
+																				<cell>
+																					<radiogroup
+																						id="rdbExcreta">
+																						<radio
+																							id="Excreta" label="En el hogar" checked="true"
+																							value="1" />
+																						<space />
+																						<radio
+																							id="Excreta2" label="Fuera del hogar" value="2" />
+																						<space />
+																					</radiogroup>
+																				</cell>
+																			</row>
+																			<row>
+																				<cell
+																					colspan="6">
+																					<label
+																						value="Observaciones" />
+																					<textbox
+																						id="tbxObservaciones_vivienda" width="99%"
+																						rows="4" style="text-transform:uppercase" />
+																				</cell>
+																			</row>
+																		</rows>
+																	</grid>
+																</groupbox>
+															</cell>
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+
+									<!-- fila 7 -->
+									<row>
+										<cell colspan="6">
+											<groupbox mold="3d"
+												width="100%" closable="false">
+												<caption
+													label="ANTECEDENTES MÉDICOS FAMILIARES" />
+												<grid
+													sclass="GridSinBorde" style="border:none">
+													<rows>
+														<row>
+															<cell>
+																<groupbox
+																	mold="3d">
+																	<grid
+																		sclass="GridSinBorde" style="border:none">
+																		<columns>
+																			<column
+																				width="20px" />
+																			<column
+																				label="" width="120px" />
+																			<column
+																				label="" width="80px" />
+																			<column
+																				label="" />
+																			<column
+																				label="" width="120px" />
+																			<column
+																				label="" width="80px" />
+																			<column
+																				label="" />
+																			<column
+																				width="20px" />
+																		</columns>
+																		<rows>
+																			<row>
+																				<cell />
+																				<cell>
+																					<checkbox
+																						id="chbNecrologicos"
+																						onCheck="formAlteracion_joven.seleccion_check(self, new AbstractComponent[]{tbxCual_necrologico})" />
+																					<space />
+																					<label
+																						id="lbNecrologicos" value="Neurológicos: " />
+																				</cell>
+																				<cell>
+																					<label
+																						id="lbCual_necrologico" value="¿Cuál? " />
+																				</cell>
+																				<cell>
+																					<textbox
+																						id="tbxCual_necrologico" hflex="1"
+																						style="text-transform:uppercase" readonly="true" />
+																				</cell>
+
+																				<cell>
+																					<checkbox
+																						id="chbMentales"
+																						onCheck="formAlteracion_joven.seleccion_check(self, new AbstractComponent[]{tbxCual_mentales})" />
+																					<space />
+																					<label
+																						id="lbMentales" value="Mentales: " />
+																				</cell>
+																				<cell>
+																					<label
+																						id="lbCual_mentales" value="¿Cuál? " />
+																				</cell>
+																				<cell>
+																					<textbox
+																						id="tbxCual_mentales" hflex="1"
+																						style="text-transform:uppercase" readonly="true" />
+																				</cell>
+																				<cell />
+																			</row>
+
+
+																			<row>
+																				<cell />
+																				<cell>
+																					<checkbox
+																						id="chbDislipidemia"
+																						onCheck="formAlteracion_joven.seleccion_check(self, new AbstractComponent[]{tbxQuien_dislipidemia})" />
+																					<space />
+																					<label
+																						id="lbDislipidemia" value="Dislipidemia: " />
+																				</cell>
+																				<cell>
+																					<label
+																						id="lbQuien_dislipidemia" value="¿Quién? " />
+																				</cell>
+																				<cell>
+																					<textbox
+																						id="tbxQuien_dislipidemia" hflex="1"
+																						style="text-transform:uppercase" readonly="true" />
+																				</cell>
+
+																				<cell>
+																					<checkbox
+																						id="chbDiabetes"
+																						onCheck="formAlteracion_joven.seleccion_check(self, new AbstractComponent[]{tbxQuien_diabetes})" />
+																					<space />
+																					<label
+																						id="lbDiabetes" value="Diabetes: " />
+																				</cell>
+
+																				<cell>
+																					<label
+																						id="lbQuien_diabetes" value="¿Quién? " />
+																				</cell>
+																				<cell>
+																					<textbox
+																						id="tbxQuien_diabetes" hflex="1"
+																						style="text-transform:uppercase" readonly="true" />
+																				</cell>
+																				<cell />
+																			</row>
+
+																			<row>
+																				<cell />
+																				<cell>
+																					<checkbox
+																						id="chbHipertencion"
+																						onCheck="formAlteracion_joven.seleccion_check(self, new AbstractComponent[]{tbxQuien_hepertencion})" />
+																					<space />
+																					<label
+																						id="lbHipertencion" value="Hipertensión: " />
+																				</cell>
+
+																				<cell>
+																					<label
+																						id="lbQuien_hepertencion" value="¿Quién? " />
+																				</cell>
+																				<cell>
+																					<textbox
+																						id="tbxQuien_hepertencion" hflex="1"
+																						style="text-transform:uppercase" readonly="true" />
+																				</cell>
+
+																				<cell>
+																					<checkbox
+																						id="chbCancer1"
+																						onCheck="formAlteracion_joven.seleccion_check(self, new AbstractComponent[]{tbxQuien_cancer1})" />
+																					<space />
+																					<label
+																						id="lbCancer1" value="Cancér: " />
+																				</cell>
+
+																				<cell>
+																					<label
+																						id="lbQuien_cancer1" value="¿Quién? " />
+																				</cell>
+																				<cell>
+																					<textbox
+																						id="tbxQuien_cancer1" hflex="1"
+																						style="text-transform:uppercase" readonly="true" />
+																				</cell>
+																				<cell />
+																			</row>
+																		</rows>
+																	</grid>
+																</groupbox>
+															</cell>
+														</row>
+
+														<row>
+															<cell>
+																<groupbox
+																	mold="3d">
+																	<grid
+																		sclass="GridSinBorde" style="border:none">
+																		<columns>
+																			<column
+																				label="" width="20px" />
+																			<column
+																				label="" width="140px" />
+																			<column
+																				label="" width="60px" />
+																			<column
+																				label="" />
+																			<column
+																				label="" width="20px" />
+																		</columns>
+																		<rows>
+																			<row>
+																				<cell />
+																				<cell>
+																					<checkbox
+																						id="chbAlcoholismo" />
+																					<space />
+																					<label
+																						id="lbAlcoholismo" value="Alcoholismo: " />
+																				</cell>
+																				<cell
+																					colspan="3" />
+																			</row>
+
+																			<row>
+																				<cell />
+																				<cell>
+																					<checkbox
+																						id="chbDrogadiccion"
+																						onFocus="tbxCual_alcoholismo.focus();"
+																						onCheck="formAlteracion_joven.deshabilitar_conCheck(self, new AbstractComponent[]{tbxCual_alcoholismo})" />
+																					<space />
+																					<label
+																						id="lbDrogadiccion" value="Drogadicción: " />
+																				</cell>
+
+																				<cell>
+																					<label
+																						id="lbCual_alcoholismo" value="¿Cuál? " />
+																				</cell>
+																				<cell>
+																					<textbox
+																						id="tbxCual_alcoholismo" hflex="1"
+																						style="text-transform:uppercase" readonly="true" />
+																				</cell>
+																				<cell />
+																			</row>
+
+																			<row>
+																				<cell />
+																				<cell
+																					colspan="3">
+																					<groupbox
+																						mold="3d">
+																						<grid
+																							sclass="GridSinBorde" style="border:none">
+																							<columns>
+																								<column
+																									label="" />
+																							</columns>
+																							<rows>
+																								<row>
+																									<cell>
+																										<label
+																											id="lbTabaquismo" value="Tabaquismo: " />
+																										<space />
+																										<radiogroup
+																											id="rdbTabaquismo"
+																											onCheck="formAlteracion_joven.seleccion_tabaquismo()">
+																											<radio
+																												id="Tabaquismo1" label="SÍ" value="1" />
+																											<space />
+																											<radio
+																												id="Tabaquismo2" label="NO" checked="true"
+																												value="2" />
+																											<space />
+																										</radiogroup>
+																										<space />
+																										<radiogroup
+																											id="rdbActivopasivo"
+																											onCheck="formAlteracion_joven.seleccion_activo_pasivo()"
+																											visible="false">
+																											<radio
+																												id="activo_pasivo1" value="1"
+																												label="Activo" />
+																											<space />
+																											<radio
+																												id="activo_pasivo2" value="2" label="Pasivo"
+																												checked="true" />
+																											<space />
+																										</radiogroup>
+																										<space
+																											width="60px" />
+																										<label
+																											id="lbFecha_hasta" value="Hasta: "
+																											visible="false" />
+																										<space></space>
+																										<datebox
+																											id="dtbxFecha_hasta"
+																											onCreate="self.value = new Date();"
+																											format="yyyy-MM-dd" width="100px"
+																											visible="false" />
+																										<space
+																											width="60px" />
+																										<label
+																											id="lbNo_cigarros"
+																											value="No. Cigarros / Dias: "
+																											visible="false" />
+																										<space />
+																										<intbox
+																											constraint="no negative:Este valor no puede ser negativo"
+																											id="ibxNo_cigarros" width="40px"
+																											visible="false" />
+																									</cell>
+																								</row>
+																							</rows>
+																						</grid>
+																					</groupbox>
+																				</cell>
+																				<cell />
+																			</row>
+																		</rows>
+																	</grid>
+																</groupbox>
+															</cell>
+														</row>
+
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+
+
+									<!-- fila 9 -->
+									<row>
+										<cell colspan="6">
+											<groupbox mold="3d"
+												width="100%" closable="false">
+												<caption
+													label="REVISIÓN POR SISTEMAS" />
+												<grid
+													sclass="GridSinBorde" style="border:none">
+													<columns>
+														<column label=""
+															width="100%" />
+													</columns>
+													<rows>
+														<row>
+															<cell>
+																<label
+																	value="* " style="color: red"
+																	tooltiptext="Campo obligatorio" />
+																<label
+																	value="Revisión por sistemas" />
+																<textbox
+																	id="tbxRevision_sistemas" width="99%" rows="4"
+																	style="text-transform:uppercase" />
+															</cell>
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+
+									<row id="rowEstadioTanner1"
+										visible="false">
+										<cell colspan="6">
+											<groupbox
+												closable="false">
+												<tanner
+													id="macroTanner" />
+											</groupbox>
+										</cell>
+
+									</row>
+									<row id="rowEstadioTanner2"
+										visible="false">
+										<cell colspan="6">
+											<label value="* "
+												style="color: red" tooltiptext="Campo obligatorio" />
+											<label id="lbEstado_tanner"
+												value="Estíado Tanner: " />
+											<space></space>
+											<textbox
+												id="tbxEstado_tanner" width="100%"
+												style="text-transform:uppercase" rows="4" />
+										</cell>
+									</row>
+									<row>
+										<cell colspan="6">
+											<groupbox mold="3d"
+												closable="false">
+												<caption
+													label="PARACLÍNICOS ORDENADOS" />
+												<grid
+													sclass="GridSinBorde" style="border:none">
+													<columns>
+														<column />
+														<column label=""
+															width="25%" />
+														<column />
+														<column />
+														<column />
+														<column />
+														<column />
+														<column />
+														<column />
+														<column />
+														<column />
+														<column />
+														<column />
+														<column />
+														<column />
+														<column />
+														<column />
+														<column />
+														<column />
+														<column />
+														<column />
+														<column />
+													</columns>
+													<rows>
+														<row
+															style="border: 1px solid #aaaaaa">
+															<cell></cell>
+															<cell
+																align="center">
+																<label
+																	value="Examenes/Edades">
+																</label>
+															</cell>
+															<cell>
+																<label
+																	value="10">
+																</label>
+															</cell>
+															<cell>
+																<label
+																	value="11">
+																</label>
+															</cell>
+															<cell>
+																<label
+																	value="12">
+																</label>
+															</cell>
+															<cell>
+																<label
+																	value="13">
+																</label>
+															</cell>
+															<cell>
+																<label
+																	value="14">
+																</label>
+															</cell>
+															<cell>
+																<label
+																	value="15">
+																</label>
+															</cell>
+															<cell>
+																<label
+																	value="16">
+																</label>
+															</cell>
+															<cell>
+																<label
+																	value="17">
+																</label>
+															</cell>
+															<cell>
+																<label
+																	value="18">
+																</label>
+															</cell>
+															<cell>
+																<label
+																	value="19">
+																</label>
+															</cell>
+															<cell>
+																<label
+																	value="20">
+																</label>
+															</cell>
+															<cell>
+																<label
+																	value="21">
+																</label>
+															</cell>
+															<cell>
+																<label
+																	value="22">
+																</label>
+															</cell>
+															<cell>
+																<label
+																	value="23">
+																</label>
+															</cell>
+															<cell>
+																<label
+																	value="24">
+																</label>
+															</cell>
+															<cell>
+																<label
+																	value="25">
+																</label>
+															</cell>
+															<cell>
+																<label
+																	value="26">
+																</label>
+															</cell>
+															<cell>
+																<label
+																	value="27">
+																</label>
+															</cell>
+															<cell>
+																<label
+																	value="28">
+																</label>
+															</cell>
+															<cell>
+																<label
+																	value="29">
+																</label>
+															</cell>
+
+														</row>
+														<row
+															style="border: 1px solid #aaaaaa">
+															<cell>
+																<checkbox
+																	id="chbHemoclasificacion_ordenados" />
+																<checkbox
+																	id="chbHemoclasificacion_paraclinicos" visible="false" />
+
+															</cell>
+															<cell>
+																<label
+																	value="Hemoclasificación" />
+															</cell>
+															<cell
+																colspan="20">
+																<label
+																	value="Una vez cuando no se conoce" />
+															</cell>
+														</row>
+														<row
+															style="border: 1px solid #aaaaaa">
+															<cell>
+																<checkbox
+																	id="chbHb_hto" />
+															</cell>
+															<cell>
+																<label
+																	value="Hemoglobina (Hb)" />
+															</cell>
+															<cell
+																colspan="5">
+																<label
+																	value="Una vez" />
+															</cell>
+															<cell
+																colspan="5">
+																<label
+																	value="Una vez " />
+															</cell>
+															<cell
+																colspan="5">
+																<label
+																	value="Una vez en mujeres " />
+															</cell>
+															<cell
+																colspan="5">
+																<label
+																	value="Una vez en mujeres  " />
+															</cell>
+
+														</row>
+														<row
+															style="border: 1px solid #aaaaaa">
+															<cell>
+																<checkbox
+																	id="chbHto" />
+															</cell>
+															<cell>
+																<label
+																	value="Hematocrito (Hto)" />
+															</cell>
+															<cell
+																colspan="5">
+																<label
+																	value="Una vez" />
+															</cell>
+															<cell
+																colspan="5">
+																<label
+																	value="Una vez " />
+															</cell>
+															<cell
+																colspan="5">
+																<label
+																	value="Una vez en mujeres " />
+															</cell>
+															<cell
+																colspan="5">
+																<label
+																	value="Una vez en mujeres  " />
+															</cell>
+														</row>
+														<row
+															style="border: 1px solid #aaaaaa">
+															<cell>
+																<checkbox
+																	id="chbColesterol" />
+															</cell>
+															<cell>
+																<label
+																	value="Colesterol H.D.L" />
+															</cell>
+															<cell
+																colspan="20">
+																<label
+																	value="Una vez cuando existen antecedentes familiares y personales " />
+
+															</cell>
+														</row>
+														<row
+															style="border: 1px solid #aaaaaa">
+															<cell>
+																<checkbox
+																	id="chbVdrl" />
+															</cell>
+															<cell>
+																<label
+																	value="V.D.R.L" />
+															</cell>
+															<cell
+																colspan="20">
+																<label
+																	value="Cuando existe alto riesgo de infección" />
+															</cell>
+														</row>
+														<row
+															style="border: 1px solid #aaaaaa">
+															<cell>
+																<checkbox
+																	id="chbVih" />
+															</cell>
+															<cell>
+																<label
+																	value="V.I.H" />
+															</cell>
+															<cell
+																colspan="20">
+																<label
+																	value="Cuando existe alto riesgo de infección (Pedir consentimiento)" />
+
+															</cell>
+														</row>
+														<row
+															style="border: 1px solid #aaaaaa">
+															<cell>
+																<checkbox
+																	id="chbCitologia" />
+															</cell>
+															<cell>
+																<label
+																	value="Citología C-U" />
+															</cell>
+															<cell
+																colspan="15">
+																<label
+																	value="Cada año si es sexualmente activa" />
+
+															</cell>
+															<cell
+																colspan="5">
+																<label
+																	value="Esquema 1-1-3" />
+
+															</cell>
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+
+
+									<row>
+										<cell colspan="6">
+											<groupbox mold="3d"
+												closable="false">
+												<caption
+													label="RESULTADOS PARACLÍNICOS" style="font-weight:bold" />
+												<vbox
+													id="vboxParaclinicos" width="100%" />
+											</groupbox>
+										</cell>
+									</row>
+									<!-- fila 13 -->
+									<row>
+										<cell colspan="6">
+											<impresionDiagnostica
+												id="macroImpresion_diagnostica" />
+										</cell>
+									</row>
+
+									<row>
+										<cell colspan="6">
+											<groupbox mold="3d"
+												width="100%" closable="false">
+												<caption
+													label="PLAN INTERVENCIÓN" />
+												<grid
+													sclass="GridSinBorde" style="border:none">
+													<columns>
+														<column label=""
+															width="100%" />
+													</columns>
+													<rows>
+														<row>
+															<cell>
+																<label
+																	value="* " style="color: red"
+																	tooltiptext="Campo obligatorio" />
+																<label
+																	value="Plan intervención" />
+																<textbox
+																	id="tbxPlan_intervencion" width="99%" rows="4"
+																	style="text-transform:uppercase" />
+															</cell>
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+
+									<row>
+										<cell colspan="6">
+											<groupbox mold="3d"
+												closable="false">
+												<caption
+													label="PLANES Y MANEJOS" />
+												<div style=""
+													id="divModuloFarmacologico" visible="true">
+												</div>
+												<separator
+													height="10px" />
+												<div style=""
+													id="divModuloOrdenamiento" visible="true">
+												</div>
+												<autorizaciones
+													id="divModuloAutorizacion" widthW="900px" heightW="360px"
+													modo="1" idDiv="divModuloOrdenamiento" visibleM="false" />
+											</groupbox>
+										</cell>
+									</row>
+									<row id="rowAgudeza_visual"
+										visible="false">
+										<cell colspan="6">
+											<agudeza_visual
+												id="macroAgudeza_visual" />
+										</cell>
+									</row>
+									<row>
+										<cell colspan="6">
+											<remision_interna
+												id="macroRemision_interna" />
+										</cell>
+									</row>
+									<row>
+										<cell colspan="6">
+											<groupbox mold="3d"
+												closable="false" visible="true" id="gbxRemisiones">
+												<caption
+													label="REMISION EXTERNA" />
+												<div style=""
+													id="divModuloRemisiones_externas" visible="true">
+												</div>
+											</groupbox>
+										</cell>
+									</row>
+
+								</rows>
+							</grid>
+						</groupbox>
+					</div>
+				</center>
+			</borderlayout>
+		</groupbox>
+	</window>
+</zk>

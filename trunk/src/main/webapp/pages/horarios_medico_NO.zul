@@ -1,0 +1,303 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formHorarios_medico" width="100%" height="97%"
+		use="healthmanager.controller.HorariosAction" border="none">
+		<style src="estilo.css" />
+
+
+		<groupbox id="groupboxConsulta" visible="true" closable="false"
+			height="90%" mold="3d">
+			<caption label="Consultar"
+				style="color: black;font-weight: bold" />
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" mold="paging" pageSize="20"
+				vflex="1">
+				<auxhead>
+					<auxheader colspan="4">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<separator />
+							<textbox id="tbxValue" width="200px"
+								onOK="formHorarios_medico.buscarDatos();"
+								style="text-transform:uppercase" />
+							<separator />
+							<button mold="trendy"
+								image="/images/Magnifier.gif"
+								onClick="formHorarios_medico.buscarDatos();"
+								tooltiptext="Consultar Horario" />
+							<separator />
+							<button mold="trendy"
+								image="/images/New16.gif"
+								onClick='formHorarios_medico.accionForm(true,"registrar");'
+								tooltiptext="Nuevo Horario" />
+						</hbox>
+					</auxheader>
+
+				</auxhead>
+				<auxhead>
+					<auxheader colspan="2" label="MEDICO" align="center"/>
+					<auxheader label="HORARIO" align="center"/>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Identificacion" width="170px" />
+					<column label="Nombre" />
+					<column label="Area de horario" />
+					<column label="Acciones" width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<!-- *************************** -->
+		<!-- *** Insertar/Actualizar *** -->
+		<!-- *************************** -->
+		<groupbox id="groupboxEditar" closable="false" mold="3d" visible="false"
+			height="97%">
+			<textbox id="tbxAccion" value="registrar" visible="false" />
+			<toolbar width="100%" align="start">
+				<toolbarbutton image="/images/Save16.gif"
+					label="Guardar Horario"
+					onClick="formHorarios_medico.guardarDatos();" id="btGuardar" />
+				<space />
+
+				<toolbarbutton image="/images/New16.gif"
+					label="Nueva Horario"
+					onClick='formHorarios_medico.accionForm(true,"registrar");'
+					id="btNew" />
+				<space />
+				<toolbarbutton image="/images/trasladar.gif"
+					label="Cancelar" onClick='formHorarios_medico.accionForm(false,tbxAccion.getText());'
+					id="btCancel" />
+			</toolbar>
+			<groupbox id="groupboxHorarios" closable="false"
+				style="border:0px">
+				<hlayout>
+					<label value="Medico : " />
+					<bandbox id="tbxCodigoMedico" autodrop="true"
+						readonly="true" mold="rounded" width="170px"
+						onOpen='formHorarios_medico.buscarMedicos(tbxValuePrestador.getValue(),lbxPrestador)'>
+						<bandpopup>
+							<vbox>
+								<toolbar>
+									<label value="Buscar: " />
+									<textbox id="tbxValuePrestador"
+										onChanging='formHorarios_medico.buscarMedicos(event.getValue(),lbxPrestador)'
+										style="text-transform:uppercase;" />
+									<toolbarbutton
+										image="/images/borrar.gif" tooltiptext="Quitar"
+										onClick='formHorarios_medico.selectedMedicos(new Listitem(), tbxCodigoMedico, tbxNomMedico)' />
+								</toolbar>
+								<listbox height="300px" width="600px"
+									mold="paging" pageSize="8" id="lbxPrestador"
+									onSelect='formHorarios_medico.selectedMedicos(self.getSelectedItem(), tbxCodigoMedico, tbxNomMedico)'>
+									<listhead>
+										<listheader
+											label="Identificación" />
+										<listheader label="Nombres" />
+										<listheader label="Apellidos" />
+										<listheader
+											label="Especialidad" />
+									</listhead>
+								</listbox>
+							</vbox>
+						</bandpopup>
+					</bandbox>
+					<textbox id="tbxNomMedico" width="265px"
+						style="text-transform:uppercase" readonly="true" />
+				</hlayout>
+				<separator orient="horizontal" />
+				<hlayout>
+					<label value="Dias : " />
+					<space width="20px" />
+					<label id="lbLunes" value="Lunes: " />
+					<checkbox id="chbLunes" checked="true"
+						onClick="headLunes.setVisible(chbLunes.isChecked());cantidadColumnas()" />
+					<space />
+					<label id="lbMartes" value="Martes: " />
+					<checkbox id="chbMartes" checked="true"
+						onClick="headMartes.setVisible(chbMartes.isChecked());cantidadColumnas()" />
+					<space />
+					<label id="lbMiercoles" value="Miercoles: " />
+					<checkbox id="chbMiercoles" checked="true"
+						onClick="headMiercoles.setVisible(chbMiercoles.isChecked()); cantidadColumnas()" />
+					<space />
+					<label id="lbJueves" value="Jueves: " />
+					<checkbox id="chbJueves" checked="true"
+						onClick="headJueves.setVisible(chbJueves.isChecked()); cantidadColumnas()" />
+					<space />
+					<label id="lbViernes" value="Viernes: " />
+					<checkbox id="chbViernes" checked="true"
+						onClick="headViernes.setVisible(chbViernes.isChecked()); cantidadColumnas()" />
+					<space />
+					<label id="lbSabado" value="Sabado: " />
+					<checkbox id="chbSabado"
+						onClick="headSabado.setVisible(chbSabado.isChecked()); cantidadColumnas()" />
+					<space />
+					<label id="lbDomingo" value="Domingo: " />
+					<checkbox id="chbDomingo"
+						onClick="headDomingo.setVisible(chbDomingo.isChecked());cantidadColumnas()" />
+				</hlayout>
+			</groupbox>
+			<groupbox id="groupboxDetallesHorarios" closable="false"
+				vflex="1"  height="50%" style="border:0px">
+				<listbox id="lbxCuadriculaHorario" height="90%"
+					vflex="1" 
+					onSelect="lbxCuadriculaHorario.getSelectedItem().setSelected(false)">
+					<auxhead>
+						<auxheader label="Horario de Atención"
+							align="center" id="auxheaderDias" colspan="1"
+							onCreate="cantidadColumnas();" />
+					</auxhead>
+					<listhead>
+						<listheader id="headLunes">
+							<hlayout>
+								<label value="Lunes" />
+								<space />
+								<button label="+" mold="trendy"
+									tooltiptext="Agregar item al dia Lunes"
+									onClick='formHorarios_medico.abrirFormularioDetallesHorarios("lunes")' />
+							</hlayout>
+						</listheader>
+						<listheader id="headMartes">
+							<hlayout>
+								<label value="Martes" />
+								<space />
+								<button label="+" mold="trendy"
+									tooltiptext="Agregar item al dia Martes"
+									onClick='formHorarios_medico.abrirFormularioDetallesHorarios("martes")' />
+							</hlayout>
+						</listheader>
+						<listheader id="headMiercoles">
+							<hlayout>
+								<label value="Miercoles" />
+								<space />
+								<button label="+" mold="trendy"
+									tooltiptext="Agregar item al dia Miercoles"
+									onClick='formHorarios_medico.abrirFormularioDetallesHorarios("miercoles")' />
+							</hlayout>
+						</listheader>
+						<listheader id="headJueves">
+							<hlayout>
+								<label value="Jueves" />
+								<space />
+								<button label="+" mold="trendy"
+									tooltiptext="Agregar item al dia Jueves"
+									onClick='formHorarios_medico.abrirFormularioDetallesHorarios("jueves")' />
+							</hlayout>
+						</listheader>
+						<listheader id="headViernes">
+							<hlayout>
+								<label value="Viernes" />
+								<space />
+								<button label="+" mold="trendy"
+									tooltiptext="Agregar item al dia Viernes"
+									onClick='formHorarios_medico.abrirFormularioDetallesHorarios("viernes")' />
+							</hlayout>
+						</listheader>
+						<listheader id="headSabado" visible="false">
+							<hlayout>
+								<label value="Sabado" />
+								<space />
+								<button label="+" mold="trendy"
+									tooltiptext="Agregar item al dia Sabado"
+									onClick='formHorarios_medico.abrirFormularioDetallesHorarios("sabado")' />
+							</hlayout>
+						</listheader>
+						<listheader id="headDomingo" visible="false">
+							<hlayout>
+								<label value="Domingo" />
+								<space />
+								<button label="+" mold="trendy"
+									tooltiptext="Agregar item al dia Domingo"
+									onClick='formHorarios_medico.abrirFormularioDetallesHorarios("domingo")' />
+							</hlayout>
+						</listheader>
+					</listhead>
+					<listitem>
+						<listcell id="celdaLunes">
+							<vlayout id="vly_lunes" />
+						</listcell>
+						<listcell id="celdaMartes">
+							<vlayout id="vly_martes" />
+						</listcell>
+						<listcell id="celdaMiercoles">
+							<vlayout id="vly_miercoles" />
+						</listcell>
+						<listcell id="celdaJueves">
+							<vlayout id="vly_jueves" />
+						</listcell>
+						<listcell id="celdaVienes">
+							<vlayout id="vly_viernes" />
+						</listcell>
+						<listcell id="celdaSabado">
+							<vlayout id="vly_sabado" />
+						</listcell>
+						<listcell id="celdaDimingo">
+							<vlayout id="vly_domingo" />
+						</listcell>
+					</listitem>
+					<listfoot>
+						<listfooter span="7">
+							<toolbar id="tb" sclass="vista"
+								height="20px" align="end">
+								<toolbarbutton style="" id="btnGuardar"
+									label="Guardar" onClick="formHorarios_medico.guardarDatos();"
+									visible="false" />
+								<toolbarbutton style="" label="Limpiar" image="/images/tab_derecha.png"
+									onClick='confirmacionLimpiar()' />
+								<toolbarbutton style="" label="Cancelar"
+									onClick='if(confirmacionLimpiar()){formHorarios_medico.accionForm(false,"buscar");}' visible="false"/>
+							</toolbar>
+						</listfooter>
+					</listfoot>
+				</listbox>
+			</groupbox>
+		</groupbox>
+		<zscript>
+	<![CDATA[
+	public void cantidadColumnas() {
+		int cantidad = 0;
+		if (chbLunes.isChecked())
+			cantidad++;
+		if (chbMartes.isChecked())
+			cantidad++;
+		if (chbMiercoles.isChecked())
+			cantidad++;
+		if (chbJueves.isChecked())
+			cantidad++;
+		if (chbViernes.isChecked())
+			cantidad++;
+		if (chbSabado.isChecked())
+			cantidad++;
+		if (chbDomingo.isChecked())
+			cantidad++;
+		auxheaderDias.setColspan(cantidad);
+	}
+	public boolean confirmacionLimpiar() throws Exception {
+		boolean retorno = false;
+		Messagebox
+				.show(
+						"¿Esta seguro que desea limpiar la plantilla?. Los datos no guardados se perderan",
+						"Limpiar Plnatilla", Messagebox.YES + Messagebox.NO,
+						Messagebox.QUESTION,
+						new org.zkoss.zk.ui.event.EventListener() {
+							public void onEvent(Event event) {
+								if ("onYes".equals(event.getName())) {
+									// do the thing
+									formHorarios_medico.limpiarPlantilla();
+									retorno = true;
+								}
+							}
+						});
+		return retorno;
+	}
+]]>         
+</zscript>
+	</window>
+</zk>

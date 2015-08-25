@@ -1,0 +1,231 @@
+<?page title="Phistorias_clinicas" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formParaclinicos" width="100%" height="97%"
+		use="healthmanager.controller.paraclinicos.ParaclinicosAction">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+		<borderlayout>
+			<center>
+				<groupbox mold="3d" closable="false">
+					<caption
+						label="Registro de Historias clinicas y examenes paraclinicos" />
+
+					<grid>
+						<columns visible="false">
+							<column />
+							<column width="20px" />
+							<column />
+							<column width="20px" />
+							<column />
+						</columns>
+
+						<rows>
+							<row>
+								<cell valign="top">
+									<listbox id="listboxHistorias"
+										checkmark="true" mold="paging" pageSize="7">
+										<auxhead>
+											<auxheader colspan="4"
+												label="" align="center">
+												<toolbar>
+													<label
+														value="Historias Clinicas" style="font-weight:bold" />
+													<space />
+													<toolbarbutton
+														label="Agregar" image="/images/add.png"
+														onClick="formParaclinicos.agregarHistoriaClinica()" />
+													<space />
+													<toolbarbutton
+														label="Eliminar" image="/images/borrar.gif"
+														onClick="formParaclinicos.eliminarHistoriaClinica()" />
+												</toolbar>
+											</auxheader>
+										</auxhead>
+										<listhead>
+											<listheader width="30px" />
+											<listheader label="Codigo"
+												width="80px" />
+											<listheader label="Nombre" />
+											<listheader
+												label="Descripcion" width="100px" />
+										</listhead>
+									</listbox>
+								</cell>
+
+								<cell />
+
+								<cell valign="top">
+									<listbox id="listboxExamenes"
+										checkmark="true" mold="paging" pageSize="7">
+										<auxhead>
+											<auxheader colspan="5"
+												label="" align="center">
+												<toolbar>
+													<label
+														value="Examenes" style="font-weight:bold" />
+													<space />
+													<listbox
+														id="lbxTipo_examen" mold="select"
+														onSelect="formParaclinicos.consultarExamenesParaclinicos()">
+														<listitem
+															label="Examen Paraclinico" value="1" selected="true" />
+														<listitem
+															label="Valoracion Obstetrica" value="2" />
+													</listbox>
+													<space />
+													<toolbarbutton
+														label="Agregar" image="/images/add.png"
+														onClick="formParaclinicos.agregarExamenParaclinico()" />
+													<space />
+													<toolbarbutton
+														label="Eliminar" image="/images/borrar.gif"
+														onClick="formParaclinicos.eliminarExamenParaclinico()" />
+												</toolbar>
+											</auxheader>
+										</auxhead>
+										<listhead>
+											<listheader width="30px" />
+											<listheader label="Codigo"
+												width="80px" />
+											<listheader label="Nombre" />
+											<listheader label="N/A"
+												tooltiptext="Aplicar Normal/Anormal" width="30px" />
+											<listheader
+												label="Descripcion" width="100px" />
+										</listhead>
+									</listbox>
+								</cell>
+
+								<cell />
+
+								<cell valign="top">
+
+									<listbox id="listboxAsignaciones"
+										checkmark="true" mold="paging" pageSize="6">
+										<auxhead>
+											<auxheader colspan="4"
+												label="" align="center">
+												<toolbar>
+													<label
+														value="Asiganciones de HC - EP" style="font-weight:bold" />
+													<space />
+													<toolbarbutton
+														label="Agregar" image="/images/add.png"
+														popup="popupAgregarAsociacion" />
+													<space />
+													<toolbarbutton
+														label="Eliminar" image="/images/borrar.gif" />
+												</toolbar>
+												<toolbar>
+													<label
+														value="Historia Clinica" style="font-weight:bold" />
+													<space />
+													<listbox
+														id="lbxHistorias_clinicas" mold="select" width="300px"
+														onSelect="formParaclinicos.consultarAsignaciones()" />
+												</toolbar>
+											</auxheader>
+										</auxhead>
+										<listhead>
+											<listheader width="30px" />
+											<listheader
+												label="Historia C." />
+											<listheader
+												label="Examen P." />
+										</listhead>
+									</listbox>
+
+								</cell>
+
+							</row>
+						</rows>
+
+					</grid>
+
+					<popup width="400px" id="popupAgregarAsociacion"
+						onOpen="formParaclinicos.abrirPopupAgregarAsociacion()">
+						<groupbox mold="3d" closable="false">
+							<caption label="Registrar Asocioacion" />
+
+							<grid>
+								<columns visible="false">
+									<column width="100px" />
+									<column />
+								</columns>
+								<rows>
+									<row>
+										<cell>
+											<label
+												value="Historia Clinica" />
+										</cell>
+										<cell>
+											<bandboxRegistros
+												id="bandboxHistorias" widthBandbox="80px"
+												widthListbox="400px" heightListbox="300px"
+												columnas="Codigo#65px|Nombre" />
+											<space width="5px" />
+											<textbox
+												id="tbxNombre_historia" width="130px" readonly="true" />
+											<space width="5px" />
+											<toolbarbutton
+												id="btnLimpiar_historia" image="/images/borrar.gif" />
+										</cell>
+									</row>
+
+									<row>
+										<cell>
+											<label
+												value="Examen Paraclinico" />
+										</cell>
+										<cell>
+											<bandboxRegistros
+												id="bandboxExamenes" widthBandbox="80px"
+												widthListbox="400px" heightListbox="300px"
+												columnas="Codigo#65px|Nombre" />
+											<space width="5px" />
+											<textbox
+												id="tbxNombre_examen" width="130px" readonly="true" />
+											<space width="5px" />
+											<toolbarbutton
+												id="btnLimpiar_examen" image="/images/borrar.gif" />
+										</cell>
+									</row>
+
+									<row>
+										<cell align="center"
+											colspan="2">
+											<toolbarbutton />
+											<toolbarbutton
+												image="/images/Save16.gif" label="Guardar"
+												onClick="formParaclinicos.guardarAsociacion()" />
+											<space width="10px" />
+											<toolbarbutton
+												image="/images/quit.png" label="Cerrar"
+												onClick="popupAgregarAsociacion.close()" />
+										</cell>
+									</row>
+
+								</rows>
+							</grid>
+
+						</groupbox>
+					</popup>
+
+				</groupbox>
+			</center>
+
+		</borderlayout>
+
+	</window>
+</zk>

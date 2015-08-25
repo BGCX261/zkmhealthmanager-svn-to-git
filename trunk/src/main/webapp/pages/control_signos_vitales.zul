@@ -1,0 +1,266 @@
+<?page title="Control_signos_vitales" contentType="text/html;charset=UTF-8"?>
+<?component name="informacionPacientes" macroURI="/WEB-INF/macros/informacionPacientes.zul"?>
+<?component name="vcolumna" macroURI="/WEB-INF/macros/vcolumna.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+<window id="formControl_signos_vitales" width="100%" height="97%" 
+use="healthmanager.controller.Control_signos_vitalesAction">
+<style>
+		body ,table{ margin:0; padding:0;
+		} .z-fieldset{ -moz-border-radius:5px; border-radius: 5px;
+		-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+		border: 1px solid silver; }
+		tr.z-row .z-cell{ background-image:none; }
+		tr.z-row td.z-row-hover{ background-image:none; }
+		.GridSinBorde tr.z-row td.z-row-inner, tr.z-row
+			.z-cell,div.z-grid { border: none; overflow: hidden;
+			zoom: 1; border-top: none; border-left: none;
+			border-right: none; border-bottom: none; }
+		</style>
+
+
+				<!-- **************** -->
+				<!-- Zona de Consulta -->
+				<!-- **************** -->
+				<groupbox id="groupboxConsulta" visible="false" closable="false" mold="3d" height="90%">
+				<caption label="Consultar" style="color: blue;font-weight: bold"/>
+				
+				<separator />
+				
+				<!-- ***************************** -->
+				<!--  Resultado Consulta Maestros  -->
+				<!-- ***************************** -->
+				<grid id="gridResultado" height="90%" mold="paging" pageSize="20"  vflex="1">
+				<auxhead>
+						<auxheader colspan="1">
+								<hbox align="center">
+										<label value="Criterios de B&#250;squeda :" />
+										<space />
+										<listbox id="lbxParameter" mold="select"
+												sclass="combobox" width="150px" />
+										<separator />
+										<textbox id="tbxValue" width="200px"
+												onOK="formControl_signos_vitales.buscarDatos();"
+												style="text-transform:uppercase" />
+										<separator />
+										<button mold="trendy"
+												image="/images/Magnifier.gif"
+												onClick="formControl_signos_vitales.buscarDatos();"
+												tooltiptext="Consultar Control signos vitales" />
+										<separator />
+										<button mold="trendy"
+												image="/images/New16.gif"
+												onClick='formControl_signos_vitales.accionForm(true,"registrar");'
+												tooltiptext="Nuevo Control signos vitales" />
+								</hbox>
+						</auxheader>
+				</auxhead>
+			<columns sizable="true">
+				<column label="Acciones" align="center" width="80px"/>
+			</columns>
+			<rows id="rowsResultado" width="100%" />
+			</grid>
+			</groupbox>
+			
+			<borderlayout width="100%" height="90%" id="groupboxEditar" visible="true">
+				<north border="none">
+						<toolbar width="100%" align="start">
+								<textbox id="tbxAccion" value="registrar"
+										visible="false" />
+								<toolbarbutton image="/images/Save16.gif"
+										label="Guardar"
+										onClick="formControl_signos_vitales.guardarDatos();" id="btGuardar" />
+		 		                  <toolbarbutton image="/images/New16.gif"
+										label="Nueva Control signos vitales" visible="false"
+										onClick='formControl_signos_vitales.accionForm(true,"registrar");'
+										id="btNew" />
+								<space />
+		 		                  <toolbarbutton image="/images/trasladar.gif" visible="false"
+										label="Cancelar" onClick='formControl_signos_vitales.accionForm(false,tbxAccion.getText());'
+										id="btCancel" />
+								<toolbarbutton image="/images/print_ico.gif"
+										label="Imprimir Control signos vitales"
+										onClick="formControl_signos_vitales.imprimir();"
+										id="btImprimir" visible="false"/>
+								<space />
+								<label value="Formato impresión: " visible="false"/>
+									<listbox id="lbxFormato" mold="select" width="150px" visible="false"
+										sclass="combobox">
+										<listitem value="pdf" label="PDF"
+												selected="true" />
+										<listitem value="rtf" label="WORD" />
+								</listbox>
+						</toolbar>
+				</north>
+				<center autoscroll="true" border="none" >
+				<div align="center">
+
+						<!-- *************************** -->
+						<!-- *** Insertar/Actualizar *** -->
+						<!-- *************************** -->
+						<groupbox closable="false" width="905px"
+							mold="3d">
+							<grid sclass="GridSinBorde" hflex="1">
+								<columns>
+									<column label="" width="276px" />
+									<column label="" width="170px" align="left" />
+									<column label="" width="182px" />
+									<column label="" />
+								</columns>
+								<rows>
+
+								<row>
+										<cell colspan="6">
+											<groupbox mold="3d"
+												closable="false" visible="true" id="gbxIdentificacion">
+												<caption
+													label="INFORMACIÓN DEL PACIENTE" style="font-weight:bold" />
+
+												<grid>
+													<columns>
+														<column width="110px" />
+														<column width="150px" />
+														<column width="100px" />
+														<column width="150px" />
+														<column />
+														<column width="110px" />
+														<column width="130px" />
+													</columns>
+													<rows>
+														<!-- fila 1 -->
+
+														<row>
+															<cell>
+																<label value="Paciente" />
+															</cell>
+															<cell>
+																<textbox id="mcTbxPaciente" hflex="1"
+																	style="text-transform:uppercase" />
+															</cell>
+															<cell colspan="3">
+																<textbox id="mcTbxInfoPaciente" width="98%"
+																	style="text-transform:uppercase" readonly="true" />
+															</cell>
+															<cell>
+																<label id="lbTipo_identificacion"
+																	value="Tipo Id: " tooltip="tipo de identificación" />
+															</cell>
+															<cell>
+																<textbox id="mcTbxTipo_identificacion" hflex="1"
+																	style="text-transform:uppercase" readonly="true" />
+															</cell>
+															
+														</row>
+									
+														<row>
+															<cell>
+																<label value="Fecha Ncto." />
+															</cell>
+															<cell>
+																<textbox id="mcDtbxFecha_ncto" width="98%" hflex="1" readonly="true"
+																	style="text-transform:uppercase" />
+															</cell>
+															<cell>
+																<label value="Edad" />
+															</cell>
+															<cell>
+																<textbox id="mcTbxEdad" hflex="1" readonly="true"
+																	style="text-transform:uppercase" />
+															</cell>
+															<cell />
+															<cell>
+																<label value="Género" />
+															</cell>
+															<cell>
+																<textbox id="mcTbxSexo" hflex="1"
+																	style="text-transform:uppercase" readonly="true" />
+															</cell>
+									
+														</row>
+
+														<row>
+															<cell>
+																<label
+																	value="* " style="color: red"
+																	tooltiptext="Campo obligatorio" />
+																<label
+																	value="Encargado: " />
+															</cell>
+															<cell
+																colspan="6">
+																<bandbox
+																	id="bandboxPrestador" width="170px" readonly="true"
+																	disabled="false" />
+																<space />
+																<textbox
+																	id="tbxNomPrestador" width="420px"
+																	style="text-transform:uppercase" readonly="true" />
+																<toolbarbutton
+																	id="btnLimpiar_prestador" image="/images/borrar.gif"
+																	visible="false" />
+															</cell>
+														</row>
+
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+									
+									<row>
+										<cell colspan="6">
+											<groupbox mold="3d"
+												width="100%" closable="false">
+												<caption
+													label="CONTROL DE SIGNOS VITALES" />
+												<grid
+													id="gridControl">
+													<auxhead>
+														<auxheader
+															colspan="16">
+															<toolbarbutton
+																id="btnAgregar_contacto" label="Agregar"
+																onClick="formControl_signos_vitales.agregarControl()"
+																image="/images/generar.png" />
+														</auxheader>
+													</auxhead>
+													<columns>
+														<column
+															width="15%" label="Hora" />
+														<column
+															width="7%" label="T/A" />
+														<column
+															width="7%" label="FC" />
+														<column
+															width="7%" label="FR" />
+														<column
+															width="7%" label="Pulso" />
+														<column
+															width="7%" label="Temp." />
+														<column
+															width="45%" label="Observación" />
+														
+														<column label=""
+															width="50px" />
+													</columns>
+													<rows>
+
+
+
+													</rows>
+												</grid>
+
+											</groupbox>
+										</cell>
+									</row>
+									
+
+
+</rows>
+</grid>
+
+</groupbox>
+	</div>
+	</center>
+	</borderlayout>
+</window>
+</zk>

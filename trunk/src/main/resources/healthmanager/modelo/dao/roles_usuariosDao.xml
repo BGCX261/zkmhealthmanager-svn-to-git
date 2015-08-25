@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.Roles_usuariosDao">
+
+
+
+	<resultMap id="roles_usuariosMap" type="roles_usuarios">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="codigo_usuario" property="codigo_usuario" />
+		<result column="rol" property="rol" />
+		<result column="horas_medico" property="horas_medico" />
+		<result column="nombre_rol" property="elementoRol.descripcion" />
+	</resultMap>
+
+	<insert id="crear" parameterType="roles_usuarios">
+		insert into
+		public.roles_usuarios (codigo_empresa,codigo_sucursal,
+		codigo_usuario,rol,horas_medico)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{codigo_usuario},#{rol},#{horas_medico})
+	</insert>
+
+	<update id="actualizar" parameterType="roles_usuarios">
+		update
+		public.roles_usuarios set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},codigo_usuario =
+		#{codigo_usuario},
+		rol = #{rol}, horas_medico = #{horas_medico} 
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and codigo_usuario =
+		#{codigo_usuario}
+		and rol = #{rol}
+	</update>
+
+	<select id="consultar" resultMap="roles_usuariosMap"
+		parameterType="roles_usuarios">
+		select ru.codigo_empresa,ru.codigo_sucursal,
+		ru.codigo_usuario,ru.rol,el.descripcion as nombre_rol,
+		ru.horas_medico as horas_medico 
+		from public.roles_usuarios ru 
+		left join elemento el on (el.tipo = 'rol'
+		and el.codigo = ru.rol)
+		where codigo_empresa =
+		#{codigo_empresa}
+		and ru.codigo_sucursal = #{codigo_sucursal} and
+		ru.codigo_usuario = #{codigo_usuario}
+		and ru.rol = #{rol}
+	</select>
+
+	<delete id="eliminar" parameterType="roles_usuarios">
+		delete from public.roles_usuarios
+		where codigo_empresa =
+		#{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and
+		codigo_usuario = #{codigo_usuario}
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="rol != null">AND rol = #{rol}</if>
+		</trim>
+	</delete>
+
+	<select id="listar" resultMap="roles_usuariosMap" parameterType="java.util.Map">
+		select ru.codigo_empresa,ru.codigo_sucursal,
+		ru.codigo_usuario,ru.rol,el.descripcion as nombre_rol,
+		ru.horas_medico as horas_medico 
+		from
+		public.roles_usuarios ru
+		left join elemento el on (el.tipo = 'rol'
+		and el.codigo = ru.rol)
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">AND ru.codigo_empresa = #{codigo_empresa}</if>
+			<if test="codigo_sucursal != null">AND ru.codigo_sucursal = #{codigo_sucursal}</if>
+			<if test="codigo_usuario != null">AND ru.codigo_usuario = #{codigo_usuario}</if>
+			<if test="parameter != null">AND ${parameter} like '${value}'</if>
+		</trim>
+		order by ru.rol
+		<if test="limite_paginado != null">
+			${limite_paginado}
+		</if>
+	</select>
+
+</mapper>

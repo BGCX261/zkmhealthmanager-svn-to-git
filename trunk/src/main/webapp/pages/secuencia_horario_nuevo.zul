@@ -1,0 +1,187 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<zk>
+	<window title="Secuencia de Horario" border="normal" id="formaCrear"
+		mode="popup" visible="true" closable="true"
+		onCreate="formaCrear.onChangeHoraInicial();"
+		use="healthmanager.controller.Secuencia_horario_nuevoAction">
+
+		<borderlayout height="390px" width="670px">
+			<north>
+				<toolbar>
+					<toolbarbutton id="okBtn"
+						image="/images/generar.png"
+						onClick="formaCrear.generarSecuenciaHorario()" label="Generar" />
+					<space orient="vertical" bar="true" />
+					<checkbox id="chkDomingo" label="Domingo"
+						onCheck="formaCrear.aplicarIndicadorr(self)" />
+					<checkbox id="chkLunes" label="Lunes" checked="true"
+						onCheck="formaCrear.aplicarIndicadorr(self)" />
+					<checkbox id="chkMartes" label="Martes"
+						checked="true" onCheck="formaCrear.aplicarIndicadorr(self)" />
+					<checkbox id="chkMiercoles" label="Miercoles"
+						checked="true" onCheck="formaCrear.aplicarIndicadorr(self)" />
+					<checkbox id="chkJueves" label="Jueves"
+						checked="true" onCheck="formaCrear.aplicarIndicadorr(self)" />
+					<checkbox id="chkViernes" label="Viernes"
+						checked="true" onCheck="formaCrear.aplicarIndicadorr(self)" />
+					<checkbox id="chkSabado" label="Sabado"
+						onCheck="formaCrear.aplicarIndicadorr(self)" />
+					<checkbox id="chkFestivos" label="Festivos"
+						onCheck="formaCrear.aplicarIndicadorr(self)" />
+				</toolbar>
+			</north>
+			<center autoscroll="true">
+				<div align="center">
+					<grid fixedLayout="true" width="350px">
+						<columns>
+							<column width="130px" />
+							<column />
+						</columns>
+						<rows>
+
+							<row>
+								Fecha Inicio:
+								<div>
+									<datebox id="dateboxInit"
+										width="170px"  format="dd-MM-yyyy" />
+								</div>
+							</row>
+							<row>
+								Fecha fin:
+								<div>
+									<datebox id="dateboxEnd"
+										width="170px" format="dd-MM-yyyy" />
+								</div>
+							</row>
+							<row>
+								Hora Inicio:
+								<div>
+									<!-- 								<timebox id="dtbinit" width="170px" -->
+									<!-- 									mold="rounded" onCreate="self.setValue(new Date())" -->
+									<!-- 									format="hh:mm a" onChange="formaCrear.onChangeHoraInicial()" /> -->
+									<hbox id="dtbinit"
+										onCreate="self.setValue(new Date())" width_="170"
+										use="com.framework.macros.HoraTextBox" />
+								</div>
+							</row>
+							<row>
+								Rol:
+								<cell>
+									<listbox mold="select" id="lbxRoles"
+										width="170px" onSelect="formaCrear.onSeleccionarRolMedico()" />
+								</cell>
+							</row>
+							<row id="rowRolEspecifico"
+								visible="false">
+								<cell visible="false">
+									<listbox mold="select"
+										id="lbxRolesExcepciones" width="170px" />
+								</cell>
+							</row>
+							<row>
+								Rango de(Min):
+								<div>
+									<spinner id="ibxSecuencia"
+										width="170px" mold="rounded" constraint="min 0" value="15"
+										step="5"
+										tooltiptext="Tiempo inicial que se tiene entre una cita y otra" />
+									<space />
+									<label value="Min" />
+								</div>
+							</row>
+							<row id="rowEnd">
+								Hora fin:
+								<div>
+									<!-- 								<timebox id="dtbend" width="170px" -->
+									<!-- 									mold="rounded" onCreate="self.setValue(new Date())" -->
+									<!-- 									format="hh:mm a"   /> -->
+									<hbox id="dtbend" width_="170"
+										use="com.framework.macros.HoraTextBox" />
+								</div>
+							</row>
+							<row id="rowcolor" visible="false">
+								Color:
+								<combobox id="cbbcolor" readonly="true"
+									mold="rounded" style="color:#D96666;font-weight: bold;"
+									onCreate="self.selectedIndex = 0">
+									<attribute name="onSelect">
+	switch (self.getSelectedIndex()) {
+	case 0:
+		self.style = "color:#D96666;font-weight: bold;";
+		break;
+	case 1:
+		self.style = "color:#668CD9;font-weight: bold;";
+		break;
+	case 2:
+		self.style = "color:#4CB052;font-weight: bold;";
+		break;
+	case 3:
+		self.style = "color:#B373B3;font-weight: bold;";
+		break;
+	}
+</attribute>
+									<comboitem sclass="red" label="Rojo"
+										value="#A32929,#D96666" />
+									<comboitem sclass="blue"
+										label="Azul" value="#3467CE,#668CD9" />
+									<comboitem sclass="green"
+										label="Verde" value="#0D7813,#4CB052" />
+									<comboitem sclass="purple"
+										label="Púrpura" value="#7A367A,#B373B3" />
+								</combobox>
+							</row>
+							<row>
+								Cita:
+								<checkbox id="ckbcitas" checked="true"
+									onCheck="rowDescripcion.visible = rowUbicacion.visible  = rowcolor.visible =  !self.checked;rowCodigoCentro.visible = rowCodigoSalud.visible = self.checked" />
+							</row>
+
+							<row id="rowCodigoCentro">
+								Centro de Salud:
+								<cell>
+									<textbox
+										id="tbxCodigo_centro" width="170px" readonly="true" />
+								</cell>
+							</row>
+
+							<row id="rowCodigoSalud">
+								Consultorio:
+								<cell>
+									<bandboxRegistros
+										id="tbxCodigo_consultorio" widthBandbox="170px"
+										widthListbox="600px" heightListbox="300px"
+										columnas="Codigo#65px|Nombre" />
+									<toolbarbutton
+										id="btnLimpiarConsultorio" image="/images/borrar.gif" />
+								</cell>
+							</row>
+							<row id="rowDescripcion" visible="false">
+								Descripción:
+								<textbox multiline="true" rows="3"
+									width="200px" id="txbDescripcion" />
+							</row>
+							<row id="rowUbicacion" visible="false">
+								Ubicacion:
+								<textbox multiline="true" rows="3"
+									width="200px" id="txbUbicacion" />
+							</row>
+						</rows>
+					</grid>
+				</div>
+			</center>
+			<east id="visualizadorHora" width="290px"
+				autoscroll="true">
+				<caption>
+					<div align="center">
+						<label value="Visualizador" />
+						<space />
+						<toolbarbutton image="/images/refresh_m.png"
+							onClick="formaCrear.validarSecuencia()" />
+					</div>
+				</caption>
+				<iframe id="ifmVisualizador" height="100%" hflex="1" />
+			</east>
+		</borderlayout>
+	</window>
+</zk>

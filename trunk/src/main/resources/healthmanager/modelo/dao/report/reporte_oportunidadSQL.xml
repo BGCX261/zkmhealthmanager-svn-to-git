@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.reporte_oportunidadModel">
+	<select id="select" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+		select drr.codigo_articulo, sum(drr.cantidad_recetada) as suma_recetada,
+		sum(drr.cantidad_entregada) as suma_entregada
+		from receta_rips rec
+		left join detalle_receta_rips drr on (rec.codigo_receta =
+		drr.codigo_receta)
+		where rec.codigo_empresa = #{codigo_empresa}
+		and rec.codigo_sucursal = #{codigo_sucursal}
+		and rec.fecha between #{fecha_inicial} and #{fecha_final}
+		AND rec.auditado_farmacia = 'S' 
+		group by drr.codigo_articulo
+	</select>
+
+</mapper>

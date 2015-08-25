@@ -1,0 +1,428 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formDatos_procedimientos" width="100%" height="100%"
+		use="healthmanager.controller.Datos_procedimientosAction"
+		border="none">
+		<style src="estilo.css" />
+
+		<!-- **************** -->
+		<!-- Zona de Objetivo -->
+		<!-- **************** -->
+		<groupbox id="groupboxObjetivo" closable="false" mold="3d"
+			visible="false">
+			<caption label="Modulo de Datos procedimiento"
+				style="color: blue;font-weight: bold" visible="false" />
+			<label
+				value="Esta pagina permite gestionar los Datos procedimiento."
+				visible="false" />
+		</groupbox>
+
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="false" closable="false"
+			mold="3d" height="100%">
+			<caption label="Consultar"
+				style="color: blue;font-weight: bold" visible="false" />
+
+			<separator />
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" height="100%" mold="paging"
+				pageSize="20" vflex="1">
+				<auxhead>
+					<auxheader colspan="7">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<separator />
+							<textbox id="tbxValue" width="200px"
+								onOK="formDatos_procedimientos.buscarDatos();"
+								style="text-transform:uppercase" />
+							<separator />
+							<button mold="trendy"
+								image="/images/Magnifier.gif"
+								onClick="formDatos_procedimientos.buscarDatos();"
+								tooltiptext="Consultar Datos" />
+							<separator />
+							<button mold="trendy"
+								image="/images/New16.gif"
+								onClick='formDatos_procedimientos.accionForm(true,"registrar");'
+								tooltiptext="Nuevo Datos" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Nro factura" width="100px" />
+					<column label="Tipo identificacion" width="120px" />
+					<column label="Nro identificacion" width="120px" />
+					<column label="Fecha procedimiento" width="130px" />
+					<column label="Apellidos" />
+					<column label="Nombres" />
+					<column label="Acciones" align="center"
+						width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+		<borderlayout width="100%" height="100%" id="borderlayoutEditar"
+			visible="true">
+			<north border="none">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<textbox id="tbxPor_lote" visible="false" />
+					<toolbarbutton image="/images/Save16.gif"
+						label="Guardar Datos"
+						onClick="formDatos_procedimientos.guardarDatos_procedimiento();"
+						id="btGuardar" />
+					<toolbarbutton image="/images/New16.gif"
+						label="Nueva Datos"
+						onClick='formDatos_procedimientos.nuevoRegistro()' id="btNew" />
+					<space />
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Cancelar"
+						onClick='formDatos_procedimientos.accionForm(false,tbxAccion.getText());'
+						id="btCancel" />
+
+
+					<label value="Formato impresión: " visible="false" />
+					<listbox id="lbxFormato" mold="select" width="150px"
+						visible="false" sclass="combobox">
+						<listitem value="pdf" label="PDF"
+							selected="true" />
+						<listitem value="rtf" label="WORD" />
+					</listbox>
+				</toolbar>
+			</north>
+
+
+
+			<center autoscroll="true">
+				<div align="center" height="100%">
+					<groupbox closable="false" width="690px"
+						id="groupboxEditar">
+						<textbox id="tbxNro_factura" visible="false" />
+
+						<groupbox closable="false" mold="3d"
+							height="90%" width="100%">
+							<caption label="DATOS DE PROCEDIMIENTO" />
+							<grid>
+
+								<columns visible="false">
+									<column width="120px" />
+									<column />
+									<column />
+									<column width="170px" />
+								</columns>
+
+								<rows>
+									<row>
+										<cell>
+											<label value="* "
+												style="color: red" tooltiptext="Campo obligatorio" />
+											<label value="Paciente" />
+										</cell>
+										<cell>
+											<bandboxRegistros
+												id="bandboxPaciente" widthBandbox="150px"
+												widthListbox="600px" heightListbox="300px"
+												columnas="Tipo Ident#65px|Identificación|Nombres|Apellidos" />
+										</cell>
+										<cell colspan="2">
+											<textbox
+												id="tbxInfoPaciente" width="300px"
+												style="text-transform:uppercase" readonly="true" />
+											<space />
+											<toolbarbutton
+												id="btnLimpiarPaciente" image="/images/borrar.gif" />
+										</cell>
+									</row>
+
+									<row>
+										<cell>
+											<label value="* "
+												style="color: red" tooltiptext="Campo obligatorio" />
+											<label value="Médico" />
+										</cell>
+										<cell>
+											<bandboxRegistros
+												id="bandboxPrestador" idthBandbox="150px"
+												widthListbox="600px" heightListbox="300px"
+												columnas="Identificación|Nombres|Apellidos|Especialidad" />
+										</cell>
+										<cell colspan="2">
+											<textbox
+												id="tbxInfoPrestador" width="300px" readonly="true" />
+											<space />
+											<toolbarbutton
+												id="btnLimpiarPrestador" image="/images/borrar.gif" />
+										</cell>
+									</row>
+
+									<row>
+										<cell>
+											<label value="* "
+												style="color: red" tooltiptext="Campo obligatorio" />
+											<label
+												value="Número Ingreso" />
+										</cell>
+										<cell>
+											<listbox
+												id="lbxNumeroIngreso" width="150px" mold="select" />
+										</cell>
+										<cell colspan="3">
+											<label value="Aseguradora:" />
+											<space />
+											<textbox
+												id="tbxInfoAseguradora" readonly="true" width="225px" />
+										</cell>
+									</row>
+
+									<row>
+										<cell>
+											<label value="Autorización" />
+										</cell>
+										<cell colspan="2">
+											<textbox
+												id="tbxAutorizacion" width="310px" readonly="true" />
+										</cell>
+										<cell>
+											<label value="Fecha: " />
+											<space />
+											<datebox id="dtbxFecha"
+												readonly="true" onCreate="" format="dd/MM/yyyy" />
+										</cell>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+
+						<!-- Para consultas por lotes -->
+						<listbox id="listboxProcedimientos"
+							width="680px" height="200px" checkmark="true"
+							onSelect="formDatos_procedimientos.onSeleccionarListboxProcedimientos()" nonselectableTags="*" >
+							<auxhead>
+								<auxheader colspan="5">
+									<hlayout valign="middle">
+										<toolbarbutton
+											image="/images/add.png" label="Agregar Registro"
+											onClick="formDatos_procedimientos.openPcd();" />
+										<space />
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label value="Diag Ppal:" />
+										<space />
+
+										<bandboxRegistros
+											id="bandboxDiagPrincipal" widthBandbox="110px"
+											widthListbox="600px" heightListbox="300px"
+											columnas="Código#65px|Nombre|Sexo#65px|L. inferior#75px|L. superior#75px" />
+										<space />
+										<textbox
+											id="tbxInfoDiagPrincipal" hflex="1" readonly="true" />
+										<space />
+										<toolbarbutton
+											id="btnLimpiarDiagPrincipal" image="/images/borrar.gif" />
+
+									</hlayout>
+								</auxheader>
+							</auxhead>
+							<listhead>
+								<listheader label="" value=""
+									width="30px" />
+								<listheader label="Codigo"
+									align="center" width="90px" />
+								<listheader label="Procedimiento"
+									align="center" />
+								<listheader label="Fecha" align="center"
+									width="100px" />
+								<listheader label="DX P" align="center"
+									width="80px" />
+								<listheader label="" align="center"
+									width="58px" />
+								<!-- 
+									<rows id="rowsProcedimientos" width="100%" />
+								-->
+							</listhead>
+						</listbox>
+					</groupbox>
+				</div>
+			</center>
+
+			<east width="500px" collapsible="true" splittable="true">
+				<groupbox closable="false" mold="3d" height="100%"
+					width="100%">
+					<caption label="DETALLE DE PROCEDIMIENTO" />
+					<grid>
+						<columns visible="false">
+							<column />
+							<column />
+							<column />
+							<column />
+						</columns>
+						<rows>
+							<row>
+								<cell>
+									<label value="Procedimiento" />
+								</cell>
+								<cell colspan="4" valign="middle">
+
+									<textbox
+										id="tbxCodigo_procedimiento" width="100px"
+										style="text-transform:uppercase" maxlength="8"
+										readonly="true" />
+									<button label="..." mold="trendy"
+										onClick="formDatos_procedimientos.openPcd();" visible="false" />
+									<textbox id="tbxNomPcd" hflex="1"
+										style="text-transform:uppercase;margin-left:5px"
+										readonly="true" />
+
+								</cell>
+							</row>
+							<row>
+								<cell>
+									<label value="Valor" />
+								</cell>
+								<cell>
+									<label value="Unidades" />
+								</cell>
+								<cell>
+									<label value="Copago" />
+								</cell>
+								<cell>
+									<label value="T. Procedimiento"
+										tooltiptext="Total procedimientos" />
+								</cell>
+							</row>
+
+							<row>
+								<cell>
+									<doublebox id="dbxValor" hflex="1" value="0.00"
+										readonly="true" format="#,##0.00" />
+								</cell>
+								<cell>
+									<spinner id="spinnerUnidades"
+										hflex="1" value="1" step="1" onChange="calcularValorTotal()" />
+								</cell>
+
+								<cell>
+									<doublebox id="dbxCopago" hflex="1"
+										value="0.0" readonly="true" format="#,##0.00" />
+								</cell>
+								<cell>
+									<doublebox
+										id="dbxTotalProcedimiento" hflex="1" readonly="true"
+										format="#,##0.00" />
+								</cell>
+							</row>
+
+							<row>
+								<cell>
+									<label value="Ambito realización" />
+								</cell>
+								<cell>
+									<label
+										value="Finalidad Procedimiento" />
+								</cell>
+								<cell>
+									<label value="Personal atiende" />
+								</cell>
+								<cell>
+									<label value="Forma realización" />
+								</cell>
+							</row>
+
+							<row>
+								<cell>
+									<listbox id="lbxAmbitoRealizacion"
+										mold="select" hflex="1" name="ambito_procedimiento" />
+								</cell>
+								<cell>
+									<listbox
+										id="lbxFinalidadProcedimiento" mold="select" hflex="1"
+										name="finalidad_proc" />
+								</cell>
+								<cell>
+									<listbox id="lbxPersonalAtiende"
+										mold="select" hflex="1" name="personal_atiende" />
+								</cell>
+								<cell>
+									<listbox id="lbxFormaRealizacion"
+										mold="select" hflex="1" name="forma_realizacion" />
+								</cell>
+							</row>
+
+							<row>
+								<cell>
+									<label value="Diag Relacionado:" />
+								</cell>
+								<cell>
+									<bandboxRegistros
+										id="bandboxDiagRelacionado" widthBandbox="110px"
+										widthListbox="600px" heightListbox="300px"
+										columnas="Código#65px|Nombre|Sexo#65px|L. inferior#75px|L. superior#75px" />
+								</cell>
+								<cell colspan="2">
+									<textbox id="tbxInfoDiagRelacionado"
+										hflex="1" readonly="true" />
+									<space />
+									<toolbarbutton
+										id="btnLimpiarDiagRelacionado" image="/images/borrar.gif" />
+								</cell>
+							</row>
+
+							<row>
+								<cell>
+									<label value="Complicación :" />
+								</cell>
+								<cell>
+									<bandboxRegistros
+										id="bandboxComplicacion" widthBandbox="110px"
+										widthListbox="600px" heightListbox="300px"
+										columnas="Código#65px|Nombre|Sexo#65px|L. inferior#75px|L. superior#75px" />
+								</cell>
+								<cell colspan="2">
+									<textbox id="tbxInfoComplicacion"
+										hflex="1" readonly="true" />
+									<space />
+									<toolbarbutton
+										id="btnLimpiarComplicacion" image="/images/borrar.gif" />
+								</cell>
+							</row>
+
+							<row>
+								<cell>
+									<label value="Programa" />
+								</cell>
+								<cell colspan="4">
+									<listbox id="lbxProgramaPYP"
+										mold="select" hflex="1" />
+								</cell>
+							</row>
+
+						</rows>
+
+					</grid>
+
+				</groupbox>
+
+			</east>
+
+		</borderlayout>
+		<zscript>
+			<![CDATA[
+	public void calcularValorTotal() {
+		Double valor = dbxValor.getValue();
+		Integer unidades = spinnerUnidades.getValue();
+		dbxTotalProcedimiento.setValue(valor * unidades);
+	}
+]]>
+		</zscript>
+	</window>
+</zk>

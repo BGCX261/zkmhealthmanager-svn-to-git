@@ -1,0 +1,1042 @@
+<?page title="Ficha_epidemiologia_n10" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formFicha_epidemiologia_n10" width="950px" height="450px"
+		border="normal"
+		use="healthmanager.controller.Ficha_epidemiologia_n10Action">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+		<style>
+			div.minimize { border: 1px solid #79858E; background:
+			#D3E1EC; position: absolute; opacity: 0.8; } div.loginGrid {
+			border: none; } td.loginCtl { text-align: center; }
+			td.loginCtl .z-label { color: red; font-style: italic; }
+		</style>
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="false" closable="false"
+			mold="3d" height="100%">
+			<caption label="Consultar"
+				style="color: blue;font-weight: bold" />
+			<separator />
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" height="100%" mold="paging"
+				pageSize="20" vflex="1">
+				<auxhead>
+					<auxheader colspan="4">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<separator />
+							<textbox id="tbxValue" width="200px"
+								onOK="formFicha_epidemiologia_n10.buscarDatos();"
+								style="text-transform:uppercase" />
+							<separator />
+							<button mold="trendy"
+								image="/images/Magnifier.gif"
+								onClick="formFicha_epidemiologia_n10.buscarDatos();"
+								tooltiptext="Consultar Ficha epidemiologia n5" />
+							<separator />
+							<button mold="trendy"
+								image="/images/New16.gif"
+								onClick='formFicha_epidemiologia_n10.accionForm(true,"registrar");'
+								tooltiptext="Nuevo Ficha epidemiologia n10" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Codigo ficha" />
+					<column label="Identificacion" />
+					<column label="Fecha inicial" />
+					<column label="Acciones" align="center"
+						width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+		<borderlayout width="100%" height="98%" id="groupboxEditar"
+			visible="true">
+			<north border="none" visible="false">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<toolbarbutton image="/images/Save16.gif"
+						label="Guardar Ficha epidemiologia n5"
+						onClick="formFicha_epidemiologia_n10.guardarDatos();"
+						id="btGuardar" />
+					<toolbarbutton image="/images/New16.gif"
+						label="Nueva Ficha epidemiologia n5"
+						onClick='formFicha_epidemiologia_n10.accionForm(true,"registrar");'
+						id="btNew" />
+					<space />
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Cancelar"
+						onClick='formFicha_epidemiologia_n10.accionForm(false,tbxAccion.getText());'
+						id="btCancel" />
+					<toolbarbutton image="/images/print_ico.gif"
+						label="Imprimir Ficha epidemiologia n5"
+						onClick="formFicha_epidemiologia_n10.imprimir();" id="btImprimir"
+						visible="false" />
+					<space />
+					<label value="Formato impresión: " visible="false" />
+					<listbox id="lbxFormato" mold="select" width="150px"
+						visible="false" sclass="combobox">
+						<listitem value="pdf" label="PDF"
+							selected="true" />
+						<listitem value="rtf" label="WORD" />
+					</listbox>
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center">
+
+					<!-- *************************** -->
+					<!-- *** Insertar/Actualizar *** -->
+					<!-- *************************** -->
+					<groupbox closable="false" width="905px"
+						mold="3d">
+						<groupbox closable="false" mold="3d">
+							<caption label="DATOS DE LA FICHA" />
+							<grid>
+								<columns>
+									<column />
+								</columns>
+								<rows>
+									<row>
+									<cell>
+										<hlayout>
+											<space width="130px" />
+											<label value="* "
+												style="color: red" tooltiptext="Campo obligatorio" />
+											<label id="lbFecha_inicial"
+												value="Fecha: " />
+											<datebox
+												id="dtbxFecha_inicial" onCreate="self.value = new Date();"
+												format="dd-MM-yyyy" width="170px" readonly="true" buttonVisible="false"/>
+											<space width="70px" />
+											<label value="* "
+												style="color: red" tooltiptext="Campo obligatorio" />
+											<label id="lbCodigo_ficha"
+												value="Codigo ficha: " />
+											<textbox readonly="true"
+												id="tbxCodigo_ficha" width="170px"
+												style="text-transform:uppercase" maxlength="20" />
+										</hlayout>
+									</cell>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+						
+						<groupbox mold="3d" closable="false"
+							visible="true" id="gbxDatosPacientett">
+							<caption label="RELACIÓN CON DATOS BÁSICOS"
+								style="font-weight:bold" />
+							<grid>
+								<columns>
+									<column width="100px" />
+									<column />
+									<column />
+									<column />
+									<column />
+									<column width="220px" />
+								</columns>
+								<rows>
+									<row>
+									<cell>
+										<label value="* " style="color: red"
+											tooltiptext="Campo obligatorio" />
+										<label value="Paciente: " />
+									</cell>
+									<cell colspan="4">
+										<textbox id="tbxIdentificacion_p" width="27%" readonly="true" disabled="true"/>
+											<!--  -->
+										<space width="1%" />
+										<textbox id="tbxNombres_y_apellidos" width="65%"
+											style="text-transform:uppercase" readonly="true" />
+									</cell>
+									<cell>
+										<space width="15px" />
+										<label value="Tipo: " />
+										<space width="23px" />
+										<textbox id="tbxTipo_identidad_p" width="135px" style="text-transform:uppercase" readonly="true"/>
+									</cell>
+										
+									</row>
+									<row>
+									<cell>
+										<label value="* " style="color: red"
+											tooltiptext="Campo obligatorio" />
+										<label value="Aseguradora: " />
+									</cell>
+									<cell colspan="4">
+										<textbox id="tbxAseguradora" width="27%" readonly="true" disabled="true"/>
+											<!--  -->
+										<space width="1%" />
+										<textbox id="tbxNombre_aseguradora" width="65%"
+											style="text-transform:uppercase" readonly="true" />
+									</cell>
+									<cell></cell>
+										
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+						
+						
+						<groupbox closable="false" mold="3d">
+							<caption
+								label="Solicitud de laboratorio de salud pública" />
+							<grid>
+								<columns>
+									<column width="10px" />
+									<column width="100px" />
+									<column width="120px" />
+									<column width="10px" />
+									<column width="150px" />
+									<column width="160px" />
+									<column width="10px" />
+									<column width="160px" />
+									<column width="160px" />
+								</columns>
+								<rows>
+									<row>
+										<cell></cell>
+										<cell height="30px">
+											<label id="lbUnidad_medida"
+												value="Unidad medida: " />
+										</cell>
+										<cell>
+											<listbox
+												id="lbxUnidad_medida" name="unidad_medida" mold="select"
+												width="110px" sclass="combobox" />
+										</cell>
+										<cell></cell>
+										<cell height="30px">
+											<label id="lbDepartamento"
+												value="Departamento: " />
+										</cell>
+										<cell>
+											<listbox
+												id="lbxDepartamento" name="departamentos" mold="select"
+												onSelect="formFicha_epidemiologia_n10.listarMunicipios(lbxMunicipio,lbxDepartamento);"
+												width="150px" sclass="combobox" />
+										</cell>
+										<cell></cell>
+										<cell height="30px">
+											<label id="lbMunicipio"
+												value="Municipio: " />
+										</cell>
+										<cell>
+											<listbox id="lbxMunicipio"
+												name="municipios" mold="select" width="150px"
+												sclass="combobox" />
+										</cell>
+									</row>
+									<row>
+										<cell></cell>
+										<cell colspan="2">
+											<label
+												id="lbFecha_inicio_sintomas"
+												value="Fecha inicio sintomas: " />
+										</cell>
+										<cell></cell>
+										<cell>
+											<datebox
+												id="dtbxFecha_inicio_sintomas"
+												onCreate="self.value = new Date();" format="yyyy-MM-dd"
+												width="90px" />
+										</cell>
+										<cell colspan="2"></cell>
+										<cell height="30px">
+											<label
+												id="lbTipo_regimen_salud"
+												value="Tipo de régimen en salud: " />
+										</cell>
+										<cell>
+											<listbox
+												id="lbxTipo_regimen_salud" name="tipo_regimen" mold="select"
+												width="150px" sclass="combobox" />
+										</cell>
+										<cell></cell>
+									</row>
+									<row>
+										<cell></cell>
+										<cell colspan="2">
+											<label
+												id="lbNombre_administradora_salud"
+												value="Nombre de la administradora salud: " />
+										</cell>
+										<cell colspan="3">
+											<textbox
+												id="tbxNombre_administradora_salud" width="250px"
+												style="text-transform:uppercase" maxlength="20" />
+										</cell>
+										<cell></cell>
+										<cell height="30px">
+											<label
+												id="lbCodigo_administradora"
+												value="Codigo administradora: " />
+										</cell>
+										<cell>
+											<textbox
+												id="tbxCodigo_administradora" width="145px"
+												style="text-transform:uppercase" maxlength="20" />
+										</cell>
+									</row>
+									<row>
+										<cell></cell>
+										<cell colspan="2">
+											<label
+												id="lbExamen_solicitado" value="Examen solicitado: " />
+										</cell>
+										<cell colspan="3">
+											<textbox
+												id="tbxExamen_solicitado" width="250px"
+												style="text-transform:uppercase" maxlength="20" />
+										</cell>
+										<cell></cell>
+										<cell>
+											<label
+												id="lbMuestra_enviada" value="Muestra enviada: " />
+										</cell>
+										<cell>
+											<textbox
+												id="tbxMuestra_enviada" width="145px"
+												style="text-transform:uppercase" maxlength="20" />
+										</cell>
+									</row>
+
+									<row>
+										<cell></cell>
+										<cell colspan="9">
+											<label
+												id="lbHallazgo_y_observaciones"
+												value="Hallazgo y observaciones: " />
+										</cell>
+									</row>
+									<row>
+										<cell></cell>
+										<cell colspan="8">
+											<textbox
+												id="tbxHallazgo_y_observaciones" width="98%"
+												style="text-transform:uppercase" maxlength="20" rows="4" />
+										</cell>
+										<cell></cell>
+									</row>
+									<row>
+										<cell colspan="9"
+											width="100%">
+											<groupbox mold="3d"
+												closable="false" visible="true"
+												id="gbxdatos_de_la_exposicon">
+												<grid>
+													<columns>
+														<column
+															width="1px" />
+														<column
+															width="100px" />
+														<column
+															width="120px" />
+														<column
+															width="10px" />
+														<column
+															width="150px" />
+														<column
+															width="160px" />
+														<column
+															width="10px" />
+														<column
+															width="140px" />
+														<column
+															width="160px" />
+													</columns>
+													<rows>
+														<row>
+															<cell></cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbFecha_de_toma1" value="Fecha de toma 1: " />
+															</cell>
+															<cell>
+																<datebox
+																	id="dtbxFecha_de_toma1"
+																	onCreate="self.value = new Date();" format="yyyy-MM-dd"
+																	width="110px" />
+															</cell>
+															<cell></cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbFecha_de_recepcion1"
+																	value="Fecha de recepcion: " />
+															</cell>
+															<cell>
+																<datebox
+																	id="dtbxFecha_de_recepcion1"
+																	onCreate="self.value = new Date();" format="yyyy-MM-dd"
+																	width="150px" />
+															</cell>
+															<cell></cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbFecha_de_resultado1"
+																	value="Fecha de resultado: " />
+															</cell>
+															<cell>
+																<datebox
+																	id="dtbxFecha_de_resultado1"
+																	onCreate="self.value = new Date();" format="yyyy-MM-dd"
+																	width="150px" />
+															</cell>
+														</row>
+														<row>
+															<cell></cell>
+															<cell>
+																<label
+																	id="lbMuestra1" value="Muestra: " />
+																<space />
+																<checkbox
+																	id="chbMuestra1" />
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbPrueba1" value="Prueba: " />
+																<space />
+																<checkbox
+																	id="chbPrueba1" />
+															</cell>
+															<cell></cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbAgente1" value="Agente: " />
+															</cell>
+															<cell>
+																<textbox
+																	id="tbxAgente1" width="145px"
+																	style="text-transform:uppercase" maxlength="20" />
+															</cell>
+															<cell></cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbResultado1" value="Resultado: " />
+															</cell>
+															<cell>
+																<textbox
+																	id="tbxResultado1" width="145px"
+																	style="text-transform:uppercase" maxlength="20" />
+															</cell>
+														</row>
+														<row>
+															<cell></cell>
+															<cell
+																colspan="2">
+																<label
+																	id="lbValor_del_registro1"
+																	value="Valor del registro: " />
+															</cell>
+															<cell
+																colspan="2">
+																<textbox
+																	id="tbxValor_del_registro1" width="145px"
+																	style="text-transform:uppercase" maxlength="20" />
+															</cell>
+															<cell></cell>
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+									<row>
+										<cell colspan="9"
+											width="100%">
+											<groupbox mold="3d"
+												closable="false" visible="true"
+												id="gbxdatos_de_la_exposico">
+												<grid>
+													<columns>
+														<column
+															width="1px" />
+														<column
+															width="100px" />
+														<column
+															width="120px" />
+														<column
+															width="10px" />
+														<column
+															width="150px" />
+														<column
+															width="160px" />
+														<column
+															width="10px" />
+														<column
+															width="140px" />
+														<column
+															width="160px" />
+													</columns>
+													<rows>
+														<row>
+															<cell></cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbFecha_de_toma2" value="Fecha de toma 2: " />
+															</cell>
+															<cell>
+																<datebox
+																	id="dtbxFecha_de_toma2"
+																	onCreate="self.value = new Date();" format="yyyy-MM-dd"
+																	width="110px" />
+															</cell>
+															<cell></cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbFecha_de_recepcion2"
+																	value="Fecha de recepcion: " />
+															</cell>
+															<cell>
+																<datebox
+																	id="dtbxFecha_de_recepcion2"
+																	onCreate="self.value = new Date();" format="yyyy-MM-dd"
+																	width="145px" />
+															</cell>
+															<cell></cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbFecha_de_resultado2"
+																	value="Fecha de resultado: " />
+															</cell>
+															<cell>
+																<datebox
+																	id="dtbxFecha_de_resultado2"
+																	onCreate="self.value = new Date();" format="yyyy-MM-dd"
+																	width="145px" />
+															</cell>
+														</row>
+														<row>
+															<cell></cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbMuestra2" value="Muestra: " />
+																<space />
+																<checkbox
+																	id="chbMuestra2" />
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbPrueba2" value="Prueba: " />
+																<space />
+																<checkbox
+																	id="chbPrueba2" />
+															</cell>
+															<cell></cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbAgente2" value="Agente: " />
+															</cell>
+															<cell>
+																<textbox
+																	id="tbxAgente2" width="145px"
+																	style="text-transform:uppercase" maxlength="20" />
+															</cell>
+															<cell>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbResultado2" value="Resultado: " />
+															</cell>
+															<cell>
+																<textbox
+																	id="tbxResultado2" width="145px"
+																	style="text-transform:uppercase" maxlength="20" />
+															</cell>
+														</row>
+														<row>
+															<cell></cell>
+															<cell
+																colspan="2">
+																<label
+																	id="lbValor_del_registro2"
+																	value="Valor del registro: " />
+															</cell>
+															<cell
+																colspan="7">
+																<textbox
+																	id="tbxValor_del_registro2" width="170px"
+																	style="text-transform:uppercase" maxlength="20" />
+															</cell>
+
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+						<groupbox closable="false" mold="3d">
+							<caption label="Examen de salud píblica" />
+							<grid>
+								<columns>
+									<column label="evento" width="80px" />
+									<column label="muestra"
+										width="90px" />
+									<column label="prueba" width="90px" />
+									<column label="momento de la toma"
+										width="180px" />
+									<column label="cantidad"
+										width="90px" />
+									<column label="almacenamiento"
+										width="130px" />
+									<column label="transporte"
+										width="170px" />
+									<column label="destino"
+										width="50px" />
+								</columns>
+								<rows>
+									<row>
+										<cell>
+											<label value="F.amarilla" />
+										</cell>
+										<cell>
+											<label value="(1)sangre" />
+										</cell>
+										<cell>
+											<label
+												value="(1)aislamiento" />
+										</cell>
+										<cell>
+											<label value="1-5 dias" />
+										</cell>
+										<cell>
+											<label value="10 cc" />
+										</cell>
+										<cell>
+											<label
+												value="suero a -70 grados c" />
+										</cell>
+										<cell>
+											<label
+												value="nitrógeno liquido o hielo seco" />
+										</cell>
+										<cell>
+											<label value="ins" />
+										</cell>
+									</row>
+									<row>
+										<cell>
+											<label value="F.amarilla" />
+										</cell>
+										<cell>
+											<label value="(1)sangre" />
+										</cell>
+										<cell>
+											<label
+												value="(1)igM captura" />
+										</cell>
+										<cell>
+											<label
+												value="más de 5 días" />
+										</cell>
+										<cell>
+											<label value="10 cc" />
+										</cell>
+										<cell>
+											<label
+												value="suero a -20 grados c" />
+										</cell>
+										<cell>
+											<label value="hielo" />
+										</cell>
+										<cell>
+											<label value="ins" />
+										</cell>
+									</row>
+									<row>
+										<cell>
+											<label value="F.amarilla" />
+										</cell>
+										<cell>
+											<label value="(1)sangre" />
+										</cell>
+										<cell>
+											<label value="igM captura" />
+										</cell>
+										<cell>
+											<label
+												value="14 a 21 díasdespués de la primera toma de suero" />
+										</cell>
+										<cell>
+											<label value="10 cc" />
+										</cell>
+										<cell>
+											<label
+												value="suero a -20 grados c" />
+										</cell>
+										<cell>
+											<label value="hielo" />
+										</cell>
+										<cell>
+											<label value="ins" />
+										</cell>
+									</row>
+									<row>
+										<cell>
+											<label value="F.amarilla" />
+										</cell>
+										<cell>
+											<label value="(4)tejido" />
+										</cell>
+										<cell>
+											<label
+												value="(5)aislamiento" />
+										</cell>
+										<cell>
+											<label
+												value="Lo más cerca de la muerte ideal &#60;= 8 horas más 12h" />
+										</cell>
+										<cell>
+											<label value="2x1 cm" />
+										</cell>
+										<cell>
+											<label
+												value="a - 70 grados c" />
+										</cell>
+										<cell>
+											<label
+												value="nitrogeno liquido o hielo seco" />
+										</cell>
+										<cell>
+											<label value="ins" />
+										</cell>
+									</row>
+									<row>
+										<cell>
+											<label value="F.amarilla" />
+										</cell>
+										<cell>
+											<label value="(4)Tejido" />
+										</cell>
+										<cell>
+											<label
+												value="(30)Patología" />
+										</cell>
+										<cell>
+											<label
+												value="Lo más cerca de la muerte ideal &#60;= 8 horas más 12h" />
+										</cell>
+										<cell>
+											<label value="2x1 cm" />
+										</cell>
+										<cell>
+											<label value="En formol" />
+										</cell>
+										<cell>
+											<label
+												value="Temperatura ambiente" />
+										</cell>
+										<cell>
+											<label value="INS" />
+										</cell>
+									</row>
+									<row>
+										<cell>
+											<label value="Dengue" />
+										</cell>
+										<cell>
+											<label value="(1)Sangre" />
+										</cell>
+										<cell>
+											<label
+												value="(5)Aislamiento" />
+										</cell>
+										<cell>
+											<label value="1 - Días" />
+										</cell>
+										<cell>
+											<label value="10 cc" />
+										</cell>
+										<cell>
+											<label
+												value="Suero a - 70 grados c" />
+										</cell>
+										<cell>
+											<label
+												value="Nitrógeno líquido o hielo seco" />
+										</cell>
+										<cell>
+											<label value="LSP" />
+										</cell>
+									</row>
+									<row>
+										<cell>
+											<label value="Dengue" />
+										</cell>
+										<cell>
+											<label value="(1)Sangre" />
+										</cell>
+										<cell>
+											<label
+												value="(1)igM captura" />
+										</cell>
+										<cell>
+											<label
+												value="Más de 5 días" />
+										</cell>
+										<cell>
+											<label value="10 cc" />
+										</cell>
+										<cell>
+											<label
+												value="Suero a - 20 grados c" />
+										</cell>
+										<cell>
+											<label value="Hielo" />
+										</cell>
+										<cell>
+											<label value="LSP" />
+										</cell>
+									</row>
+									<row>
+										<cell>
+											<label value="Dengue" />
+										</cell>
+										<cell>
+											<label value="(1)Sangre" />
+										</cell>
+										<cell>
+											<label
+												value="(1)igM captura" />
+										</cell>
+										<cell>
+											<label
+												value="14 a 21 días después de la primera toma de suero" />
+										</cell>
+										<cell>
+											<label value="10 cc" />
+										</cell>
+										<cell>
+											<label
+												value="Suero a - 20 grados c" />
+										</cell>
+										<cell>
+											<label value="Hielo" />
+										</cell>
+										<cell>
+											<label value="LSP" />
+										</cell>
+									</row>
+									<row>
+										<cell>
+											<label value="Dengue" />
+										</cell>
+										<cell>
+											<label value="(4)Tejido" />
+										</cell>
+										<cell>
+											<label
+												value="(5)Aislamiento" />
+										</cell>
+										<cell>
+											<label
+												value="Lo más cerca de la muerte ideal &#60;= 8 horas max 12h" />
+										</cell>
+										<cell>
+											<label value="2x1 cm" />
+										</cell>
+										<cell>
+											<label
+												value="A - 70 grados c" />
+										</cell>
+										<cell>
+											<label
+												value="Nitrogeno líquido o hielo seco" />
+										</cell>
+										<cell>
+											<label value="INS" />
+										</cell>
+									</row>
+									<row>
+										<cell>
+											<label value="Dengue" />
+										</cell>
+										<cell>
+											<label value="(4)Tejido" />
+										</cell>
+										<cell>
+											<label
+												value="(30)Patologia" />
+										</cell>
+										<cell>
+											<label
+												value="Lo más cerca de la muerte ideal &#60;= 8 horas max 12h" />
+										</cell>
+										<cell>
+											<label value="2x1 cm" />
+										</cell>
+										<cell>
+											<label value="En formol" />
+										</cell>
+										<cell>
+											<label
+												value="Temperatura ambiente" />
+										</cell>
+										<cell>
+											<label value="INS" />
+										</cell>
+									</row>
+									<row>
+										<cell>
+											<label value="Poliovirus" />
+										</cell>
+										<cell>
+											<label
+												value="(7)Desconocida" />
+										</cell>
+										<cell>
+											<label
+												value="(5)Aislamiento" />
+										</cell>
+										<cell>
+											<label
+												value="Primeros 15 días del inicio de la parálisis" />
+										</cell>
+										<cell>
+											<label value=" 3 a 5 g  " />
+										</cell>
+										<cell>
+											<label
+												value="A - 20 grados c" />
+										</cell>
+										<cell>
+											<label value="Refrigerado" />
+										</cell>
+										<cell>
+											<label value="INS" />
+										</cell>
+									</row>
+									<row>
+										<cell>
+											<label
+												value="Sarampión rubéola" />
+										</cell>
+										<cell>
+											<label value="(1)Sangre" />
+										</cell>
+										<cell>
+											<label
+												value="(2)igM indirecta" />
+										</cell>
+										<cell>
+											<label
+												value="Antes de 30 días de inicio del examen" />
+										</cell>
+										<cell>
+											<label value="10 cc" />
+										</cell>
+										<cell>
+											<label
+												value="Suero a 20 grados C" />
+										</cell>
+										<cell>
+											<label value="Hielo" />
+										</cell>
+										<cell>
+											<label value="LPS" />
+										</cell>
+									</row>
+									<row>
+										<cell>
+											<label
+												value="Sarampión rubéola" />
+										</cell>
+										<cell>
+											<label value="(2)Orina" />
+										</cell>
+										<cell>
+											<label
+												value="(5)Aislamiento" />
+										</cell>
+										<cell>
+											<label
+												value="Antes de 7 días de inicio del examen" />
+										</cell>
+										<cell>
+											<label value="2 cc" />
+										</cell>
+										<cell>
+											<label value="Refrigerado" />
+										</cell>
+										<cell>
+											<label value="Refrigerado" />
+										</cell>
+										<cell>
+											<label value="INS" />
+										</cell>
+									</row>
+									<row>
+										<cell>
+											<label
+												value="Virus respiratório" />
+										</cell>
+										<cell>
+											<label value="(3)Hisopado" />
+										</cell>
+										<cell>
+											<label
+												value="(45)Fluorescencia-IFI" />
+										</cell>
+										<cell>
+											<label
+												value="Antes de 5 días del inicio de los síntomas" />
+										</cell>
+										<cell>
+											<label
+												value="Escobill viricult (MW 950/974/975)" />
+										</cell>
+										<cell>
+											<label
+												value="Medio de transporte para virus respiratorios a 4 grados c" />
+										</cell>
+										<cell>
+											<label value="Refrigerado" />
+										</cell>
+										<cell>
+											<label value="INS" />
+										</cell>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+					</groupbox>
+				</div>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

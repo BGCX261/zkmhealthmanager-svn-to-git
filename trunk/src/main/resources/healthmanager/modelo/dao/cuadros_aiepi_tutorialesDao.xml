@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Cuadros_aiepi_tutorialesDao">
+
+	<resultMap id="cuadros_aiepi_tutorialesMap" type="cuadros_aiepi_tutoriales">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="cuadro" property="cuadro" />
+		<result column="via_ingreso" property="via_ingreso" />
+		<result column="no_columna" property="no_columna" />
+		<result column="titulo" property="titulo" />
+		<result column="info" property="info" />
+		<result column="color" property="color" />
+	</resultMap>
+
+	<insert id="crear" parameterType="cuadros_aiepi_tutoriales">
+		insert into public.cuadros_aiepi_tutoriales (codigo_empresa,codigo_sucursal,
+		cuadro,via_ingreso,no_columna,
+		titulo,info,color)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{cuadro},#{via_ingreso},#{no_columna},
+		#{titulo},#{info},#{color})
+	</insert>
+
+	<update id="actualizar" parameterType="cuadros_aiepi_tutoriales">
+		update public.cuadros_aiepi_tutoriales set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},cuadro = #{cuadro},
+		via_ingreso = #{via_ingreso},no_columna = #{no_columna},
+		titulo = #{titulo},info = #{info},
+		color = #{color}
+		where 		codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and cuadro = #{cuadro}
+		and via_ingreso = #{via_ingreso}
+		and no_columna = #{no_columna}
+	</update>
+
+	<select id="consultar" parameterType="cuadros_aiepi_tutoriales" resultMap="cuadros_aiepi_tutorialesMap">
+		select codigo_empresa,codigo_sucursal,
+		cuadro,via_ingreso,no_columna,titulo,
+		info,color
+		from public.cuadros_aiepi_tutoriales where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and cuadro = #{cuadro}
+		and via_ingreso = #{via_ingreso} and no_columna = #{no_columna}
+	</select>
+
+	<delete id="eliminar" parameterType="cuadros_aiepi_tutoriales">
+		delete from public.cuadros_aiepi_tutoriales
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and cuadro = #{cuadro}
+		and via_ingreso = #{via_ingreso} and no_columna = #{no_columna}
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="cuadros_aiepi_tutorialesMap">
+		select codigo_empresa,codigo_sucursal,
+		cuadro,via_ingreso,no_columna,titulo,
+		info,color
+		from public.cuadros_aiepi_tutoriales 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+				AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+				AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="via_ingreso != null">
+				AND via_ingreso = #{via_ingreso}
+			</if>
+			<if test="cuadro != null">
+				AND cuadro = #{cuadro}
+			</if>
+			<if test="parameter != null">
+				AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limite_paginado != null">
+			${limite_paginado}
+		</if>
+	 	ORDER BY via_ingreso, cuadro, no_columna ASC
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from public.cuadros_aiepi_tutoriales 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

@@ -1,0 +1,313 @@
+<?page title="Orden_servicio2" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formOrden_servicio2" width="100%" height="97%" use="healthmanager.controller.Orden_servicio2Action">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="false" closable="false"
+			mold="3d" height="90%">
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" height="90%" mold="paging"
+				pageSize="20" vflex="1">
+				<auxhead>
+					<auxheader colspan="5">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<separator />
+							<textbox id="tbxValue" width="200px"
+								onOK="formOrden_servicio2.buscarDatos();"
+								style="text-transform:uppercase" />
+							<separator />
+							<button mold="trendy"
+								image="/images/Magnifier.gif"
+								onClick="formOrden_servicio2.buscarDatos();"
+								tooltiptext="Consultar" />
+							<separator />
+							<button mold="trendy"
+								image="/images/New16.gif"
+								onClick='formOrden_servicio2.accionForm(true,"registrar");'
+								tooltiptext="Nuevo" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Codigo orden" width="90px" />
+					<column label="Fecha" width="120px" />
+					<column label="Id paciente" width="90px" />
+					<column label="Paciente" />
+					<column label="Prestador" width="200px" />
+					<column label="Acciones" align="center"
+						width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<borderlayout width="100%" height="90%" id="groupboxEditar"
+			visible="true">
+			<north border="none">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<toolbarbutton image="/images/Save16.gif"
+						label="Guardar" onClick="formOrden_servicio2.guardarDatos();"
+						id="btGuardar" />
+					<toolbarbutton image="/images/New16.gif"
+						label="Nuevo"
+						onClick='formOrden_servicio2.accionForm(true,"registrar");'
+						id="btNew" />
+					<space />
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Regresar"
+						onClick='formOrden_servicio2.accionForm(false,tbxAccion.getText());'
+						id="btCancel" />
+					<toolbarbutton image="/images/generar.png"
+						label="Ver registros"
+						onClick='formOrden_servicio2.abrirWindowHistorial()'
+						id="" />
+					<toolbarbutton image="/images/print_ico.gif"
+						label="Imprimir" onClick="formOrden_servicio2.imprimir(tbxCodigo_orden.getValue());"
+						id="btImprimir" />
+					<space />
+					<label value="Formato impresión: " />
+					<listbox id="lbxFormato" mold="select" width="150px"
+						sclass="combobox">
+						<listitem value="pdf" label="PDF"
+							selected="true" />
+						<listitem value="rtf" label="WORD" />
+					</listbox>
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center">
+
+					<!-- *************************** -->
+					<!-- *** Insertar/Actualizar *** -->
+					<!-- *************************** -->
+					<groupbox closable="false" width="920px"
+						mold="3d">
+						<grid sclass="GridSinBorde">
+							<auxhead>
+						    	<auxheader label="MODULO DE ORDENES DE SERVICIOS"
+						    		align="center" colspan="6" />
+						    </auxhead>
+							<columns visible="false">
+								<column label="" width="115px"
+									align="left" />
+								<column label="" width="490px"
+									align="left" />
+								<column label="" width="98px"
+									align="left" />
+								<column label="" 
+									align="left"  />
+							</columns>
+							<rows>
+								<row>
+									<cell>
+										<label value="Prestador: " />
+									</cell>
+									<cell>
+										<hlayout>
+											<bandboxRegistros
+												id="tbxCodigo_prestador" widthBandbox="140px"
+												widthListbox="600px" heightListbox="300px"
+												columnas="Identificación|Nombres|Apellidos|Especialidad" />
+											<textbox
+												id="tbxNomPrestador" width="300px"
+												style="text-transform:uppercase" readonly="true" />
+											<toolbarbutton
+												id="btnLimpiarPrestador" image="/images/borrar.gif" />
+
+										</hlayout>
+									</cell>
+									<cell>
+										<label id="lbCodigo_orden"
+											value="Codigo orden: " />
+									</cell>
+									<cell>
+										<textbox id="tbxCodigo_orden"
+											width="150px" style="text-transform:uppercase" maxlength="20" 
+											readonly="true"/>
+									</cell>
+								</row>
+								
+								<row>
+									<cell>
+										<label value="Paciente: " />
+									</cell>
+									<cell>
+										<hlayout>
+											<bandboxRegistros
+									    		id="tbxCodigo_paciente" widthBandbox="140px"
+									    		widthListbox="600px" heightListbox="300px"
+									    		columnas="Tipo Ident#65px|Identificación|Nombres|Apellidos" />
+											<textbox id="tbxNomPaciente"
+											width="300px" style="text-transform:uppercase"
+											readonly="true" />
+											<toolbarbutton
+											id="btnLimpiarPaciente" image="/images/borrar.gif" />
+
+										</hlayout>
+									</cell>
+									<cell>
+										<label value="Tipo ID: " />
+									</cell>
+									<cell>
+										<textbox id="tbxTipo_identificacion"
+											width="150px" readonly="true" />
+									</cell>
+								</row>
+								<row>
+									<cell><label value="Nacimiento: " /></cell>
+									<cell colspan="3">
+										<hlayout>
+											<textbox id="tbxNacimiento"
+											width="134px" readonly="true" />
+											
+											<label value="Edad: " />
+											<space/>
+											<textbox id="tbxEdad"
+											width="97px" readonly="true" />
+											<space/>
+											
+											<label value="Sexo: " />
+											<textbox id="tbxSexo"
+											width="90px" readonly="true" />
+											<space width="30px"/>
+											
+											<label value="Estrato: " />
+											<space width="47px"/>
+											<textbox id="tbxEstrato"
+											width="150px" readonly="true" />
+										</hlayout>
+									</cell>
+									
+								</row>
+								
+								<row>
+									<cell>
+										<label value="Diagnostico Ppal: " />
+									</cell>
+									<cell>
+										<hlayout>
+											<bandboxRegistros
+											id="tbxCodigo_dx1" widthBandbox="140px"
+											widthListbox="600px" heightListbox="300px"
+											columnas="Código|Nombre|Sexo|L. inferior|L. superior" />
+											<textbox id="tbxNomDx1"
+												width="300px" style="text-transform:uppercase"
+												readonly="true" />
+											<toolbarbutton
+												id="btnLimpiarDx1" image="/images/borrar.gif" />
+
+										</hlayout>
+									</cell>
+									<cell>
+										<label id="lbEstado"
+											value="Estado: " />
+									</cell>
+									<cell>
+										<textbox id="tbxEstado"
+											width="150px" readonly="true" />
+									</cell>
+								</row>
+								
+								<row>
+									<cell>
+										<label value="Diagnostico Sec: " />
+									</cell>
+									<cell>
+										<hlayout>
+											<bandboxRegistros
+											id="tbxCodigo_dx2" widthBandbox="140px"
+											widthListbox="600px" heightListbox="300px"
+											columnas="Código|Nombre|Sexo|L. inferior|L. superior" />
+											<textbox id="tbxNomDx2"
+												width="300px" style="text-transform:uppercase"
+												readonly="true" />
+											<toolbarbutton
+												id="btnLimpiarDx2" image="/images/borrar.gif" />
+
+										</hlayout>
+									</cell>
+									<cell>
+										<label id="lbFecha_orden"
+											value="Fecha orden: " />
+									</cell>
+									<cell>
+										<datebox id="dtbxFecha_orden"
+											format="yyyy-MM-dd"
+											width="156px" />
+									</cell>
+								</row>
+								<row>
+									<cell><label id="lbObservaciones"
+											value="Observaciones: " /></cell>
+									<cell colspan="3">
+										<textbox id="tbxObservaciones"
+											width="95%" rows="3" style="text-transform:uppercase"
+											/>
+									</cell>
+									
+								</row>
+								<row>
+									<cell valign="top" colspan="4">
+										<!-- Para consultas por lotes -->
+										<grid id="gridOrden2"
+											width="100%" height="200px" style="margin-top:3px"
+											mold="paging" pageSize="20">
+											<auxhead>
+												<auxheader
+													colspan="4">
+													<hlayout>
+														<toolbarbutton
+															image="/images/add.png" label="Agregar Registro"
+															onClick="formOrden_servicio2.abrirVentanaCups();" />
+
+													</hlayout>
+												</auxheader>
+											</auxhead>
+											<columns sizable="true">
+												<column label="Codigo"
+													align="center" width="100px" />
+												<column label="Procedimiento"
+													align="center" />
+												<column label="Unidades"
+													align="center" width="80px" />
+												
+											</columns>
+											<rows
+												id="rowsOrden2" width="100%" />
+										</grid>
+									</cell>
+
+								</row>
+							</rows>
+						</grid>
+
+					</groupbox>
+				</div>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

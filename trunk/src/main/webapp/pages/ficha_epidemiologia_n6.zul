@@ -1,0 +1,680 @@
+<?page title="Ficha_epidemiologia_n6" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+<window id="formFicha_epidemiologia_n6" width="890px" height="450px"
+		border="normal" use="healthmanager.controller.Ficha_epidemiologia_n6Action">
+<style>
+		body ,table{ margin:0; padding:0;
+		} .z-fieldset{ -moz-border-radius:5px; border-radius: 5px;
+		-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+		border: 1px solid silver; }
+		tr.z-row .z-cell{ background-image:none; }
+		tr.z-row td.z-row-hover{ background-image:none; }
+		.GridSinBorde tr.z-row td.z-row-inner, tr.z-row
+			.z-cell,div.z-grid { border: none; overflow: hidden;
+			zoom: 1; border-top: none; border-left: none;
+			border-right: none; border-bottom: none; }
+		</style>
+		<style>
+        div.minimize {
+            border: 1px solid #79858E;
+            background: #D3E1EC;
+            position: absolute;
+            opacity: 0.8;       
+        }
+        div.loginGrid { 
+            border: none;
+        }
+        td.loginCtl {
+            text-align: center;
+        }
+        td.loginCtl .z-label {
+            color: red;         
+            font-style: italic;
+        }
+        </style>
+
+<!-- **************** -->
+<!-- Zona de Consulta -->
+<!-- **************** -->
+<groupbox id="groupboxConsulta" visible="false" closable="false" mold="3d" height="90%">
+<caption label="Consultar" style="color: blue;font-weight: bold"/>
+
+<separator />
+
+<!-- ***************************** -->
+<!--  Resultado Consulta Maestros  -->
+<!-- ***************************** -->
+<grid id="gridResultado" height="90%" mold="paging" pageSize="20"  vflex="1">
+<auxhead>
+						<auxheader colspan="4">
+								<hbox align="center">
+										<label value="Criterios de B&#250;squeda :" />
+										<space />
+										<listbox id="lbxParameter" mold="select"
+												sclass="combobox" width="150px" />
+										<separator />
+										<textbox id="tbxValue" width="200px"
+												onOK="formFicha_epidemiologia_n6.buscarDatos();"
+												style="text-transform:uppercase" />
+										<separator />
+										<button mold="trendy"
+												image="/images/Magnifier.gif"
+												onClick="formFicha_epidemiologia_n6.buscarDatos();"
+												tooltiptext="Consultar Ficha epidemiologia n6" />
+										<separator />
+										<button mold="trendy"
+												image="/images/New16.gif"
+												onClick='formFicha_epidemiologia_n6.accionForm(true,"registrar");'
+												tooltiptext="Nuevo Ficha epidemiologia n6" />
+								</hbox>
+						</auxheader>
+				</auxhead>
+<columns sizable="true">
+	<column label="Código ficha"/>
+	<column label="Identificación"/>
+	<column label="Fecha creación"/>
+	<column label="Acciones" align="center" width="80px"/>
+</columns>
+<rows id="rowsResultado" width="100%" />
+</grid>
+</groupbox>
+
+<borderlayout width="100%" height="98%" id="groupboxEditar" visible="true">
+				<north id="north_ficha" border="none" visible="false">
+						<toolbar width="100%" align="start">
+								<textbox id="tbxAccion" value="registrar"
+										visible="false" />
+								<toolbarbutton image="/images/Save16.gif"
+										label="Guardar Ficha"
+										onClick="formFicha_epidemiologia_n6.guardarDatos();" id="btGuardar" />
+		 		                <toolbarbutton image="/images/print_ico.gif"
+										label="Imprimir"
+										onClick="formFicha_epidemiologia_n6.imprimir();"
+										id="btImprimir" visible="false"/>
+								<space />
+								<label value="Formato impresión: " visible="false"/>
+									<listbox id="lbxFormato" mold="select" width="150px" visible="false"
+										sclass="combobox">
+										<listitem value="pdf" label="PDF"
+												selected="true" />
+										<listitem value="rtf" label="WORD" />
+								</listbox>
+						</toolbar>
+				</north>
+				<center autoscroll="true" border="none" >
+				<div align="center">
+				
+				<groupbox mold="3d" closable="false">
+						<caption label="DATOS DE LA FICHA"
+							style="font-weight:bold" />
+						<grid>
+							<columns>
+								<column />
+							</columns>
+							<rows>
+								
+								<row>
+									<cell>
+										<hlayout>
+											<space width="130px" />
+											<label value="* "
+												style="color: red" tooltiptext="Campo obligatorio" />
+											<label id="lbFecha_inicial"
+												value="Fecha: " />
+											<datebox
+												id="dtbxFecha_creacion" onCreate="self.value = new Date();"
+												format="dd-MM-yyyy" width="170px" readonly="true" buttonVisible="false"/>
+											<space width="70px" />
+											<label value="* "
+												style="color: red" tooltiptext="Campo obligatorio" />
+											<label id="lbCodigo_ficha"
+												value="Codigo ficha: " />
+											<textbox readonly="true"
+												id="tbxCodigo_ficha" width="170px"
+												style="text-transform:uppercase" maxlength="20" />
+										</hlayout>
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+
+
+<groupbox mold="3d" width="100%" closable="false">
+<caption label="RELACIÓN CON DATOS BÁSICOS" />
+<grid>
+<columns visible="false">
+		<column width="100px" />
+		<column />
+		<column />
+		<column />
+		<column />
+		<column width="220px" />
+	</columns>
+	<rows>
+	
+		<row>
+			<cell>
+				<label value="* " style="color: red"
+					tooltiptext="Campo obligatorio" />
+				<label value="Paciente: " />
+			</cell>
+			<cell colspan="4">
+				<textbox id="tbxIdentificacion" width="27%" readonly="true" disabled="true"/>
+					<!--  -->
+				<space width="1%" />
+				<textbox id="tbxNombrePaciente" width="65%"
+					style="text-transform:uppercase" readonly="true" />
+			</cell>
+			<cell>
+				<space width="15px" />
+				<label value="Tipo: " />
+				<space width="23px" />
+				<textbox id="tbxTipo_identificacion" width="135px" style="text-transform:uppercase" readonly="true"/>
+			</cell>
+				
+		</row>
+		<row>
+			<cell>
+				<label value="* " style="color: red"
+					tooltiptext="Campo obligatorio" />
+				<label value="Aseguradora: " />
+			</cell>
+			<cell colspan="4">
+				<textbox id="tbxAseguradora" width="27%" readonly="true" disabled="true"/>
+					<!--  -->
+				<space width="1%" />
+				<textbox id="tbxNombre_aseguradora" width="65%"
+					style="text-transform:uppercase" readonly="true" />
+			</cell>
+			<cell></cell>
+				
+		</row>
+		
+		
+		<!-- fila 4 -->
+		<row>
+		<cell><label id="lbCodigo_diagnostico" value="Codigo diagnostico: " visible="false"/></cell>
+		<cell><textbox id="tbxCodigo_diagnostico" width="170px" style="text-transform:uppercase" maxlength="8" visible="false"/></cell>
+		<cell colspan="4"></cell>
+		</row>
+
+	</rows>
+
+</grid>
+</groupbox>
+
+
+<groupbox mold="3d" width="100%" closable="false">
+<caption label="ANTECEDENTES VACUNALES" />
+<grid>
+<columns>
+		<column label="Dosis" width="100px" align="center"/>
+		<column label="Vacuna" width="250px" />
+		<column label="SÍ" width="100px" align="center" />
+		<column label="NO" width="100px" align="center" />
+		<column label="Desconocido" width="100px" align="center" />
+		<column label="Fecha de Aplicación" align="center"/>
+	</columns>
+	<rows>
+	<row >
+			<cell><label value=" 1 " /></cell>
+			<cell><label id="lbVacuna_fiebre_amarilla" value="Fiebre Amarilla: "/></cell>
+			<cell>
+			<radiogroup id="rdbVacuna_fiebre_amarilla" onCheck="formFicha_epidemiologia_n6.deshabilitar_conRadio(self, new AbstractComponent[]{dtbxFecha_fiebre_amarilla})"/>
+			<radio label="" value="S" radiogroup="rdbVacuna_fiebre_amarilla"/>
+			</cell>
+			<cell>
+			<radio label="" value="N" radiogroup="rdbVacuna_fiebre_amarilla"/>
+			</cell>
+			
+			<cell>
+			<radio label="" value="D" checked="true"  radiogroup="rdbVacuna_fiebre_amarilla"/>
+			</cell>
+			<cell ><datebox id="dtbxFecha_fiebre_amarilla" onCreate="" format="yyyy-MM-dd" width="50%" readonly="true" buttonVisible="false" /></cell>
+		</row >
+		<row >
+			<cell><label value=" 1 " /></cell>
+			<cell><label id="lbVacuna_hepatitis_b1" value="Hepatitis B: "/></cell>
+			<cell >
+			<radiogroup id="rdbVacuna_hepatitis_b1" onCheck="formFicha_epidemiologia_n6.deshabilitar_conRadio(self, new AbstractComponent[]{dtbxFecha_hepatitis_b1})"/>
+			<radio label="" value="S" radiogroup="rdbVacuna_hepatitis_b1"/>
+			</cell>
+			<cell>
+			<radio label="" value="N" radiogroup="rdbVacuna_hepatitis_b1"/>
+			</cell>
+			
+			<cell>
+			<radio label="" value="D" checked="true"  radiogroup="rdbVacuna_hepatitis_b1"/>
+			</cell>
+			<cell ><datebox id="dtbxFecha_hepatitis_b1" onCreate="" format="yyyy-MM-dd" width="50%" readonly="true" buttonVisible="false" /></cell>
+		</row >
+		<row >
+			<cell><label value=" 2 " /></cell>
+			<cell><label id="lbVacuna_hepatitis_b2" value="Hepatitis B: "/></cell>
+			<cell >
+			<radiogroup id="rdbVacuna_hepatitis_b2" onCheck="formFicha_epidemiologia_n6.deshabilitar_conRadio(self, new AbstractComponent[]{dtbxFecha_hepatitis_b2})"/>
+			<radio label="" value="S" radiogroup="rdbVacuna_hepatitis_b2" />
+			</cell>
+			<cell>
+			<radio label="" value="N" radiogroup="rdbVacuna_hepatitis_b2"/>
+			</cell>
+			
+			<cell>
+			<radio label="" value="D" checked="true"  radiogroup="rdbVacuna_hepatitis_b2"/>
+			</cell>
+			<cell ><datebox id="dtbxFecha_hepatitis_b2" onCreate="" format="yyyy-MM-dd" width="50%" readonly="true" buttonVisible="false" /></cell>
+		</row >
+		<row >
+			<cell><label value=" 3 " /></cell>
+			<cell><label id="lbVacuna_hepatitis_b3" value="Hepatitis B: "/></cell>
+			<cell >
+			<radiogroup id="rdbVacuna_hepatitis_b3" onCheck="formFicha_epidemiologia_n6.deshabilitar_conRadio(self, new AbstractComponent[]{dtbxFecha_hepatitis_b3})"/>
+			<radio label="" value="S" radiogroup="rdbVacuna_hepatitis_b3"/>
+			</cell>
+			<cell>
+			<radio label="" value="N" radiogroup="rdbVacuna_hepatitis_b3"/>
+			</cell>
+			
+			<cell>
+			<radio label="" value="D" checked="true"  radiogroup="rdbVacuna_hepatitis_b3"/>
+			</cell>
+			<cell ><datebox id="dtbxFecha_hepatitis_b3" onCreate="" format="yyyy-MM-dd" width="50%" readonly="true" buttonVisible="false" /></cell>
+		</row >
+		<row >
+			<cell><label value=" 1 " /></cell>
+			<cell><label id="lbVacuna_hepatitis_a" value="Hepatitis A: "/></cell>
+			<cell >
+			<radiogroup id="rdbVacuna_hepatitis_a" onCheck="formFicha_epidemiologia_n6.deshabilitar_conRadio(self, new AbstractComponent[]{dtbxFecha_hepatitis_a})"/>
+			<radio label="" value="S" radiogroup="rdbVacuna_hepatitis_a"/>
+			</cell>
+			<cell>
+			<radio label="" value="N" radiogroup="rdbVacuna_hepatitis_a"/>
+			</cell>
+			
+			<cell>
+			<radio label="" value="D" checked="true"  radiogroup="rdbVacuna_hepatitis_a"/>
+			</cell>
+			<cell ><datebox id="dtbxFecha_hepatitis_a" onCreate="" format="yyyy-MM-dd" width="50%" readonly="true" buttonVisible="false" /></cell>
+		</row >
+		<row >
+			<cell align="left" colspan="6"><label id="lbObservaciones_vacunas" value="Observaciones vacunas: "/></cell>
+			
+		</row >
+		
+		<row >
+			<cell colspan="6"><textbox id="tbxObservaciones_vacunas" width="98%" rows="4" style="text-transform:uppercase" maxlength="-1"/></cell>
+			
+		</row >
+		
+
+	</rows>
+
+</grid>
+</groupbox>
+
+<groupbox mold="3d" width="100%" closable="false">
+		<caption label="DATOS CLÍNICOS" />
+		<grid>
+			<columns>
+				<column />
+				<column label="" width="50px" />
+				<column />
+				<column label="" width="50px" />
+				<column />
+				<column label="" width="50px" />
+			</columns>
+			<rows>
+				<row>
+				<cell colspan="6">
+				
+				<groupbox mold="3d" width="100%" closable="false">
+						<caption label="Hallazgos Semiológicos" />
+						<grid>
+							<columns>
+								<column />
+								<column label="" width="50px" />
+								<column />
+								<column label="" width="50px" />
+								<column />
+								<column label="" width="50px" />
+							</columns>
+							<rows>
+							<row >
+								<cell><label id="lbFiebre" value="1. Fiebre: "/></cell>
+								<cell ><checkbox id="chbFiebre"/></cell>
+								<cell><label id="lbMialgias" value="2. Mialgias: "/></cell>
+								<cell ><checkbox id="chbMialgias"/></cell>
+								<cell><label id="lbArtralgias" value="3. Artralgias: "/></cell>
+								<cell ><checkbox id="chbArtralgias"/></cell>
+							</row >
+							<row >
+								<cell><label id="lbCefalea" value="4. Cefalea: "/></cell>
+								<cell ><checkbox id="chbCefalea"/></cell>
+								<cell><label id="lbVomito" value="5. Vómito: "/></cell>
+								<cell ><checkbox id="chbVomito"/></cell>
+								<cell><label id="lbIctericia" value="6. Ictericia: "/></cell>
+								<cell ><checkbox id="chbIctericia"/></cell>
+							</row >
+							<row >
+								<cell><label id="lbHemoptisis" value="7. Hemoptisis: "/></cell>
+								<cell ><checkbox id="chbHemoptisis"/></cell>
+								<cell><label id="lbS_faget" value="8. S Faget: "/></cell>
+								<cell ><checkbox id="chbS_faget"/></cell>
+								<cell><label id="lbHiperemia_conjuntival" value="9. Hiperemia conjuntival: "/></cell>
+								<cell ><checkbox id="chbHiperemia_conjuntival"/></cell>
+							</row >
+							<row >
+								<cell><label id="lbHematemesis" value="10. Hematemesis: "/></cell>
+								<cell ><checkbox id="chbHematemesis"/></cell>
+								<cell><label id="lbOliguria" value="11. Oliguria: "/></cell>
+								<cell ><checkbox id="chbOliguria"/></cell>
+								<cell><label id="lbPetequias" value="12. Petequias: "/></cell>
+								<cell ><checkbox id="chbPetequias"/></cell>
+							</row >
+							<row >
+								<cell><label id="lbMetrorragia" value="13. Metrorragia: "/></cell>
+								<cell ><checkbox id="chbMetrorragia"/></cell>
+								<cell><label id="lbChoque" value="14. Choque: "/></cell>
+								<cell ><checkbox id="chbChoque"/></cell>
+								<cell><label id="lbBrandicardia" value="15. Brandicardia: "/></cell>
+								<cell ><checkbox id="chbBrandicardia"/></cell>
+							</row >
+							<row >
+								<cell><label id="lbMelenas" value="16. Melenas: "/></cell>
+								<cell ><checkbox id="chbMelenas"/></cell>
+								<cell><label id="lbEquimosis" value="17. Equimosis: "/></cell>
+								<cell ><checkbox id="chbEquimosis"/></cell>
+								<cell><label id="lbEpistaxis" value="18. Epistaxis: "/></cell>
+								<cell ><checkbox id="chbEpistaxis"/></cell>
+							</row >
+							<row >
+								<cell><label id="lbHematuria" value="19. Hematuria: "/></cell>
+								<cell ><checkbox id="chbHematuria"/></cell>
+								<cell><label id="lbDolor_abdominal" value="20. Dolor abdominal: "/></cell>
+								<cell ><checkbox id="chbDolor_abdominal"/></cell>
+								<cell><label id="lbFalla_renal" value="21. Falla renal: "/></cell>
+								<cell ><checkbox id="chbFalla_renal"/></cell>
+							</row >
+							<row >
+								<cell><label id="lbFalla_hepatica" value="22. Falla hepática: "/></cell>
+								<cell ><checkbox id="chbFalla_hepatica"/></cell>
+								<cell colspan="2" />
+								<cell colspan="2" />
+							</row >
+							
+							</rows>
+						</grid>
+				</groupbox>				
+				</cell>
+				</row>	
+			</rows>		
+		</grid>
+</groupbox>
+
+
+
+<groupbox mold="3d" width="100%" closable="false">
+<caption label="DATOS DE LABORATORIO" />
+<grid>
+	<columns>
+		<column />
+		<column label="" width="50px" />
+		<column />
+		<column label="" width="50px" />
+		<column />
+		<column label="" width="50px" />
+	</columns>
+	<rows>
+		<row>
+		<cell colspan="6">
+		
+		<groupbox mold="3d" width="100%" closable="false">
+		<caption label="Hallazgos de laboratorio" />
+
+			<grid>
+				<columns>
+					<column />
+					<column width="330px"/>
+					<column label="" width="100px" />
+				</columns>
+				<rows>
+				
+				<row >
+					<cell><label value="* " style="color: red" tooltiptext="Campo obligatorio"/><label id="lbRecuento_leucocitos" value="Recuento leucocitos: "/></cell>
+					<cell ><doublebox id="dbxRecuento_leucocitos" width="50%" format="0" locale="en"/><space/><label value="(mm3) " /></cell>
+					<cell></cell>
+				</row >
+				<row >
+					<cell><label value="* " style="color: red" tooltiptext="Campo obligatorio"/><label id="lbRecuento_plaquetas_inicial" value="Recuento de plaquetas inicial (verificar trombocitopenia): "/></cell>
+					<cell ><doublebox id="dbxRecuento_plaquetas_inicial" width="50%" format="0" locale="en"/><space/><label value="(mm3) " /></cell>
+					<cell></cell>
+				</row >
+				<row >
+					<cell><label value="* " style="color: red" tooltiptext="Campo obligatorio"/><label id="lbAst_tgo" value="AST/TGO: "/></cell>
+					<cell ><doublebox id="dbxAst_tgo" width="50%" format="0" locale="en"/><space/><label value="(U/L) " /></cell>
+					<cell></cell>
+				</row >
+				<row >
+					<cell><label value="* " style="color: red" tooltiptext="Campo obligatorio"/><label id="lbAlt_tgp" value="ALT/TGP: "/></cell>
+					<cell ><doublebox id="dbxAlt_tgp" width="50%" format="0" locale="en"/><space/><label value="(U/L) " /></cell>
+					<cell></cell>
+				</row >
+				<row >
+					<cell><label value="* " style="color: red" tooltiptext="Campo obligatorio"/><label id="lbBilirrubina_total" value="Bilirrubina total: "/></cell>
+					<cell ><doublebox id="dbxBilirrubina_total" width="50%" format="0" locale="en"/><space/><label value="(mg/dL) " /></cell>
+					<cell></cell>
+				</row >
+				<row >
+					<cell><label value="* " style="color: red" tooltiptext="Campo obligatorio"/><label id="lbBilirrubina_directa" value="Bilirrubina directa: "/></cell>
+					<cell ><doublebox id="dbxBilirrubina_directa" width="50%" format="0" locale="en"/><space/><label value="(mg/dL) " /></cell>
+					<cell></cell>
+				</row >
+				<row >
+					<cell><label value="* " style="color: red" tooltiptext="Campo obligatorio"/><label id="lbBilirrubina_indirecta" value="Bilirrubina indirecta: "/></cell>
+					<cell ><doublebox id="dbxBilirrubina_indirecta" width="50%" format="0" locale="en"/><space/><label value="(mg/dL) " /></cell>
+					<cell></cell>
+				</row >
+				<row >
+					<cell><label value="* " style="color: red" tooltiptext="Campo obligatorio"/><label id="lbBun" value="BUN: "/></cell>
+					<cell ><doublebox id="dbxBun" width="50%" format="0" locale="en"/><space/><label value="(mg/dL) " /></cell>
+					<cell></cell>
+				</row >
+				<row >
+					<cell><label value="* " style="color: red" tooltiptext="Campo obligatorio"/><label id="lbCreatinina" value="Creatinina: "/></cell>
+					<cell ><doublebox id="dbxCreatinina" width="50%" format="0" locale="en"/><space/><label value="(mg/dL) " /></cell>
+					<cell></cell>
+				</row >
+				<row >
+					<cell><label value="* " style="color: red" tooltiptext="Campo obligatorio"/><label id="lbIgm_fiebre_amarilla" value="IgM fiebre amarilla: "/></cell>
+					<cell >
+					<radiogroup id="rdbIgm_fiebre_amarilla">
+					<radio label="Positivo" value="P" checked="true" /><space width="15px" />
+					<radio label="Negativo" value="N"/><space width="15px" />
+					<radio label="No se realizó" value="NR"/>
+					</radiogroup></cell>
+					<cell></cell>
+				</row >
+				<row >
+					<cell><label value="* " style="color: red" tooltiptext="Campo obligatorio"/><label id="lbRt_pcr" value="RT-PCR (Reacción en cadena de la polimerasa): "/></cell>
+					<cell >
+					<radiogroup id="rdbRt_pcr">
+					<radio label="Positivo" value="P" checked="true" /><space width="15px" />
+					<radio label="Negativo" value="N"/><space width="15px" />
+					<radio label="No se realizó" value="NR"/>
+					</radiogroup></cell>
+					<cell></cell>
+				</row >
+				<row >
+					<cell><label value="* " style="color: red" tooltiptext="Campo obligatorio"/><label id="lbAislamiento_viral" value="Aislamiento viral: "/></cell>
+					<cell >
+					<radiogroup id="rdbAislamiento_viral">
+					<radio label="Positivo" value="P" checked="true" /><space width="15px" />
+					<radio label="Negativo" value="N"/><space width="15px" />
+					<radio label="No se realizó" value="NR"/>
+					</radiogroup>
+					</cell>
+					<cell></cell>
+				</row >
+				
+				
+				
+				</rows>
+			</grid>		
+		</groupbox>
+		</cell>
+		</row>
+		<row>
+		<cell colspan="6">
+		
+		<groupbox mold="3d" width="100%" closable="false">
+		<caption label="En Caso de Mortalidad" />
+
+			<grid>
+				<columns>
+					<column />
+					<column width="330px"/>
+					<column label="" width="100px" />
+				</columns>
+				<rows>
+				<row >
+					<cell><label id="lbViscerotomia" value="¿Se tomó muestra de viscerotomía? "/></cell>
+					<cell >
+					<radiogroup id="rdbViscerotomia">
+					<radio label="SÍ" value="S"/><space width="15px" />
+					<radio label="NO" value="N" checked="true" />
+					</radiogroup>
+					</cell>
+					<cell></cell>
+				</row >
+				<row >
+					<cell><label id="lbTejido_fresco" value="¿Se envió tejido fresco refrigerado? "/></cell>
+					<cell >
+					<radiogroup id="rdbTejido_fresco">
+					<radio label="SÍ" value="S"/><space width="15px" />
+					<radio label="NO" value="N" checked="true" />
+					</radiogroup>
+					</cell>
+					<cell></cell>
+				</row >
+				<row >
+					<cell><label id="lbTejido_normal" value="¿Se envió tejido en formol neutro? "/></cell>
+					<cell >
+					<radiogroup id="rdbTejido_normal">
+					<radio label="SÍ" value="S"/><space width="15px" />
+					<radio label="NO" value="N" checked="true" />
+					</radiogroup>
+					</cell>
+					<cell></cell>
+				</row >
+				</rows>
+			</grid>		
+		</groupbox>
+		</cell>
+		</row>
+	</rows>
+</grid>
+</groupbox>
+		
+
+<groupbox mold="3d" width="100%" closable="false">
+<caption label="DATOS ESPECÍFICOS" />
+<grid>
+<columns visible="false">
+		<column width="140px" />
+		<column />
+		<column />
+		<column />
+		<column />
+		<column width="135px" />
+	</columns>
+	<rows>
+
+		<!-- fila 5 -->
+		<row>
+		<cell colspan="3">
+		<label value="* " style="color: red" tooltiptext="Campo obligatorio"/>
+		<label id="lbDesplazamiento" value="Desplazamiento en los últimos 15 días:  "/></cell>
+		<cell colspan="3">
+		<radiogroup id="rdbDesplazamiento"  onCheck="formFicha_epidemiologia_n6.mostrar_conRadio(formFicha_epidemiologia_n6,self, new AbstractComponent[]{rowDesplazamiento,lbFecha_desplazamiento,dtbxFecha_desplazamiento,lbMunicipio_desplazamiento,tbxMunicipio_desplazamiento})">
+		<radio label="SÍ" value="S"/><space width="15px" />
+		<radio label="NO" value="N" checked="true" /></radiogroup></cell>
+		</row>
+		
+		<!-- fila 5 -->
+		<row id="rowDesplazamiento" visible="false">
+		<cell><label id="lbFecha_desplazamiento" value="Fecha desplazamiento: "/></cell>
+		<cell><datebox id="dtbxFecha_desplazamiento" onCreate="" format="yyyy-MM-dd" width="110px"/></cell>
+		<cell colspan="2"><label id="lbMunicipio_desplazamiento" value="Municipio/departamento al que se desplazó: "/></cell>
+		<cell colspan="2"><textbox id="tbxMunicipio_desplazamiento" width="98%" style="text-transform:uppercase" maxlength="100"/></cell>
+		</row>
+		
+		
+		<!-- fila 8 -->
+		<row>
+		<cell colspan="3">
+		<label value="* " style="color: red" tooltiptext="Campo obligatorio"/>
+		<label id="lbCaso_fiebre" value="Caso de fiebre amarilla: "/></cell>
+		<cell colspan="3">
+		<radiogroup id="rdbCaso_fiebre">
+		<radio label="Selvático" value="S"/><space width="30px" />
+		<radio label="Urbano" value="U" checked="true" />
+		</radiogroup>
+		</cell>
+		</row>
+		
+		
+		<!-- fila 9 -->
+		<row>
+		<cell colspan="3">
+		<label value="* " style="color: red" tooltiptext="Campo obligatorio"/>
+		<label id="lbOcurrencia" value="Ocurrencia de epizootia (mortalidad de monos): "/></cell>
+		<cell colspan="3">
+		<radiogroup id="rdbOcurrencia">
+		<radio label="SÍ" value="S"/><space width="15px" />
+		<radio label="NO" value="N"/><space width="15px" />
+		<radio label="Desconocido" value="D" checked="true" />
+		</radiogroup>
+		</cell>
+		</row>
+
+		
+		<!-- fila 10 -->
+		<row>
+		<cell colspan="3">
+		<label value="* " style="color: red" tooltiptext="Campo obligatorio"/>
+		<label id="lbPresencia_aedes" value="Presencia de Aedes aegypti: "/></cell>
+		<cell colspan="3">
+		<radiogroup id="rdbPresencia_aedes">
+		<radio label="SÍ" value="S"/><space width="15px" />
+		<radio label="NO" value="N"/><space width="15px" />
+		<radio label="Desconocido" value="D" checked="true" />
+		</radiogroup>
+		</cell>
+		</row>
+
+		
+		<!-- fila 11 -->
+		<row>
+		<cell colspan="3"><label value="* " style="color: red" tooltiptext="Campo obligatorio"/><label id="lbDireccion" value="Dirección de sitio de ocupación o estudio: "/></cell>
+		<cell colspan="3"><textbox id="tbxDireccion" width="98%" style="text-transform:uppercase" maxlength="-1"/></cell>
+		</row>	
+		
+		
+		<!-- fila 12 -->
+		<row>
+		<cell colspan="2"><label id="lbCodigo_medico" value="Codigo medico: " visible="false"/></cell>
+		<cell colspan="4"><textbox id="tbxCodigo_medico" width="170px" style="text-transform:uppercase" maxlength="20" visible="false"/></cell>
+		</row>
+		
+	</rows>		
+
+</grid>
+</groupbox>
+
+
+	</div>
+	</center>
+	</borderlayout>
+</window>
+</zk>

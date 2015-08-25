@@ -1,0 +1,170 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formRespuesta_solicitud_e4" width="100%" height="90%"
+		use="healthmanager.controller.Respuesta_solicitud_e4Action"
+		border="none">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+		<groupbox id="groupboxConsulta" visible="true" closable="false"
+			height="90%" mold="3d">
+			<caption label="Consultar"
+				style="color: black;font-weight: bold" />
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" mold="paging" pageSize="20"
+				vflex="1">
+				<auxhead>
+					<auxheader colspan="6">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<separator />
+							<textbox id="tbxValue" width="200px"
+								onOK="formRespuesta_solicitud_e4.buscarDatos();"
+								style="text-transform:uppercase" />
+							<separator />
+							<button mold="trendy"
+								image="/images/Magnifier.gif"
+								onClick="formRespuesta_solicitud_e4.buscarDatos();"
+								tooltiptext="Consultar Prueba" />
+							<separator />
+							<button mold="trendy"
+								image="/images/New16.gif"
+								onClick='formRespuesta_solicitud_e4.accionForm(true,"registrar");'
+								tooltiptext="Nuevo Prueba" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Serial BDUA" width="110px" />
+					<column label="Nro identificacion" width="120px" />
+					<column label="Estado translado" width="120px" />
+					<column label="Causa" />
+					<column label="Fecha aprobacion" width="120px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<borderlayout width="100%" height="98%" id="groupboxEditar"
+			visible="false">
+			<north border="none">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<toolbarbutton image="/images/Save16.gif"
+						label="Guardar Respuesta"
+						onClick="formRespuesta_solicitud_e4.guardarDatos();"
+						id="btGuardar" />
+					<toolbarbutton image="/images/New16.gif"
+						label="Nueva Respuesta"
+						onClick='formRespuesta_solicitud_e4.accionForm(true,"registrar");'
+						id="btNew" />
+					<space />
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Cancelar"
+						onClick='formRespuesta_solicitud_e4.accionForm(false,tbxAccion.getText());'
+						id="btCancel" />
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center">
+					<space />
+					<groupbox closable="false" mold="3d" height="90%"
+						width="478px">
+						<caption label="Registrar/Actualizar"
+							style="color: black;font-weight: bold" />
+						<grid sclass="GridSinBorde" vflex="1">
+							<columns>
+								<column label="" width="10px" />
+								<column label="" width="140px" />
+								<column label="" width="200px" />
+								<column label="" width="100px" />
+								<column label="" width="10px" />
+							</columns>
+							<rows>
+								<row visible="false">
+									<cell>
+										<intbox
+											constraint="no negative:Este valor no puede ser negativo"
+											id="ibxId" width="170px" style="text-transform:uppercase" />
+									</cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label id="lbSeparado_por"
+											value="Separado por: " />
+									</cell>
+									<cell>
+										<listbox id="lbxSeparado_por"
+											name="separador_esp" mold="select" hflex="1"
+											sclass="combobox" />
+									</cell>
+									<cell colspan="2" />
+								</row>
+								<row>
+									<cell></cell>
+									<cell colspan="2">
+										<textbox id="nameCT" hflex="1"
+											style="text-transform:uppercase" readonly="true" />
+									</cell>
+									<cell>
+										<button sclass="attachBtn"
+											image="/images/upload.png" upload="true" mold="trendy"
+											tooltiptext="Subir Respuesta Solicitud E4(TXT) ">
+											<attribute name="onUpload">
+	{
+		org.zkoss.util.media.Media media = event.getMedia();
+		if (media.getName().toLowerCase().endsWith("txt")) {
+			String txtString = media.getStringData();
+			if (txtString.trim().isEmpty()) {
+				formRespuesta_solicitud_e4.setRespuesta_e4(null);
+				nameCT.setValue("");
+				alert("Este archivo no puede estar vacio");
+			} else {
+				formRespuesta_solicitud_e4.setRespuesta_e4(txtString);
+				nameCT.setValue(media.getName());
+			}
+		} else {
+			formRespuesta_solicitud_e4.setRespuesta_e4(null);
+			nameCT.setValue("");
+			alert("Debe ser de tipo txt");
+		}
+	}
+</attribute>
+										</button>
+
+										<button mold="trendy"
+											image="/images/limpiar_mini.png" tooltiptext="Limpiar">
+											<attribute name="onClick">
+											   formRespuesta_solicitud_e4.setRespuesta_e4(null);
+			                                   nameCT.setValue("");
+											</attribute>
+										</button>
+									</cell>
+									<cell></cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+				</div>
+			</center>
+		</borderlayout>
+
+	</window>
+</zk>

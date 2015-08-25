@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Contratos_paquetesDao">
+
+	<resultMap id="contratos_paquetesMap" type="contratos_paquetes">
+		<result column="id" property="id" />
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="codigo_administradora" property="codigo_administradora" />
+		<result column="id_plan" property="id_plan" />
+		<result column="id_paquete" property="id_paquete" />
+		<result column="creacion_date" property="creacion_date" />
+		<result column="creacion_user" property="creacion_user" />
+		<association column="{id=id_paquete}" property="paquetes_servicios"
+			select="healthmanager.modelo.dao.Paquetes_serviciosDao.consultar" />
+		<association
+			column="{codigo_empresa=codigo_empresa,codigo_sucursal=codigo_sucursal,codigo_administradora=codigo_administradora,id_plan=id_plan}"
+			property="contratos" select="healthmanager.modelo.dao.ContratosDao.consultar" />
+	</resultMap>
+
+	<insert id="crear" parameterType="contratos_paquetes">
+		<selectKey keyProperty="id" resultType="java.lang.Long">
+			insert into public.contratos_paquetes
+			(codigo_empresa,codigo_sucursal,
+			codigo_administradora,id_plan,id_paquete,creacion_date,
+			creacion_user)
+
+			values (#{codigo_empresa},#{codigo_sucursal},
+			#{codigo_administradora},#{id_plan},#{id_paquete},
+			#{creacion_date}, #{creacion_user})
+			returning id;
+		</selectKey>
+	</insert>
+
+	<update id="actualizar" parameterType="contratos_paquetes">
+		update
+		public.contratos_paquetes set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},codigo_administradora =
+		#{codigo_administradora},
+		id_plan = #{id_plan},id_paquete =
+		#{id_paquete}, creacion_date = #{creacion_date},
+		creacion_user = #{creacion_user}
+		where id = #{id}
+	</update>
+
+	<select id="consultar" parameterType="contratos_paquetes"
+		resultMap="contratos_paquetesMap">
+		select id,
+		codigo_empresa,codigo_sucursal,
+		codigo_administradora,id_plan,id_paquete,creacion_date, creacion_user
+		from public.contratos_paquetes where id = #{id}
+	</select>
+
+	<delete id="eliminar" parameterType="contratos_paquetes">
+		delete from
+		public.contratos_paquetes
+		where id = #{id}
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="contratos_paquetesMap">
+		select id,
+		codigo_empresa,codigo_sucursal,
+		codigo_administradora,id_plan,id_paquete,creacion_date, creacion_user
+		from public.contratos_paquetes
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+				AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+				AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="codigo_administradora != null">
+				AND codigo_administradora = #{codigo_administradora}
+			</if>
+			<if test="id_plan != null">
+				AND id_plan = #{id_plan}
+			</if>
+			<if test="id_paquete != null">
+				AND id_paquete = #{id_paquete}
+			</if>
+		</trim>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist from public.contratos_paquetes
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+				AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+				AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="codigo_administradora != null">
+				AND codigo_administradora = #{codigo_administradora}
+			</if>
+			<if test="id_plan != null">
+				AND id_plan = #{id_plan}
+			</if>
+			<if test="id_paquete != null">
+				AND id_paquete = #{id_paquete}
+			</if>
+		</trim>
+	</select>
+
+</mapper>

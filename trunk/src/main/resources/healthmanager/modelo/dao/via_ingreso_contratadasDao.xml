@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Via_ingreso_contratadasDao">
+
+	<!--<typeAlias alias="admin" type="resolucion4505.modelo.bean.Admin" /> -->
+
+	<!--<mapper resource="resolucion4505/modelo/dao/xml/adminSQL.xml" /> -->
+
+	<resultMap id="via_ingreso_contratadasMap" type="via_ingreso_contratadas">
+		<result column="id_via" property="id_via" />
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="codigo_administradora" property="codigo_administradora" />
+		<result column="id_plan" property="id_plan" />
+		<result column="via_ingreso" property="via_ingreso" />
+		<result column="descripcion_via_ingreso" property="descripcion_via_ingreso" />
+		<result column="ultimo_user" property="ultimo_user" />
+		<result column="ultimo_update" property="ultimo_update" />
+		<result column="consecutivo_manual" property="consecutivo_manual" />
+	</resultMap>
+
+	<insert id="crear" parameterType="via_ingreso_contratadas">
+		<selectKey keyProperty="id_via" resultType="java.lang.Long">
+			insert into
+			public.via_ingreso_contratadas (codigo_empresa,
+			codigo_sucursal,codigo_administradora,id_plan,
+			via_ingreso,descripcion_via_ingreso,ultimo_user,ultimo_update,
+			consecutivo_manual)
+
+			values (#{codigo_empresa},
+			#{codigo_sucursal},#{codigo_administradora},#{id_plan},
+			#{via_ingreso},#{descripcion_via_ingreso},
+			#{ultimo_user},#{ultimo_update},
+			#{consecutivo_manual})
+			RETURNING id_via;
+		</selectKey>
+
+	</insert>
+
+	<update id="actualizar" parameterType="via_ingreso_contratadas">
+		update
+		public.via_ingreso_contratadas set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal}, codigo_administradora =
+		#{codigo_administradora},
+		id_plan = #{id_plan},via_ingreso =
+		#{via_ingreso},
+		descripcion_via_ingreso = #{descripcion_via_ingreso},
+		ultimo_user = #{ultimo_user},
+		ultimo_update = #{ultimo_update},
+		consecutivo_manual = #{consecutivo_manual}
+		where id_via = #{id_via}
+	</update>
+
+	<select id="consultar" parameterType="via_ingreso_contratadas"
+		resultMap="via_ingreso_contratadasMap">
+		select id_via,codigo_empresa,
+		codigo_sucursal,codigo_administradora,id_plan,
+		via_ingreso,descripcion_via_ingreso,ultimo_user,ultimo_update,
+		consecutivo_manual
+		from
+		public.via_ingreso_contratadas
+		where id_via = #{id_via}
+	</select>
+	
+	<select id="consultar_informacion" parameterType="via_ingreso_contratadas"
+		resultMap="via_ingreso_contratadasMap">
+		select id_via,codigo_empresa,
+		codigo_sucursal,codigo_administradora,id_plan,
+		via_ingreso,descripcion_via_ingreso,ultimo_user,ultimo_update,
+		consecutivo_manual
+		from
+		public.via_ingreso_contratadas
+		where codigo_empresa = #{codigo_empresa} and 
+		codigo_sucursal = #{codigo_sucursal} and 
+		codigo_administradora = #{codigo_administradora} and 
+		id_plan = #{id_plan} and 
+		via_ingreso = #{via_ingreso} 
+	</select>
+
+	<delete id="eliminar" parameterType="via_ingreso_contratadas">
+		delete from
+		public.via_ingreso_contratadas
+		where id_via = #{id_via}
+	</delete>
+
+	<delete id="eliminar_contrato" parameterType="via_ingreso_contratadas">
+		delete from
+		public.via_ingreso_contratadas
+		where codigo_empresa = #{codigo_empresa} and
+		codigo_sucursal = #{codigo_sucursal} and
+		codigo_administradora = #{codigo_administradora} and
+		id_plan = #{id_plan}
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="via_ingreso_contratadasMap">
+		select id_via,codigo_empresa,
+		codigo_sucursal,codigo_administradora,id_plan,
+		via_ingreso,descripcion_via_ingreso,ultimo_user,ultimo_update,
+		consecutivo_manual
+		from
+		public.via_ingreso_contratadas
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+				AND codigo_empresa =
+				#{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+				AND codigo_sucursal =
+				#{codigo_sucursal}
+			</if>
+			<if test="codigo_administradora != null">
+				AND codigo_administradora
+				= #{codigo_administradora}
+			</if>
+			<if test="id_plan != null">
+				AND id_plan = #{id_plan}
+			</if>
+			<if test="id_contrato != null">
+				AND id_plan = #{id_contrato}
+			</if>
+			<if test="via_ingreso != null">
+				AND via_ingreso = #{via_ingreso}
+			</if>
+			<if test="listado_contratos != null">
+				AND id_plan IN
+				<foreach collection="listado_contratos" item="i" open="("
+					separator="," close=")">
+					#{i}
+				</foreach>
+			</if>
+		</trim>
+		<if test="limit != null">
+			${limit}
+		</if>
+	</select>
+	
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from public.via_ingreso_contratadas 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="codigo_administradora != null">
+				AND codigo_administradora
+				= #{codigo_administradora}
+			</if>
+			<if test="id_plan != null">
+				AND id_plan = #{id_plan}
+			</if>
+		</trim>
+	</select>
+	
+	<select id="verificarDuplicados" resultType="java.util.HashMap" >
+		SELECT "count"(1) as total, 
+		codigo_empresa, codigo_sucursal,codigo_administradora,id_plan,via_ingreso,consecutivo_manual 
+		FROM via_ingreso_contratadas GROUP BY codigo_empresa, codigo_sucursal,
+		codigo_administradora,id_plan,via_ingreso,consecutivo_manual ORDER BY 1 desc
+	</select>
+
+</mapper>

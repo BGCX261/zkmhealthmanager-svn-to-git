@@ -1,0 +1,171 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formReporte" width="100%" height="100%"
+		use="healthmanager.controller.Reporte_agenda_citasAction"
+		onCreate="formReporte.initReporte();">
+		<style src="estilo.css" />
+		<style>
+			body ,table{ margin:0; padding:0;
+
+			} .z-fieldset{ -moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; }
+
+			tr.z-row .z-cell{ background-image:none; }
+
+			tr.z-row td.z-row-inner{ background-image:none; }
+		</style>
+		<borderlayout width="100%" height="100%">
+			<west width="500px" autoscroll="true">
+				<grid>
+					<columns visible="false">
+						<column width="100px" />
+						<column />
+					</columns>
+					<rows>
+						<row>
+							<cell>
+								<label value="Centro salud" />
+							</cell>
+							<cell>
+								<hlayout>
+									<bandboxRegistros
+										id="bandboxCentro_salud" widthBandbox="130px"
+										widthListbox="500px" heightListbox="300px"
+										columnas="Código#110px|Nombre" />
+									<textbox id="tbxNombre_centro"
+										width="200px" style="text-transform:uppercase"
+										readonly="true" />
+									<toolbarbutton
+										id="btnLimpiar_centro" image="/images/borrar.gif" />
+
+								</hlayout>
+							</cell>
+						</row>
+
+						<row>
+							<cell>
+								<label value="Fecha inicial" />
+							</cell>
+							<cell>
+								<datebox format="dd/MM/yyyy"
+									id="dtbxFecha_inicial" width="130px" />
+								<space />
+								<label value="Fecha final" />
+								<space width="5px" />
+								<datebox format="dd/MM/yyyy"
+									id="dtbxFecha_final" width="150px" />
+							</cell>
+						</row>
+
+						<row>
+							<cell>
+								<label value="Tipo de ingreso" />
+							</cell>
+
+							<cell>
+								<listbox width="350px" mold="select"
+									id="lbxTipo_cita" onSelect="formReporte.listarVias_ingreso()" />
+							</cell>
+
+						</row>
+
+						<row>
+							<cell colspan="2">
+								<toolbarbutton
+									image="/images/print_ico.gif" label="Generar reporte" onClick="formReporte.generarReporte()" />
+							</cell>
+						</row>
+
+						<row>
+							<cell colspan="2">
+								<groupbox mold="3d">
+									<caption
+										label="Estados y vias de ingreso" style="font-weight:bold" />
+									<hbox widths="50%,50%">
+										<listbox id="lbxEstados"
+											multiple="true" checkmark="true">
+											<listhead>
+												<listheader
+													width="30px" />
+												<listheader
+													label="Estados" />
+											</listhead>
+										</listbox>
+
+										<listbox id="lbxVia_ingreso"
+											rows="5" multiple="true" checkmark="true">
+											<listhead>
+												<listheader
+													width="30px" />
+												<listheader
+													label="Vias de ingreso" />
+											</listhead>
+										</listbox>
+									</hbox>
+								</groupbox>
+
+							</cell>
+						</row>
+
+						<row>
+							<cell colspan="2">
+								<groupbox mold="3d" id="groupboxPrestadores" >
+									<caption label="Prestadores"
+										style="font-weight:bold" />
+
+									<listbox id="lbxPrestadores"
+										multiple="true" checkmark="true" mold="paging" pageSize="8">
+										<auxhead>
+											<auxheader colspan="5">
+												<label
+													value="Criterios de busqueda: " />
+												<textbox id="tbxValue"
+													width="170px" onOK="formReporte.buscarPrestadores()" />
+												<space width="5px" />
+												<toolbarbutton
+													label="Consultar" image="/images/Magnifier.gif"
+													onClick="formReporte.buscarPrestadores()" />
+											</auxheader>
+										</auxhead>
+										<listhead>
+											<listheader width="30px" />
+											<listheader
+												label="Identificación" />
+											<listheader label="Nombres" />
+											<listheader
+												label="Apellidos" />
+											<listheader
+												label="Especialidad" />
+										</listhead>
+									</listbox>
+								</groupbox>
+
+							</cell>
+						</row>
+
+					</rows>
+				</grid>
+			</west>
+			
+			<center>
+				<listbox id="listboxResultados" mold="paging" pageSize="20" vflex="1" >
+					<auxhead>
+						<auxheader label="LISTADO DE CITAS POR CAPS " colspan="6" />
+					</auxhead>
+					<listhead>
+						<listheader label="N°" width="70px" />
+						<listheader label="Fecha hora" width="150px" />
+						<listheader label="Prestador" />
+						<listheader label="Paciente" />
+						<listheader label="Estado" width="120px" />
+						<listheader label="Area" />
+						
+					</listhead>
+				</listbox>
+			</center>
+			
+		</borderlayout>
+	</window>
+</zk>

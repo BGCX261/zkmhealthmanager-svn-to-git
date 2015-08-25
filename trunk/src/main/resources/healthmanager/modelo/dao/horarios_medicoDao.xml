@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.Horarios_medicoDao">
+
+	
+
+	<resultMap id="horarios_medicoMap" type="horarios_medico">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="codigo_medico" property="codigo_medico" />
+		<result column="creacion_date" property="creacion_date" />
+		<result column="creacion_user" property="creacion_user" />
+		<result column="codigo_rol"    property="codigo_rol" />
+	</resultMap>
+
+	<insert id="crear" parameterType="horarios_medico">
+		insert into public.horarios_medico (codigo_empresa,codigo_sucursal,
+		codigo_medico,creacion_date,creacion_user,codigo_rol)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{codigo_medico},#{creacion_date},#{creacion_user},#{codigo_rol})
+	</insert>
+
+	<update id="actualizar" parameterType="horarios_medico">
+		update public.horarios_medico set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},codigo_medico = #{codigo_medico},
+		creacion_date = #{creacion_date},creacion_user = #{creacion_user}, codigo_rol = #{codigo_rol} 
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and codigo_medico = #{codigo_medico}
+	</update>
+
+	<select id="consultar" resultMap="horarios_medicoMap" parameterType="horarios_medico">
+		select codigo_empresa,codigo_sucursal,
+		codigo_medico,creacion_date,creacion_user,codigo_rol 
+		from public.horarios_medico where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_medico = #{codigo_medico} 
+	</select>
+
+	<delete id="eliminar" parameterType="horarios_medico">
+		delete from public.horarios_medico
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_medico = #{codigo_medico}
+	</delete>
+
+	<select id="listar" resultMap="horarios_medicoMap" parameterType="java.util.Map">
+		SELECT h.codigo_empresa, h.codigo_sucursal, h.codigo_medico,
+     	h.creacion_date, h.creacion_user, h.codigo_rol 
+		from public.horarios_medico h
+		INNER JOIN usuarios u ON (u.codigo_empresa = h.codigo_empresa AND
+    	u.codigo_sucursal = h.codigo_sucursal AND u.codigo = h.codigo_medico)
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">AND h.codigo_empresa = #{codigo_empresa}</if>
+			<if test="codigo_sucursal != null">AND h.codigo_sucursal = #{codigo_sucursal}</if>
+			<if test="paramTodo != null">AND (u.codigo like '${value}' or u.nombres like '${value}' 
+			 or u.apellidos like '${value}')</if>
+			<if test="parameter != null">AND ${parameter} like '${value}'</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

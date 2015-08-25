@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.historia_urgencia2Model">
+	<select id="select" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+
+		SELECT
+		hisc_urgencia.ante_fam_hipertension AS hipertension,
+		hisc_urgencia.ante_fam_ecv AS cerebro_vascular,
+		hisc_urgencia.ante_fam_enf_coronaria AS coronaria,
+		hisc_urgencia.ante_fam_muerte_im_acv AS micro_cardio,
+		hisc_urgencia.ante_fam_dislipidemia AS displimedia,
+		hisc_urgencia.ante_fam_alergicos AS alergicos,
+		hisc_urgencia.embarazo_cefaleas AS cefalea,
+		hisc_urgencia.gineco_ciclo1 AS ciclo1,
+		hisc_urgencia.gineco_fur AS fur,
+		hisc_urgencia.gineco_conf_fur AS confur,
+		hisc_urgencia.gineco_generales AS generales,
+		hisc_urgencia.gineco_malformaciones AS malformaciones,
+		hisc_urgencia.gineco_menarca AS menarca,
+		hisc_urgencia.gineco_menopaudia AS menopaudia,
+		hisc_urgencia.gineco_nacidos_muertos AS naci_muerto,
+		hisc_urgencia.gineco_nacidos_vivos AS nac_vivos,
+		hisc_urgencia.gineco_nro_abortos AS nro_abortos,
+		hisc_urgencia.gineco_nro_cesarias AS nro_cesarea,
+		hisc_urgencia.gineco_nro_gestaciones AS nro_gesta,
+		hisc_urgencia.gineco_nro_partos AS nro_partos,
+		hisc_urgencia.gineco_preterminos AS preterminos,
+		sigvitales.frecuencia_cardiaca AS fc,
+		sigvitales.frecuencia_respiratoria AS fr,
+		sigvitales.temparatura AS tem,
+		sigvitales.ta_sistolica AS sistolica,
+		sigvitales.ta_diastolica AS diastolica,
+		sigvitales.ta_media AS media,
+		sigvitales.peso AS peso,
+		sigvitales.talla AS talla,
+		sigvitales.imc AS imc,
+		sigvitales.superficie_corporal AS corporal,
+		hisc_urgencia.respuesta_motora AS motora,
+		hisc_urgencia.respuesta_verbal AS verbal,
+		hisc_urgencia.apertura_ocular AS ap_ocular,
+		hisc_urgencia.gineco_ciclo2 AS ciclo2,
+		hisc_urgencia.ant_gin_citologia_resultado AS resultado,
+		hisc_urgencia.ant_gin_fecha_ultima_citologia AS fecha_ul_cito,
+		hisc_urgencia.ant_gin_tiene_citologia AS tiene_citologia,
+		hisc_urgencia.vida_marital AS vida_marital,
+		hisc_urgencia.fecha_vida_marital AS fecha_marital,
+		hisc_urgencia.patologia_embarazo_parto,
+		paciente.sexo AS paciente_sexo
+
+
+		FROM
+		"public"."hisc_urgencia" hisc_urgencia INNER JOIN "public".paciente paciente ON
+		paciente."codigo_empresa" = hisc_urgencia."codigo_empresa"
+		AND paciente."nro_identificacion" = hisc_urgencia."nro_identificacion"
+		AND paciente."codigo_sucursal" = hisc_urgencia."codigo_sucursal"
+
+		LEFT JOIN "public".sigvitales sigvitales ON sigvitales.codigo_empresa =
+		hisc_urgencia.codigo_empresa
+		AND hisc_urgencia.codigo_historia = sigvitales.codigo_historia
+		AND hisc_urgencia.codigo_sucursal = sigvitales.codigo_sucursal
+
+		where hisc_urgencia.codigo_empresa = #{codigo_empresa}
+		and
+		hisc_urgencia.codigo_sucursal = #{codigo_sucursal}
+		and
+		hisc_urgencia.codigo_historia = #{nro_historia}
+
+	</select>
+</mapper>

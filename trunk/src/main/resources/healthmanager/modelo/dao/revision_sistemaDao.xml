@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Revision_sistemaDao">
+
+	<!--<typeAlias alias="revision_sistema" type="healthmanager.modelo.bean.Revision_sistema" />-->
+
+	<!--<mapper resource="healthmanager/modelo/dao/xml/revision_sistemaSQL.xml" />-->
+
+	<resultMap id="revision_sistemaMap" type="revision_sistema">
+		<result column="codigo_revision" property="codigo_revision" />
+		<result column="respuesta" property="respuesta" />
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="codigo_historia" property="codigo_historia" />
+		<result column="observaciones" property="observaciones" />
+		<result column="nro_identificacion" property="nro_identificacion" />
+	</resultMap>
+
+	<insert id="crear" parameterType="revision_sistema">
+		insert into public.revision_sistema (codigo_revision,respuesta,
+		codigo_empresa,codigo_sucursal,codigo_historia,observaciones,nro_identificacion)
+
+		values (#{codigo_revision},#{respuesta},
+		#{codigo_empresa},#{codigo_sucursal},#{codigo_historia},#{observaciones},#{nro_identificacion})
+	</insert>
+
+	<update id="actualizar" parameterType="revision_sistema">
+		update public.revision_sistema set codigo_revision = #{codigo_revision},
+		respuesta = #{respuesta},codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},codigo_historia = #{codigo_historia},
+		observaciones = #{observaciones}, nro_identificacion = #{nro_identificacion}  
+		where codigo_revision = #{codigo_revision}
+		and codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and codigo_historia = #{codigo_historia}
+	</update>
+
+	<select id="consultar" parameterType="revision_sistema" resultMap="revision_sistemaMap">
+		select codigo_revision,respuesta,
+		codigo_empresa,codigo_sucursal,codigo_historia,observaciones,nro_identificacion   
+		from public.revision_sistema where codigo_revision = #{codigo_revision}
+		and codigo_empresa = #{codigo_empresa} and codigo_sucursal = #{codigo_sucursal}
+		and codigo_historia = #{codigo_historia}
+	</select>
+
+	<delete id="eliminar" parameterType="revision_sistema">
+		delete from public.revision_sistema
+		where codigo_empresa = #{codigo_empresa} and codigo_sucursal = #{codigo_sucursal}
+		and codigo_historia = #{codigo_historia}
+		<if test="codigo_revision != null">
+			and codigo_revision = #{codigo_revision}
+		</if>
+	</delete>
+
+	<select id="listar" resultMap="revision_sistemaMap" parameterType="java.util.Map">
+		select codigo_revision,respuesta,
+		codigo_empresa,codigo_sucursal,codigo_historia,observaciones,nro_identificacion   
+		from public.revision_sistema
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">AND codigo_empresa = #{codigo_empresa}</if>
+			<if test="codigo_sucursal != null">AND codigo_sucursal = #{codigo_sucursal}</if>
+			<if test="codigo_historia != null">AND codigo_historia = #{codigo_historia}</if>
+			<if test="nro_identificacion != null">AND nro_identificacion = #{nro_identificacion} </if>
+			<if test="parameter != null">AND ${parameter} like '${value}'</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+</mapper>

@@ -1,0 +1,647 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+
+	<window id="formPaciente" width="100%" height="100%"
+		use="healthmanager.controller.PacienteAction"
+		onCreate="formPaciente.initPaciente();">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="true" closable="false"
+			mold="3d" height="100%">
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" vflex="1">
+				<auxhead>
+					<auxheader colspan="7">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<textbox id="tbxValue" width="200px"
+								onOK="formPaciente.buscarDatos();"
+								style="text-transform:uppercase" />
+							<toolbarbutton image="/images/Magnifier.gif"
+								onClick="formPaciente.buscarDatos();" label="Consultar Paciente"
+								id="btConsultar" />
+							<toolbarbutton image="/images/New16.gif"
+								onClick='formPaciente.accionForm(true,"registrar");'
+								label="Nuevo Paciente" id="btNew" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+
+				<columns sizable="true">
+					<column label="Tipo Id" align="center" width="58px" />
+					<column label="Identificación" align="center"
+						width="90px" />
+					<column label="Administradora" align="center" />
+					<column label="Apellidos" align="center" />
+					<column label="Nombres" align="center" />
+					<column label="Fecha nac" align="center"
+						width="90px" />
+					<column label="Acciones" align="center"
+						width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<!-- *************************** -->
+		<!-- *** Insertar/Actualizar *** -->
+		<!-- *************************** -->
+		<borderlayout width="100%" height="98%" id="groupboxEditar"
+			visible="false">
+			<north border="none">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<textbox id="tbxCodigo_administradora" value=""
+						visible="false" />
+					<toolbarbutton image="/images/Save16.gif"
+						label="Guardar Datos" onClick="formPaciente.guardarDatos();"
+						id="btGuardar" />
+					<toolbarbutton image="/images/New16.gif"
+						onClick='formPaciente.accionForm(true,"registrar");'
+						label="Nuevo Paciente" id="btNuevo" />
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Regresar"
+						onClick='formPaciente.accionForm(false,tbxAccion.getText());'
+						id="btCancelar" />
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center">
+					<separator height="3px" />
+					<groupbox closable="false" width="1200px"
+						mold="3d">
+						<grid sclass="GridSinBorde">
+							<auxhead>
+								<auxheader colspan="7" align="center"
+									label="REGISTRAR PACIENTES" />
+							</auxhead>
+							<columns visible="false">
+								<column label="" width="10px" />
+								<column label="" width="100px" />
+								<column label="" width="180px" />
+								<column label="" width="190px" />
+								<column label="" width="120px" />
+								<column label="" width="180px" />
+								<column label="" width="180px" />
+							</columns>
+							<rows>
+
+								<!-- fila 1 -->
+								<row>
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+									</cell>
+									<cell>
+										<label id="lbNro_identificacion"
+											value="Identificación: " />
+									</cell>
+									<cell colspan="3">
+										<hlayout>
+											<textbox
+												id="tbxNro_identificacion"
+												style="text-transform:uppercase"
+												onOK="lbxTipo_identificacion.focus();" maxlength="20"
+												onChange="formPaciente.consultarExistenciaPaciente()" 
+												visible="false"/>
+											<textbox id="tbxDocumento"
+												width="120px" style="text-transform:uppercase"
+												onOK="lbxTipo_identificacion.focus();" maxlength="20"
+												onChange="formPaciente.consultarExistenciaPaciente()"/>
+											<space width="2px" />
+											<label value="* "
+												style="color: red" tooltiptext="Campo obligatorio" />
+												<space width="20px"/>
+											<label
+												id="lbTipo_identificacion" value="Tipo Id: "
+												tooltip="tipo de identificación" />
+												<space width="25px"/>
+											<listbox
+												id="lbxTipo_identificacion" name="tipo_id" mold="select"
+												width="110%"
+												 sclass="combobox" onOK="tbxLugar_exp.focus();"
+												onSelect="formPaciente.consultarExistenciaPaciente();formPaciente.mostrarVentanaRecienNacido()">
+
+											</listbox>
+											<toolbarbutton
+												image="/images/atendido.png" id="btnMostrar_ms" visible="false"
+												onClick="formPaciente.mostrarVentanaRecienNacido2()"
+												width="25px" tooltip="Menor sin identificación" />
+										</hlayout>
+									</cell>
+									<cell colspan="3">
+									<space width="20px"/>
+										<label id="lbLugar_exp"
+											value="Lugar Expedición: " />
+											<space width="10px"></space>
+											<textbox id="tbxLugar_exp"
+											style="text-transform:uppercase"
+											onOK="tbxNombre1.focus();"  width="425px"/>
+									</cell>
+								
+								</row>
+
+								<!-- fila 2 -->
+								<row>
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+									</cell>
+									<cell>
+										<label id="lbNombres"
+											value="Nombres: " />
+									</cell>
+									<cell>
+										<textbox id="tbxNombre1"
+											width="97%" style="text-transform:uppercase"
+											onOK="tbxNombre2.focus();" />
+									</cell>
+									<cell colspan="2">
+									<space width="70px"/>
+										<textbox id="tbxNombre2"
+											width="72%"
+											onOK="tbxApellido1.focus();" />
+									</cell>
+									<cell colspan="3">
+									<space width="10px"/>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+											
+										<label id="lbApellidos"
+											value="Apellidos: " />
+											<space width="55px"/>
+												<textbox id="tbxApellido1" width="190px"
+											 style="text-transform:uppercase"
+											onOK="tbxApellido2.focus();" />
+												<space width="30px"/>
+												<textbox id="tbxApellido2" width="200px"
+											style="text-transform:uppercase"
+											onOK="dtbxFecha_nacimiento.focus();" />
+								
+									
+									</cell>
+								
+								</row>
+
+								<!-- fila 3 -->
+								<row>
+									<cell />
+									<cell>
+										<label id="lbFecha_nacimiento"
+											value="Fecha Nac: " />
+									</cell>
+									<cell>
+										<datebox
+											id="dtbxFecha_nacimiento" format="dd/MM/yyyy a hh:mm:ss"
+											width="170px"
+											onChange="formPaciente.obtenerEdad(true);
+														formPaciente.deshabilitarCampos(dtbxFecha_nacimiento);"
+											onBlur="formPaciente.deshabilitarCampos(dtbxFecha_nacimiento);"
+											onOK="lbxUnidad_medidad.focus();" />
+									</cell>
+									<cell colspan="5">
+										<hlayout valign="middle">
+											<label id="lbUnidad_medidad"
+												value="Unid Med: " />
+												<space width="5px"></space>
+											<listbox
+												id="lbxUnidad_medidad" name="unidad_medidad" mold="select"
+												width="220px" sclass="combobox"
+												onSelect="formPaciente.obtenerEdad(false);"
+												onOK="lbxSexo.focus();" />
+
+											<space width="27px" />
+
+											<label id="lbEdad"
+												value="Edad: " />
+												<space width="70px"/>
+											<textbox id="tbxEdad"
+												width="120px" style="text-transform:uppercase"
+												readonly="true" />
+											<space width="5px" />
+											<label value="* "
+												style="color: red" tooltiptext="Campo obligatorio" />
+											<label id="lbSexo"
+												value="Sexo: " />
+											<listbox id="lbxSexo"
+												name="sexo" mold="select" width="90px" sclass="combobox"
+												onOK="lbxZona.focus();" />
+											<space width="5px" />
+											<label id="lbZona"
+												value="Zona: " />
+											<space width="5px" />
+											<listbox id="lbxZona"
+												name="zona" mold="select" width="98px" sclass="combobox"
+												onOK="lbxTipo_usuario.focus();" />
+										</hlayout>
+									</cell>
+								</row>
+
+								<!-- fila 4 -->
+								<row>
+									<cell />
+									<cell>
+										<label id="lbTipo_usuario"
+											value="Régimen: " />
+									</cell>
+									<cell>
+										<listbox id="lbxTipo_usuario"
+											name="tipo_usuario" mold="select" width="170px"
+											sclass="combobox"
+											onSelect="formPaciente.listarTipo_afiliado(lbxTipo_afiliado,lbxTipo_usuario);"
+											onOK="lbxTipo_afiliado.focus();" />
+									</cell>
+									<cell colspan="5">
+										<hlayout>
+											<label id="lbTipo_afiliado"
+												value="Tipo afilia: " tooltip="Tipo de identificación" />
+												<space width="5px"></space>
+											<listbox
+												id="lbxTipo_afiliado" name="tipo_afiliado" mold="select"
+												width="220px" sclass="combobox" onOK="lbxEstrato.focus();" />
+											<space width="28px" />
+											<label id="lbEstrato"
+												value="Estrato: " />
+												<space width="60px"/>
+											<listbox id="lbxEstrato"
+												name="estrato" mold="select" width="70px" sclass="combobox"
+												onOK="lbxEstado_civil.focus();" />
+											<space width="4px" />
+											<label id="lbEstado_civil"
+												value="E. civil: " />
+											<listbox
+												id="lbxEstado_civil" name="estado_civil" mold="select"
+												width="120px" sclass="combobox" onOK="dbxIngresos.focus();" />
+											<space width="3px" />
+											<label id="lbIngresos"
+												value="Ingresos $: " />
+												<space width="8px"/>
+											<doublebox id="dbxIngresos"
+												format="#,##0.00" width="93px" value="0.00"
+												onOK="lbxCodigo_dpto.focus();" />
+										</hlayout>
+									</cell>
+								</row>
+
+								<!-- fila 5 -->
+								<row>
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+									</cell>
+									<cell>
+										<label id="lbCodigo_dpto"
+											value="Departamento: " />
+									</cell>
+									<cell>
+										<listbox id="lbxCodigo_dpto"
+											mold="select" width="170px" sclass="combobox"
+											onSelect="formPaciente.listarMunicipios(lbxCodigo_municipio,lbxCodigo_dpto);"
+											onOK="lbxCodigo_municipio.focus();" />
+									</cell>
+									<cell colspan="5">
+										<hlayout>
+											<label value="* "
+												style="color: red" tooltiptext="Campo obligatorio" />
+											<label
+												id="lbCodigo_municipio" value="Municipio: " />
+											<listbox
+												id="lbxCodigo_municipio" name="Codigo_municipio"
+												mold="select" width="220px" sclass="combobox"
+												onOK="tbxDireccion.focus();" />
+											<space width="30px" />
+											<label id="lbDireccion"
+												value="Dirección: " />
+												<space width="43px"/>
+											<textbox id="tbxDireccion"
+												width="430px" style="text-transform:uppercase"
+												onOK="dbxTel_res.focus();" />
+										</hlayout>
+									</cell>
+								</row>
+
+								<!-- fila 6 -->
+								<row>
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+									</cell>
+									<cell>
+										<label id="lbTel_res"
+											value="Teléfono res: " tooltiptext="Teléfono de residencia" />
+									</cell>
+									<cell>
+										<doublebox id="dbxTel_res"
+											hflex="1" format="##0" onOK="dbxTel_oficina.focus();" />
+									</cell>
+									<cell colspan="2">
+										<hlayout>
+											<label id="lbTel_oficina"
+												value="Teléfono oficina: " />
+											<doublebox
+												id="dbxTel_oficina" width="180px" format="##0"
+												onOK="tbxProfesion.focus();" />
+										</hlayout>
+									</cell>
+									<cell colspan="3">
+										<hlayout visible="false">
+											<label id="lbProfesion"
+												value="Profesion: " />
+											<textbox id="tbxProfesion"
+												width="280px" style="text-transform:uppercase"
+												onOK="tbxNom_administradora.focus();" />
+										</hlayout>
+									</cell>
+								</row>
+
+								<!-- fila 2 -->
+								<row>
+									<cell />
+									<cell>
+										<label
+											id="lbCodigo_administradora" value="Aseguradora: " />
+									</cell>
+									<cell colspan="3">
+										<bandbox
+											id="tbxNom_administradora" autodrop="true" readonly="true"
+											width="460px"
+											onOpen='formPaciente.buscarAdministradora(tbxValueAdministradora.getValue(),lbxAdministradora)'
+											onOK="listboxContratos.focus();">
+											<bandpopup>
+												<vbox>
+													<toolbar>
+														<label
+															value="Buscar: " />
+														<textbox
+															id="tbxValueAdministradora"
+															onChanging='formPaciente.buscarAdministradora(event.getValue(),lbxAdministradora)'
+															style="text-transform:uppercase;" />
+														<toolbarbutton
+															image="/images/borrar.gif" tooltiptext="Quitar"
+															onClick='formPaciente.selectedAdministradora(new Listitem(),tbxNom_administradora,tbxCodigo_administradora);formPaciente.listarContratos(listboxContratos,tbxCodigo_administradora.getValue(),true,true)' />
+													</toolbar>
+													<listbox
+														height="300px" width="600px" mold="paging" pageSize="8"
+														id="lbxAdministradora"
+														onSelect='formPaciente.selectedAdministradora(self.getSelectedItem(),tbxNom_administradora,tbxCodigo_administradora);formPaciente.listarContratos(listboxContratos,tbxCodigo_administradora.getValue(),true,true)'>
+														<listhead>
+															<listheader
+																label="Codigo" width="65px" />
+															<listheader
+																label="Nombre" />
+															<listheader
+																label="Nit" width="100px" />
+														</listhead>
+													</listbox>
+												</vbox>
+											</bandpopup>
+										</bandbox>
+
+									</cell>
+
+									<cell colspan="3" rowspan="6"
+										valign="top">
+										
+										<listbox id="listboxContratos"
+											checkmark="true" multiple="true">
+											<custom-attributes
+												org.zkoss.zul.listbox.rod="true" />
+												
+												
+												
+											<listhead>
+												
+												<listheader
+													width="30px" />
+												<listheader width="320px"
+													label="Listado de contratos"  />
+													<listheader width="140px"
+													label="Tipo de contrato" />
+													<listheader width="80px"
+													label="Estado" />
+													
+											</listhead>
+										</listbox>
+									</cell>
+								</row>
+								<row>
+									<cell />
+									<cell>
+										<label value="Ocupación: " />
+									</cell>
+									<cell colspan="3">
+										<hlayout>
+											<bandboxRegistros
+												id="tbxCodigo_ocupacion" widthBandbox="120px"
+												widthListbox="600px" heightListbox="300px"
+												columnas="Codigo#65px|Nombre" />
+											<textbox
+												id="tbxInfoOcupacion" width="325px"
+												style="text-transform:uppercase" readonly="true" />
+											<toolbarbutton
+												id="btnLimpiarOcupacion" image="/images/borrar.gif" />
+										</hlayout>
+
+									</cell>
+
+
+								</row>
+
+								<row>
+									<cell />
+									<cell>
+										<label value="Área: " />
+									</cell>
+									<cell colspan="3">
+										<listbox id="lbxArea_paciente"
+											mold="select" width="460px" sclass="combobox"
+											name="area_paciente" onOK="formPaciente.guardarDatos()" />
+									</cell>
+								</row>
+
+								<row>
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+									</cell>
+									<cell colspan="2">
+										<hlayout>
+											<label
+												value="Nivel educativo: " />
+											<space width="3px" />
+											<listbox
+												id="lbxCodigo_educativo" mold="select" width="170px"
+												sclass="combobox" onOK="btGuardar.focus();" />
+										</hlayout>
+									</cell>
+
+									<cell colspan="2">
+										<hlayout>
+											<label value="* "
+												style="color: red" tooltiptext="Campo obligatorio" />
+											<label
+												tooltiptext="Pertenencia etnica" value="Perten. Etnica: " />
+											<space width="10px" />
+											<listbox
+												id="lbxPertenencia_etnica" mold="select" width="175px"
+												sclass="combobox" onOK="btGuardar.focus();" />
+										</hlayout>
+									</cell>
+
+								</row>
+
+								<row>
+									<cell />
+									<cell colspan="2" id="cellSisben">
+										<hlayout>
+											<label id="lbNivel_sisben"
+												value="Nivel sisben: " />
+											<space width="20px" />
+											<listbox
+												id="lbxNivel_sisben" name="nivel_sisben" mold="select"
+												width="170px" sclass="combobox" />
+										</hlayout>
+									</cell>
+									<cell colspan="2">
+										<hlayout>
+											<label
+												value="Fecha afiliación:" />
+											<space width="3px" />
+											<datebox format="yyyy-MM-dd"
+												id="dtbxFecha_afiliacion" width="181px" />
+										</hlayout>
+									</cell>
+								</row>
+
+								<row>
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+									</cell>
+									<cell>
+										<label value="Barrio: " />
+									</cell>
+									<cell colspan="3">
+										<hlayout>
+											<bandboxRegistros
+												id="tbxCod_bar" widthBandbox="120px" widthListbox="600px"
+												heightListbox="300px"
+												columnas="Codigo#100px|Barrio|Localidad#180px|Dpto  Mun#210px" />
+											<textbox id="tbxInfoBar"
+												width="325px" style="text-transform:uppercase"
+												readonly="true" />
+											<toolbarbutton
+												id="btnLimpiarBar" image="/images/borrar.gif" />
+										</hlayout>
+									</cell>
+
+
+								</row>
+								<row>
+									<cell />
+									<cell colspan="2">
+										<hlayout>
+											<label id="lbLogin"
+												value="Login: " />
+											<space width="57px" />
+											<textbox id="tbxLogin"
+												width="160px" style="text-transform:uppercase"
+												maxlength="30" />
+											<image id="imgState" />
+										</hlayout>
+									</cell>
+									<cell colspan="2">
+										<hlayout>
+											<label id="lbPassword"
+												value="Password: " />
+											<space />
+											<textbox id="tbxPassword"
+												width="195px" style="text-transform:uppercase"
+												maxlength="30" />
+										</hlayout>
+									</cell>
+								</row>
+
+
+							</rows>
+
+						</grid>
+					</groupbox>
+				</div>
+			</center>
+
+		</borderlayout>
+
+		<window id="windowMenorSinIdentificacion" visible="false"
+			height="400px" width="80%" border="normal" position="center"
+			title="SELECCIONAR PADRE">
+			<groupbox id="groupboxMenorSinId" visible="true"
+				closable="false" mold="3d" height="10%">
+				<label value="Consultar paciente:"></label>
+				<textbox id="tbxidentificacion_ms" width="200px"
+					onOK="formPaciente.buscarDatos2()">
+				</textbox>
+				<toolbarbutton image="/images/Magnifier.gif"
+					tooltiptext="Consultar familiar" label="Consultar"
+					onClick="formPaciente.buscarDatos2()" />
+				<button mold="trendy" id="buttonCancelar"
+					label="Cancelar" style="float:right" />
+			</groupbox>
+			<div>
+				<hlayout style="float:left">
+					<grid id="gridResultadoMenor" >
+						<columns sizable="true">
+							<column label="Tipo Id" align="center"
+								width="58px" />
+							<column label="Identificación"
+								align="center" width="90px" />
+							<column label="Administradora"
+								align="center" />
+							<column label="Apellidos" align="center"
+								width="170px" />
+							<column label="Nombres" align="center"
+								width="170px" />
+							<column label="Fecha nac" align="center"
+								width="90px" />
+							<column label="Accion" align="center"
+								width="70px" />
+						</columns>
+						<rows id="rowsResultadoMenor" />
+					</grid>
+				</hlayout>
+			</div>
+
+		</window>
+
+		<zscript>
+			<![CDATA[
+	public Bandpopup crearBandpopupContratos() {
+		Bandpopup bandpopup = new Bandpopup();
+		bandpopup.setWidth("300px");
+		return bandpopup;
+	}
+]]>
+		</zscript>
+
+
+	</window>
+</zk>

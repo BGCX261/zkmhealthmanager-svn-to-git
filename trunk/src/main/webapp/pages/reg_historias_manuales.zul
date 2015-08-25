@@ -1,0 +1,177 @@
+<?page title="Registro de historias manuales" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+
+	<window id="formManuales" width="100%" height="100%"
+		use="healthmanager.controller.Reg_historias_manualesAction">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="false" closable="false"
+			mold="3d" height="100%">
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" vflex="1">
+				<auxhead>
+					<auxheader colspan="6">
+						<hbox align="center" hflex="1">
+							<label value="B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="110px" />
+							<space />
+							<textbox id="tbxValue"
+								style="text-transform:uppercase" />
+							<space />
+							<toolbarbutton image="/images/Magnifier.gif"
+								onClick="formManuales.buscarDatos();"
+								tooltiptext="Consultar Historias" label="Consultar"
+								autodisable="self" />
+							<space />
+							<toolbarbutton image="/images/New16.gif"
+								onClick='formManuales.accionForm(true,"registrar");'
+								tooltiptext="Nueva" label="Nueva" />
+						</hbox>
+
+					</auxheader>
+				</auxhead>
+
+				<columns sizable="true">
+					
+					<column label="Nro identificación" width="110px" />
+					<column label="Paciente" width="200px" />
+					<column label="Via de ingreso" width="250px" />
+					<column label="Fecha" width="170px" />
+					<column label="Motivo" />
+					<column label="Resumen"  />
+					<column label="Acciones" align="center"
+						width="140px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<borderlayout width="100%" height="100%" id="groupboxEditar"
+			visible="true">
+			<north border="none">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<toolbarbutton image="/images/Save16.gif"
+						label="Guardar Historia"
+						onClick="formManuales.guardarDatos();"
+						id="btGuardar" />
+					<toolbarbutton image="/images/New16.gif"
+						label="Nueva Historia"
+						onClick='formManuales.accionForm(true,"registrar");'
+						id="btNew" />
+					<space />
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Consultar"
+						onClick='formManuales.accionForm(false,tbxAccion.getText());'
+						id="btCancel" />
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center">
+					<space />
+					<!-- *************************** -->
+					<!-- *** Insertar/Actualizar *** -->
+					<!-- *************************** -->
+
+					<groupbox closable="false" width="805px"
+						mold="3d">
+						<caption label="REGISTRAR HISTORIAS MANUALES"
+							style="font-weight: bold;">
+
+						</caption>
+						<grid sclass="GridSinBorde">
+							<columns visible="false">
+								<column label="" width="115px"
+									align="left" />
+								<column label="" width="150px"
+									align="left" />
+								<column label="" width="70px"
+									align="left" />
+								<column label="" width="177px"
+									align="left" />
+								<column label="" width="98px"
+									align="left" />
+								<column label="" align="left" />
+							</columns>
+
+							<rows>
+								<row>
+									<cell>
+										<label value="Identificación: " />
+										<toolbarbutton
+											id="btnLimpiarPaciente" image="/images/borrar.gif" />
+									</cell>
+									<cell colspan="5">
+										<bandboxRegistros
+											id="tbxNro_identificacion" widthBandbox="170px"
+											widthListbox="600px" heightListbox="300px"
+											columnas="Tipo Ident#65px|Identificación|Nombres|Apellidos" />
+										<textbox id="tbxNomPaciente"
+											hflex="1" style="text-transform:uppercase" readonly="true" />
+									</cell>
+								</row>
+								<row>
+									<cell colspan="6">
+										<label value="Fecha: " />
+										<space width="74px" />
+
+										<datebox id="dtbxFecha_ingreso1"
+											format="yyyy-MM-dd HH:mm" width="170px"
+											constraint="no future: now or never" />
+										<space width="23px" />
+										<label value="Vía ingreso: " />
+
+										<listbox id="lbxVias_ingreso"
+											name="via_ingreso" mold="select" hflex="1"
+											sclass="combobox"
+											onSelect="formManuales.cargarVias(lbxVias_ingreso);" />
+									</cell>
+								</row>
+								<row style="background-color:white">
+									<cell colspan="6"></cell>
+								</row>
+								<row>
+									<label value="Motivo: " />
+									<cell colspan="5">
+										<textbox rows="5" cols="80"
+											id="tbxMotivo" />
+									</cell>
+								</row>
+								<row>
+									<label value="Resumen: " />
+									<cell colspan="5">
+										<textbox rows="5" cols="80"
+											id="tbxResumen" />
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+				</div>
+			</center>
+		</borderlayout>
+
+
+
+	</window>
+</zk>

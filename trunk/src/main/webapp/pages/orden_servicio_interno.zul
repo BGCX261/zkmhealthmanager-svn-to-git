@@ -1,0 +1,297 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+
+	<listbox id="listboxOrdenes_servicio" mold="paging" pageSize="20"
+		use="healthmanager.controller.Orden_servicio_internoAction"
+		hflex="1">
+		
+		<auxhead>
+			<auxheader colspan="5">
+				<div>
+					<toolbar width="100%" align="start"
+						id="toolbarGuardar">
+
+						<textbox id="tbxAccionOrden" value="registrar"
+							visible="false" />
+						<textbox id="tbxCodigo_paciente" value=""
+							visible="false" />
+						<textbox id="tbxSexo_pctOrden" value=""
+							visible="false" />
+						<textbox id="tbxFecha_nacOrden" value=""
+							visible="false" />
+						<textbox id="tbxCodigo_administradoraOrden"
+							value="" visible="false" />
+						<textbox id="tbxId_planOrden" value=""
+							visible="false" />
+						<textbox id="tbxNro_ingresoOrden" value=""
+							visible="false" />
+						<textbox id="tbxTipo_hcOrden" value=""
+							visible="false" />
+
+						<toolbarbutton image="/images/Save16.gif"
+							label="Guardar Orden"
+							onClick="listboxOrdenes_servicio.guardarDatos();"
+							id="btGuardarOrden" />
+						<toolbarbutton image="/images/eliminar.gif"
+							label="Eliminar Orden"
+							onClick='listboxOrdenes_servicio.eliminarDatos(tbxCodigo_orden.getValue());'
+							id="btEliminarOrden" />
+						<toolbarbutton image="/images/print_ico.gif"
+							label="Imprimir Orden"
+							onClick="listboxOrdenes_servicio.imprimir();" 
+							id="btImprimirOrden" />
+						<space />
+
+						<label value="Formato impresión: " />
+						<listbox id="lbxFormatoOrden" mold="select"
+							width="150px" sclass="combobox">
+							<listitem value="pdf" label="PDF"
+								selected="true" />
+							<listitem value="rtf" label="WORD" />
+						</listbox>
+
+					</toolbar>
+					<div id="divcontenedorPametrizado" visible="false"
+						style="border:0px">
+						<hbox align="center">
+							<label value="Plan Diagnóstico" style="font-weight:bold" />
+							<space width="20px" />
+							<toolbarbutton label="Adicionar Registro"
+								image="/images/generar.png"
+								onClick="listboxOrdenes_servicio.openPcd()"
+								id="btAdicionar2Orden" />
+
+							<toolbarbutton image="/images/print_ico.gif"
+								label="Imprimir Orden"
+								onClick="listboxOrdenes_servicio.imprimir();" 
+								id="btImprimir2Orden" disabled="true" />
+						</hbox>
+					</div>
+
+					<grid sclass="GridSinBorde" style="border:none"
+						height="110px" id="gridtabla" visible="false">
+						<columns>
+							<column label="" width="92px" />
+							<column label="" width="182px" />
+							<column label="" width="68px" />
+							<column label="" width="175px" />
+							<column label="" width="60px" />
+							<column label="" />
+						</columns>
+
+						<rows>
+
+							<row>
+								<cell>
+									<label value="Ordenador: " />
+								</cell>
+								<cell>
+									<bandbox id="tbxCodigo_ordenador"
+										autodrop="true" readonly="true" width="170px"
+										onOpen='listboxOrdenes_servicio.buscarOrdenador(tbxValueOrdenador.getValue(),lbxOrdenador)'>
+										<bandpopup>
+											<vbox>
+												<toolbar>
+													<label
+														value="Buscar: " />
+													<textbox
+														id="tbxValueOrdenador"
+														onChanging='listboxOrdenes_servicio.buscarOrdenador(event.getValue(),lbxOrdenador)'
+														style="text-transform:uppercase;" />
+													<toolbarbutton
+														image="/images/borrar.gif" tooltiptext="Quitar"
+														onClick='listboxOrdenes_servicio.selectedOrdenador(new Listitem())' />
+												</toolbar>
+												<listbox height="300px"
+													width="600px" mold="paging" pageSize="8" id="lbxOrdenador"
+													onSelect='listboxOrdenes_servicio.selectedOrdenador(self.getSelectedItem())'>
+													<listhead>
+														<listheader
+															label="Tipo Ident." width="65px" />
+														<listheader
+															label="Identificación" />
+														<listheader
+															label="Nombres" />
+														<listheader
+															label="Apellidos" />
+														<listheader
+															label="Especialidad" />
+													</listhead>
+												</listbox>
+											</vbox>
+										</bandpopup>
+									</bandbox>
+								</cell>
+								<cell colspan="2">
+									<textbox id="tbxNomOrdenador"
+										width="213px" style="text-transform:uppercase"
+										readonly="true" />
+								</cell>
+								<cell>
+									<label value="Codigo: " />
+								</cell>
+								<cell>
+									<textbox id="tbxCodigo_orden"
+										width="120px" style="text-transform:uppercase"
+										readonly="true" />
+								</cell>
+							</row>
+
+							<row>
+								<cell>
+									<label value="Prestador: " />
+								</cell>
+								<cell>
+									<bandbox id="tbxId_prestador"
+										autodrop="true" readonly="true" width="170px"
+										onOpen='listboxOrdenes_servicio.buscarPrestador(tbxValuePrestadorOrden.getValue(),lbxPrestadorOrden)'>
+										<bandpopup>
+											<vbox>
+												<toolbar>
+													<label
+														value="Buscar: " />
+													<textbox
+														id="tbxValuePrestadorOrden"
+														onChanging='listboxOrdenes_servicio.buscarPrestador(event.getValue(),lbxPrestadorOrden)'
+														style="text-transform:uppercase;" />
+													<toolbarbutton
+														image="/images/borrar.gif" tooltiptext="Quitar"
+														onClick='listboxOrdenes_servicio.selectedPrestador(new Listitem())' />
+												</toolbar>
+												<listbox height="300px"
+													width="500px" mold="paging" pageSize="8"
+													id="lbxPrestadorOrden"
+													onSelect='listboxOrdenes_servicio.selectedPrestador(self.getSelectedItem())'>
+													<listhead>
+														<listheader
+															label="Codigo" width="75px" />
+														<listheader
+															label="Nombre" />
+													</listhead>
+												</listbox>
+											</vbox>
+										</bandpopup>
+									</bandbox>
+								</cell>
+								<cell colspan="2">
+									<textbox id="tbxNomPrestadorOrden"
+										width="213px" style="text-transform:uppercase"
+										readonly="true" />
+								</cell>
+								<cell>
+									<label value="Fecha: " />
+								</cell>
+								<cell>
+									<datebox id="dtbxFecha_orden"
+										onCreate="" format="yyyy-MM-dd" width="120px" />
+								</cell>
+							</row>
+
+							<row>
+								<cell>
+									<label value="Diagnóstico: " />
+								</cell>
+								<cell>
+									<bandbox id="tbxCodigo_dx"
+										autodrop="true" readonly="true" width="170px"
+										onOpen="listboxOrdenes_servicio.buscarDx(tbxValueOrdenDx.getValue(),lbxOrdenDx)">
+										<bandpopup>
+											<vbox>
+												<toolbar>
+													<label
+														value="Buscar: " />
+													<textbox
+														id="tbxValueOrdenDx"
+														onChanging='listboxOrdenes_servicio.buscarDx(event.getValue(),lbxOrdenDx)'
+														style="text-transform:uppercase;" />
+													<toolbarbutton
+														image="/images/borrar.gif" tooltiptext="Quitar"
+														onClick='listboxOrdenes_servicio.selectedDx(new Listitem())' />
+												</toolbar>
+												<listbox height="300px"
+													width="600px" mold="paging" pageSize="8" id="lbxOrdenDx"
+													onSelect='listboxOrdenes_servicio.selectedDx(self.getSelectedItem())'>
+													<listhead>
+														<listheader
+															label="Código" width="65px" />
+														<listheader
+															label="Nombre" />
+														<listheader
+															label="Sexo" width="65px" />
+														<listheader
+															label="Limite inf" width="75px" />
+														<listheader
+															label="Limite sup" width="75px" />
+													</listhead>
+												</listbox>
+											</vbox>
+										</bandpopup>
+									</bandbox>
+								</cell>
+								<cell colspan="2">
+									<textbox id="tbxNomOrdenDx"
+										width="213px" style="text-transform:uppercase"
+										readonly="true" />
+									<textbox id="tbxSexo_dx" value=""
+										visible="false" />
+									<textbox id="tbxLimite_inferior_dx"
+										value="" visible="false" />
+									<textbox id="tbxLimite_superior_dx"
+										value="" visible="false" />
+								</cell>
+								<cell colspan="2">
+									<button mold="trendy"
+										label="Adicionar Registro"
+										onClick="listboxOrdenes_servicio.openPcd();"
+										id="btAdicionarOrden" />
+								</cell>
+							</row>
+
+						</rows>
+					</grid>
+				</div>
+			</auxheader>
+		</auxhead>
+
+		<listhead sizable="true">
+			<listheader label="Codigo" align="center" width="110px" />
+			<listheader label="Procedimiento" align="center" hflex="1"/>
+			<listheader label="Cantidad" id="lhrCantidad" align="center" width="80px" tooltiptext="Cantidad" />
+			<listheader label="Valor" align="center" width="120px" id="lhrValor" visible="false" />
+			<listheader label="Estado" visible="false" align="center" width="40px" id="colEstado_realizado" />
+			<listheader label="" align="center" width="28px" />
+		</listhead>
+		<listfoot>
+			 <listfooter span="6" align="left" id="listfooterObservaciones">
+                    <hlayout>
+		                	<groupbox mold="3d"
+		                		id="gbxIndicaciones_orden" closable="false"
+		                		hflex="1">
+		                		<caption
+		                			label="INDICACIONES Y/O RECOMENDACIONES" />
+		                		<textbox id="tbxObservaciones_ordenes"
+		                			hflex="1" rows="4" />
+		                	</groupbox>
+                    </hlayout>
+                    <hlayout id="hlayoutConsentimiento" visible="false">
+						<label value="Nombre de procedimiento " />
+						<textbox id="tbxNombres_procedimientos" hflex="1" />
+						<label value="¿Acepta el consentimiento informado?"
+							style="font-weight:bold" />
+						<radiogroup id="rgpConsentimiento_informado">
+							<radio label="Si" value="S" checked="true"/>
+							<radio label="No" value="N"  />
+						</radiogroup>
+						<toolbarbutton image="/images/consentimiento.png"
+							label="Mostrar consentimiento informado"
+							id="toolbarbuttonConsentimiento"
+							onClick="listboxOrdenes_servicio.imprimirConsentimientoInformado()" />
+						<datebox id="dtbxFecha_consentimiento"
+							visible="false" />
+					</hlayout>
+            </listfooter>
+		</listfoot>
+
+	</listbox>
+
+</zk>

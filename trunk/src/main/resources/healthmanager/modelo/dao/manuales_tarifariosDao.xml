@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Manuales_tarifariosDao">
+
+	<resultMap id="manuales_tarifariosMap" type="manuales_tarifarios">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="id_contrato" property="id_contrato" />
+		<result column="consecutivo" property="consecutivo" />
+		<result column="id_maestro_manual" property="id_maestro_manual" />
+		<result column="anio" property="anio" />
+		<result column="creacion_user" property="creacion_user" />
+		<result column="creacion_date" property="creacion_date" />
+		<result column="servicios" property="servicios" />
+		<result column="tipo_servicio" property="tipo_servicio" />
+		<result column="medicamentos" property="medicamentos" />
+		<result column="tipo_medicamento" property="tipo_medicamento" />
+		<result column="general" property="general" />
+		<result column="tipo_general" property="tipo_general" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="codigo_administradora" property="codigo_administradora" />
+		<result column="tarifa_especial" property="tarifa_especial" />
+		<result column="restriccion" property="restriccion" />
+		<result column="aplica_descuentos" property="aplica_descuentos" />
+		<result column="tipo_consulta" property="tipo_consulta" />
+		<result column="consulta" property="consulta" />
+		
+		<association property="maestro_manual" column="{id_manual=id_maestro_manual}" select="healthmanager.modelo.dao.Maestro_manualDao.consultar" />
+		
+	</resultMap>
+
+	<insert id="crear" parameterType="manuales_tarifarios">
+		insert into public.manuales_tarifarios (codigo_empresa,id_contrato,
+		consecutivo,id_maestro_manual,anio,
+		creacion_user,creacion_date,servicios,
+		tipo_servicio,medicamentos,tipo_medicamento,
+		general,tipo_general,codigo_sucursal,
+		codigo_administradora,tarifa_especial,restriccion,
+		aplica_descuentos,tipo_consulta,consulta)
+
+		values (#{codigo_empresa},#{id_contrato},
+		#{consecutivo},#{id_maestro_manual},#{anio},
+		#{creacion_user},#{creacion_date},#{servicios},
+		#{tipo_servicio},#{medicamentos},#{tipo_medicamento},
+		#{general},#{tipo_general},#{codigo_sucursal},
+		#{codigo_administradora},#{tarifa_especial},#{restriccion},
+		#{aplica_descuentos},#{tipo_consulta},#{consulta})
+	</insert>
+
+	<update id="actualizar" parameterType="manuales_tarifarios">
+		update public.manuales_tarifarios set codigo_empresa = #{codigo_empresa},
+		id_contrato = #{id_contrato},consecutivo = #{consecutivo},
+		id_maestro_manual = #{id_maestro_manual},anio = #{anio},
+		creacion_user = #{creacion_user},creacion_date = #{creacion_date},
+		servicios = #{servicios},tipo_servicio = #{tipo_servicio},
+		medicamentos = #{medicamentos},tipo_medicamento = #{tipo_medicamento},
+		general = #{general},tipo_general = #{tipo_general},
+		codigo_sucursal = #{codigo_sucursal},codigo_administradora = #{codigo_administradora},
+		tarifa_especial = #{tarifa_especial},restriccion = #{restriccion},
+		aplica_descuentos = #{aplica_descuentos},
+		tipo_consulta = #{tipo_consulta},consulta = #{consulta} 
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and id_contrato = #{id_contrato}
+		and codigo_administradora = #{codigo_administradora}
+		and consecutivo = #{consecutivo}
+	</update>
+
+	<select id="consultar" parameterType="manuales_tarifarios" resultMap="manuales_tarifariosMap">
+		select codigo_empresa,id_contrato,
+		consecutivo,id_maestro_manual,anio,creacion_user,
+		creacion_date,servicios,tipo_servicio,medicamentos,
+		tipo_medicamento,general,tipo_general,codigo_sucursal,
+		codigo_administradora,tarifa_especial,restriccion,aplica_descuentos,
+		tipo_consulta,consulta
+		from public.manuales_tarifarios where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and id_contrato = #{id_contrato}
+		and codigo_administradora = #{codigo_administradora} and consecutivo = #{consecutivo}
+	</select>
+
+	<delete id="eliminar" parameterType="manuales_tarifarios">
+		delete from public.manuales_tarifarios
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and id_contrato = #{id_contrato}
+		and codigo_administradora = #{codigo_administradora} and consecutivo = #{consecutivo}
+	</delete>
+	
+	<delete id="eliminarDeUnContrato" parameterType="manuales_tarifarios">
+		delete from public.manuales_tarifarios
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and id_contrato = #{id_contrato}
+		and codigo_administradora = #{codigo_administradora}
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="manuales_tarifariosMap">
+		select codigo_empresa,id_contrato,
+		consecutivo,id_maestro_manual,anio,creacion_user,
+		creacion_date,servicios,tipo_servicio,medicamentos,
+		tipo_medicamento,general,tipo_general,codigo_sucursal,
+		codigo_administradora,tarifa_especial,restriccion,aplica_descuentos,
+		tipo_consulta,consulta
+		from public.manuales_tarifarios 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="codigo_administradora != null">
+			AND codigo_administradora = #{codigo_administradora}
+			</if>
+			<if test="id_contrato != null">
+			AND id_contrato = #{id_contrato}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limite_paginado != null">
+			${limite_paginado}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from public.manuales_tarifarios 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limite_paginado != null">
+			${limite_paginado}
+		</if>
+	</select>
+	
+	<select id="consultarDesdeServicio" parameterType="servicios_contratados" resultMap="manuales_tarifariosMap">
+		select codigo_empresa,id_contrato,
+		consecutivo,id_maestro_manual,anio,creacion_user,
+		creacion_date,servicios,tipo_servicio,medicamentos,
+		tipo_medicamento,general,tipo_general,codigo_sucursal,
+		codigo_administradora,tarifa_especial,restriccion,aplica_descuentos,
+		tipo_consulta,consulta
+		from public.manuales_tarifarios where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and id_contrato = #{id_contrato}
+		and codigo_administradora = #{codigo_administradora} and consecutivo = #{consecutivo_mt}
+	</select>
+	
+	<select id="consultarParametrizado" parameterType="java.util.Map" resultMap="manuales_tarifariosMap">
+		SELECT DISTINCT ON (manuales.codigo_administradora, s_m.id_servicio) manuales.id_contrato,
+			manuales.codigo_empresa,
+			manuales.consecutivo,
+			manuales.id_maestro_manual,
+			manuales.anio,
+			manuales.creacion_user,
+			manuales.creacion_date,
+			manuales.servicios,
+			manuales.tipo_servicio,
+			manuales.medicamentos,
+			manuales.tipo_medicamento,
+			manuales.general,
+			manuales.tipo_general,
+			manuales.codigo_sucursal,
+			manuales.codigo_administradora,
+			manuales.tarifa_especial,
+			manuales.restriccion,manuales.aplica_descuentos,
+			manuales.tipo_consulta,manuales.consulta
+			FROM 
+			public.manuales_tarifarios AS manuales
+			INNER JOIN public.contratos ON public.contratos.codigo_empresa = manuales.codigo_empresa AND public.contratos.codigo_sucursal = manuales.codigo_sucursal AND public.contratos.codigo_administradora = manuales.codigo_administradora AND public.contratos.id_plan = manuales.id_contrato AND public.contratos.cerrado = FALSE
+			<if test="nro_identificacion != null">
+			    INNER JOIN public.pacientes_contratos AS paci ON paci.codigo_empresa = public.contratos.codigo_empresa AND paci.codigo_sucursal = public.contratos.codigo_sucursal AND paci.codigo_administradora = public.contratos.codigo_administradora AND paci.id_codigo = public.contratos.id_plan AND paci.nro_identificacion = #{nro_identificacion}
+			</if>
+			INNER JOIN public.servicios_manuales AS s_m ON s_m.codigo_empresa = manuales.codigo_empresa AND s_m.codigo_sucursal = manuales.codigo_sucursal AND s_m.codigo_administradora = manuales.codigo_administradora AND s_m.id_contrato = manuales.id_contrato AND s_m.id_servicio = #{id_servicio}
+			WHERE manuales.codigo_empresa = #{codigo_empresa} AND manuales.codigo_sucursal = #{codigo_sucursal} AND manuales.codigo_administradora = #{codigo_administradora}
+			<if test="id_contrato != null">
+			   AND s_m.id_contrato = #{id_contrato}
+			</if>
+	</select>
+	
+	<select id="consultar_parametrizado" parameterType="java.util.Map" resultMap="manuales_tarifariosMap">
+		SELECT DISTINCT
+			manuales.id_contrato,
+			manuales.codigo_empresa,
+			manuales.consecutivo,
+			manuales.id_maestro_manual,
+			manuales.anio,
+			manuales.creacion_user,
+			manuales.creacion_date,
+			manuales.servicios,
+			manuales.tipo_servicio,
+			manuales.medicamentos,
+			manuales.tipo_medicamento,
+			manuales.general,
+			manuales.tipo_general,
+			manuales.codigo_sucursal,
+			manuales.codigo_administradora,
+			manuales.tarifa_especial,
+			manuales.restriccion,manuales.aplica_descuentos,
+			manuales.tipo_consulta,manuales.consulta
+			FROM 
+			public.manuales_tarifarios AS manuales
+			INNER JOIN public.contratos ON public.contratos.codigo_empresa = manuales.codigo_empresa AND public.contratos.codigo_sucursal = manuales.codigo_sucursal AND 
+			public.contratos.codigo_administradora = manuales.codigo_administradora AND public.contratos.id_plan = manuales.id_contrato AND public.contratos.cerrado = FALSE
+			<if test="nro_identificacion != null">
+			    INNER JOIN public.pacientes_contratos AS paci ON paci.codigo_empresa = public.contratos.codigo_empresa AND paci.codigo_sucursal = public.contratos.codigo_sucursal AND 
+			    paci.codigo_administradora = public.contratos.codigo_administradora AND paci.id_codigo = public.contratos.id_plan AND paci.nro_identificacion = #{nro_identificacion}
+			</if>
+			INNER JOIN public.servicios_contratados AS s_c ON s_c.codigo_empresa = manuales.codigo_empresa AND s_c.codigo_sucursal = manuales.codigo_sucursal AND 
+			s_c.codigo_administradora = manuales.codigo_administradora AND s_c.id_contrato = manuales.id_contrato 
+			AND (s_c.codigo_servicio like '${codigo_servicio}%' OR (position(s_c.codigo_servicio in '${codigo_servicio}')  = 1))  
+			WHERE manuales.codigo_empresa = #{codigo_empresa} AND manuales.codigo_sucursal = #{codigo_sucursal} AND manuales.codigo_administradora = #{codigo_administradora}
+			<if test="id_contrato != null">
+			   AND s_c.id_contrato = #{id_contrato}
+			</if>
+	</select>
+	
+	<select id="listar_parametrizado" parameterType="java.util.Map" resultMap="manuales_tarifariosMap">
+		SELECT DISTINCT
+			manuales.id_contrato,
+			manuales.codigo_empresa,
+			manuales.consecutivo,
+			manuales.id_maestro_manual,
+			manuales.anio,
+			manuales.creacion_user,
+			manuales.creacion_date,
+			manuales.servicios,
+			manuales.tipo_servicio,
+			manuales.medicamentos,
+			manuales.tipo_medicamento,
+			manuales.general,
+			manuales.tipo_general,
+			manuales.codigo_sucursal,
+			manuales.codigo_administradora,
+			manuales.tarifa_especial,
+			manuales.restriccion,manuales.aplica_descuentos,
+			manuales.tipo_consulta,manuales.consulta
+			FROM 
+			public.manuales_tarifarios AS manuales
+			INNER JOIN public.contratos ON public.contratos.codigo_empresa = manuales.codigo_empresa AND public.contratos.codigo_sucursal = manuales.codigo_sucursal AND 
+			public.contratos.codigo_administradora = manuales.codigo_administradora AND public.contratos.id_plan = manuales.id_contrato AND public.contratos.cerrado = FALSE
+			<if test="nro_identificacion != null">
+			    INNER JOIN public.pacientes_contratos AS paci ON paci.codigo_empresa = public.contratos.codigo_empresa AND paci.codigo_sucursal = public.contratos.codigo_sucursal AND 
+			    paci.codigo_administradora = public.contratos.codigo_administradora AND paci.id_codigo = public.contratos.id_plan AND paci.nro_identificacion = #{nro_identificacion}
+			</if>
+			INNER JOIN public.servicios_contratados AS s_c ON s_c.codigo_empresa = manuales.codigo_empresa AND s_c.codigo_sucursal = manuales.codigo_sucursal AND 
+			s_c.codigo_administradora = manuales.codigo_administradora AND s_c.id_contrato = manuales.id_contrato 
+			AND (s_c.codigo_servicio like '${codigo_servicio}%' OR (position(s_c.codigo_servicio in '${codigo_servicio}')  = 1))  
+			WHERE manuales.codigo_empresa = #{codigo_empresa} AND manuales.codigo_sucursal = #{codigo_sucursal} AND manuales.codigo_administradora = #{codigo_administradora}
+			<if test="id_contrato != null">
+			   AND s_c.id_contrato = #{id_contrato}
+			</if>
+	</select>
+
+</mapper>

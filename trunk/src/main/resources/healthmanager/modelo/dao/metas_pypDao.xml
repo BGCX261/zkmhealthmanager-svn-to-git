@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Metas_pypDao">
+
+	<resultMap id="metas_pypMap" type="metas_pyp">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="codigo_administradora" property="codigo_administradora" />
+		<result column="id_plan" property="id_plan" />
+		<result column="anio" property="anio" />
+		<result column="mes" property="mes" />
+		<result column="area_intervencion" property="area_intervencion" />
+		<result column="codigo_pcd" property="codigo_pcd" />
+		<result column="metas" property="metas" />
+		<result column="creacion_date" property="creacion_date" />
+		<result column="ultimo_update" property="ultimo_update" />
+		<result column="delete_date" property="delete_date" />
+		<result column="creacion_user" property="creacion_user" />
+		<result column="ultimo_user" property="ultimo_user" />
+		<result column="delete_user" property="delete_user" />
+	</resultMap>
+
+	<insert id="crear" parameterType="metas_pyp">
+		insert into public.metas_pyp (codigo_empresa,codigo_sucursal,
+		codigo_administradora,id_plan,anio,
+		mes,area_intervencion,codigo_pcd,
+		metas,creacion_date,ultimo_update,
+		delete_date,creacion_user,ultimo_user,
+		delete_user)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{codigo_administradora},#{id_plan},#{anio},
+		#{mes},#{area_intervencion},#{codigo_pcd},
+		#{metas},#{creacion_date},#{ultimo_update},
+		#{delete_date},#{creacion_user},#{ultimo_user},
+		#{delete_user})
+	</insert>
+
+	<update id="actualizar" parameterType="metas_pyp">
+		update public.metas_pyp set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},codigo_administradora = #{codigo_administradora},
+		id_plan = #{id_plan},anio = #{anio},
+		mes = #{mes},area_intervencion = #{area_intervencion},
+		codigo_pcd = #{codigo_pcd},metas = #{metas},
+		creacion_date = #{creacion_date},ultimo_update = #{ultimo_update},
+		delete_date = #{delete_date},creacion_user = #{creacion_user},
+		ultimo_user = #{ultimo_user},delete_user = #{delete_user}
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and codigo_administradora = #{codigo_administradora}
+		and id_plan = #{id_plan}
+		and anio = #{anio}
+		and mes = #{mes}
+		and area_intervencion = #{area_intervencion}
+		and codigo_pcd = #{codigo_pcd}
+	</update>
+
+	<select id="consultar" parameterType="metas_pyp" resultMap="metas_pypMap">
+		select codigo_empresa,codigo_sucursal,
+		codigo_administradora,id_plan,anio,mes,
+		area_intervencion,codigo_pcd,metas,creacion_date,
+		ultimo_update,delete_date,creacion_user,ultimo_user,
+		delete_user
+		from public.metas_pyp where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_administradora = #{codigo_administradora}
+		and id_plan = #{id_plan} and anio = #{anio}
+		and mes = #{mes} and area_intervencion = #{area_intervencion}
+		and codigo_pcd = #{codigo_pcd}
+	</select>
+
+	<delete id="eliminar" parameterType="metas_pyp">
+		delete from public.metas_pyp
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_administradora = #{codigo_administradora}
+		and id_plan = #{id_plan} and anio = #{anio}
+		and mes = #{mes} and area_intervencion = #{area_intervencion}
+		and codigo_pcd = #{codigo_pcd}
+	</delete>
+	
+	
+	<delete id="eliminarDesdeContrato" parameterType="metas_pyp">
+		delete from public.metas_pyp
+		where codigo_empresa = '${codigo_empresa}'
+		and codigo_sucursal = '${codigo_sucursal}' and codigo_administradora = '${codigo_administradora}'
+		and id_plan = '${id_plan}'
+	</delete>
+	
+
+	<select id="listar" parameterType="java.util.Map" resultMap="metas_pypMap">
+		select codigo_empresa,codigo_sucursal,
+		codigo_administradora,id_plan,anio,mes,
+		area_intervencion,codigo_pcd,metas,creacion_date,
+		ultimo_update,delete_date,creacion_user,ultimo_user,
+		delete_user
+		from public.metas_pyp 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from public.metas_pyp 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+	
+	<select id="getCantidadMetasProcedimiento" resultType="java.lang.Integer" parameterType="java.util.Map"> 
+	    SELECT
+		  count(*) 
+		FROM
+		 public.datos_${codigo_datos} AS dX
+		  WHERE (EXISTS(SELECT * FROM  public.procedimientos AS ps WHERE ps.codigo_soat = dX.codigo_${codigo_datos} AND ps.codigo_cups = #{codigo_procedimiento}) 
+		        OR EXISTS (SELECT * FROM  public.procedimiento_iss01 AS ps WHERE ps.codigo_soat = dX.codigo_${codigo_datos} AND ps.codigo_cups = #{codigo_procedimiento})
+		        OR EXISTS (SELECT * FROM  public.procedimiento_iss04 AS ps WHERE ps.codigo_soat = dX.codigo_${codigo_datos} AND ps.codigo_cups = #{codigo_procedimiento}))
+		  AND  (dX.fecha_${codigo_datos} BETWEEN #{fecha_inicio} AND #{fecha_final}) 
+		  AND  dX.codigo_empresa  = #{codigo_empresa}
+		  AND  dX.codigo_sucursal = #{codigo_sucursal} AND dX.codigo_administradora = #{codigo_administradora} AND dX.id_plan = #{id_contrato}
+		  <if test="finalidad != null">
+		      AND  dX.finalidad_consulta = #{finalidad}
+		  </if>
+	</select>
+	
+	
+	<select id="getCantidadMetasArticulos" resultType="java.lang.Integer" parameterType="java.util.Map">
+	  	    SELECT count(*) FROM
+			public.datos_${nombre_tabla} AS dX
+			  WHERE    
+			  dX.creacion_date BETWEEN #{fecha_inicio} AND #{fecha_final} 
+			  AND  dX.referencia_pyp = #{referencia_pyp}
+			  AND  dX.codigo_empresa = #{codigo_empresa}
+			  AND  dX.codigo_sucursal  = #{codigo_sucursal} AND dX.codigo_administradora = #{codigo_administradora} AND dX.id_plan = #{id_contrato};
+	</select>
+	
+	
+	<select id="getUltimaFechaProcedimiento" resultType="java.sql.Timestamp" parameterType="java.util.Map"> 
+	    SELECT DISTINCT ON (dX.nro_identificacion, dx.fecha_${codigo_datos})
+		  dx.fecha_${codigo_datos}
+		FROM
+		 public.datos_${codigo_datos} AS dX
+		  WHERE (EXISTS(SELECT * FROM  public.procedimientos AS ps WHERE ps.codigo_soat = dX.codigo_${codigo_datos} AND ps.codigo_cups = #{codigo_procedimiento}) 
+		        OR EXISTS (SELECT * FROM  public.procedimiento_iss01 AS ps WHERE ps.codigo_soat = dX.codigo_${codigo_datos} AND ps.codigo_cups = #{codigo_procedimiento})
+		        OR EXISTS (SELECT * FROM  public.procedimiento_iss04 AS ps WHERE ps.codigo_soat = dX.codigo_${codigo_datos} AND ps.codigo_cups = #{codigo_procedimiento}))
+		  AND  dX.codigo_empresa  = #{codigo_empresa}
+		  AND  dX.codigo_sucursal = #{codigo_sucursal}
+		  AND  dX.nro_identificacion  = #{nro_identificacion}
+		  ORDER BY dx.fecha_${codigo_datos} ASC limit 1 offset 0
+	</select>
+	
+	
+	<select id="getUltimaFechaArticulos" resultType="java.sql.Timestamp" parameterType="java.util.Map">
+	  	    SELECT DISTINCT ON (dX.nro_identificacion, dx.creacion_date) dx.creacion_date FROM
+			public.datos_${nombre_tabla} AS dX
+			  WHERE dX.referencia_pyp = #{referencia_pyp}
+			  AND  dX.codigo_empresa = #{codigo_empresa}
+			  AND  dX.codigo_sucursal  = #{codigo_sucursal}
+			  AND  dX.nro_identificacion  = #{nro_identificacion}
+			  ORDER BY dX.nro_identificacion, dx.creacion_date ASC limit 1 offset 0
+	</select>
+	
+	
+
+</mapper>

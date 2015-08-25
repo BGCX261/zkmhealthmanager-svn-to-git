@@ -1,0 +1,907 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+<style src="estilo.css" />
+<style>
+body ,table{
+	margin:0;
+	padding:0;
+	
+}
+.z-fieldset{
+	-moz-border-radius:5px;
+	border-radius: 5px;
+	-webkit-border-radius: 5px;
+}
+.combobox{
+	font-size:12px;
+	border: 1px solid silver;
+}
+
+tr.z-row .z-cell{
+	background-image:none;
+}
+
+tr.z-row td.z-row-inner{
+	background-image:none;
+}
+</style>
+<borderlayout id="formControl_prenatal" width="100%" height="100%" use="healthmanager.controller.Control_prenatalAction"  onCreate="formControl_prenatal.initControl_prenatal();">
+<center autoscroll="true" border="none">
+
+<!-- *********************** -->
+<!--        Principal        -->
+<!-- *********************** -->
+<groupbox id="groupboxPrincipal" style="border:0;padding:2px">
+
+<!-- **************** -->
+<!-- Zona de Consulta -->
+<!-- **************** -->
+<groupbox id="groupboxConsulta" visible="false" closable="false" style="border:0;padding:0">
+
+<toolbar sclass="vista">
+<label value="Criterios de B&#250;squeda :" />
+<listbox id="lbxParameter" mold="select" sclass="combobox" width="150px"/>
+<textbox id="tbxValue" width="200px" onOK="formControl_prenatal.buscarDatos();" style="text-transform:uppercase"/>
+<toolbarbutton image="/images/Magnifier.gif" label="Consultar" onClick="formControl_prenatal.buscarDatos();" tooltiptext="Consultar" id="btConsultar"/>
+<toolbarbutton image="/images/New16.gif" label="Nuevo" onClick='formControl_prenatal.accionForm(true,"registrar");' tooltiptext="Nuevo Control_prenatal" id="btNew"/>
+</toolbar>
+
+<space/>
+
+<!-- ***************************** -->
+<!--  Resultado Consulta Maestros  -->
+<!-- ***************************** -->
+<grid id="gridResultado" height="300px" mold="paging" pageSize="20">
+<columns sizable="true">
+	<column label="Codigo_historia" align="center"/>
+	<column label="Identificacion" align="center"/>
+	<column label="Fecha_inicial" align="center"/>
+	<column label="Acciones" align="center" width="80px"/>
+</columns>
+<rows id="rowsResultado" width="100%" />
+</grid>
+</groupbox>
+
+<!-- *************************** -->
+<!-- *** Insertar/Actualizar *** -->
+<!-- *************************** -->
+<groupbox visible="true" id="groupboxEditar" closable="false" style="border:0;padding:0">
+
+<!-- *************************** -->
+<!-- **** Barra de Botones ***** -->
+<!-- *************************** -->
+
+<toolbar width="100%" align="start">
+<textbox id="tbxAccion" value="registrar" visible="false"/>
+<toolbarbutton image="/images/Save16.gif" label="Guardar" tooltiptext="Guardar Datos" onClick="formControl_prenatal.guardarDatos();" id="btGuardar"/>
+<toolbarbutton image="/images/New16.gif" label="Nuevo" onClick='formControl_prenatal.accionForm(true,"registrar");' tooltiptext="Nuevo" id="btNuevo"/>
+<toolbarbutton image="/images/cancel.jpg" label="Consultar" tooltiptext="Regresar a Consulta" onClick='formControl_prenatal.accionForm(false,tbxAccion.getText());' id="btCancelar"/>
+</toolbar>
+
+<space/>
+<grid sclass="GridSinBorde">
+<columns>
+<column label="" width="13%"/>
+<column label="" width="18%"/>
+<column label="" width="13%"/>
+<column label="" width="18%"/>
+<column label="" width="13%"/>
+<column label="" width="15%"/>
+</columns>
+<rows>
+
+<!-- fila 1 -->
+<row>
+<cell></cell>
+<cell></cell>
+<cell><textbox id="tbxCodigo_historia" width="170px" style="text-transform:uppercase" visible="false"/></cell>
+<cell></cell>
+<cell></cell>
+<cell></cell>
+</row>
+
+<!-- fila 2 -->
+<row>
+<cell><label id="lbFecha_inicial" value="Fecha inicial: "/></cell>
+<cell colspan="5"><datebox id="dtbxFecha_inicial" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="170px"/></cell>
+</row>
+
+
+<!-- fila 3 -->
+
+
+<row>
+<cell><label value="* " style="color: red" tooltiptext="Campo obligatorio"/><label id="lbIdentificacion" value="Identificacion: "/></cell>
+<cell>
+<bandbox id="tbxIdentificacion" autodrop="true" readonly="true" width="170px" onOpen='formControl_prenatal.buscarPaciente(tbxIdentificacion.getValue(),lbxPaciente)'>
+<bandpopup>
+	<vbox>
+		<toolbar>
+			<label value="Buscar: "/>
+		    <textbox id="tbxValuePaciente" onChanging='formControl_prenatal.buscarPaciente(event.getValue(),lbxPaciente)' style="text-transform:uppercase;"/>
+		    <toolbarbutton image="/images/borrar.gif" tooltiptext="Quitar" onClick='formControl_prenatal.selectedPaciente(new Listitem())'/>
+		</toolbar>
+		<listbox height="300px" width="600px" mold="paging" pageSize="8" id="lbxPaciente"
+		    onSelect='formControl_prenatal.selectedPaciente(self.getSelectedItem())' >
+		    <listhead>
+		    <listheader label="Tipo Ident." width="65px"/>
+		    <listheader label="Identificación"/>
+		    <listheader label="Nombres"/>
+		    <listheader label="Apellidos"/>
+		    </listhead>
+		</listbox>
+	</vbox>
+  </bandpopup>
+</bandbox>
+</cell>
+<cell colspan="4">
+<hlayout>
+<label id="lbTipoIdentificacion" value="Tipo: "/><space></space>
+<textbox id="tbxTipoIdentificacion" width="40px" style="text-transform:uppercase" readonly="true"/><space></space>
+<label id="lbNomPaciente" value="Nombre: "/><space></space>
+<textbox id="tbxNomPaciente" width="350px" style="text-transform:uppercase" readonly="true"/>
+</hlayout>
+</cell>
+</row>
+
+<!-- fila 4 -->
+<row>
+<cell colspan="2">
+<hlayout>
+<label id="lbNacimiento" value="Fecha de Nacimiento: "/><space></space>
+<datebox id="dbxNacimiento" width="120px" style="text-transform:uppercase" disabled="disabled" format="yyyy-MM-dd" readonly="true"/><space></space>
+</hlayout>
+</cell>
+<cell colspan="4">
+<hlayout>
+<label id="lbEdad" value="Edad: "/>
+<textbox id="tbxEdad" width="30px" style="text-transform:uppercase" readonly="true"/><space></space>
+<label id="lbSexo" value="Sexo: "/>
+<textbox id="tbxSexo" width="80px" style="text-transform:uppercase" readonly="true"/><space></space>
+<label id="lbDireccion" value="Direccion: "/>
+<textbox id="tbxDireccion" width="240px" style="text-transform:uppercase" readonly="true"/>
+</hlayout>
+</cell>
+</row>
+
+
+<!-- fila 5 -->
+<row>
+<cell><label id="lbCodigo_eps" value="Codigo EPS: "/></cell>
+<cell colspan="5">
+<hlayout>
+<textbox id="tbxCodigo_eps" width="70px" style="text-transform:uppercase" readonly="true"/><space></space>
+<textbox id="tbxNombre_eps" width="220px" style="text-transform:uppercase" readonly="true"/><space></space>
+<label id="lbCodigo_dpto" value="* Dpto: "/>
+<listbox id="lbxCodigo_dpto" mold="select" width="120px" sclass="combobox" onSelect="formControl_prenatal.listarMunicipios(lbxCodigo_municipio,lbxCodigo_dpto);" onOK="lbxCodigo_municipio.focus();"/><space></space>
+<label id="lbCodigo_municipio" value="* Municipio: "/>
+<listbox id="lbxCodigo_municipio" name="Codigo_municipio" mold="select" width="120px" sclass="combobox" onOK="lbxCodigo_dpto.focus();"/><space/>
+
+</hlayout>
+</cell>
+
+</row>
+
+<!-- fila 6 -->
+<row>
+<cell><label id="lbControto" value="Contrato: "/></cell>
+<cell><textbox id="tbxCodigo_contrato" width="70px" style="text-transform:uppercase" readonly="true"/></cell>
+<cell colspan="4">
+<textbox id="tbxContrato" width="220px" style="text-transform:uppercase" readonly="true"/>
+</cell>
+</row>
+
+<!-- fila 6 -->
+<row>
+<cell colspan="6">
+<groupbox mold="3d" width="100%" closable="false">
+<caption label="Datos Consulta"/>
+			<grid sclass="GridSinBorde" style="border:none">
+				<columns>
+				<column label="" width="20%"/>
+				<column label="" width="30%"/>
+				<column label="" width="20%"/>
+				<column label="" width="30%"/>
+				</columns>
+				<rows>
+								
+				<row>
+				<cell><label id="lbSintomatico_piel" value="Sintomatico Piel: "/></cell>
+				<cell><radiogroup id="rdbSintomatico_piel">
+				<radio id="Sintomatico_piel1" label="SI" value="1"/><space/>
+				<radio id="Sintomatico_piel2" label="NO" checked="true" value="2"/><space/>
+				</radiogroup></cell>
+				
+				<cell><label id="lbSintomatico_resp" value="Sintomatico Respiratorio: "/></cell>
+				<cell><radiogroup id="rdbSintomatico_resp">
+				<radio id="Sintomatico_resp1" label="SI" value="1"/><space/>
+				<radio id="Sintomatico_resp2" label="NO" checked="true" value="2"/><space/>
+				</radiogroup></cell>
+				</row>
+				
+				<row>
+				<cell colspan="2"><label id="lbMotivo" value="Motivo de la Consulta: "/></cell>
+				<cell colspan="2"><label id="lbEnfermedad_actual" value="Enfermedad Actual: "/></cell>
+				</row>
+				
+				<row>
+				<cell colspan="2"><textbox id="tbxMotivo" width="420px" rows="4" style="text-transform:uppercase"/></cell>
+				<cell colspan="2"><textbox id="tbxEnfermedad_actual" width="420px" rows="4" style="text-transform:uppercase"/></cell>
+				</row>
+				
+				<row>
+				<cell colspan="2"><label id="lbAntecedentes_descritos" value="Antecedentes Descritos: "/></cell>
+				<cell colspan="2"><label id="lbOtros" value="Otros: "/></cell>
+				</row>
+				
+				<row>
+				<cell colspan="2"><textbox id="tbxAntecedentes_descritos" width="420px" rows="4" style="text-transform:uppercase"/></cell>
+				<cell colspan="2"><textbox id="tbxOtros" width="420px" rows="4" style="text-transform:uppercase"/></cell>
+				</row>
+				
+				</rows>
+			</grid>
+</groupbox>
+</cell>
+</row>
+
+<!-- fila 7 -->
+<row>
+<cell colspan="6">
+<groupbox mold="3d" width="100%" closable="false">
+<caption label="Revision por Sistema"/>
+			<grid sclass="GridSinBorde" style="border:none">
+				<columns>
+				<column label="Sistema" width="20%"/>
+				<column label="Estado" width="20%"/>
+				<column label="Observaciones" width="60%"/>
+				</columns>
+				<rows>
+				
+				<row>
+				<cell><label id="lbConciencia" value="Conciencia: "/></cell>
+				<cell><listbox id="lbxConciencia" name="control_prenatal" mold="select" width="100px" sclass="combobox" onOK="lbConciencia.focus();"/></cell>
+				<cell><textbox id="tbxObservacion_conciencia" width="420px" style="text-transform:uppercase"/></cell>
+				</row>
+				
+				<row>
+				<cell><label id="lbPiel" value="Piel y Faneres: "/></cell>
+				<cell><listbox id="lbxPiel" name="control_prenatal" mold="select" width="100px" sclass="combobox" onOK="lbPiel.focus();"/></cell>
+				<cell><textbox id="tbxObservacion_piel" width="420px" style="text-transform:uppercase"/></cell>
+				</row>
+				
+				<row>
+				<cell><label id="lbCuello" value="Cuello: "/></cell>
+				<cell><listbox id="lbxCuello" name="control_prenatal" mold="select" width="100px" sclass="combobox" onOK="lbCuello.focus();"/></cell>
+				<cell><textbox id="tbxObservacion_cuello" width="420px" style="text-transform:uppercase"/></cell>
+				</row>
+				
+				<row>
+				<cell><label id="lbSentidos" value="Organos de los Sentidos: "/></cell>
+				<cell><listbox id="lbxSentidos" name="control_prenatal" mold="select" width="100px" sclass="combobox" onOK="lbSentidos.focus();"/></cell>
+				<cell><textbox id="tbxObservacion_sentidos" width="420px" style="text-transform:uppercase"/></cell>
+				</row>
+				
+				<row>
+				<cell><label id="lbTorax" value="Torax: "/></cell>
+				<cell><listbox id="lbxTorax" name="control_prenatal" mold="select" width="100px" sclass="combobox" onOK="lbTorax.focus();"/></cell>
+				<cell><textbox id="tbxObservacion_torax" width="420px" style="text-transform:uppercase"/></cell>
+				</row>
+				
+				<row>
+				<cell><label id="lbRespiratorio" value="Respiratorio: "/></cell>
+				<cell><listbox id="lbxRespiratorio" name="control_prenatal" mold="select" width="100px" sclass="combobox" onOK="lbRespiratorio.focus();"/></cell>
+				<cell><textbox id="tbxObservacion_respiratorio" width="420px" style="text-transform:uppercase"/></cell>
+				</row>
+				
+				<row>
+				<cell><label id="lbCardiovascular" value="Cardiovascular: "/></cell>
+				<cell><listbox id="lbxCardiovascular" name="control_prenatal" mold="select" width="100px" sclass="combobox" onOK="lbCardiovascular.focus();"/></cell>
+				<cell><textbox id="tbxObservacion_cardiovascular" width="420px" style="text-transform:uppercase"/></cell>
+				</row>
+				
+				<row>
+				<cell><label id="lbVascular" value="Vascular Perisfericos: "/></cell>
+				<cell><listbox id="lbxVascular" name="control_prenatal" mold="select" width="100px" sclass="combobox" onOK="lbVascular.focus();"/></cell>
+				<cell><textbox id="tbxObservacion_vascular" width="420px" style="text-transform:uppercase"/></cell>
+				</row>
+				
+				<row>
+				<cell><label id="lbAbdomen" value="Abdomen: "/></cell>
+				<cell><listbox id="lbxAbdomen" name="control_prenatal" mold="select" width="100px" sclass="combobox" onOK="lbAbdomen.focus();"/></cell>
+				<cell><textbox id="tbxObservacion_abdomen" width="420px" style="text-transform:uppercase"/></cell>
+				</row>
+				
+				<row>
+				<cell><label id="lbPerianal" value="Perianal: "/></cell>
+				<cell><listbox id="lbxPerianal" name="control_prenatal" mold="select" width="100px" sclass="combobox" onOK="lbPerianal.focus();"/></cell>
+				<cell><textbox id="tbxObservacion_perianal" width="420px" style="text-transform:uppercase"/></cell>
+				</row>
+				
+				<row>
+				<cell><label id="lbInguinal" value="Region Inguinal: "/></cell>
+				<cell><listbox id="lbxInguinal" name="control_prenatal" mold="select" width="100px" sclass="combobox" onOK="lbInguinal.focus();"/></cell>
+				<cell><textbox id="tbxObservacion_inguinal" width="420px" style="text-transform:uppercase"/></cell>
+				</row>
+				
+				<row>
+				<cell><label id="lbGenitales" value="Genitales: "/></cell>
+				<cell><listbox id="lbxGenitales" name="control_prenatal" mold="select" width="100px" sclass="combobox" onOK="lbGenitales.focus();"/></cell>
+				<cell><textbox id="tbxObservacion_genitales" width="420px" style="text-transform:uppercase"/></cell>
+				</row>
+				
+				<row>
+				<cell><label id="lbExtremidades" value="Extremidades: "/></cell>
+				<cell><listbox id="lbxExtremidades" name="control_prenatal" mold="select" width="100px" sclass="combobox" onOK="lbExtremidades.focus();"/></cell>
+				<cell><textbox id="tbxObservacion_extremidades" width="420px" style="text-transform:uppercase"/></cell>
+				</row>
+				
+				<row>
+				<cell><label id="lbNeurologico" value="Neurologico: "/></cell>
+				<cell><listbox id="lbxNeurologico" name="control_prenatal" mold="select" width="100px" sclass="combobox" onOK="lbNeurologico.focus();"/></cell>
+				<cell><textbox id="tbxObservacion_neurologico" width="420px" style="text-transform:uppercase"/></cell>
+				</row>
+				
+				<row>
+				<cell><label id="lbPeriferico" value="Sist. Ner. Periferico: "/></cell>
+				<cell><listbox id="lbxPeriferico" name="control_prenatal" mold="select" width="100px" sclass="combobox" onOK="lbPeriferico.focus();"/></cell>
+				<cell><textbox id="tbxObservacion_periferico" width="420px" style="text-transform:uppercase"/></cell>
+				</row>
+				
+				<row>
+				<cell><label id="lbLinfatico" value="Sistema Linfatico: "/></cell>
+				<cell><listbox id="lbxLinfatico" name="control_prenatal" mold="select" width="100px" sclass="combobox" onOK="lbLinfatico.focus();"/></cell>
+				<cell><textbox id="tbxObservacion_linfatico" width="420px" style="text-transform:uppercase"/></cell>
+				</row>
+				
+				<row>
+				<cell><label id="lbOsteomuscular" value="Osteomuscular: "/></cell>
+				<cell><listbox id="lbxOsteomuscular" name="control_prenatal" mold="select" width="100px" sclass="combobox" onOK="lbOsteomuscular.focus();"/></cell>
+				<cell><textbox id="tbxObservacion_osteomuscular" width="420px" style="text-transform:uppercase"/></cell>
+				</row>
+				
+				<row>
+				<cell><label id="lbEndocrino" value="Endocrino: "/></cell>
+				<cell><listbox id="lbxEndocrino" name="control_prenatal" mold="select" width="100px" sclass="combobox" onOK="lbEndocrino.focus();"/></cell>
+				<cell><textbox id="tbxObservacion_endocrino" width="420px" style="text-transform:uppercase"/></cell>
+				</row>
+				
+				<row>
+				<cell><label id="lbGastrointestinal" value="Gastrointestinal: "/></cell>
+				<cell><listbox id="lbxGastrointestinal" name="control_prenatal" mold="select" width="100px" sclass="combobox" onOK="lbGastrointestinal.focus();"/></cell>
+				<cell><textbox id="tbxObservacion_gastrointestinal" width="420px" style="text-transform:uppercase"/></cell>
+				</row>
+				
+				<row>
+				<cell><label id="lbGenitourinario" value="Genitourinario: "/></cell>
+				<cell><listbox id="lbxGenitourinario" name="control_prenatal" mold="select" width="100px" sclass="combobox" onOK="lbGenitourinario.focus();"/></cell>
+				<cell><textbox id="tbxObservacion_genitourinario" width="420px" style="text-transform:uppercase"/></cell>
+				</row>
+				
+				<row>
+				<cell><label id="lbLocomotor" value="Locomotor: "/></cell>
+				<cell><listbox id="lbxLocomotor" name="control_prenatal" mold="select" width="100px" sclass="combobox" onOK="lbLocomotor.focus();"/></cell>
+				<cell><textbox id="tbxObservacion_locomotor" width="420px" style="text-transform:uppercase"/></cell>
+				</row>
+			
+				</rows>
+			</grid>
+</groupbox>
+</cell>
+</row>
+
+<!-- fila 8 -->
+<row>
+<cell colspan="6">
+<groupbox mold="3d" width="100%" closable="false">
+<caption label="Signos Vitales"/>
+			<grid sclass="GridSinBorde" style="border:none">
+				<columns>
+				<column label="" width="25%"/>
+				<column label="" width="25%"/>
+				<column label="" width="25%"/>
+				<column label="" width="25%"/>
+				</columns>
+				<rows>
+				
+				<row>
+				<cell><label id="lbEstado_general" value="Estado General: "/></cell>
+				<cell colspan="3"><textbox id="tbxEstado_general" width="420px" rows="3" style="text-transform:uppercase"/></cell>
+				</row>		
+				
+				<row>
+				<cell colspan="4">
+				<hlayout>
+				<label id="lbTempo" value="Temp: "/>
+				<textbox id="tbxTempo" width="50px" style="text-transform:uppercase"/>
+				<label value=" °C"/><space></space>
+				<label id="lbCardiaca" value="FC: "/>
+				<textbox id="tbxCardiaca" width="50px" style="text-transform:uppercase"/>
+				<label value="/min"/><space></space>
+				<label id="lbRespiratoria" value="FR: "/>
+				<textbox id="tbxRespiratoria" width="50px" style="text-transform:uppercase"/>
+				<label value="/min"/><space></space>
+				<label id="lbTalla" value="Talla: "/>
+				<textbox id="tbxTalla" width="50px" style="text-transform:uppercase"/>
+				<label value="cms"/><space></space>
+				<label id="lbPeso" value="Peso: "/>
+				<textbox id="tbxPeso" width="50px" style="text-transform:uppercase"/>
+				<label value="kg"/><space></space>
+				
+				</hlayout>
+				</cell>
+				</row>
+				
+				<row>
+				<cell colspan="4">
+				<hlayout>
+				<label id="lbPresion" value="Presion: "/>
+				<textbox id="tbxPresion" width="50px" style="text-transform:uppercase"/>
+				<label value=" / "/><space></space>
+				<textbox id="tbxPresion2" width="50px" style="text-transform:uppercase"/>
+				<label value="mmHg"/><space></space>
+				<label id="lbInd_masa" value="Ind_masa_corp: "/>
+				<textbox id="tbxInd_masa" width="50px" style="text-transform:uppercase"/><space></space>
+				<label id="lbSus_masa" value="Sup_masa_corp: "/>
+				<textbox id="tbxSus_masa" width="50px" style="text-transform:uppercase"/>
+				
+				</hlayout>
+				</cell>
+				</row>
+				
+				<row>
+				<cell colspan="4">
+			 	<hlayout>
+			 	<groupbox width="95%" closable="false">
+			 	<caption label="Examenes Fisicos"/>
+				
+						<grid sclass="GridSinBorde" style="border:none">
+							<columns>
+							<column label="Examen" width="20%"/>
+							<column label="Estado" width="20%"/>
+							<column label="Observacion" width="60%"/>
+							</columns>
+							<rows>
+
+							<row>
+							<cell><label id="lbApariencia" value="Apariencia: "/></cell>
+							<cell><listbox id="lbxApariencia" name="control_prenatal" mold="select" width="100px" sclass="combobox" onOK="lbApariencia.focus();"/></cell>
+							<cell><textbox id="tbxObservacion_apariencia" width="420px" style="text-transform:uppercase"/></cell>
+							</row>
+							
+							<row>
+							<cell><label id="lbCabeza" value="Cabeza: "/></cell>
+							<cell><listbox id="lbxCabeza" name="control_prenatal" mold="select" width="100px" sclass="combobox" onOK="lbCabeza.focus();"/></cell>
+							<cell><textbox id="tbxObservacion_cabeza" width="420px" style="text-transform:uppercase"/></cell>
+							</row>
+							
+							<row>
+							<cell><label id="lbExam_torax" value="Torax: "/></cell>
+							<cell><listbox id="lbxExam_torax" name="control_prenatal" mold="select" width="100px" sclass="combobox" onOK="lbExam_torax.focus();"/></cell>
+							<cell><textbox id="tbxObservacion_exam_torax" width="420px" style="text-transform:uppercase"/></cell>
+							</row>
+							
+							<row>
+							<cell><label id="lbExam_cardio" value="Cardio-Pulmonar: "/></cell>
+							<cell><listbox id="lbxExam_cardio" name="control_prenatal" mold="select" width="100px" sclass="combobox" onOK="lbExam_cardio.focus();"/></cell>
+							<cell><textbox id="tbxObservacion_exam_cardio" width="420px" style="text-transform:uppercase"/></cell>
+							</row>
+							
+							<row>
+							<cell><label id="lbExam_abdomen" value="Abdomen: "/></cell>
+							<cell><listbox id="lbxExam_abdomen" name="control_prenatal" mold="select" width="100px" sclass="combobox" onOK="lbExam_abdomen.focus();"/></cell>
+							<cell><textbox id="tbxObservacion_exam_abdomen" width="420px" style="text-transform:uppercase"/></cell>
+							</row>
+							
+							<row>
+							<cell><label id="lbExam_pies" value="Pies: "/></cell>
+							<cell><listbox id="lbxExam_pies" name="control_prenatal" mold="select" width="100px" sclass="combobox" onOK="lbExam_pies.focus();"/></cell>
+							<cell><textbox id="tbxObservacion_exam_pies" width="420px" style="text-transform:uppercase"/></cell>
+							</row>
+							
+							<row>
+							<cell><label id="lbExam_genital" value="Genital-Urinario: "/></cell>
+							<cell><listbox id="lbxExam_genital" name="control_prenatal" mold="select" width="100px" sclass="combobox" onOK="lbExam_genital.focus();"/></cell>
+							<cell><textbox id="tbxObservacion_exam_genital" width="420px" style="text-transform:uppercase"/></cell>
+							</row>
+							
+							<row>
+							<cell><label id="lbExam_cuello" value="Cuello: "/></cell>
+							<cell><listbox id="lbxExam_cuello" name="control_prenatal" mold="select" width="100px" sclass="combobox" onOK="lbExam_cuello.focus();"/></cell>
+							<cell><textbox id="tbxObservacion_exam_cuello" width="420px" style="text-transform:uppercase"/></cell>
+							</row>
+							
+							<row>
+							<cell><label id="lbExam_extremidades" value="Extremidades: "/></cell>
+							<cell><listbox id="lbxExam_extremidades" name="control_prenatal" mold="select" width="100px" sclass="combobox" onOK="lbExam_extremidades.focus();"/></cell>
+							<cell><textbox id="tbxObservacion_exam_extremidades" width="420px" style="text-transform:uppercase"/></cell>
+							</row>
+							
+							<row>
+							<cell><label id="lbBoca" value="Boca: "/></cell>
+							<cell><listbox id="lbxBoca" name="control_prenatal" mold="select" width="100px" sclass="combobox" onOK="lbBoca.focus();"/></cell>
+							<cell><textbox id="tbxObservacion_boca" width="420px" style="text-transform:uppercase"/></cell>
+							</row>
+							
+							<row>
+							<cell><label id="lbSenos" value="Senos: "/></cell>
+							<cell><listbox id="lbxSenos" name="control_prenatal" mold="select" width="100px" sclass="combobox" onOK="lbSenos.focus();"/></cell>
+							<cell><textbox id="tbxObservacion_senos" width="420px" style="text-transform:uppercase"/></cell>
+							</row>
+							
+							<row>
+							<cell><label id="lbExam_osteomuscular" value="Osteomuscular: "/></cell>
+							<cell><listbox id="lbxExam_osteomuscular" name="control_prenatal" mold="select" width="100px" sclass="combobox" onOK="lbExam_osteomuscular.focus();"/></cell>
+							<cell><textbox id="tbxObservacion_exam_osteomuscular" width="420px" style="text-transform:uppercase"/></cell>
+							</row>
+							
+							<row>
+							<cell><label id="lbExam_neuro" value="Neurologico: "/></cell>
+							<cell><listbox id="lbxExam_neuro" name="control_prenatal" mold="select" width="100px" sclass="combobox" onOK="lbExam_neuro.focus();"/></cell>
+							<cell><textbox id="tbxObservacion_exam_neuro" width="420px" style="text-transform:uppercase"/></cell>
+							</row>
+							
+							<row>
+							<cell><label id="lbExam_sentidos" value="Organos de los Sentidos: "/></cell>
+							<cell><listbox id="lbxExam_sentidos" name="control_prenatal" mold="select" width="100px" sclass="combobox" onOK="lbExam_sentidos.focus();"/></cell>
+							<cell><textbox id="tbxObservacion_exam_sentidos" width="420px" style="text-transform:uppercase"/></cell>
+							</row>
+							
+							<row>
+							<cell colspan="2"><label id="lbAnalisis_paraclinico" value="Analisis Paraclinico: "/></cell>
+							<cell><label id="lbAnalisis_ganancia" value="Analisis Ganancia: "/></cell>
+							</row>
+							
+							<row>
+							<cell colspan="2"><textbox id="tbxAnalisis_ganancia" width="300px" rows="4" style="text-transform:uppercase"/></cell>
+							<cell><textbox id="tbxAnalisis_paraclinico" width="300px" rows="4" style="text-transform:uppercase"/></cell>
+							</row>
+							
+							<row>
+							<cell colspan="2"><label id="lbAnalisis_crecimiento" value="Analisis Crecimiento: "/></cell>
+							<cell><label id="lbAnalisis_presion" value="Analisis Presion: "/></cell>
+							</row>
+							
+							<row>
+							<cell colspan="2"><textbox id="tbxAnalisis_crecimiento" width="300px" rows="4" style="text-transform:uppercase"/></cell>
+							<cell><textbox id="tbxAnalisis_presion" width="300px" rows="4" style="text-transform:uppercase"/></cell>
+							</row>
+			
+							</rows>
+							</grid>
+				</groupbox>
+				</hlayout>
+				</cell>
+				</row>		
+				
+				
+				<row>
+				<cell><label value="Micronutrientes: "/></cell>
+				<cell colspan="3">
+				<hlayout>
+				<label id="lbSulfato" value="Sulfato Ferroso TAB 300mg: "/>
+				<textbox id="tbxSulfato" width="70px" style="text-transform:uppercase"/>
+				<label id="lbFoloco" value="Acido Folico TAB 1mg: "/>
+				<textbox id="tbxFoloco" width="70px" style="text-transform:uppercase"/>
+				<label id="lbCalcio" value="Calcio TAB 600mg: "/>
+				<textbox id="tbxCalcio" width="70px" style="text-transform:uppercase"/>
+				</hlayout>
+				</cell>
+				</row>
+				
+				
+				<row>
+				<cell colspan="2"><label id="lbParaclinico" value="Paraclinico: "/></cell>
+				<cell colspan="2"><label id="lbEducacion_antes" value="Educacion antes del parto institucional: "/></cell>
+				</row>
+				
+				<row>
+				<cell colspan="2"><textbox id="tbxParaclinico" width="420px" rows="4" style="text-transform:uppercase"/></cell>
+				<cell colspan="2"><textbox id="tbxEducacion_antes" width="420px" rows="4" style="text-transform:uppercase"/></cell>
+				</row>
+				
+				<row>
+				<cell colspan="2"><label id="lbSignos" value="Signos: "/></cell>
+				<cell colspan="2"><label id="lbConsejeria" value="Consejeria planificacion Familiar: "/></cell>
+				</row>
+				
+				<row>
+				<cell colspan="2"><textbox id="tbxSignos" width="420px" rows="4" style="text-transform:uppercase"/></cell>
+				<cell colspan="2"><textbox id="tbxConsejeria" width="420px" rows="4" style="text-transform:uppercase"/></cell>
+				</row>
+				
+				<row>
+				<cell colspan="2"><label id="lbEducacion_iami" value="Educacion IAMI: "/></cell>
+				<cell colspan="2"><label id="lbEntrega_educacion" value="Entrega y educacion carne Materna: "/></cell>
+				</row>
+				
+				<row>
+				<cell colspan="2"><textbox id="tbxEducacion_iami" width="420px" rows="4" style="text-transform:uppercase"/></cell>
+				<cell colspan="2"><textbox id="tbxEntrega_educacion" width="420px" rows="4" style="text-transform:uppercase"/></cell>
+				</row>					
+				</rows>
+			</grid>
+</groupbox>
+</cell>
+</row>
+
+
+
+
+<!-- fila 10 -->
+<row>
+<cell colspan="6">
+<groupbox mold="3d" width="100%" closable="false">
+<caption label="RIPS"/>
+			<grid sclass="GridSinBorde" style="border:none">
+				<columns>
+				<column label="" width="20%"/>
+				<column label="" width="20%"/>
+				<column label="" width="20%"/>
+				<column label="" width="20%"/>
+				<column label="" width="20%"/>
+				</columns>
+				<rows>
+						
+				<row>
+				<cell>
+				<label id="lbFinalidad_cons" value="Finalidad de consulta: " />
+				</cell>
+				<cell>
+				<listbox id="lbxFinalidad_cons" name="Finalidad_cons" mold="select" width="170px" sclass="combobox" 
+								onSelect="formControl_prenatal.seleccionarProgramaPyp()"/>
+				</cell>
+				
+				<cell>
+					<label id="lbCodigo_consulta_pyp" value="Pro. PYP: " />
+				</cell>
+				<cell colspan="2">
+					<listbox
+						id="lbxCodigo_consulta_pyp" name="Codigo_consulta_pyp"
+						mold="select" width="170px" sclass="combobox" />
+				</cell>
+				</row>
+				
+				<row>
+				<cell>
+				<label id="lbCausas_externas" value="Causas Externas: " />
+				</cell>
+				<cell colspan="4">
+					<listbox
+						id="lbxCausas_externas" name="Causas_externas"
+						mold="select" width="170px" sclass="combobox" />
+				</cell>
+				</row>
+				
+				<row>
+				<cell><label id="lbTipo_disnostico" value="Tipo Diagnostico: "/></cell>
+				<cell colspan="4"><listbox id="lbxTipo_disnostico" name="tipo_disnostico" mold="select" width="170px" sclass="combobox"/></cell>
+				</row>
+				
+				<row>
+				
+				<cell><label id="lbTipo_principal" value="Tipo Principal: "/>
+				</cell>
+				<cell>
+					<bandbox
+						id="tbxTipo_principal" autodrop="true"
+						readonly="true" width="70px"
+						onOpen="formControl_prenatal.buscarDx(tbxValueDx.getValue(),lbxDx)">
+						<bandpopup>
+							<vbox>
+								<toolbar>
+									<label
+										value="Buscar: " />
+									<textbox
+										id="tbxValueDx"
+										onChanging='formControl_prenatal.buscarDx(event.getValue(),lbxDx)'
+										style="text-transform:uppercase;" />
+									<toolbarbutton
+										image="/images/borrar.gif" tooltiptext="Quitar"
+										onClick='formControl_prenatal.selectedDx(new Listitem(), tbxTipo_principal, tbxNomDx)' />
+								</toolbar>
+								<listbox
+									height="300px" width="600px" mold="paging"
+									pageSize="8" id="lbxDx"
+									onSelect='formControl_prenatal.selectedDx(self.getSelectedItem(), tbxTipo_principal, tbxNomDx)'>
+									<listhead>
+										<listheader
+											label="Código" width="65px" />
+										<listheader
+											label="Nombre" />
+										<listheader
+											label="Sexo" width="65px" />
+										<listheader
+											label="Limite inf" width="75px" />
+										<listheader
+											label="Limite sup" width="75px" />
+									</listhead>
+								</listbox>
+							</vbox>
+						</bandpopup>
+					</bandbox>
+				</cell>
+				<cell colspan="3">
+					<textbox
+						id="tbxNomDx" width="230px"
+						style="text-transform:uppercase" readonly="true" />
+				</cell>
+				
+			</row>
+			<row>
+				<cell>
+					<label
+						value="Relacionado 1: " />
+				</cell>
+				<cell>
+					<bandbox
+						id="tbxTipo_relacionado_1" autodrop="true" readonly="true"
+						width="70px"
+						onOpen="formControl_prenatal.buscarDx(tbxValueDx.getValue(),lbxDxRelacionado_1)">
+						<bandpopup>
+							<vbox>
+								<toolbar>
+									<label
+										value="Buscar: " />
+									<textbox
+										id="tbxValueDxRelacionado_1"
+										onChanging='formControl_prenatal.buscarDx(event.getValue(),lbxDxRelacionado_1)'
+										style="text-transform:uppercase;" />
+									<toolbarbutton
+										image="/images/borrar.gif" tooltiptext="Quitar"
+										onClick='formControl_prenatal.selectedDx(new Listitem(), tbxTipo_relacionado_1, tbxNomDxRelacionado_1)' />
+								</toolbar>
+								<listbox
+									height="300px" width="600px" mold="paging"
+									pageSize="8" id="lbxDxRelacionado_1"
+									onSelect='formControl_prenatal.selectedDx(self.getSelectedItem(), tbxTipo_relacionado_1, tbxNomDxRelacionado_1)'>
+									<listhead>
+										<listheader
+											label="Código" width="65px" />
+										<listheader
+											label="Nombre" />
+										<listheader
+											label="Sexo" width="65px" />
+										<listheader
+											label="Limite inf" width="75px" />
+										<listheader
+											label="Limite sup" width="75px" />
+									</listhead>
+								</listbox>
+							</vbox>
+						</bandpopup>
+					</bandbox>
+				</cell>
+				<cell colspan="3">
+					<textbox
+						id="tbxNomDxRelacionado_1" width="230px"
+						style="text-transform:uppercase" readonly="true" />
+				</cell>
+				
+			</row>
+
+			<!-- relacionado 2 -->
+			<row>
+				<cell>
+					<label
+						value="Relacionado 2: " />
+				</cell>
+				<cell>
+					<bandbox
+						id="tbxTipo_relacionado_2" autodrop="true" readonly="true"
+						width="70px"
+						onOpen="formControl_prenatal.buscarDx(tbxValueDx.getValue(),lbxDxRelacionado_2)">
+						<bandpopup>
+							<vbox>
+								<toolbar>
+									<label
+										value="Buscar: " />
+									<textbox
+										id="tbxValueDxRelacionado_2"
+										onChanging='formControl_prenatal.buscarDx(event.getValue(),lbxDxRelacionado_2)'
+										style="text-transform:uppercase;" />
+									<toolbarbutton
+										image="/images/borrar.gif" tooltiptext="Quitar"
+										onClick='formControl_prenatal.selectedDx(new Listitem(), tbxTipo_relacionado_2, tbxNomDxRelacionado_2)' />
+								</toolbar>
+								<listbox
+									height="300px" width="600px" mold="paging"
+									pageSize="8" id="lbxDxRelacionado_2"
+									onSelect='formControl_prenatal.selectedDx(self.getSelectedItem(), tbxTipo_relacionado_2, tbxNomDxRelacionado_2)'>
+									<listhead>
+										<listheader
+											label="Código" width="65px" />
+										<listheader
+											label="Nombre" />
+										<listheader
+											label="Sexo" width="65px" />
+										<listheader
+											label="Limite inf" width="75px" />
+										<listheader
+											label="Limite sup" width="75px" />
+									</listhead>
+								</listbox>
+							</vbox>
+						</bandpopup>
+					</bandbox>
+				</cell>
+				<cell colspan="3">
+					<textbox
+						id="tbxNomDxRelacionado_2" width="230px"
+						style="text-transform:uppercase" readonly="true" />
+				</cell>
+				
+			</row>
+			<!-- relacionado 3 -->
+			<row>
+				<cell>
+					<label
+						value="Relacionado 3: " />
+				</cell>
+				<cell>
+					<bandbox
+						id="tbxTipo_relacionado_3" autodrop="true" readonly="true"
+						width="70px"
+						onOpen="formControl_prenatal.buscarDx(tbxValueDx.getValue(),lbxDxRelacionado_3)">
+						<bandpopup>
+							<vbox>
+								<toolbar>
+									<label
+										value="Buscar: " />
+									<textbox
+										id="tbxValueDxRelacionado_3"
+										onChanging='formControl_prenatal.buscarDx(event.getValue(),lbxDxRelacionado_3)'
+										style="text-transform:uppercase;" />
+									<toolbarbutton
+										image="/images/borrar.gif" tooltiptext="Quitar"
+										onClick='formControl_prenatal.selectedDx(new Listitem(), tbxTipo_relacionado_3, tbxNomDxRelacionado_3)' />
+								</toolbar>
+								<listbox
+									height="300px" width="600px" mold="paging"
+									pageSize="8" id="lbxDxRelacionado_3"
+									onSelect='formControl_prenatal.selectedDx(self.getSelectedItem(), tbxTipo_relacionado_3, tbxNomDxRelacionado_3)'>
+									<listhead>
+										<listheader
+											label="Código" width="65px" />
+										<listheader
+											label="Nombre" />
+										<listheader
+											label="Sexo" width="65px" />
+										<listheader
+											label="Limite inf" width="75px" />
+										<listheader
+											label="Limite sup" width="75px" />
+									</listhead>
+								</listbox>
+							</vbox>
+						</bandpopup>
+					</bandbox>
+				</cell>
+				<cell colspan="3">
+					<textbox
+						id="tbxNomDxRelacionado_3" width="230px"
+						style="text-transform:uppercase" readonly="true" />
+				</cell>
+				
+			</row>
+			
+			<row>
+			<cell><label id="lbTratamiento" value="Conductas y Recomendaciones: "/></cell>
+			<cell colspan="4"><textbox id="tbxTratamiento" width="420px" rows="4" style="text-transform:uppercase"/></cell>
+			</row>
+			
+			
+				</rows>
+			</grid>
+</groupbox>
+</cell>
+</row>
+
+
+</rows>
+</grid>
+</groupbox>
+</groupbox>
+</center>
+</borderlayout>
+</zk>

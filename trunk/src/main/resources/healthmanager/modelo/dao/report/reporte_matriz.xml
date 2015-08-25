@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.MatrizModel">
+    <select id="select" resultType="java.util.HashMap" parameterType="java.util.Map">
+    SELECT
+			centro.nombre_centro,
+			pac.tipo_identificacion,
+			pac.nro_identificacion,
+			pac.apellido1,
+			pac.apellido2,
+			pac.nombre1,
+			pac.nombre2,
+			pac.fecha_nacimiento,
+			ads.nro_ingreso,
+			elem_sexo.descripcion  AS sexo,
+			eps.codigo AS codigo_eps,
+             eps.nombre AS nombre_eps,
+			ads.fecha_ingreso,
+			ads.fecha_atencion,
+			cita.fecha_cita,
+			cita.fecha_solicitada,
+			cita.tipo_cita,
+			elem_tipo_cita.descripcion,
+			CASE WHEN  cita.tipo_cita IS NULL THEN '' WHEN cita.tipo_cita = '1' THEN 'SI' ELSE 'NO' END AS cita_primera_vez,
+			cita.hora,
+			cita.estado,
+			elem_estado_cita.descripcion AS estado_cita,
+			CASE WHEN cita.estado IS NULL THEN '' WHEN cita.estado = '6' THEN 'SI' ELSE 'NO' END AS reemplazo,
+			upper(elm_via_ingreso.descripcion) AS via_ingreso,
+			public.cie.nombre AS nombre_diagnostico,
+			public.cie.codigo AS codigo_diagnostico,
+			CASE WHEN triage.fecha_inicial IS NULL THEN '' WHEN ads.via_ingreso = '1' THEN 'SI' ELSE 'NO' END AS triage,
+			ads.diagnostico_ingreso,
+			medico.tipo_identificacion AS tipo_medico,
+			medico.nro_identificacion AS nro_id_medico,
+			medico.nombres AS nombre_medico,
+			medico.apellidos AS apellido_medico,
+			CASE WHEN remision_ext.codigo_paciente IS NULL THEN '' WHEN ads.via_ingreso = '1' THEN 'SI' ELSE 'NO' END AS remitido,
+			remision_ext.servico_cual_solicita,
+			CASE WHEN ads.via_ingreso != '1' THEN '' WHEN  EXISTS (SELECT 1 FROM public.datos_procedimiento AS dtos_pro 
+			                     WHERE dtos_pro.codigo_empresa = ads.codigo_empresa 
+			                          AND dtos_pro.codigo_sucursal = ads.codigo_sucursal AND dtos_pro.nro_ingreso = ads.nro_ingreso 
+			                              AND dtos_pro.nro_identificacion = ads.nro_identificacion AND dtos_pro.codigo_procedimiento = 'S20000') THEN 'SI'
+			                             ELSE 'NO' END AS observacion,
+			
+			CASE WHEN ads.via_ingreso != '1' THEN NULL WHEN egreso.fecha_ingreso IS NOT NULL THEN egreso.fecha_ingreso ELSE ads.fecha_ingreso  END AS fecha_ingreso_egreso,
+			egreso.fecha_egreso,
+			CASE WHEN ads.via_ingreso = '26' THEN 'SI' ELSE 'NO' END AS hospitalizacion,
+			CASE WHEN ads.via_ingreso = '26' THEN ads.cama ELSE '' END AS cama,
+			CASE WHEN ads.via_ingreso = '26' THEN 'HABITACIÓN ' ||  habitacion.nombre || ' CAMA ' ||  cama.nombre ELSE '' END AS descripcion_cama,
+			CASE WHEN ads.via_ingreso != '26' THEN NULL WHEN egreso_hosp.fecha_ingreso IS NOT NULL THEN egreso_hosp.fecha_ingreso ELSE ads.fecha_ingreso END  AS fecha_ingreso_hosp,
+			egreso_hosp.fecha_egreso AS fecha_egreso_hosp,
+			egreso_hosp.estado_salida,
+			CASE WHEN ads.via_ingreso != '26' THEN '' WHEN remision_ext.fecha IS NOT NULL THEN 'REMITIDO' WHEN egreso_hosp.estado_salida = '2' THEN 'FALLECIDO' ELSE 'DE ALTA POR MEJORIA' END AS estado_salida_descripcion,
+			usr.nombres AS nombres_fact, usr.apellidos AS apellidos_fact
+			FROM
+			public.admision AS ads
+			INNER JOIN public.paciente AS pac ON pac.codigo_empresa = ads.codigo_empresa AND pac.codigo_sucursal = ads.codigo_sucursal AND pac.nro_identificacion = ads.nro_identificacion
+			INNER JOIN public.elemento AS elem_sexo ON elem_sexo.codigo = pac.sexo AND elem_sexo.tipo = 'sexo'
+			INNER JOIN public.administradora AS eps ON eps.codigo_empresa = pac.codigo_empresa AND eps.codigo_sucursal = pac.codigo_sucursal AND eps.codigo = ads.codigo_administradora
+			LEFT JOIN public.citas AS cita ON ads.codigo_empresa = cita.codigo_empresa AND ads.codigo_sucursal = cita.codigo_sucursal AND ads.codigo_cita = cita.codigo_cita
+			LEFT JOIN public.elemento AS elem_tipo_cita ON elem_tipo_cita.codigo = cita.tipo_cita AND elem_tipo_cita.tipo = 'tipo_cita'
+			LEFT JOIN public.elemento AS elem_estado_cita ON elem_estado_cita.codigo = cita.estado AND elem_estado_cita.tipo = 'estado_cita'
+			LEFT JOIN public.elemento AS elm_via_ingreso ON ads.via_ingreso = elm_via_ingreso.codigo AND elm_via_ingreso.tipo = 'via_ingreso'
+			LEFT JOIN public.cie ON public.cie.codigo = ads.diagnostico_ingreso
+			LEFT JOIN public.his_triage AS triage ON triage.codigo_empresa = ads.codigo_empresa AND triage.codigo_sucursal = ads.codigo_sucursal AND triage.nro_ingreso = ads.nro_ingreso AND triage.identificacion = ads.nro_identificacion
+			INNER JOIN public.prestadores AS medico ON medico.codigo_empresa = ads.codigo_empresa AND medico.codigo_sucursal = ads.codigo_sucursal AND medico.nro_identificacion = ads.codigo_medico
+			LEFT JOIN public.anexo9_entidad AS remision_ext  ON (remision_ext.codigo_empresa = ads.codigo_empresa AND remision_ext.codigo_sucursal = ads.codigo_sucursal AND remision_ext.nro_ingreso = ads.nro_ingreso AND remision_ext.codigo_paciente = ads.nro_identificacion)
+			LEFT JOIN public.urgencias AS egreso ON (egreso.codigo_empresa = ads.codigo_empresa AND egreso.codigo_sucursal = ads.codigo_sucursal AND egreso.nro_ingreso = ads.nro_ingreso AND egreso.nro_identificacion = ads.nro_identificacion)
+			LEFT JOIN public.admision_cama AS admision_cama ON (admision_cama.codigo_empresa = ads.codigo_empresa AND admision_cama.codigo_sucursal = ads.codigo_sucursal AND admision_cama.nro_ingreso = ads.nro_ingreso AND admision_cama.nro_identificacion = ads.nro_identificacion)
+			LEFT JOIN public.cama AS cama ON (cama.codigo_empresa = admision_cama.codigo_empresa AND cama.codigo_sucursal = admision_cama.codigo_sucursal AND cama.codigo = admision_cama.codigo_cama AND cama.codigo_pabellon = admision_cama.codigo_pabellon AND cama.codigo_habitacion = admision_cama.codigo_habitacion)
+			LEFT JOIN public.habitacion AS habitacion ON (habitacion.codigo_empresa = cama.codigo_empresa AND habitacion.codigo_sucursal = cama.codigo_sucursal AND habitacion.codigo = cama.codigo_habitacion AND habitacion.codigo_pabellon = cama.codigo_pabellon AND habitacion.tipo_atencion = cama.tipo_atencion)
+			LEFT JOIN public.hospitalizacion AS egreso_hosp ON (egreso_hosp.codigo_empresa = ads.codigo_empresa AND egreso_hosp.codigo_sucursal = ads.codigo_sucursal AND egreso_hosp.nro_ingreso = ads.nro_ingreso AND egreso_hosp.nro_identificacion = ads.nro_identificacion)
+			INNER JOIN public.centro_atencion AS centro ON (centro.codigo_empresa = ads.codigo_empresa AND centro.codigo_sucursal = ads.codigo_sucursal AND centro.codigo_centro = ads.codigo_centro)
+			INNER JOIN usuarios AS usr ON (ads.codigo_empresa = usr.codigo_empresa AND ads.codigo_sucursal = usr.codigo_sucursal AND ads.ultimo_user = usr.codigo)
+			where ads.codigo_empresa = #{codigo_empresa}
+	         and ads.codigo_sucursal = #{codigo_sucursal} 
+	         and ads.estado = '2'
+	         <if test="fecha_inicio != null and fecha_final != null">
+	             AND CAST(ads.fecha_ingreso AS DATE) BETWEEN CAST(#{fecha_inicio} AS DATE) AND CAST(#{fecha_final} AS DATE)
+	         </if>
+	         <if test="fecha_inicio != null and fecha_final == null">
+	             <![CDATA[ AND CAST(ads.fecha_ingreso AS DATE) >=  CAST(#{fecha_inicio} AS DATE)]]>
+	         </if>
+	         <if test="fecha_inicio == null and fecha_final != null">
+	            <![CDATA[ AND CAST(ads.fecha_ingreso AS DATE) <=  CAST(#{fecha_final} AS DATE)]]>
+	         </if>
+	         <if test="contratos != null">
+                AND ads.id_plan || ads.codigo_administradora
+                <foreach collection="contratos" item="item" open="IN(" close=")" separator=",">
+                     '${item.id_plan}${item.codigo_administradora}'
+                </foreach>
+            </if>
+            <if test="eps != null">
+                AND ads.codigo_administradora
+                <foreach collection="eps" item="item" open="IN(" close=")" separator=",">
+                     #{item.codigo}
+                </foreach>
+            </if>
+            <if test="centros_salud != null">
+                AND centro.codigo_centro
+                <foreach collection="centros_salud" item="item" open="IN(" close=")" separator=",">
+                     #{item.codigo_centro}
+                </foreach>
+            </if>
+             <if test="servicios != null">
+                <foreach collection="servicios" item="item" open="AND ads.via_ingreso IN(" close=")" separator=",">
+                     #{item.codigo}
+                </foreach>
+            </if>
+			ORDER BY
+			ads.codigo_centro ASC,
+			pac.codigo_administradora ASC,
+			ads.via_ingreso ASC
+    </select>
+</mapper>

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="imagen_diagnostica.modelo.dao.Laboratorios_resultadosDao">
+
+	<resultMap id="laboratorios_resultadosMap" type="laboratorios_resultados">
+		<result column="id_resultado" property="id_resultado" />
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="nro_identificacion" property="nro_identificacion" />
+		<result column="fecha_realizacion" property="fecha_realizacion" />
+		<result column="lugar" property="lugar" />
+		<result column="id_cliente" property="id_cliente" />
+		<result column="direccion_archivo" property="direccion_archivo" />
+		<result column="creacion_date" property="creacion_date" />
+		<result column="codigo_orden" property="codigo_orden" />
+	</resultMap>
+
+	<insert id="crear" parameterType="laboratorios_resultados">
+		insert into imagen_diagnostica.laboratorios_resultados (id_resultado,codigo_empresa,
+		codigo_sucursal,nro_identificacion,fecha_realizacion,
+		lugar,id_cliente,direccion_archivo,
+		creacion_date,codigo_orden)
+
+		values (#{id_resultado},#{codigo_empresa},
+		#{codigo_sucursal},#{nro_identificacion},#{fecha_realizacion},
+		#{lugar},#{id_cliente},#{direccion_archivo},
+		#{creacion_date},#{codigo_orden})
+	</insert>
+
+	<update id="actualizar" parameterType="laboratorios_resultados">
+		update imagen_diagnostica.laboratorios_resultados set id_resultado = #{id_resultado},
+		codigo_empresa = #{codigo_empresa},codigo_sucursal = #{codigo_sucursal},
+		nro_identificacion = #{nro_identificacion},fecha_realizacion = #{fecha_realizacion},
+		lugar = #{lugar},id_cliente = #{id_cliente},
+		direccion_archivo = #{direccion_archivo},creacion_date = #{creacion_date},
+		codigo_orden = #{codigo_orden}
+		where id_resultado = #{id_resultado}
+	</update>
+
+	<select id="consultar" parameterType="laboratorios_resultados" resultMap="laboratorios_resultadosMap">
+		select id_resultado,codigo_empresa,
+		codigo_sucursal,nro_identificacion,fecha_realizacion,lugar,
+		id_cliente,direccion_archivo,creacion_date,codigo_orden
+		from imagen_diagnostica.laboratorios_resultados where id_resultado = #{id_resultado}
+	</select>
+
+	<delete id="eliminar" parameterType="laboratorios_resultados">
+		delete from imagen_diagnostica.laboratorios_resultados
+		where id_resultado = #{id_resultado}
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="laboratorios_resultadosMap">
+		select id_resultado,codigo_empresa,
+		codigo_sucursal,nro_identificacion,fecha_realizacion,lugar,
+		id_cliente,direccion_archivo,creacion_date,codigo_orden
+		from imagen_diagnostica.laboratorios_resultados 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="nro_identificacion != null">
+			AND nro_identificacion = #{nro_identificacion}
+			</if>
+			<if test="fecha_inicial_p != null">
+				<![CDATA[
+				AND (to_char(fecha_realizacion, 'yyyy-MM-dd') >= to_char(to_date('${fecha_inicial_p}','yyyy-MM-dd'),'yyyy-MM-dd'))
+				]]>
+			</if>
+			
+			<if test="fecha_final_p != null">
+				<![CDATA[
+				AND (to_char(fecha_realizacion, 'yyyy-MM-dd') <= to_char(to_date('${fecha_final_p}', 'yyyy-MM-dd'),'yyyy-MM-dd'))
+				]]>
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from imagen_diagnostica.laboratorios_resultados 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

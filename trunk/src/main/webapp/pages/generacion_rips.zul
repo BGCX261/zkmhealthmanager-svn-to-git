@@ -1,0 +1,231 @@
+<?page title="Facturacion_medicamento" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formGeneracion_rips" width="100%" height="100%"
+		use="healthmanager.controller.Generacion_ripsAction">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+		<!-- **************** -->
+		<!-- Zona de Objetivo -->
+		<!-- **************** -->
+		<groupbox id="groupboxObjetivo" closable="false" mold="3d"
+			visible="false">
+			<caption label="Modulo de Generacion de Rips"
+				style="color: blue;font-weight: bold" />
+			<label
+				value="Esta pagina permite gestionar la Generacion de Rips." />
+		</groupbox>
+
+		<borderlayout width="100%" height="100%" id="borderlayoutEditar"
+			visible="true">
+			<north border="none">
+				<groupbox closable="false" hflex="1" mold="3d"
+					id="groupboxEditar">
+					<caption
+						label="GENERACIÓN DE RIPS POR FACTURAS DE ADMINISTRADORAS"
+						style="font-weight:bold">
+						<label value="Filtro facturas: "
+							visible="false" />
+						<radiogroup id="rgpFiltroFacturas"
+							onCheck="formGeneracion_rips.chequearFiltroFacturas()"
+							visible="false">
+							<radio label="Todos" value="todos" />
+							<space />
+							<radio label="Fecha" value="fecha"
+								selected="true" />
+							<space visible="false" />
+							<radio visible="false" label="Rango"
+								value="rango" />
+						</radiogroup>
+						<space bar="true" />
+						<checkbox id="chkCapitada"
+							label="Facturas Capitadas"
+							onCheck="btnFiltro_ingreso.setVisible(!chkCapitada.isChecked());formGeneracion_rips.buscarFacturas();"
+							style="font-weight:bold" />
+					</caption>
+					<grid sclass="GridSinBorde" hflex="1">
+						<columns visible="false">
+							<column width="130px" />
+							<column width="170px" />
+							<column width="130px" />
+							<column width="170px" />
+							<column width="100px" />
+							<column />
+							<column width="140px" />
+						</columns>
+						<rows>
+
+							<row>
+								<cell>
+									<label value="* " style="color: red"
+										tooltiptext="Campo obligatorio" />
+									<label value="Aseguradora:" />
+									<toolbarbutton
+										id="btnLimpiarAseguradora" image="/images/borrar.gif" />
+								</cell>
+								<cell>
+									<bandboxRegistros
+										id="bandboxAseguradora" widthBandbox="160px"
+										widthListbox="600px" heightListbox="300px"
+										columnas="Codigo#65px|Nombres|Nit#100px" />
+								</cell>
+								<cell colspan="2">
+									<textbox id="tbxInfoAseguradora"
+										hflex="1" style="text-transform:uppercase" readonly="true" />
+								</cell>
+								<cell>
+									<label value="* " style="color: red"
+										tooltiptext="Campo obligatorio" />
+									<label value="Contrato" />
+								</cell>
+								<cell>
+									<listbox id="lbxContratos" hflex="1"
+										mold="select" disabled="true"
+										onSelect="formGeneracion_rips.limpiarListaFactura()" />
+								</cell>
+								<cell>
+									<toolbarbutton
+										id="btnFiltro_ingreso" image="/images/filtro.png"
+										label="Vias de ingreso"
+										onClick='popupViasIngreso.open(self,"end_after")' />
+								</cell>
+							</row>
+							<row>
+								<cell>
+									<label value="Fecha Inicial"
+										id="lbRangoInicial" />
+								</cell>
+								<cell>
+									<datebox hflex="1"
+										id="dtbxRango_inicio" readonly="true" format="dd/MM/yyyy"
+										disabled="true" />
+								</cell>
+								<cell>
+									<label value="Fecha Final"
+										id="lbRangoFinal" />
+								</cell>
+								<cell>
+									<datebox hflex="1"
+										id="dtbxRango_final" readonly="true" format="dd/MM/yyyy"
+										disabled="true" />
+								</cell>
+								<cell colspan="2">
+									<listbox id="lbxOrden_factura"
+										mold="select" width="270px"
+										onSelect="formGeneracion_rips.buscarFacturas()">
+										<listitem
+											label="Ordenar por codigo factura ascendente" value="1"
+											selected="true" />
+										<listitem
+											label="Ordenar por valor total descendente" value="2" />
+									</listbox>
+								</cell>
+								<cell>
+									<toolbarbutton
+										image="/images/Magnifier.gif" label="Consultar facturas"
+										onClick="formGeneracion_rips.buscarFacturas()" />
+								</cell>
+							</row>
+						</rows>
+					</grid>
+				</groupbox>
+			</north>
+
+			<center autoscroll="true" border="none">
+				<listbox id="listboxRegistros" vflex="1"
+					checkmark="true" multiple="true" mold="paging" pageSize="100"
+					onSelect="formGeneracion_rips.verificarSeleccion();formGeneracion_rips.seleccionarFacturas()"
+					emptyMessage="No se ha consultado ninguna factura">
+					<custom-attributes org.zkoss.zul.listbox.rod="true" />
+					<listhead>
+						<listheader width="30px">
+							<checkbox id="checkboxSeleccionar_todos"
+								onCheck="formGeneracion_rips.seleccionarTodos()" />
+						</listheader>
+						<listheader label="Nro Factura" width="90px" />
+						<listheader label="ID Paciente" width="140px" />
+						<listheader label="Nombre Paciente" />
+						<listheader label="Via Ingreso" />
+						<listheader label="Fecha" width="100px" />
+						<listheader label="Valor Factura" width="100px" />
+					</listhead>
+
+					<listfoot>
+						<listfooter span="5" align="left">
+							<checkbox id="chkPrueba" label="Prueba" />
+							<space />
+							<checkbox id="chkContinuar_error"
+								label="Continuar error"
+								tooltiptext="Continuar si hay errores y generar archivo con las especificaciones" />
+							<space bar="true" />
+							<toolbarbutton label="Generar reporte"
+								image="/images/generar.png"
+								onClick="formGeneracion_rips.imprimirRelacion()"
+								tooltiptext="Generar reporte de relacion de facturas a entregar" />
+							<space />
+							<toolbarbutton label="Generar rips"
+								image="/images/generar.png"
+								onClick="formGeneracion_rips.generarRips()"
+								tooltiptext="Generar rips" />
+							<space />
+							<label id="lbCantidadFacturas"
+								value="Cantidad: 0" />
+							<space />
+							<space bar="true" />
+							<checkbox id="chkIncluir_paquetes"
+								disabled="true" checked="true"
+								label="Mostrar detalles de la facturación de paquetes" />
+						</listfooter>
+						<listfooter span="3" align="right">
+							<label value="Total : " />
+							<doublebox id="dbxTotal" hflex="1"
+								value="0.0" readonly="true" format="#,##0.00"
+								style="text-align:right" />
+						</listfooter>
+					</listfoot>
+				</listbox>
+			</center>
+		</borderlayout>
+		<popup id="popupFacturas">
+			<groupbox mold="3d" closable="false" width="400px"
+				height="170px">
+				<caption
+					label="Insertar codigos de facturas separados por coma" />
+				<textbox id="tbxCodigos_facturas" width="98%" rows="7" />
+				<separator />
+				<toolbarbutton label="Seleccionar facturas"
+					image="/images/generar.png"
+					onClick="formGeneracion_rips.seleccionarCodigosFacturas(tbxCodigos_facturas.getText())"
+					tooltiptext="Seleccionar facturas" />
+			</groupbox>
+		</popup>
+		<popup id="popupViasIngreso">
+			<listbox id="lbxVias_ingreso" multiple="true"
+				checkmark="true" width="300px" name="via_ingreso" rows="8">
+				<custom-attributes org.zkoss.zul.listbox.rod="true" />
+				<listhead>
+					<listheader label="Vias de ingreso" />
+				</listhead>
+				<listfoot>
+					<listfooter align="middle">
+						<toolbarbutton
+							label="Consultar por via de ingreso"
+							image="/images/Magnifier.gif"
+							onClick="formGeneracion_rips.buscarFacturas()"
+							tooltiptext="Consultar por via de ingreso" />
+					</listfooter>
+				</listfoot>
+			</listbox>
+		</popup>
+	</window>
+</zk>

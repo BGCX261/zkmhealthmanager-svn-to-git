@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.historia_pyp_hipertensoModel">
+	<select id="select" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+SELECT
+		get_edad(paciente.fecha_nacimiento,CURRENT_DATE,'1') AS edad,
+		hisc_hipertenso_diabetico.codigo_empresa,hisc_hipertenso_diabetico.codigo_sucursal,
+		hisc_hipertenso_diabetico.codigo_historia,hisc_hipertenso_diabetico.identificacion,
+		hisc_hipertenso_diabetico.motivo_consulta,hisc_hipertenso_diabetico.enfermedad_actual,
+		hisc_hipertenso_diabetico.cefalea,hisc_hipertenso_diabetico.epistaxis,
+		tinitus,vertigo,
+		disartria,convulsion_focal,
+		lipotimia,fotopsias,
+		escotomas,vision_borrosa,
+		dolor_percordial_esf,dolor_percordial_rep,
+		palpitaciones,disnea_esfuerzo,
+		disnea_paroxis,ortopnea,
+		poliruria,polidipsia,
+		polifagia,oliguria,
+		hematuria,edemas,
+		parestesias,hipoestesias,
+		disestesias,anestesia,
+		deficit_motor,disf_erectil,
+		diarrea,estrenimiento,
+		dishidrosis,anhidrosis,
+		claudicacion,calambres,
+		dolor_neuritic,apnea_suenio,
+		hisc_hipertenso_diabetico.observacion_rs,
+		lesion_pies, disnea, disnea_pequenia, 
+		disnea_grande,disnea_mediana,
+		hisc_hipertenso_diabetico.acompaniante,relacion,
+		hisc_hipertenso_diabetico.tel_acompaniante,hisc_hipertenso_diabetico.cedula_acomp,
+		hisc_hipertenso_diabetico.tipo_historia,hisc_hipertenso_diabetico.codigo_historia_anterior,
+		hisc_hipertenso_diabetico.nro_ingreso,
+		hisc_hipertenso_diabetico.ultimo_update,
+		paciente."tipo_identificacion" AS paciente_tipo_identificacion,
+		paciente."nro_identificacion" AS paciente_nro_identificacion,
+		paciente."codigo_administradora" AS paciente_codigo_administradora,
+		paciente."tipo_usuario" AS paciente_tipo_usuario,
+		paciente."apellido1" AS paciente_apellido1,
+		paciente."apellido2" AS paciente_apellido2,
+		paciente."nombre1" AS paciente_nombre1,
+		paciente."nombre2" AS paciente_nombre2,
+		paciente."unidad_medidad" AS paciente_unidad_medidad,
+		paciente."sexo" AS paciente_sexo,
+		paciente."profesion" AS paciente_profesion,
+		paciente."tel_oficina" AS paciente_tel_oficina,
+		paciente."tel_res" AS paciente_tel_res,
+		paciente."direccion" AS paciente_direccion,
+		paciente."nivel_sisben" AS paciente_nivel_sisben,
+		paciente."edad" AS paciente_edad,
+		pertenencia_etnica."nombre" AS pert_etnica,
+		departamentos."nombre" AS departamento,
+		municipios."nombre" AS municipios,
+		administradora."codigo" AS administradora,
+		ocupaciones."nombre" AS ocupacion,
+		barrio."barrio" AS barrio,
+		elemento."descripcion" AS estado_civil,
+		elemento1."descripcion" AS regimen,
+		nivel_educativo."nombre" AS nivel_educativo,
+		localidad."localidad" AS localidad,
+		paciente."login" AS paciente_login,
+		paciente."fecha_nacimiento" AS paciente_fecha_nacimiento,
+		paciente."codigo_dpto" AS paciente_codigo_dpto,
+		paciente."codigo_municipio" AS paciente_codigo_municipio,
+		u.nombres || ' ' || u.apellidos as medico,
+		u.codigo as codigo_medico,
+		elemento2.descripcion AS elemento2
+		
+		FROM
+		"public"."hisc_hipertenso_diabetico"
+		hisc_hipertenso_diabetico INNER JOIN "public"."admision" admision ON
+		hisc_hipertenso_diabetico."codigo_empresa" = admision."codigo_empresa" AND
+		hisc_hipertenso_diabetico."identificacion" = admision."nro_identificacion" AND
+		hisc_hipertenso_diabetico."codigo_sucursal" = admision."codigo_sucursal" AND 
+		hisc_hipertenso_diabetico."nro_ingreso" = admision."nro_ingreso"
+
+		INNER
+		JOIN "public"."paciente" paciente ON 
+		paciente."codigo_empresa" = admision."codigo_empresa"
+		AND paciente."nro_identificacion" = admision."nro_identificacion"
+		AND paciente.codigo_sucursal = admision.codigo_sucursal
+		AND paciente."codigo_sucursal" = admision."codigo_sucursal"
+
+		INNER JOIN 
+		"public"."impresion_diagnostica" impresion_diagnostica ON 
+		hisc_hipertenso_diabetico."codigo_empresa" = impresion_diagnostica."codigo_empresa" AND
+		hisc_hipertenso_diabetico."codigo_sucursal"=impresion_diagnostica."codigo_sucursal" AND 
+		hisc_hipertenso_diabetico."codigo_historia" = impresion_diagnostica."codigo_historia"
+
+		LEFT JOIN
+		"public".pertenencia_etnica pertenencia_etnica on
+		pertenencia_etnica."id" = paciente."pertenencia_etnica"
+
+		LEFT JOIN
+		"public".municipios municipios on
+		municipios.codigo = paciente.codigo_municipio
+
+		INNER JOIN 
+		"public".departamentos departamentos on 
+		departamentos.codigo = paciente.codigo_dpto AND
+		municipios.coddep = paciente."codigo_dpto"
+
+		LEFT JOIN
+		"public".administradora administradora on 
+		administradora.codigo = paciente.codigo_administradora
+		
+		LEFT JOIN 
+		"public".ocupaciones ocupaciones on 
+		ocupaciones."id" = paciente.codigo_ocupacion
+
+		LEFT JOIN
+		"public".adicional_paciente adicional_paciente on
+		adicional_paciente.codigo_empresa = paciente.codigo_empresa AND
+		adicional_paciente.codigo_sucursal = paciente.codigo_sucursal AND
+		adicional_paciente.nro_identificacion = paciente.nro_identificacion
+
+		LEFT JOIN 
+		"public".barrio barrio on 
+		barrio.codigo_barrio = adicional_paciente.codigo_barrio
+
+		LEFT JOIN 
+		"public".elemento elemento on 
+		elemento.codigo = paciente.estado_civil AND
+		elemento.tipo ='estado_civil'
+
+		
+		LEFT JOIN 
+		"public".usuarios u on
+		u.codigo_empresa = hisc_hipertenso_diabetico.codigo_empresa
+		and u.codigo_sucursal = hisc_hipertenso_diabetico.codigo_sucursal
+		and u.codigo = admision.codigo_medico
+		
+		LEFT JOIN 
+		"public".elemento elemento1 on 
+		elemento1.codigo = paciente.tipo_usuario 
+		and elemento1.tipo = 'tipo_usuario'
+		
+		LEFT JOIN 
+		"public".elemento elemento2 on 
+		elemento2.codigo = hisc_hipertenso_diabetico.relacion 
+		and elemento2.tipo = 'relacion_acomp'
+	
+		LEFT JOIN
+		"public".nivel_educativo nivel_educativo on 
+		nivel_educativo."id" = paciente.codigo_educativo
+		
+		LEFT JOIN 
+		"public".localidad localidad on
+		localidad.codigo_localidad = barrio.codigo_localidad
+		
+		
+		where
+		hisc_hipertenso_diabetico.codigo_empresa = #{codigo_empresa}
+		and
+		hisc_hipertenso_diabetico.codigo_sucursal = #{codigo_sucursal}
+		and
+		hisc_hipertenso_diabetico.codigo_historia = #{nro_historia}
+
+
+	</select>
+
+</mapper>

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="healthmanager.modelo.dao.report.historia_pyp_planificacion_familiar4Model">
+	<select id="select" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+
+		select planificacion_familiar.codigo_empresa,planificacion_familiar.codigo_sucursal,
+		planificacion_familiar.codigo_historia,planificacion_familiar.identificacion,
+		planificacion_familiar.fecha_inicial,planificacion_familiar.nro_ingreso,
+		planificacion_familiar.cardiaca,planificacion_familiar.respiratoria,
+		planificacion_familiar.peso,planificacion_familiar.talla,
+		planificacion_familiar.presion,planificacion_familiar.presion2,planificacion_familiar.ind_masa,
+		planificacion_familiar.sintomaticos_respiratorio,planificacion_familiar.sintomaticos_piel,
+		planificacion_familiar.prueba_embarazo,planificacion_familiar.citologia,
+		planificacion_familiar.frotis,otro,
+		planificacion_familiar.metodo_adoptado,planificacion_familiar.metodo_adoptado_hombres,
+		planificacion_familiar.remision,planificacion_familiar.metodo_ets,
+		planificacion_familiar.metodo_observaciones,planificacion_familiar.codigo_historia_anterior,
+		planificacion_familiar.tipo_historia,planificacion_familiar.fecha_hasta,
+		planificacion_familiar.porque,planificacion_familiar.cantidad_condon,
+		planificacion_familiar.creacion_date,planificacion_familiar.ultimo_update,
+		planificacion_familiar.creacion_user,
+		planificacion_familiar.delete_date,planificacion_familiar.ultimo_user,
+		planificacion_familiar.delete_user,planificacion_familiar.tamizaje_cuello,
+		planificacion_familiar.citologias,
+		impresion_diagnostica."cie_principal" AS impresion_diagnostica_cie_principal,
+		impresion_diagnostica."tipo_principal" AS
+		impresion_diagnostica_tipo_principal,
+		impresion_diagnostica."cie_relacionado1" AS
+		impresion_diagnostica_cie_relacionado1,
+		impresion_diagnostica."tipo_relacionado1" AS
+		impresion_diagnostica_tipo_relacionado1,
+		impresion_diagnostica."cie_relacionado2" AS
+		impresion_diagnostica_cie_relacionado2,
+		impresion_diagnostica."tipo_relacionado2" AS
+		impresion_diagnostica_tipo_relacionado2,
+		impresion_diagnostica."cie_relacionado3" AS
+		impresion_diagnostica_cie_relacionado3,
+		impresion_diagnostica."tipo_relacionado3" AS
+		impresion_diagnostica_tipo_relacionado3,
+		impresion_diagnostica."finalidad_consulta" AS
+		impresion_diagnostica_finalidad_consulta,
+		impresion_diagnostica."causas_externas" AS
+		impresion_diagnostica_causas_externas,
+		impresion_diagnostica."cie_relacionado4" AS
+		impresion_diagnostica_cie_relacionado4,
+		impresion_diagnostica."tipo_relacionado4" AS
+		impresion_diagnostica_tipo_relacionado4,
+		elemento.descripcion AS finalidad_consulta,
+		cie."nombre" AS principal,
+		cie1."nombre" AS relacionado1,
+		cie2."nombre" AS relacionado2,
+		cie3."nombre" AS relacionado3,
+		elemento1.descripcion AS causas_externa,
+		med.nombres,med.apellidos,med.firma,med.registro_medico,
+		elemento2.descripcion AS elemento2, 
+		elemento3.descripcion AS elemento3, 
+		paciente.sexo
+		FROM
+		"public"."planificacion_familiar" planificacion_familiar 
+
+		INNER JOIN "public"."impresion_diagnostica"
+		impresion_diagnostica ON 
+		planificacion_familiar."codigo_historia" = impresion_diagnostica."codigo_historia"
+
+		INNER JOIN "public"."cie" cie ON 
+		impresion_diagnostica."cie_principal" = cie."codigo"
+
+		LEFT JOIN "public".elemento elemento on elemento.codigo =
+		impresion_diagnostica.finalidad_consulta
+		AND elemento.tipo = 'finalidad_cons'
+
+		LEFT JOIN "public".elemento elemento1 on elemento1.codigo =
+		impresion_diagnostica.causas_externas
+		AND elemento1.tipo='causa_externa'
+
+		INNER
+		JOIN "public"."paciente" paciente ON 
+		paciente."codigo_empresa" = planificacion_familiar."codigo_empresa"
+		AND paciente."nro_identificacion" = planificacion_familiar."identificacion"
+		AND paciente.codigo_sucursal = planificacion_familiar.codigo_sucursal
+		AND paciente."codigo_sucursal" = planificacion_familiar."codigo_sucursal"
+
+		
+		LEFT JOIN "public".elemento elemento2 on 
+		elemento2.codigo =planificacion_familiar.metodo_adoptado
+		AND elemento2.tipo='metodo_planificacion_mujeres'
+		AND paciente.sexo='F'
+
+		LEFT JOIN "public".elemento elemento3 on 
+		elemento3.codigo =planificacion_familiar.metodo_adoptado_hombres
+		AND elemento3.tipo='metodo_planificacion_hombres'
+		AND paciente.sexo='M'
+		
+		LEFT JOIN "public"."cie" AS cie1 ON
+		impresion_diagnostica."cie_relacionado1" = cie1."codigo"
+		LEFT JOIN "public"."cie" AS cie2 ON
+		impresion_diagnostica."cie_relacionado2" = cie2."codigo"
+		LEFT JOIN "public"."cie" AS cie3 ON
+		impresion_diagnostica."cie_relacionado3" = cie3."codigo"
+
+		LEFT JOIN usuarios med on (med.codigo_empresa =
+		planificacion_familiar.codigo_empresa
+		and med.codigo_sucursal = planificacion_familiar.codigo_sucursal
+		and med.codigo = planificacion_familiar.creacion_user)
+
+		
+		
+		where
+		planificacion_familiar.codigo_empresa = #{codigo_empresa}
+		and
+		planificacion_familiar.codigo_sucursal = #{codigo_sucursal}
+		and
+		planificacion_familiar.codigo_historia = #{nro_historia}
+	</select>
+
+</mapper>

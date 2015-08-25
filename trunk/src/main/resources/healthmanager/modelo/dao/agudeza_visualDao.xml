@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.Agudeza_visualDao">
+
+
+
+	<resultMap id="agudeza_visualMap" type="agudeza_visual">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="codigo_historia" property="codigo_historia" />
+		<result column="identificacion" property="identificacion" />
+		<result column="fecha_inicial" property="fecha_inicial" />
+		<result column="con_lentes_od" property="con_lentes_od" />
+		<result column="con_lentes_od2" property="con_lentes_od2" />
+		<result column="con_lentes_oi" property="con_lentes_oi" />
+		<result column="con_lentes_oi2" property="con_lentes_oi2" />
+		<result column="con_lentes_ao" property="con_lentes_ao" />
+		<result column="con_lentes_ao2" property="con_lentes_ao2" />
+		<result column="conducta" property="conducta" />
+		<result column="observacion" property="observacion" />
+		<result column="cobrar_agudeza" property="cobrar_agudeza" />
+		<result column="anio" property="anio" />
+
+
+	</resultMap>
+
+	<insert id="crear" parameterType="agudeza_visual">
+		insert into
+		public.agudeza_visual (codigo_empresa,codigo_sucursal,
+		codigo_historia,identificacion,fecha_inicial,
+		con_lentes_od,con_lentes_od2,con_lentes_oi,
+		con_lentes_oi2,con_lentes_ao,con_lentes_ao2,
+		conducta,observacion,cobrar_agudeza,anio)
+
+		values
+		(#{codigo_empresa},#{codigo_sucursal},
+		#{codigo_historia},#{identificacion},#{fecha_inicial},
+		#{con_lentes_od},#{con_lentes_od2},#{con_lentes_oi},
+		#{con_lentes_oi2},#{con_lentes_ao},#{con_lentes_ao2},
+		#{conducta},#{observacion},#{cobrar_agudeza},#{anio})
+	</insert>
+
+	<update id="actualizar" parameterType="agudeza_visual">
+		update
+		public.agudeza_visual set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},codigo_historia =
+		#{codigo_historia},
+		identificacion = #{identificacion},fecha_inicial =
+		#{fecha_inicial},
+		con_lentes_od = #{con_lentes_od},con_lentes_od2 =
+		#{con_lentes_od2},
+		con_lentes_oi = #{con_lentes_oi},con_lentes_oi2 =
+		#{con_lentes_oi2},
+		con_lentes_ao = #{con_lentes_ao},con_lentes_ao2 =
+		#{con_lentes_ao2},
+		conducta = #{conducta},observacion = #{observacion}
+		,cobrar_agudeza = #{cobrar_agudeza},anio = #{anio}
+
+		where
+		codigo_empresa
+		= #{codigo_empresa}
+		and codigo_sucursal =
+		#{codigo_sucursal}
+		and
+		codigo_historia = #{codigo_historia}
+	</update>
+
+	<select id="consultar" resultMap="agudeza_visualMap"
+		parameterType="agudeza_visual">
+		select codigo_empresa,codigo_sucursal,
+		codigo_historia,identificacion,fecha_inicial,con_lentes_od,
+		con_lentes_od2,con_lentes_oi,con_lentes_oi2,con_lentes_ao,
+		con_lentes_ao2,conducta,observacion,cobrar_agudeza,anio
+		from
+		public.agudeza_visual
+		where codigo_empresa = #{codigo_empresa}
+		and
+		codigo_sucursal =
+		#{codigo_sucursal} and codigo_historia =
+		#{codigo_historia}
+	</select>
+
+	<select id="consultarAnio" resultMap="agudeza_visualMap"
+		parameterType="agudeza_visual">
+		select codigo_empresa,codigo_sucursal,
+		codigo_historia,identificacion,fecha_inicial,con_lentes_od,
+		con_lentes_od2,con_lentes_oi,con_lentes_oi2,con_lentes_ao,
+		con_lentes_ao2,conducta,observacion,cobrar_agudeza,anio
+		from
+		public.agudeza_visual
+		where codigo_empresa = #{codigo_empresa}
+		and
+		codigo_sucursal =
+		#{codigo_sucursal} and identificacion
+		=#{identificacion} and anio=#{anio}
+
+	</select>
+
+	<delete id="eliminar" parameterType="agudeza_visual">
+		delete from
+		public.agudeza_visual
+		where codigo_empresa = #{codigo_empresa}
+		and
+		codigo_sucursal = #{codigo_sucursal} and codigo_historia =
+		#{codigo_historia}
+	</delete>
+
+	<select id="listar" resultMap="agudeza_visualMap" parameterType="java.util.Map">
+		select codigo_empresa,codigo_sucursal,
+		codigo_historia,identificacion,fecha_inicial,con_lentes_od,
+		con_lentes_od2,con_lentes_oi,con_lentes_oi2,con_lentes_ao,
+		con_lentes_ao2,conducta,observacion,cobrar_agudeza,anio
+		from
+		public.agudeza_visual
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">AND codigo_empresa = #{codigo_empresa}</if>
+			<if test="codigo_sucursal != null">AND codigo_sucursal = #{codigo_sucursal}</if>
+			<if test="parameter != null">AND ${parameter} like '${value}'</if>
+		</trim>
+		<if test="limite_paginado != null">
+			${limite_paginado}
+		</if>
+	</select>
+
+</mapper>

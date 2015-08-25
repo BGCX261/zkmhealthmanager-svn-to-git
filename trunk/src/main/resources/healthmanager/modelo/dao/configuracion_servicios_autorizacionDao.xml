@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper
+	namespace="healthmanager.modelo.dao.Configuracion_servicios_autorizacionDao">
+
+	<resultMap id="configuracion_servicios_autorizacionMap" type="configuracion_servicios_autorizacion">
+		<result column="id" property="id" />
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="nombre" property="nombre" />
+		<result column="creacion_date" property="creacion_date" />
+		<result column="creacion_user" property="creacion_user" />
+		<result column="estado" property="estado" />
+		<result column="mostrar_tipo_pcd" property="mostrar_tipo_pcd" />
+		<result column="tipo_servicio" property="tipo_servicio" />
+		<result column="modo_cobro" property="modo_cobro" />
+	</resultMap>
+
+	<insert id="crear" parameterType="configuracion_servicios_autorizacion">
+		<selectKey keyProperty="id" resultType="java.lang.Long">
+			insert into public.configuracion_servicios_autorizacion
+			(codigo_empresa,codigo_sucursal,
+			nombre,creacion_date,creacion_user,
+			estado,mostrar_tipo_pcd,tipo_servicio,modo_cobro)
+
+			values (#{codigo_empresa},#{codigo_sucursal},
+			#{nombre},#{creacion_date},#{creacion_user},
+			#{estado},#{mostrar_tipo_pcd},#{tipo_servicio}),#{modo_cobro}
+			RETURNING id;
+		</selectKey>
+	</insert>
+
+	<update id="actualizar" parameterType="configuracion_servicios_autorizacion">
+		update
+		public.configuracion_servicios_autorizacion set id = #{id},
+		codigo_empresa = #{codigo_empresa},codigo_sucursal =
+		#{codigo_sucursal},
+		nombre = #{nombre},creacion_date =
+		#{creacion_date},
+		creacion_user = #{creacion_user},estado = #{estado},mostrar_tipo_pcd = #{mostrar_tipo_pcd},
+		tipo_servicio = #{tipo_servicio}, modo_cobro = #{modo_cobro}
+		where id
+		= #{id}
+	</update>
+
+	<select id="consultar" parameterType="configuracion_servicios_autorizacion"
+		resultMap="configuracion_servicios_autorizacionMap">
+		select id,codigo_empresa,
+		codigo_sucursal,nombre,creacion_date,creacion_user,
+		estado,mostrar_tipo_pcd,tipo_servicio,modo_cobro
+		from
+		public.configuracion_servicios_autorizacion where id = #{id}
+	</select>
+
+	<delete id="eliminar" parameterType="configuracion_servicios_autorizacion">
+		delete from
+		public.configuracion_servicios_autorizacion
+		where id = #{id}
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map"
+		resultMap="configuracion_servicios_autorizacionMap">
+		SET ENABLE_SEQSCAN TO OFF;
+		SELECT
+			config."id",
+			config.codigo_empresa,
+			config.codigo_sucursal,
+			config.nombre,
+			config.creacion_date,
+			config.creacion_user,
+			config.estado,
+			config.mostrar_tipo_pcd,
+			config.tipo_servicio,
+			config.modo_cobro
+		FROM public.configuracion_servicios_autorizacion AS config
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+				AND config.codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+				AND config.codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="estado != null">
+				AND config.estado = #{estado}
+			</if>
+			<if test="tipo_usuarios != null">
+				AND EXISTS (SELECT * FROM configuracion_autorizacion_tipo_usuario AS config_atu WHERE
+				config_atu.id_configuracion = config."id" AND config_atu.codigo_tipo_usuario = #{tipo_usuarios})
+			</if>
+			<if test="via_ingreso != null">
+			    AND EXISTS (SELECT * FROM configuracion_autorizacion_via_ingreso AS config_avi WHERE
+				config_avi.id_configuracion = config."id" AND config_avi.codigo_via_ingreso = #{via_ingreso})
+			</if>
+			<if test="parameter != null">
+				AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="ordenar_nombre != null">
+		    ORDER BY config.nombre
+		</if>
+		<if test="limit != null">
+			${limit}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist from
+		public.configuracion_servicios_autorizacion
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+				AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+				AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+				AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+			${limit}
+		</if>
+	</select>
+	
+	<select id="listarServiciosPermitidos" parameterType="java.util.Map"
+		resultType="java.lang.String"> 
+	    SELECT DISTINCT codigo_servicio 
+	    FROM detalle_config_servicios_autorizacion AS dtt_c 
+	    WHERE dtt_c.id_configuracion = #{id_configuracion};
+	</select>
+
+</mapper>

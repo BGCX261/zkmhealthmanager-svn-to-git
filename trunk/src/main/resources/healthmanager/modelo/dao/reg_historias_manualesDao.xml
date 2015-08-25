@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Reg_historias_manualesDao">
+
+	<resultMap id="reg_historias_manualesMap" type="reg_historias_manuales">
+		<result column="id" property="id" />
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="nro_identificacion" property="nro_identificacion" />
+		<result column="via_ingreso" property="via_ingreso" />
+		<result column="fecha_historia" property="fecha_historia" />
+		<result column="codigo_centro" property="codigo_centro" />
+		<result column="motivo" property="motivo" />
+		<result column="resumen_historia" property="resumen_historia" />
+		<result column="creacion_date" property="creacion_date" />
+		<result column="creacion_user" property="creacion_user" />
+	</resultMap>
+
+	<insert id="crear" parameterType="reg_historias_manuales">
+		insert into public.reg_historias_manuales (codigo_empresa,codigo_sucursal,
+		nro_identificacion,via_ingreso,fecha_historia,codigo_centro,
+		motivo,resumen_historia,
+		creacion_date,creacion_user)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{nro_identificacion},#{via_ingreso},#{fecha_historia},
+		#{codigo_centro},#{motivo},#{resumen_historia},
+		#{creacion_date},#{creacion_user})
+	</insert>
+
+	<update id="actualizar" parameterType="reg_historias_manuales">
+		update public.reg_historias_manuales set 
+		codigo_empresa = #{codigo_empresa},codigo_sucursal = #{codigo_sucursal},
+		nro_identificacion = #{nro_identificacion},via_ingreso = #{via_ingreso},fecha_historia = #{fecha_historia},
+		codigo_centro = #{codigo_centro},motivo = #{motivo},resumen_historia = #{resumen_historia},
+		creacion_date = #{creacion_date}, creacion_user = #{creacion_user}
+		where id = #{id}
+	</update>
+
+	<select id="consultar" parameterType="reg_historias_manuales" resultMap="reg_historias_manualesMap">
+		select id, codigo_empresa,codigo_sucursal,
+		nro_identificacion,via_ingreso,fecha_historia,codigo_centro,
+		motivo,resumen_historia,
+		creacion_date,creacion_user
+		from public.reg_historias_manuales where id = #{id}
+	</select>
+
+	<delete id="eliminar" parameterType="reg_historias_manuales">
+		delete from public.reg_historias_manuales
+		where id = #{id}
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="reg_historias_manualesMap">
+		select id, codigo_empresa,codigo_sucursal,
+		nro_identificacion,via_ingreso,fecha_historia,codigo_centro,
+		motivo,resumen_historia,
+		creacion_date,creacion_user
+		from public.reg_historias_manuales 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+				AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+				AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="nro_identificacion != null">
+				AND nro_identificacion = #{nro_identificacion}
+			</if>
+			<if test="via_ingreso != null">
+				AND via_ingreso = #{via_ingreso}
+			</if>
+			<if test="codigo_centro != null">
+				AND codigo_centro = #{codigo_centro}
+			</if>
+		</trim>
+	</select>
+
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from public.reg_historias_manuales 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+				AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+				AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="nro_identificacion != null">
+				AND nro_identificacion = #{nro_identificacion}
+			</if>
+			<if test="via_ingreso != null">
+				AND via_ingreso = #{via_ingreso}
+			</if>
+			<if test="codigo_centro != null">
+				AND codigo_centro = #{codigo_centro}
+			</if>
+		</trim>
+	</select>
+
+</mapper>

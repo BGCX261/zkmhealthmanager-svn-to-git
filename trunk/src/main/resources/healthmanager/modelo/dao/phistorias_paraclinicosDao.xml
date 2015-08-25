@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Phistorias_paraclinicosDao">
+
+	<!--<typeAlias alias="phistorias_paraclinicos" type="healthmanager.modelo.bean.Phistorias_paraclinicos" />-->
+
+	<!--<mapper resource="healthmanager/modelo/dao/xml/phistorias_paraclinicosSQL.xml" />-->
+
+	<resultMap id="phistorias_paraclinicosMap" type="phistorias_paraclinicos">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="codigo_historia" property="codigo_historia" />
+		<result column="codigo_examen" property="codigo_examen" />
+		
+		<result column="nombre_historia" property="phistorias_clinicas.nombre" />
+		<result column="descripcion_historia" property="phistorias_clinicas.descripcion" />
+		<result column="nombre_examen" property="pexamenes_paraclinicos.nombre" />
+		<result column="descripcion_examen" property="pexamenes_paraclinicos.descripcion" />
+		<result column="tipo_examen" property="pexamenes_paraclinicos.tipo_examen" />
+		<result column="normal_anormal" property="pexamenes_paraclinicos.normal_anormal" />
+	</resultMap>
+
+	<insert id="crear" parameterType="phistorias_paraclinicos">
+		insert into public.phistorias_paraclinicos (codigo_empresa,codigo_sucursal,
+		codigo_historia,codigo_examen)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{codigo_historia},#{codigo_examen})
+	</insert>
+
+	<update id="actualizar" parameterType="phistorias_paraclinicos">
+		update public.phistorias_paraclinicos set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},codigo_historia = #{codigo_historia},
+		codigo_examen = #{codigo_examen}
+		where 		codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and codigo_historia = #{codigo_historia}
+		and codigo_examen = #{codigo_examen}
+	</update>
+
+	<select id="consultar" parameterType="phistorias_paraclinicos" resultMap="phistorias_paraclinicosMap">
+		select 
+			hp.codigo_empresa,hp.codigo_sucursal,
+			hp.codigo_historia,hp.codigo_examen,
+			h.nombre as nombre_historia,
+			h.descripcion as descripcion_historia,
+			e.nombre as nombre_examen,
+			e.descripcion as descripcion_examen,
+			e.tipo_examen as tipo_examen,
+			e.normal_anormal as normal_anormal
+		from 
+			public.phistorias_paraclinicos hp 
+			left join public.phistorias_clinicas h 
+			ON(hp.codigo_empresa = h.codigo_empresa and 
+			hp.codigo_sucursal = h.codigo_sucursal and 
+			hp.codigo_historia = h.codigo)
+			left join public.pexamenes_paraclinicos e 
+			ON(hp.codigo_empresa = e.codigo_empresa and 
+			hp.codigo_sucursal = e.codigo_sucursal and 
+			hp.codigo_examen = e.codigo)
+		
+		where hp.codigo_empresa = #{codigo_empresa}
+		and hp.codigo_sucursal = #{codigo_sucursal} and codigo_historia = #{codigo_historia}
+		and hp.codigo_examen = #{codigo_examen}
+	</select>
+
+	<delete id="eliminar" parameterType="phistorias_paraclinicos">
+		delete from public.phistorias_paraclinicos
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_historia = #{codigo_historia}
+		and codigo_examen = #{codigo_examen}
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="phistorias_paraclinicosMap">
+		select 
+			hp.codigo_empresa,hp.codigo_sucursal,
+			hp.codigo_historia,hp.codigo_examen,
+			h.nombre as nombre_historia,
+			h.descripcion as descripcion_historia,
+			e.nombre as nombre_examen,
+			e.descripcion as descripcion_examen,
+			e.tipo_examen as tipo_examen,
+			e.normal_anormal as normal_anormal
+		from 
+			public.phistorias_paraclinicos hp 
+			left join public.phistorias_clinicas h 
+			ON(hp.codigo_empresa = h.codigo_empresa and 
+			hp.codigo_sucursal = h.codigo_sucursal and 
+			hp.codigo_historia = h.codigo)
+			left join public.pexamenes_paraclinicos e 
+			ON(hp.codigo_empresa = e.codigo_empresa and 
+			hp.codigo_sucursal = e.codigo_sucursal and 
+			hp.codigo_examen = e.codigo)
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+				AND hp.codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+				AND hp.codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="codigo_historia != null">
+				AND hp.codigo_historia = #{codigo_historia}
+			</if>
+			<if test="tipo_examen != null">
+				AND e.tipo_examen = #{tipo_examen}
+			</if>
+			
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		
+		<if test="orden_abc != null">
+			order by e.nombre
+		</if>
+		
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from public.phistorias_paraclinicos 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

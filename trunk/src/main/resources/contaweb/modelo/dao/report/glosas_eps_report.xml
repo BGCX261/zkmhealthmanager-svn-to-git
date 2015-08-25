@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="contaweb.modelo.dao.report.glosasepsModel">
+	<select id="select" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+		SELECT    fact.codigo_administradora,
+                     fact.codigo_administradora AS codigo_tercero,
+		fact.codigo_comprobante,
+		fact.codigo_documento,
+		fact.fecha,
+		fact.descripcion,
+		fact.observacion,
+		fact.estado,
+		fact.valor_total,
+		fact.valor_cuota,
+		fact.valor_copago,
+		fact.factura,
+		fact.auditado,
+		fact.motivo_glosa,
+		fact.valor_glosa_inicial,
+		fact.valor_glosa_aceptada,
+		fact.valor_glosa_noaceptada,
+		fact.observaciones,
+		fact.estado_glosa,
+		fact.valor_glosa_levantada,
+		fact.valor_glosa_ratificada,
+		fact.valor_pagar_factura,
+		fact.estado_respuesta_glosa,
+		fact.fecha_devolucion_factura,
+		df.respuesta_definitiva,
+		fact.plazo,
+		fact.nro_cuenta,
+		fact.fecha_glosa,
+		fact.fact_glosada,
+		ter.nombre1 AS eps,
+        df.glosado,
+        df.valor_total AS valor_glosado_detalle,
+        upper(elm.descripcion) AS concepto
+		FROM contaweb.facturacion AS fact
+		INNER JOIN contaweb.detalle_factura AS
+		df ON (df.codigo_empresa =
+		fact.codigo_empresa
+		AND df.codigo_sucursal =
+		fact.codigo_sucursal
+		AND df.codigo_comprobante =
+		fact.codigo_comprobante
+		AND df.codigo_documento = fact.codigo_documento
+		AND df.respuesta_definitiva IS NOT NULL
+		AND df.respuesta_definitiva !=
+		'')
+		LEFT JOIN contaweb.tercero ter ON (ter.codigo_empresa =
+		fact.codigo_empresa AND ter.codigo_sucursal = fact.codigo_sucursal AND
+		ter.nro_identificacion = fact.codigo_administradora)
+		LEFT JOIN contaweb.elemento AS elm ON (elm.tipo = 'motivo_glosa' AND elm.codigo = df.respuesta_definitiva)
+		where
+		fact.codigo_empresa
+		= #{codigo_empresa}
+		AND fact.codigo_sucursal =
+		#{codigo_sucursal}
+		<if test="eps != null">
+		    <foreach collection="eps" open="AND fact.codigo_administradora IN ("
+				item="t" separator="," close=")">
+				#{t.codigo}
+		    </foreach>
+		</if>
+		AND fact.fecha_respuesta_definitiva BETWEEN #{fecha_inicio} AND #{fecha_final}
+		AND fact.fact_glosada = 'S'
+		AND fact.estado_respuesta_glosa = '00'
+		ORDER BY
+		fact.codigo_administradora ASC, fact.codigo_documento ASC,
+		fact.codigo_comprobante ASC, df.respuesta_definitiva ASC
+	</select>
+</mapper>
+

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Plan_tratamientoDao">
+
+	<resultMap id="plan_tratamientoMap" type="plan_tratamiento">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="nro_identificacion" property="nro_identificacion" />
+		<result column="codigo_procedimiento" property="codigo_procedimiento" />
+		<result column="valor_procedimiento" property="valor_procedimiento" />
+		<result column="unidades" property="unidades" />
+		<result column="valor_real" property="valor_real" />
+		<result column="descuento" property="descuento" />
+		<result column="incremento" property="incremento" />
+		<result column="codigo_cups" property="codigo_cups" />
+		<result column="realizado" property="realizado" />
+		<result column="unidades_realizadas" property="unidades_realizadas" />
+		<result column="tipo_procedimiento" property="tipo_procedimiento" />
+		<result column="creacion_date" property="creacion_date" />
+		<result column="ultimo_update" property="ultimo_update" />
+		<result column="delete_date" property="delete_date" />
+		<result column="creacion_user" property="creacion_user" />
+		<result column="ultimo_user" property="ultimo_user" />
+		<result column="delete_user" property="delete_user" />
+		<result column="estado" property="estado" />
+	</resultMap>
+
+	<insert id="crear" parameterType="plan_tratamiento">
+		insert into public.plan_tratamiento (codigo_empresa,codigo_sucursal,
+		nro_identificacion,codigo_procedimiento,valor_procedimiento,
+		unidades,valor_real,descuento,
+		incremento,codigo_cups,realizado,
+		unidades_realizadas,tipo_procedimiento,creacion_date,
+		ultimo_update,delete_date,creacion_user,
+		ultimo_user,delete_user,estado)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{nro_identificacion},#{codigo_procedimiento},#{valor_procedimiento},
+		#{unidades},#{valor_real},#{descuento},
+		#{incremento},#{codigo_cups},#{realizado},
+		#{unidades_realizadas},#{tipo_procedimiento},#{creacion_date},
+		#{ultimo_update},#{delete_date},#{creacion_user},
+		#{ultimo_user},#{delete_user},#{estado})
+	</insert>
+
+	<update id="actualizar" parameterType="plan_tratamiento">
+		update public.plan_tratamiento set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},nro_identificacion = #{nro_identificacion},
+		codigo_procedimiento = #{codigo_procedimiento},valor_procedimiento = #{valor_procedimiento},
+		unidades = #{unidades},valor_real = #{valor_real},
+		descuento = #{descuento},incremento = #{incremento},
+		codigo_cups = #{codigo_cups},realizado = #{realizado},
+		unidades_realizadas = #{unidades_realizadas},tipo_procedimiento = #{tipo_procedimiento},
+		creacion_date = #{creacion_date},ultimo_update = #{ultimo_update},
+		delete_date = #{delete_date},creacion_user = #{creacion_user},
+		ultimo_user = #{ultimo_user},delete_user = #{delete_user},
+		estado = #{estado}
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and nro_identificacion = #{nro_identificacion}
+		and codigo_procedimiento = #{codigo_procedimiento}
+	</update>
+
+	<select id="consultar" parameterType="plan_tratamiento" resultMap="plan_tratamientoMap">
+		select codigo_empresa,codigo_sucursal,
+		nro_identificacion,codigo_procedimiento,valor_procedimiento,unidades,
+		valor_real,descuento,incremento,codigo_cups,
+		realizado,unidades_realizadas,tipo_procedimiento,creacion_date,
+		ultimo_update,delete_date,creacion_user,ultimo_user,
+		delete_user,estado
+		from public.plan_tratamiento where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and nro_identificacion = #{nro_identificacion}
+		and codigo_procedimiento = #{codigo_procedimiento}
+	</select>
+
+	<delete id="eliminar" parameterType="plan_tratamiento">
+		delete from public.plan_tratamiento
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and nro_identificacion = #{nro_identificacion}
+		and codigo_procedimiento = #{codigo_procedimiento}
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="plan_tratamientoMap">
+		select codigo_empresa,codigo_sucursal,
+		nro_identificacion,codigo_procedimiento,valor_procedimiento,unidades,
+		valor_real,descuento,incremento,codigo_cups,
+		realizado,unidades_realizadas,tipo_procedimiento,creacion_date,
+		ultimo_update,delete_date,creacion_user,ultimo_user,
+		delete_user,estado
+		from public.plan_tratamiento 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="nro_identificacion != null">
+			AND nro_identificacion = #{nro_identificacion}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limite_paginado != null">
+			${limite_paginado}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from public.plan_tratamiento 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limite_paginado != null">
+			${limite_paginado}
+		</if>
+	</select>
+
+	<select id="planTratamientoPendiente" resultType="java.lang.Boolean" parameterType="java.util.Map">
+	    	SELECT "count"(*) > 0 AS existe_plan_tratamiento 
+	    	FROM plan_tratamiento 
+	    	WHERE unidades != unidades_realizadas
+				AND codigo_empresa = #{codigo_empresa}
+			    AND codigo_sucursal = #{codigo_sucursal}
+			    <if test="nro_identificacion != null">
+					AND nro_identificacion = #{nro_identificacion}
+				</if>
+	</select>
+</mapper>

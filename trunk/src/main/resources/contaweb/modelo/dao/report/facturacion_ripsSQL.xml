@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="contaweb.modelo.dao.report.facturacion_ripsModel">
+    <select id="select" resultType="java.util.HashMap" parameterType="java.util.Map">
+	    SELECT
+	    	fact.id_factura,
+	    	fact.nro_atencion,
+			fact.codigo_documento,
+			fact.fecha,
+			fact.fecha_inicio,
+			fact.fecha_final,
+			fact.fecha_vencimiento,
+			fact.codigo_administradora,
+			fact.id_plan,
+			fact.plazo,
+			fact.codigo_tercero,
+			fact.creacion_user,
+			fact.ultimo_user,
+			fact.nro_contrato,
+			fact.nro_poliza,
+			fact.valor_total::double precision,
+			fact.dto_factura::double precision,
+			fact.dto_copago::double precision,
+			fact.valor_copago::double precision,
+			dtt_fact.tipo AS tipo_servicio,
+			dtt_fact.codigo_articulo,
+			dtt_fact.detalle,
+			dtt_fact.cantidad::integer,
+			dtt_fact.valor_unitario::integer,
+			dtt_fact.valor_total::integer AS total,
+			fact.tipo,
+			fact.nro_ingreso,
+			fact.descripcion,
+			dtt_fact.facturable,
+			dtt_fact.id_detalle,
+			dtt_fact.factura_concepto,
+			fact.valor_cuota::double precision,
+			fact.forma_pago::integer,
+			fact.nocopago,
+			fact.estado
+		FROM
+		contaweb.facturacion AS fact
+		LEFT JOIN contaweb.detalle_factura AS dtt_fact ON fact.id_factura = dtt_fact.id_factura 
+		WHERE fact.id_factura = #{id_factura}
+			AND fact.post = 'N'
+			AND dtt_fact.facturable = true
+		<if test="valor_total_cero != null">
+			AND dtt_fact.valor_total > 0
+		</if>
+    </select>
+</mapper>

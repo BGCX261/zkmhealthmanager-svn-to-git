@@ -1,0 +1,173 @@
+<?page title="Radicación" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formRecalcular_factura" width="100%" height="100%"
+		use="healthmanager.controller.RecalcularFacturaAction">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+		<borderlayout width="100%" height="100%" id="groupboxEditar"
+			visible="true">
+			<north border="none">
+				<toolbar width="100%" align="start">
+					<toolbarbutton image="/images/Save16.gif"
+						label="Recalcular"
+						onClick="formRecalcular_factura.guardarDatos();" id="btGuardar"
+						tooltiptext="Solo se puede recalcular las facturas que no estén radicadas ni las que ya se hallan Capitado." />
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center">
+					<space />
+					<!-- *************************** -->
+					<!-- *** Insertar/Actualizar *** -->
+					<!-- *************************** -->
+					<groupbox closable="false" width="805px"
+						mold="3d">
+						<caption
+							label="MODULO DE RECALCULO DE SERVICIOS"
+							style="font-weight:bold" />
+						<grid>
+							<columns visible="false">
+								<column align="left" width="10px" />
+								<column width="90px" align="left" />
+								<column align="left" width="175px" />
+								<column width="80px" align="left" />
+								<column align="left" width="175px" />
+								<column align="left" />
+							</columns>
+							<rows>
+								<!-- Fila 1 -->
+								<row>
+									<cell>
+										<space />
+									</cell>
+									<cell>
+										<label value="Aseguradora:" />
+									</cell>
+									<cell>
+										<bandboxRegistros
+											id="bandboxAseguradora" widthBandbox="170px"
+											widthListbox="600px" heightListbox="300px"
+											columnas="Codigo#65px|Nombres|Nit#100px" />
+									</cell>
+									<cell colspan="2">
+										<textbox id="tbxInfoAseguradora"
+											hflex="1" style="text-transform:uppercase" readonly="true" />
+									</cell>
+									<cell>
+										<toolbarbutton
+											id="btnLimpiarAseguradora" image="/images/borrar.gif" />
+									</cell>
+								</row>
+
+								<!-- Fila 2 -->
+								<row>
+									<cell>
+										<space />
+									</cell>
+									<cell>
+										<label value="Contrato:" />
+									</cell>
+									<cell colspan="3">
+										<listbox id="lbxPlan" hflex="1"
+											mold="select" disabled="true" />
+									</cell>
+									<cell>
+										<space />
+									</cell>
+								</row>
+
+								<!-- Fila 3-->
+								<row>
+									<cell>
+										<space />
+									</cell>
+									<cell>
+										<label value="Fecha inicial: " />
+									</cell>
+									<cell>
+										<datebox id="dtbxFecha_inicial"
+											readonly="true" format="yyyy-MM-dd" hflex="1" />
+									</cell>
+									<cell>
+										<label value="Fecha final: " />
+									</cell>
+									<cell>
+										<datebox id="dtbxFecha_fin"
+											readonly="true" format="yyyy-MM-dd" hflex="1" />
+									</cell>
+									<cell>
+										<toolbarbutton
+											image="/images/Magnifier.gif"
+											onClick="formRecalcular_factura.buscarDatos();"
+											label="Consultar" />
+										<space />
+									</cell>
+								</row>
+
+								<!-- Fila 3 -->
+								<row>
+									<cell colspan="6">
+										<!-- Para consultas por lotes -->
+										<listbox id="listboxRegistros"
+											width="100%" height="300px" multiple="true" checkmark="true"
+											mold="paging" pageSize="100"
+											onSelect="formRecalcular_factura.verificarSeleccion();">
+											<custom-attributes
+												org.zkoss.zul.listbox.rod="true" />
+											<listhead>
+												<listheader
+													width="30px">
+													<checkbox
+														id="checkboxSeleccionar_todos"
+														onCheck="formRecalcular_factura.seleccionarTodos()" />
+												</listheader>
+												<listheader
+													label="ID Paciente" width="140px" />
+												<listheader
+													label="Nombre Paciente" />
+												<listheader
+													label="Fecha" width="100px" />
+												<listheader
+													label="Nro Factura" width="90px" />
+												<listheader
+													label="Valor Factura" width="100px" />
+											</listhead>
+											<listfoot>
+												<listfooter span="6"
+													align="right">
+													<label id="lbTotal" />
+												</listfooter>
+											</listfoot>
+										</listbox>
+										<hlayout>
+											<progressmeter
+												id="progressmeterProgreso" value="0" width="750px" />
+											<timer id="timerProgreso"
+												repeats="true" onCreate="timerProgreso.stop()" delay="1000"
+												onTimer="formRecalcular_factura.onTimerProgreso()" />
+											<label id="labelProgreso"
+												value="..." />
+										</hlayout>
+
+									</cell>
+								</row>
+							</rows>
+						</grid>
+
+					</groupbox>
+				</div>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

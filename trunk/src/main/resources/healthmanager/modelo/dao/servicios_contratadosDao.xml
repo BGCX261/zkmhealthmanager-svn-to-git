@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Servicios_contratadosDao">
+
+	<resultMap id="servicios_contratadosMap" type="servicios_contratados">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="codigo_administradora" property="codigo_administradora" />
+		<result column="id_contrato" property="id_contrato" />
+		<result column="consecutivo_mt" property="consecutivo_mt" />
+		<result column="codigo_servicio" property="codigo_servicio" />
+		<result column="creacion_date" property="creacion_date" />
+		<result column="creacion_user" property="creacion_user" />
+	</resultMap>
+
+	<insert id="crear" parameterType="servicios_contratados">
+		insert into public.servicios_contratados (codigo_empresa,codigo_sucursal,
+		codigo_administradora,id_contrato,consecutivo_mt,
+		codigo_servicio,creacion_date,creacion_user)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{codigo_administradora},#{id_contrato},#{consecutivo_mt},
+		#{codigo_servicio},#{creacion_date},#{creacion_user})
+	</insert>
+
+	<update id="actualizar" parameterType="servicios_contratados">
+		update public.servicios_contratados set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},codigo_administradora = #{codigo_administradora},
+		id_contrato = #{id_contrato},consecutivo_mt = #{consecutivo_mt},
+		codigo_servicio = #{codigo_servicio},creacion_date = #{creacion_date},
+		creacion_user = #{creacion_user}
+		where 		codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and id_contrato = #{id_contrato}
+		and codigo_administradora = #{codigo_administradora}
+		and consecutivo_mt = #{consecutivo_mt}
+		and codigo_servicio = #{codigo_servicio}
+	</update>
+
+	<select id="consultar" parameterType="servicios_contratados" resultMap="servicios_contratadosMap">
+		select codigo_empresa,codigo_sucursal,
+		codigo_administradora,id_contrato,consecutivo_mt,codigo_servicio,
+		creacion_date,creacion_user
+		from public.servicios_contratados where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and id_contrato = #{id_contrato}
+		and codigo_administradora = #{codigo_administradora} and consecutivo_mt = #{consecutivo_mt}
+		and codigo_servicio = #{codigo_servicio}
+	</select>
+
+	<delete id="eliminar" parameterType="servicios_contratados">
+		delete from public.servicios_contratados
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and id_contrato = #{id_contrato}
+		and codigo_administradora = #{codigo_administradora} 
+		<if test="consecutivo_mt != null">
+			and consecutivo_mt = #{consecutivo_mt}
+		</if>
+		<if test="codigo_servicio != null">
+			and codigo_servicio = #{codigo_servicio}
+		</if>
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="servicios_contratadosMap">
+		select codigo_empresa,codigo_sucursal,
+		codigo_administradora,id_contrato,consecutivo_mt,codigo_servicio,
+		creacion_date,creacion_user
+		from public.servicios_contratados 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="codigo_administradora != null">
+			AND codigo_administradora = #{codigo_administradora}
+			</if>
+			<if test="id_contrato != null">
+			AND id_contrato = #{id_contrato}
+			</if>
+			<if test="consecutivo_mt != null">
+			AND consecutivo_mt = #{consecutivo_mt}
+			</if>
+			<if test="consecutivo_manual != null">
+			AND consecutivo_mt = #{consecutivo_manual}
+			</if>
+			
+			<if test="codigo_servicio_especifico != null">
+				AND (codigo_servicio like '${codigo_servicio_especifico}%' or "position"('${codigo_servicio_especifico}', codigo_servicio) = 1)
+			</if>
+			
+			<if test="servicios != null">
+			    AND 
+			   <foreach collection="servicios" open="(" separator="OR" close=")" item="i">
+			   		(codigo_servicio like '${i}%' OR "position"('${i}', codigo_servicio) = 1) 
+			   </foreach>
+			</if>
+			
+			<if test="filtro_consulta != null">
+			${filtro_consulta}
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+	
+	<select id="listar_codigos" parameterType="java.util.Map" resultType="java.lang.String">
+		select codigo_servicio 
+		from public.servicios_contratados 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="codigo_administradora != null">
+			AND codigo_administradora = #{codigo_administradora}
+			</if>
+			<if test="id_contrato != null">
+			AND id_contrato = #{id_contrato}
+			</if>
+			<if test="consecutivo_mt != null">
+			AND consecutivo_mt = #{consecutivo_mt}
+			</if>
+			<if test="consecutivo_manual != null">
+				AND consecutivo_mt = #{consecutivo_manual}
+			</if>
+			
+			<if test="codigo_servicio_especifico != null">
+				AND (codigo_servicio like '${codigo_servicio_especifico}%')
+			</if>
+		</trim>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from public.servicios_contratados 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="codigo_administradora != null">
+			AND codigo_administradora = #{codigo_administradora}
+			</if>
+			<if test="id_contrato != null">
+			AND id_contrato = #{id_contrato}
+			</if>
+			<if test="consecutivo_mt != null">
+			AND consecutivo_mt = #{consecutivo_mt}
+			</if>
+			<if test="consecutivo_manual != null">
+			AND consecutivo_mt = #{consecutivo_manual}
+			</if>
+			
+			<if test="codigo_servicio_especifico != null">
+				AND (codigo_servicio like '${codigo_servicio_especifico}%' OR  (position(codigo_servicio in '${codigo_servicio_especifico}')  = 1))
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+	
+	<select id="listarServiciosPaciente" parameterType="java.util.Map" resultMap="servicios_contratadosMap">
+		SELECT
+			servicios_contratados.codigo_empresa,
+			servicios_contratados.codigo_sucursal,
+			servicios_contratados.codigo_administradora,
+			servicios_contratados.id_contrato,
+			servicios_contratados.consecutivo_mt,
+			servicios_contratados.codigo_servicio,
+			servicios_contratados.creacion_date,
+			servicios_contratados.creacion_user
+		from public.servicios_contratados  AS servicios_contratados 
+		
+		INNER JOIN public.pacientes_contratos ON public.pacientes_contratos.codigo_empresa = servicios_contratados.codigo_empresa 
+		AND public.pacientes_contratos.codigo_sucursal = servicios_contratados.codigo_sucursal 
+		AND public.pacientes_contratos.codigo_administradora = servicios_contratados.codigo_administradora 
+		AND public.pacientes_contratos.id_codigo = servicios_contratados.id_contrato
+		
+		INNER JOIN public.paciente ON public.paciente.codigo_sucursal = public.pacientes_contratos.codigo_sucursal 
+		    AND public.paciente.codigo_empresa = public.pacientes_contratos.codigo_empresa 
+		    AND public.paciente.nro_identificacion = public.pacientes_contratos.nro_identificacion
+		    AND public.paciente.nro_identificacion = #{nro_identificacion}
+		    AND public.paciente.codigo_empresa = #{codigo_empresa}
+		    AND public.paciente.codigo_sucursal = #{codigo_sucursal}
+		
+		INNER JOIN public.contratos ON public.contratos.codigo_empresa = servicios_contratados.codigo_empresa 
+		AND public.contratos.codigo_sucursal = servicios_contratados.codigo_sucursal 
+		AND public.contratos.cerrado = false AND public.contratos.codigo_administradora = servicios_contratados.codigo_administradora 
+		AND public.contratos.id_plan = servicios_contratados.id_contrato AND (CURRENT_TIMESTAMP between public.contratos.fecha_inicio AND public.contratos.fecha_fin)
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_servicio_especifico != null">
+			AND (servicios_contratados.codigo_servicio like '${codigo_servicio_especifico}%' OR  (position(servicios_contratados.codigo_servicio in '${codigo_servicio_especifico}')  = 1))
+			</if>
+			<if test="codigo_servicio_urg != null">
+				AND ((servicios_contratados.codigo_servicio like '${codigo_servicio_urg}%' OR  (position(servicios_contratados.codigo_servicio in '${codigo_servicio_urg}')  = 1))
+					OR 
+					(servicios_contratados.codigo_servicio like '${codigo_servicio_hos}%' OR  (position(servicios_contratados.codigo_servicio in '${codigo_servicio_hos}')  = 1))) 
+			</if>
+			<if test="servicios != null">
+			    AND 
+			   <foreach collection="servicios" open="(" separator="OR" close=")" item="i">
+			   		(servicios_contratados.codigo_servicio like '${i}%' OR "position"('${i}', servicios_contratados.codigo_servicio) = 1) 
+			   </foreach>
+			</if>
+		</trim>
+	</select>
+	
+	<select id="listarServiciosPermitidos" parameterType="java.util.Map" resultMap="servicios_contratadosMap">
+	  SELECT
+			servicios_contratados.codigo_empresa,
+			servicios_contratados.codigo_sucursal,
+			servicios_contratados.codigo_administradora,
+			servicios_contratados.id_contrato,
+			servicios_contratados.consecutivo_mt,
+			servicios_contratados.codigo_servicio,
+			servicios_contratados.creacion_date,
+			servicios_contratados.creacion_user
+		from public.servicios_contratados  AS servicios_contratados 
+		INNER JOIN public.contratos ON public.contratos.codigo_empresa = servicios_contratados.codigo_empresa 
+		AND public.contratos.codigo_sucursal = servicios_contratados.codigo_sucursal 
+		AND public.contratos.cerrado = false AND public.contratos.codigo_administradora = servicios_contratados.codigo_administradora 
+		AND public.contratos.id_plan = servicios_contratados.id_contrato
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_servicio_especifico != null">
+			AND (servicios_contratados.codigo_servicio like '${codigo_servicio_especifico}%' OR  (position(servicios_contratados.codigo_servicio in '${codigo_servicio_especifico}')  = 1))
+			</if>
+			<if test="codigo_servicio_urg != null">
+				AND ((servicios_contratados.codigo_servicio like '${codigo_servicio_urg}%' OR  (position(servicios_contratados.codigo_servicio in '${codigo_servicio_urg}')  = 1))
+					OR 
+					(servicios_contratados.codigo_servicio like '${codigo_servicio_hos}%' OR  (position(servicios_contratados.codigo_servicio in '${codigo_servicio_hos}')  = 1))) 
+			</if>
+			<if test="servicios != null">
+			    AND 
+			   <foreach collection="servicios" open="(" separator="OR" close=")" item="i">
+			   		(servicios_contratados.codigo_servicio like '${i}%' OR "position"('${i}', servicios_contratados.codigo_servicio) = 1) 
+			   </foreach>
+			</if>
+			<if test="id_plan != null">
+			   AND public.contratos.id_plan = #{id_plan}
+			</if>
+			<if test="codigo_empresa != null">
+			   AND public.contratos.codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			   AND public.contratos.codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="codigo_administradora != null">
+			   AND public.contratos.codigo_administradora = #{codigo_administradora}
+			</if>
+			<if test="consecutivo_mt != null">
+			    AND servicios_contratados.consecutivo_mt = #{consecutivo_mt}
+			</if>
+			<if test="id_configuracion != null">
+			   AND EXISTS (SELECT * FROM detalle_config_servicios_autorizacion AS dtt_c 
+		                         WHERE (servicios_contratados.codigo_servicio||'.' like dtt_c.codigo_servicio||'.%' 
+		                         			OR "position"(dtt_c.codigo_servicio||'.', servicios_contratados.codigo_servicio||'.') = 1) 
+		           AND dtt_c.id_configuracion = #{id_configuracion})
+			</if>
+		</trim>
+	</select>
+	
+	<select id="listarServiciosPermitidosPorConfiguracion"
+				parameterType="java.util.Map" resultType="java.lang.String"> 
+			SELECT DISTINCT  codigo_servicio FROM detalle_config_servicios_autorizacion AS dtt_c 
+			WHERE EXISTS (
+					   SELECT servicios_contratados.codigo_empresa FROM servicios_contratados AS servicios_contratados
+					   INNER JOIN public.contratos AS cont ON cont.codigo_empresa = servicios_contratados.codigo_empresa 
+							AND cont.codigo_sucursal = servicios_contratados.codigo_sucursal 
+							AND cont.cerrado = FALSE AND cont.codigo_administradora = servicios_contratados.codigo_administradora 
+							AND cont.id_plan = servicios_contratados.id_contrato
+					    WHERE servicios_contratados.codigo_empresa = #{codigo_empresa}
+					    AND servicios_contratados.codigo_sucursal = #{codigo_sucursal}
+					    AND servicios_contratados.codigo_administradora = #{codigo_administradora}
+					    <if test="id_plan != null">
+						       AND servicios_contratados.id_contrato = #{id_plan}
+						</if>
+						<if test="consecutivo_mt != null">
+						       AND servicios_contratados.consecutivo_mt = #{consecutivo_mt}
+						</if>
+					   AND (servicios_contratados.codigo_servicio||'.' like dtt_c.codigo_servicio||'.%' OR "position"(dtt_c.codigo_servicio||'.', servicios_contratados.codigo_servicio||'.') = 1)
+			   )  AND dtt_c.id_configuracion = #{id_configuracion};
+	</select>
+	
+	<select id="listarServiciosParticular" parameterType="java.util.Map" resultMap="servicios_contratadosMap">
+		SELECT
+			servicios_contratados.codigo_empresa,
+			servicios_contratados.codigo_sucursal,
+			servicios_contratados.codigo_administradora,
+			servicios_contratados.id_contrato,
+			servicios_contratados.consecutivo_mt,
+			servicios_contratados.codigo_servicio,
+			servicios_contratados.creacion_date,
+			servicios_contratados.creacion_user
+		from public.servicios_contratados  AS servicios_contratados 
+		
+		INNER JOIN public.contratos ON public.contratos.codigo_empresa = servicios_contratados.codigo_empresa 
+		AND public.contratos.codigo_sucursal = servicios_contratados.codigo_sucursal 
+		AND public.contratos.cerrado = false AND public.contratos.codigo_administradora = servicios_contratados.codigo_administradora 
+		AND public.contratos.id_plan = servicios_contratados.id_contrato AND (CURRENT_TIMESTAMP between public.contratos.fecha_inicio AND public.contratos.fecha_fin)
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_servicio_especifico != null">
+			AND (servicios_contratados.codigo_servicio like '${codigo_servicio_especifico}%' OR  (position(servicios_contratados.codigo_servicio in '${codigo_servicio_especifico}')  = 1))
+			</if>
+			<if test="codigo_servicio_urg != null">
+				AND ((servicios_contratados.codigo_servicio like '${codigo_servicio_urg}%' OR  (position(servicios_contratados.codigo_servicio in '${codigo_servicio_urg}')  = 1))
+					OR 
+					(servicios_contratados.codigo_servicio like '${codigo_servicio_hos}%' OR  (position(servicios_contratados.codigo_servicio in '${codigo_servicio_hos}')  = 1))) 
+			</if>
+			<if test="servicios != null">
+			    AND 
+			   <foreach collection="servicios" open="(" separator="OR" close=")" item="i">
+			   		(servicios_contratados.codigo_servicio like '${i}%' OR "position"('${i}', servicios_contratados.codigo_servicio) = 1) 
+			   </foreach>
+			</if>
+			<if test="id_contrato != null">
+				AND servicios_contratados.id_contrato = #{id_contrato} 
+			</if>
+		</trim>
+	</select>
+	
+	
+	<select id="getTieneContratoServicio" parameterType="java.util.Map" resultType="java.lang.Boolean"> 
+	    SELECT (count(servicios.id_contrato) > 0) AS existe
+		FROM
+		public.servicios_contratados AS servicios
+		INNER JOIN public.pacientes_contratos AS pac_con 
+		ON pac_con.codigo_empresa = servicios.codigo_empresa 
+		AND pac_con.codigo_sucursal = servicios.codigo_sucursal 
+		AND pac_con.codigo_administradora = servicios.codigo_administradora AND pac_con.id_codigo = servicios.id_contrato
+		WHERE pac_con.nro_identificacion = #{nro_identificacion} 
+		AND servicios.codigo_empresa = #{codigo_empresa} AND servicios.codigo_sucursal = #{codigo_sucursal}
+		AND (servicios.codigo_servicio like '${codigo_servicio_especifico}%' OR  (position(servicios.codigo_servicio in '${codigo_servicio_especifico}')  = 1))
+	</select>
+	
+	<select id="getTieneContratoServicioParticular" parameterType="java.util.Map" resultType="java.lang.Boolean"> 
+	    SELECT (count(servicios.id_contrato) > 0) AS existe
+		FROM
+		public.servicios_contratados AS servicios
+		WHERE 
+		servicios.codigo_empresa = #{codigo_empresa} AND servicios.codigo_sucursal = #{codigo_sucursal}
+		AND (servicios.codigo_servicio like '${codigo_servicio_especifico}%' OR  (position(servicios.codigo_servicio in '${codigo_servicio_especifico}')  = 1))
+		AND servicios.id_contrato = #{id_contrato}
+	</select>
+	
+	<select id="getServiciosContratadosRepetidos" parameterType="java.util.Map" resultType="java.util.HashMap"> 
+	    SELECT "count"(1) AS cantidad, sc.codigo_servicio, sed.nombre FROM servicios_contratados AS sc 
+		INNER JOIN servicios_disponibles sed ON (sed.codigo = sc.codigo_servicio)
+		WHERE sc.codigo_empresa = #{codigo_empresa} 
+		AND sc.codigo_sucursal = #{codigo_sucursal} 
+		AND sc.codigo_administradora = #{codigo_administradora}
+		<if test="id_contrato != null">
+		    AND sc.id_contrato IN 
+		    <foreach collection="id_contrato" item="i" open="(" close=")" separator=",">
+		        #{i.id_plan}
+		    </foreach>
+		</if>
+		GROUP BY sc.codigo_servicio, sed.nombre
+		ORDER BY cantidad DESC
+		LIMIT 1 OFFSET 0
+	</select>
+	
+    <select id="getContratosValidos" parameterType="java.util.Map" resultType="java.util.HashMap">
+        SELECT DISTINCT ON (res.codigo_empresa, res.codigo_sucursal, 
+        				            res.codigo_administradora, res.id_contrato, 
+        													        res.consecutivo_mt) 
+		    res.codigo_empresa,
+		    res.codigo_sucursal, 
+		    res.codigo_administradora, 
+		    res.id_contrato, 
+		    res.consecutivo_mt, 
+		    cont.nro_contrato,  
+		    cont.nombre 
+		FROM (
+		    SELECT codigo_empresa, codigo_sucursal, codigo_administradora, id_contrato, consecutivo_mt 
+		    FROM servicios_contratados AS s_c 
+		    WHERE  
+		      EXISTS (SELECT * FROM detalle_config_servicios_autorizacion AS dtt_c 
+		                         WHERE validarServiciosContratados(dtt_c.codigo_servicio, s_c.codigo_servicio)
+		           AND dtt_c.id_configuracion = #{id_configuracion})
+	               AND s_c.codigo_empresa = #{codigo_empresa}
+	               AND s_c.codigo_sucursal = #{codigo_sucursal}
+	               AND s_c.codigo_administradora = #{codigo_administradora}
+		) AS res
+		INNER JOIN contratos AS cont ON (cont.codigo_empresa = res.codigo_empresa 
+		AND cont.codigo_sucursal = res.codigo_sucursal 
+		AND cont.codigo_administradora = res.codigo_administradora 
+		AND cont.id_plan = res.id_contrato) 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="mostar_solo_activos != null">
+				AND cont.cerrado = FALSE 
+			</if>
+		</trim>
+        ORDER BY res.codigo_administradora, res.id_contrato, res.consecutivo_mt
+    </select>
+</mapper>

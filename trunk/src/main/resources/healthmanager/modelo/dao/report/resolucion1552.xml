@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.resolucion1552Model">
+	<select id="select" resultType="java.util.HashMap" parameterType="java.util.Map">
+		SELECT
+		cts.tipo_consulta,
+		count(*) AS total_citas,
+		Sum(cts.diferencia1) AS realizacion,
+		Sum(cts.diferencia2) AS solicitud_pac,
+		(Sum(cts.diferencia1) / count(*)) AS dos_uno,
+		(Sum(cts.diferencia2) / count(*)) AS tres_uno,
+		(min(cts.diferencia2)) min_del4,
+		(min(cts.diferencia1)) min_del5,
+		(max(cts.diferencia2)) max_del4,
+		(max(cts.diferencia1)) max_del5,
+		(SELECT count(*) FROM detalles_horarios AS dth WHERE dth.motivo_consulta = cts.tipo_consulta AND to_char(dth.fecha_inicial, 'MM-yyyy') = #{mes_anio} AND dth.codigo_empresa = #{codigo_empresa}
+	    AND dth.codigo_sucursal = #{codigo_sucursal}) horas_contradas_disponibles,
+		upper(e.descripcion) motivo_consulta
+		FROM
+		public.citas AS cts
+		INNER JOIN elemento e ON e.tipo = 'motivo_consulta_hc' AND e.codigo =
+		cts.tipo_consulta
+		WHERE to_char(cts.fecha_cita, 'MM-yyyy') = #{mes_anio} 
+		AND cts.codigo_empresa = #{codigo_empresa}
+	    AND cts.codigo_sucursal = #{codigo_sucursal}
+	    AND cts.tipo_consulta IN <foreach collection="contentin" open="(" close=")" separator="," item="i">#{i.value}</foreach>
+		GROUP BY cts.tipo_consulta, e.descripcion
+    </select>
+</mapper>

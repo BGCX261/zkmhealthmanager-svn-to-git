@@ -1,0 +1,236 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<zk>
+	<window border="none" width="100%" height="100%"
+		id="formIngresoRecetasExternas"
+		use="healthmanager.controller.IngresoRecetasExternasAction">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+		<groupbox id="groupboxConsulta" visible="false" closable="false"
+			height="90%" mold="3d">
+			<caption label="Consultar"
+				style="color: black;font-weight: bold" />
+
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" mold="paging" pageSize="20"
+				vflex="1">
+				<auxhead>
+					<auxheader colspan="8" id="auzheader">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<separator />
+							<textbox id="tbxValue" width="200px"
+								onOK="formIngresoRecetasExternas.buscarDatos();"
+								style="text-transform:uppercase" />
+							<separator />
+							<button mold="trendy"
+								image="/images/Magnifier.gif"
+								onClick="formIngresoRecetasExternas.buscarDatos();"
+								tooltiptext="Consultar Prueba" />
+							<separator />
+							<button mold="trendy"
+								image="/images/New16.gif"
+								onClick='formIngresoRecetasExternas.accionNuevo()'
+								tooltiptext="Nuevo Prueba" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Identificacion" width="120px"/>
+					<column label="Nombre y Apellidos" />
+					<column label="Telefono" width="100px"/>
+					<column label="Prestador" />
+					<column label="Observaciones" width="97px" />
+					<column label="Cant Med" width="120px" />
+					<column label="Acciones" width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<borderlayout width="100%" height="100%"
+			id="borderLayoutRegistrar">
+			<north>
+				<toolbar width="100%" align="start">
+
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+
+					<toolbarbutton image="/images/Save16.gif"
+						label="Guardar Receta"
+						onClick="formIngresoRecetasExternas.guardarDatos();"
+						id="btGuardar" />
+
+					<toolbarbutton image="/images/New16.gif"
+						label="Nueva" onClick='formIngresoRecetasExternas.accionNuevo()' />
+
+					<toolbarbutton image="/images/borrar.gif"
+						label="Eliminar Receta"
+						onClick='formIngresoRecetasExternas.eliminar();' id="btEliminar" />
+					<toolbarbutton label=" Buscar" id="btImprimir"
+						image="/images/atras_.png"
+						onClick="formIngresoRecetasExternas.accionBuscar()" />
+
+					<toolbarbutton image="/images/informe.png"
+						label="Abrir solicitud" id="btSolicitud" visible="false" />
+					<space />
+					<label value="Formato impresión: " visible="false" />
+					<listbox id="lbxFormato" mold="select"
+						visible="false" width="150px" sclass="combobox">
+						<listitem value="pdf" label="PDF"
+							selected="true" />
+						<listitem value="rtf" label="WORD" />
+					</listbox>
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center">
+					<space />
+					<!-- *********************** -->
+					<!--        Principal        -->
+					<!-- *********************** -->
+					<!-- *************************** -->
+					<!-- *** Insertar/Actualizar *** -->
+					<!-- *************************** -->
+					<groupbox visible="true" id="groupboxEditar"
+						closable="false" mold="3d" width="800px">
+
+						<grid sclass="GridSinBorde" style="border:none"
+							hflex="1">
+							<columns>
+								<column label="" width="10px" />
+								<column label="" width="130px"
+									align="left" />
+								<column label="" width="182px"
+									align="left" />
+								<column label="" width="130px"
+									align="left" />
+								<column label="" align="left" />
+								<column label="" width="10px"
+									align="left" />
+							</columns>
+							<rows>
+								<row>
+									<cell />
+									<cell height="30px" align="left">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbNro_identificacion"
+											value="Identificacion: " />
+										<toolbarbutton
+											id="btnLimpiarPaciente" image="/images/borrar.gif" />
+									</cell>
+									<cell align="left">
+										<bandboxRegistros
+											id="tbxNro_identificacion" widthBandbox="170px"
+											widthListbox="600px" heightListbox="300px"
+											columnas="Tipo Ident#65px|Identificación|Nombres|Apellidos" />
+									</cell>
+									<cell colspan="2" align="left">
+										<textbox id="tbxNombPaciente"
+											hflex="1" style="text-transform:uppercase" readonly="true" />
+									</cell>
+									<cell />
+								</row>
+
+								<row id="row_administradora">
+									<cell />
+									<cell>
+										<label value="Administradora"
+											id="lbadministradora" />
+										<toolbarbutton
+											id="btnLimpiarAseguradora" image="/images/borrar.gif"
+											visible="false" />
+									</cell>
+									<cell align="left">
+										<bandboxRegistros
+											id="tbxCodigo_prestador" widthBandbox="170px"
+											widthListbox="600px" heightListbox="300px"
+											columnas="Identificación#102px|Código#102px|Nombre|Dirección" />
+									</cell>
+									<cell colspan="2" align="left">
+										<textbox
+											id="tbxNombre_prestador" style="text-transform:uppercase"
+											hflex="1" />
+									</cell>
+									<cell />
+								</row>
+								<row>
+									<cell />
+									<cell align="left">
+										<label value="Observación: " />
+									</cell>
+									<cell align="left" colspan="3">
+										<textbox id="tbxObservaciones"
+											style="text-transform:uppercase" rows="3" hflex="1" />
+									</cell>
+									<cell />
+								</row>
+
+								<row>
+									<cell />
+									<cell align="left">
+										<label id="lbFecha_orden"
+											value="Fecha: " />
+									</cell>
+									<cell align="left">
+										<datebox id="dtbxFecha"
+											onCreate="" format="yyyy-MM-dd" hflex="1" />
+									</cell>
+									<cell colspan="2" align="right">
+										<toolbarbutton
+											label="Adicionar Registro" image="/images/add.png"
+											onClick="formIngresoRecetasExternas.openArticulo();"
+											id="btAdicionar" />
+									</cell>
+									<cell />
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+					<space height="5px" />
+					<groupbox width="800px">
+						<grid id="gridReceta" width="800px"
+							height="200px" mold="paging" pageSize="20">
+							<columns sizable="true">
+								<column label="Código" align="left"
+									width="70px" />
+								<column label="Nombre" align="left" />
+								<column label="Nombre comercial"
+									align="left" />
+								<column label="Via Admin" width="100px"
+									align="left" />
+								<column label="Cant Rec." align="left"
+									width="70px" />
+								<column label="Valor unit" align="left"
+									width="110px" id="colValor_unitario" />
+								<column label="Valor total" align="left"
+									width="70px" id="colValor_total" />
+								<column label="Posología" align="left"
+									width="90px" />
+								<column align="left" width="40px" />
+							</columns>
+							<rows id="rowsReceta" />
+						</grid>
+					</groupbox>
+				</div>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

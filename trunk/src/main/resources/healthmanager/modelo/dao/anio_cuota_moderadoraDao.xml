@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.Anio_cuota_moderadoraDao">
+
+	
+
+	<resultMap id="anio_cuota_moderadoraMap" type="anio_cuota_moderadora">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="grupo" property="grupo" />
+		<result column="anio" property="anio" />
+		<result column="valor_cuota" property="valor_cuota" />
+		<result column="porcentaje_copago" property="porcentaje_copago" />
+		<result column="limite_evento" property="limite_evento" />
+		<result column="maximo_anio" property="maximo_anio" />
+		<result column="tipo_nivel" property="tipo_nivel" />
+		<result column="nivel1" property="nivel1" />
+		<result column="nivel2" property="nivel2" />
+		<result column="creacion_date" property="creacion_date" />
+		<result column="ultimo_update" property="ultimo_update" />
+		<result column="creacion_user" property="creacion_user" />
+		<result column="ultimo_user" property="ultimo_user" />
+	</resultMap>
+
+	<insert id="crear" parameterType="anio_cuota_moderadora">
+		insert into public.anio_cuota_moderadora (codigo_empresa,grupo,
+		anio,valor_cuota,porcentaje_copago,
+		limite_evento,maximo_anio,tipo_nivel,
+		nivel1,nivel2,creacion_date,
+		ultimo_update,creacion_user,ultimo_user)
+
+		values (#{codigo_empresa},#{grupo},
+		#{anio},#{valor_cuota},#{porcentaje_copago},
+		#{limite_evento},#{maximo_anio},#{tipo_nivel},
+		#{nivel1},#{nivel2},#{creacion_date},
+		#{ultimo_update},#{creacion_user},#{ultimo_user})
+	</insert>
+
+	<update id="actualizar" parameterType="anio_cuota_moderadora">
+		update public.anio_cuota_moderadora set codigo_empresa = #{codigo_empresa},
+		grupo = #{grupo},anio = #{anio},
+		valor_cuota = #{valor_cuota},porcentaje_copago = #{porcentaje_copago},
+		limite_evento = #{limite_evento},maximo_anio = #{maximo_anio},
+		tipo_nivel = #{tipo_nivel},nivel1 = #{nivel1},
+		nivel2 = #{nivel2},creacion_date = #{creacion_date},
+		ultimo_update = #{ultimo_update},creacion_user = #{creacion_user},
+		ultimo_user = #{ultimo_user}
+		where codigo_empresa = #{codigo_empresa}
+		and grupo = #{grupo}
+		and anio = #{anio}
+	</update>
+
+	<select id="consultar" resultMap="anio_cuota_moderadoraMap" parameterType="anio_cuota_moderadora">
+		select codigo_empresa,grupo,
+		anio,valor_cuota,porcentaje_copago,limite_evento,
+		maximo_anio,tipo_nivel,nivel1,nivel2,
+		creacion_date,ultimo_update,creacion_user,ultimo_user
+		from public.anio_cuota_moderadora where codigo_empresa = #{codigo_empresa}
+		and grupo = #{grupo} and anio = #{anio}
+	</select>
+
+	<delete id="eliminar" parameterType="anio_cuota_moderadora">
+		delete from public.anio_cuota_moderadora
+		where codigo_empresa = #{codigo_empresa}
+		and grupo = #{grupo} and anio = #{anio}
+	</delete>
+
+	<select id="listar" resultMap="anio_cuota_moderadoraMap" parameterType="java.util.Map">
+		select codigo_empresa,grupo,
+		anio,valor_cuota,porcentaje_copago,limite_evento,
+		maximo_anio,tipo_nivel,nivel1,nivel2,
+		creacion_date,ultimo_update,creacion_user,ultimo_user
+		from public.anio_cuota_moderadora 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">AND codigo_empresa = #{codigo_empresa}</if>
+			<if test="anio != null">AND anio = #{anio}</if>
+			<if test="parameter != null">AND ${parameter} like '${value}'</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from public.anio_cuota_moderadora 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

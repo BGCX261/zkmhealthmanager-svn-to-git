@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.consulta_externa_hcModel">
+    <select id="select" resultType="java.util.HashMap" parameterType="java.util.Map">
+    select ce.codigo,el.descripcion as tipo_consulta,
+	med.apellidos as apellido_med,med.nombres as nombre_med,
+	pct.apellido1 as apellido1_pct,pct.apellido2 as apellido2_pct,
+	pct.nombre1 as nombre1_pct,pct.nombre2 as nombre2_pct,
+	ce.fecha_inicio,ce.motivo_consulta,dx.nombre as enfermedad_actual,
+	ce.examen_fisico,ce.recomendaciones
+	from consulta_externa_hc ce
+	left join elemento el on(el.codigo=ce.tipo_consulta and el.tipo = 'motivo_consulta_hc')
+	left join prestadores med
+	on(med.codigo_empresa = ce.codigo_empresa and med.codigo_sucursal = ce.codigo_sucursal
+	and med.nro_identificacion = ce.codigo_prestador)
+	left join paciente pct
+	on(pct.codigo_empresa = ce.codigo_empresa and pct.codigo_sucursal = ce.codigo_sucursal
+	and pct.nro_identificacion = ce.nro_identificacion)
+	left join cie dx on(dx.codigo = ce.codigo_dx)
+	where ce.codigo_empresa = #{codigo_empresa}
+	and ce.codigo_sucursal = #{codigo_sucursal}
+	and ce.codigo = #{codigo}
+	order by codigo desc
+    </select>
+   
+</mapper>

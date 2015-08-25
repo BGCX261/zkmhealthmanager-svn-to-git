@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.epicrisisHV3Model">
+    <select id="select" resultType="java.util.HashMap" parameterType="java.util.Map">
+    select ev.codigo_evolucion,de.consecutivo,de.fecha,de.evoluciones,de.ordenes
+	from historia_clinica_uci hc
+	left join evolucion_medica ev on (ev.codigo_empresa=hc.codigo_empresa
+	and ev.codigo_sucursal=hc.codigo_sucursal
+	and ev.nro_identificacion = hc.nro_identificacion and ev.nro_ingreso = hc.nro_ingreso
+	and ev.tipo_hc = hc.tipo_hc)
+	left join prestadores p
+	on(p.codigo_empresa=ev.codigo_empresa
+	and p.codigo_sucursal=ev.codigo_sucursal
+	and p.nro_identificacion = ev.codigo_prestador)
+	left join detalle_evolucion de on (de.codigo_empresa = ev.codigo_empresa
+	and de.codigo_sucursal = ev.codigo_sucursal
+	and de.codigo_evolucion = ev.codigo_evolucion)
+	where hc.codigo_empresa = #{codigo_empresa}
+	and hc.codigo_sucursal = #{codigo_sucursal}
+	and hc.nro_historia = #{nro_historia}
+	order by de.fecha
+    </select>
+   
+</mapper>

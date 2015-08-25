@@ -1,0 +1,919 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<?component name="historialObservaciones" macroURI="/WEB-INF/macros/historial_observaciones_macro.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formAfiliaciones_me"
+		use="healthmanager.controller.Afiliaciones_meAction" width="100%"
+		height="98%" border="none">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+		<groupbox id="groupboxConsulta" visible="true" closable="false"
+			height="97%" mold="3d">
+			<caption label="Consultar"
+				style="color: black;font-weight: bold" />
+
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" mold="paging" pageSize="20"
+				vflex="1">
+				<auxhead>
+					<auxheader colspan="7" id="auzheader">
+						<hbox align="center">
+							<listbox id="lbxParameterAfiliaciones"
+								mold="select" sclass="combobox" width="90px" />
+							<space />
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<separator />
+							<textbox id="tbxValue" width="200px"
+								onOK="formAfiliaciones_me.buscarDatos();"
+								style="text-transform:uppercase" />
+							<separator />
+							<toolbarbutton image="/images/Magnifier.gif"
+								onClick="formAfiliaciones_me.buscarDatos();"
+								tooltiptext="Consultar" label="Consultar" />
+							<separator />
+							<toolbarbutton image="/images/New16.gif"
+								onClick='formAfiliaciones_me.accionForm(true,"registrar");'
+								tooltiptext="Nuevo" label="Nuevo" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="" tooltiptext="Cotizante"
+						id="column_CotizanteName" width="30px" />
+					<column label="Identificación" width="120px" />
+					<column label="Nombres" />
+					<column label="Fec. afiliación" width="90px" />
+					<column label="Aportante" id="colum_idaportante" />
+					<column label="Estado" width="90px" />
+					<column label="Acciones" width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+
+		<borderlayout width="100%" height="98%" id="groupboxEditar"
+			visible="false">
+			<north border="none">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<toolbarbutton image="/images/Save16.gif"
+						label="Guardar Afiliado"
+						onClick="formAfiliaciones_me.guardarDatos();" id="btGuardar" />
+					<toolbarbutton image="/images/New16.gif"
+						label="Nueva"
+						onClick='formAfiliaciones_me.accionForm(true,"registrar");'
+						id="btNew" />
+					<space />
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Cancelar"
+						onClick='formAfiliaciones_me.accionForm(false,tbxAccion.getText());'
+						id="btCancel" />
+					<toolbarbutton image="/images/print_ico.gif"
+						label="Imprimir afiliado"
+						onClick="formAfiliaciones_me.imprimir();" id="btImprimir"
+						visible="false" />
+					<space />
+					<label value="Formato impresión: " visible="false" />
+					<listbox id="lbxFormato" mold="select" width="150px"
+						visible="false" sclass="combobox">
+						<listitem value="pdf" label="PDF"
+							selected="true" />
+						<listitem value="rtf" label="WORD" />
+					</listbox>
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<tabbox height="98%">
+					<tabs>
+						<tab label="Datos del cotizante"
+							id="tabDatosCotizante" />
+						<tab label="Beneficiarios" />
+					</tabs>
+					<tabpanels>
+						<tabpanel>
+							<div align="center" style="overflow:auto"
+								height="97%" width="100%">
+								<groupbox mold="3d" closable="false"
+									visible="true" width="680px">
+									<caption label="Datos Basicos" />
+									<grid sclass="GridSinBorde">
+										<columns>
+											<column label=""
+												width="10px" />
+											<column label=""
+												width="130px" align="left" />
+											<column label=""
+												width="182px" align="left" />
+											<column label=""
+												width="130px" align="left" />
+											<column label=""
+												width="182px" align="left" />
+											<column label=""
+												width="30px" align="left" />
+										</columns>
+										<rows>
+											<row>
+												<cell />
+												<cell height="30px"
+													rowspan="6" colspan="2" align="center">
+													<vbox>
+														<image
+															width="168px" height="168px" src="/images/perfil.gif"
+															id="imageUsuario" />
+														<hlayout>
+															<toolbarbutton
+																image="/images/upload.png" id="upLoad"
+																label="Cargar Imagen" upload="true"
+																style="font-size:9px;"
+																onUpload="formAfiliaciones_me.guardarImagen(event.getMedia());" />
+															<toolbarbutton
+																image="/images/borrar.gif" id="quitar"
+																label="Quitar Imagen" style="font-size:9px;"
+																onClick="formAfiliaciones_me.borrarImagen();" />
+														</hlayout>
+													</vbox>
+												</cell>
+
+											</row>
+
+
+											<!-- fila 1 -->
+											<row>
+												<cell
+													style="background-color:#ffffff" />
+												<cell height="30px">
+													<label value="* "
+														style="color: red" tooltiptext="Campo obligatorio" />
+													<label
+														id="lbTipo_identificacion" value="Tipo identificación: " />
+												</cell>
+												<cell>
+													<listbox
+														id="lbxTipo_identificacion" name="tipo_id" mold="select"
+														hflex="1" sclass="combobox" />
+												</cell>
+												<cell />
+											</row>
+											<row>
+												<cell />
+												<cell height="30px">
+													<label value="* "
+														style="color: red" tooltiptext="Campo obligatorio" />
+													<label
+														id="lbNro_identificacion" value="Nro identificación: " />
+												</cell>
+												<cell>
+													<textbox
+														id="tbxNro_identificacion" hflex="1"
+														style="text-transform:uppercase" />
+												</cell>
+												<cell />
+											</row>
+
+											<!-- fila 3 -->
+											<row>
+												<cell
+													style="background-color:#ffffff" />
+												<cell height="30px">
+													<label value="* "
+														style="color: red" tooltiptext="Campo obligatorio" />
+													<label
+														id="lbApellido1" value="1er Apellido: " />
+												</cell>
+												<cell>
+													<textbox
+														id="tbxApellido1" hflex="1"
+														style="text-transform:uppercase" />
+												</cell>
+												<cell />
+											</row>
+											<row>
+												<cell />
+												<cell height="30px">
+													<space width="7px" />
+													<label
+														id="lbApellido2" value="2do Apellido: " />
+												</cell>
+												<cell>
+													<textbox
+														id="tbxApellido2" hflex="1"
+														style="text-transform:uppercase" />
+												</cell>
+												<cell />
+											</row>
+
+											<!-- fila 5 -->
+											<row>
+												<cell
+													style="background-color:#ffffff" />
+												<cell height="30px">
+													<label value="* "
+														style="color: red" tooltiptext="Campo obligatorio" />
+													<label
+														id="lbNombre1" value="1er Nombre: " />
+												</cell>
+												<cell>
+													<textbox
+														id="tbxNombre1" hflex="1"
+														style="text-transform:uppercase" />
+												</cell>
+												<cell />
+											</row>
+											<row>
+												<cell />
+												<cell height="30px">
+													<label
+														id="lbNombre2" value="2do Nombre: " />
+												</cell>
+												<cell>
+													<textbox
+														id="tbxNombre2" hflex="1"
+														style="text-transform:uppercase" />
+												</cell>
+												<cell height="30px">
+													<label value="* "
+														style="color: red" tooltiptext="Campo obligatorio" />
+													<label
+														id="lbFecha_nacimiento" value="Fecha nacimiento: " />
+												</cell>
+												<cell>
+													<datebox
+														id="dtbxFecha_nacimiento" format="yyyy-MM-dd" hflex="1" />
+												</cell>
+												<cell />
+											</row>
+											<row>
+												<cell />
+												<cell height="30px">
+													<space width="7px" />
+													<label
+														id="lbUnidad_medidad" value="Unidad medidad(Fecha Nac.): "
+														style="font-size:9px" />
+												</cell>
+												<cell>
+													<listbox
+														id="lbxUnidad_medidad" name="unidad_medidad" mold="select"
+														hflex="1" sclass="combobox" />
+												</cell>
+												<cell height="30px">
+													<label value="* "
+														style="color: red" tooltiptext="Campo obligatorio" />
+													<label id="lbSexo"
+														value="Sexo: " />
+												</cell>
+												<cell>
+													<listbox
+														id="lbxSexo" name="sexo" mold="select" hflex="1"
+														sclass="combobox" />
+												</cell>
+												<cell />
+											</row>
+											<row>
+												<cell />
+												<cell height="30px">
+													<space width="7px" />
+													<label
+														id="lbProfesion" value="Profesión: " />
+												</cell>
+												<cell>
+													<textbox
+														id="tbxProfesion" hflex="1"
+														style="text-transform:uppercase" />
+												</cell>
+												<cell height="30px">
+													<label value="* "
+														style="color: red" tooltiptext="Campo obligatorio" />
+													<label
+														id="lbCodigo_dpto" value="Departamento: " />
+												</cell>
+												<cell>
+													<listbox
+														id="lbxCodigo_dpto" name="Codigo_dpto" mold="select"
+														hflex="1" sclass="combobox"
+														onSelect="formAfiliaciones_me.listarMunicipios(lbxCodigo_municipio, self)" />
+												</cell>
+												<cell />
+											</row>
+
+											<!-- fila 11 -->
+											<row>
+												<cell></cell>
+												<cell height="30px">
+													<space width="7px" />
+													<label
+														id="lbCodigo_municipio" value="Municipio: " />
+												</cell>
+												<cell>
+													<listbox
+														id="lbxCodigo_municipio" name="Codigo_municipio"
+														mold="select" hflex="1" sclass="combobox" />
+												</cell>
+												<cell height="30px">
+													<space width="7px" />
+													<label
+														id="lbTel_oficina" value="Tel.: " />
+												</cell>
+												<cell>
+													<textbox
+														id="tbxTel_oficina" hflex="1"
+														style="text-transform:uppercase" />
+												</cell>
+												<cell />
+											</row>
+
+											<!-- fila 11 -->
+											<row>
+												<cell></cell>
+												<cell height="30px">
+													<space width="7px" />
+													<label
+														id="lbDireccion" value="Dirección: " />
+												</cell>
+												<cell>
+													<textbox
+														id="tbxDireccion" hflex="1"
+														style="text-transform:uppercase" />
+												</cell>
+												<cell height="30px">
+													<space width="7px" />
+													<label
+														id="lbEstado_civil" value="Estado civil: " />
+												</cell>
+												<cell>
+													<listbox
+														id="lbxEstado_civil" name="estado_civilcaja" mold="select"
+														hflex="1" sclass="combobox" />
+												</cell>
+												<cell></cell>
+											</row>
+
+											<!-- fila 11 -->
+											<row>
+												<cell></cell>
+												<cell height="30px">
+													<space width="7px" />
+													<label
+														id="lbEstrato" value="Estrato: " />
+												</cell>
+												<cell>
+													<listbox
+														id="lbxEstrato" name="estrato" mold="select" hflex="1"
+														sclass="combobox" />
+												</cell>
+												<cell colspan="2">
+													<space width="7px" />
+													<checkbox
+														id="chbConvension" label="Convención" />
+												</cell>
+												<cell></cell>
+											</row>
+
+											<!-- fila 11 -->
+											<row>
+												<cell></cell>
+
+												<cell>
+													<space width="7px" />
+													<label value="RH: " />
+												</cell>
+
+												<cell>
+													<listbox id="lbxRh"
+														name="rh" mold="select" hflex="1" sclass="combobox" />
+												</cell>
+												<cell height="30px">
+													<space width="7px" />
+													<label
+														id="lbTipo_usuario" value="Tipo usuario: " />
+												</cell>
+
+												<cell>
+													<listbox
+														id="lbxTipo_usuario" name="tipo_usuario" mold="select"
+														hflex="1" sclass="combobox" />
+												</cell>
+												<cell></cell>
+											</row>
+
+											<row>
+												<cell></cell>
+												<cell height="30px">
+													<space width="7px" />
+													<label
+														id="lbCedula_tutor" value="Cedula tutor: " />
+												</cell>
+												<cell>
+													<textbox
+														id="tbxCedula_tutor" hflex="1"
+														style="text-transform:uppercase" />
+												</cell>
+												<cell height="30px">
+													<space width="7px" />
+													<label
+														id="lbTipo_empleado" value="Tipo empleado: " />
+												</cell>
+												<cell>
+													<listbox
+														id="lbxTipo_empleado" name="tipo_empleado" mold="select"
+														hflex="1" sclass="combobox" />
+												</cell>
+												<cell></cell>
+											</row>
+											<row>
+												<cell></cell>
+												<cell height="30px">
+													<space width="7px" />
+													<label
+														id="lbNombre_universidad" style="font-size:10px"
+														value="Universidad/Aseguradora: " />
+												</cell>
+												<cell>
+													<bandboxRegistros
+														id="tbxUniversidad" widthBandbox="170px"
+														widthListbox="800px" heightListbox="300px"
+														columnas="Identificación#102px|Código#102px|Nombre|Dirección" />
+												</cell>
+												<cell colspan="2">
+													<textbox
+														id="tbxNombre_universidad" hflex="1"
+														style="text-transform:uppercase" readonly="true" />
+												</cell>
+												<cell>
+													<toolbarbutton
+														id="btnLimpiarAseguradora" visible="false"
+														image="/images/borrar.gif" />
+												</cell>
+											</row>
+											<row>
+												<cell />
+												<cell>
+													<label value="* "
+														style="color: red" tooltiptext="Campo obligatorio" />
+													<label
+														value="Barrio: " />
+												</cell>
+												<cell>
+													<bandboxRegistros
+														id="tbxCod_bar" widthBandbox="170px" widthListbox="600px"
+														heightListbox="300px"
+														columnas="Codigo#100px|Barrio|Localidad#180px|Dpto  Mun#210px" />
+												</cell>
+												<cell colspan="2">
+													<textbox
+														id="tbxInfoBar" hflex="1" style="text-transform:uppercase"
+														readonly="true" />
+
+												</cell>
+												<cell>
+													<toolbarbutton
+														id="btnLimpiarBar" image="/images/borrar.gif" />
+												</cell>
+											</row>
+											<row>
+												<cell></cell>
+												<cell colspan="2">
+													<space width="7px" />
+													<checkbox
+														id="chbDiscapacidad" label="Presenta discapacidad" />
+												</cell>
+												<cell height="30px">
+													<space width="7px" />
+													<label
+														id="lbDescripcion_discapacidad" value="Discapacidad: "
+														visible="false" />
+												</cell>
+												<cell>
+													<textbox
+														id="tbxDescripcion_discapacidad" hflex="1"
+														style="text-transform:uppercase" visible="false" />
+												</cell>
+												<cell></cell>
+											</row>
+											<row>
+												<cell />
+												<cell colspan="4"
+													rowspan="6" valign="top">
+													<listbox
+														id="listboxContratos" checkmark="true" multiple="true"
+														height="120px">
+														<custom-attributes
+															org.zkoss.zul.listbox.rod="true" />
+														<listhead>
+															<listheader
+																width="30px" />
+															<listheader
+																label="Listado de contratos" />
+														</listhead>
+													</listbox>
+												</cell>
+												<cell />
+											</row>
+										</rows>
+									</grid>
+								</groupbox>
+								<space height="5px" />
+								<groupbox mold="3d" closable="false"
+									visible="true" width="680px">
+									<caption label="Datos Afiliacion">
+									</caption>
+
+									<grid sclass="GridSinBorde">
+										<columns>
+											<column label=""
+												width="10px" />
+											<column label=""
+												width="130px" align="left" />
+											<column label=""
+												width="182px" align="left" />
+											<column label=""
+												width="130px" align="left" />
+											<column label=""
+												width="182px" align="left" />
+											<column label=""
+												width="30px" align="left" />
+										</columns>
+										<rows>
+											<row>
+												<cell />
+												<cell height="30px">
+													<label value="* "
+														style="color: red" tooltiptext="Campo obligatorio" />
+													<label
+														value="Departamento: " />
+												</cell>
+												<cell>
+													<listbox
+														id="lbxDepartamento_afiliacion" name="Codigo_dpto"
+														mold="select" hflex="1" sclass="combobox"
+														onSelect="formAfiliaciones_me.listarMunicipios(lbxMunicipio_afiliacion, self)" />
+												</cell>
+												<cell height="30px">
+													<label
+														value="Municipio: " />
+												</cell>
+												<cell>
+													<listbox
+														id="lbxMunicipio_afiliacion" name="Codigo_municipio"
+														mold="select" hflex="1" sclass="combobox" />
+												</cell>
+												<cell />
+											</row>
+											<row>
+												<cell></cell>
+												<cell height="30px">
+													<label id="lbZona"
+														value="Zona: " />
+												</cell>
+												<cell>
+													<listbox
+														id="lbxZona" name="zona" mold="select" hflex="1"
+														sclass="combobox" />
+												</cell>
+												<cell height="30px">
+													<label value="* "
+														style="color: red" tooltiptext="Campo obligatorio" />
+													<label
+														value="Fecha afiliacion: " />
+												</cell>
+												<cell>
+													<datebox
+														id="dtbxFecha_afiliacion" format="yyyy-MM-dd" hflex="1" />
+												</cell>
+												<cell></cell>
+											</row>
+
+
+											<row>
+												<cell></cell>
+												<cell height="30px">
+													<label
+														id="lbCodigo_empleado1" value="Codigo Empleado 1: " />
+												</cell>
+												<cell>
+													<textbox
+														id="tbxCodigo_empleado1" hflex="1"
+														style="text-transform:uppercase" />
+												</cell>
+												<cell height="30px">
+													<label
+														id="lbCodigo_empleado2" value="Codigo Empleado 2: " />
+												</cell>
+												<cell>
+													<textbox
+														id="tbxCodigo_empleado2" hflex="1"
+														style="text-transform:uppercase" />
+												</cell>
+												<cell></cell>
+											</row>
+											<!-- fila 6 -->
+											<row>
+												<cell></cell>
+												<cell height="30px">
+													<label
+														id="lbidentificacion_ibc" value="Identificacion IBC: " />
+												</cell>
+												<cell>
+													<bandboxRegistros
+														id="tbxIdentificacion_ibc" widthBandbox="170px"
+														widthListbox="800px" heightListbox="300px"
+														columnas="Tipo identificación#120px|Identificación#120px|Nombre" />
+												</cell>
+												<cell colspan="2">
+													<textbox
+														id="tbxNomIBC" hflex="1" style="text-transform:uppercase"
+														readonly="true" />
+												</cell>
+												<cell />
+											</row>
+											<row>
+												<cell></cell>
+												<cell height="30px">
+													<label id="lbLogin"
+														value="Login: " />
+													<image
+														id="imgState" />
+												</cell>
+												<cell>
+													<textbox
+														id="tbxLogin" hflex="1" style="text-transform:uppercase"
+														maxlength="30" />
+												</cell>
+												<cell height="30px">
+													<label
+														id="lbPassword" value="Password: " />
+												</cell>
+												<cell>
+													<textbox
+														id="tbxPassword" hflex="1"
+														style="text-transform:uppercase" maxlength="30" />
+												</cell>
+												<cell></cell>
+											</row>
+											<row visible="false">
+												<cell></cell>
+												<cell height="30px">
+													<label
+														id="lbObservaciones" value="Observaciones: " />
+												</cell>
+												<cell colspan="3">
+													<textbox
+														id="tbxObservaciones" hflex="1"
+														style="text-transform:uppercase" maxlength="100" rows="3" />
+												</cell>
+												<cell></cell>
+											</row>
+											<row>
+												<cell></cell>
+												<cell height="30px">
+													<label value="* "
+														style="color: red" tooltiptext="Campo obligatorio" />
+													<label
+														id="lbPertenencia_etnica" value="Pertenencia etnica: " />
+												</cell>
+												<cell colspan="3">
+													<listbox
+														id="lbxPertenencia_etnica" name="pertenencia_etnica"
+														mold="select" hflex="1" sclass="combobox" />
+												</cell>
+												<cell></cell>
+											</row>
+											<row>
+												<cell></cell>
+												<cell height="30px">
+													<label
+														id="lbCodigo_ocupacion" value="Ocupación: " />
+												</cell>
+												<cell>
+													<bandboxRegistros
+														id="tbxCodigo_ocupacion" widthBandbox="170px"
+														widthListbox="600px" heightListbox="300px"
+														columnas="Codigo#65px|Nombre" />
+												</cell>
+												<cell colspan="2">
+													<textbox
+														id="tbxInfoOcupacion" hflex="1"
+														style="text-transform:uppercase" readonly="true" />
+												</cell>
+												<cell>
+													<toolbarbutton
+														id="btnLimpiarOcupacion" image="/images/borrar.gif" />
+												</cell>
+											</row>
+											<row>
+												<cell />
+												<cell height="30px">
+													<label
+														id="lbCodigo_educativo" value="Nivel educativo: " />
+												</cell>
+												<cell>
+													<listbox
+														id="lbxCodigo_educativo" name="codigo_educativo"
+														mold="select" hflex="1" sclass="combobox" />
+												</cell>
+												<cell id="cellSisben">
+													<label
+														id="lbNivel_sisben" value="Nivel sisben: " />
+												</cell>
+												<cell>
+													<listbox
+														id="lbxNivel_sisben" name="nivel_sisben" mold="select"
+														hflex="1" sclass="combobox" />
+												</cell>
+												<cell />
+											</row>
+											<row>
+												<cell />
+												<cell height="30px">
+													<label value="* "
+														style="color: red" tooltiptext="Campo obligatorio" />
+													<label
+														value="Estado: " />
+												</cell>
+												<cell>
+													<listbox
+														id="lbxEstadoAfiliacion" name="estado_afiliacion"
+														mold="select" hflex="1" sclass="combobox" />
+												</cell>
+												<cell height="30px">
+													<label
+														id="lbFecha_vencimiento" value="Fecha vencimiento: " />
+												</cell>
+												<cell>
+													<datebox
+														id="dtbxFecha_vencimiento" format="dd-MM-yyyy"
+														width="170px" />
+												</cell>
+												<cell />
+											</row>
+											<row>
+												<cell colspan="6">
+													<historialObservaciones
+														id="historialObservacionMacro" />
+												</cell>
+											</row>
+										</rows>
+									</grid>
+								</groupbox>
+								<space height="5px" />
+								<groupbox mold="3d" closable="false"
+									visible="true" width="680px">
+									<caption label="Datos Aportante" />
+
+									<grid sclass="GridSinBorde">
+										<columns>
+											<column label=""
+												width="10px" />
+											<column label=""
+												width="130px" align="left" />
+											<column label=""
+												width="182px" align="left" />
+											<column label=""
+												width="130px" align="left" />
+											<column label=""
+												width="182px" align="left" />
+											<column label=""
+												width="30px" align="left" />
+										</columns>
+										<rows>
+											<row>
+												<cell></cell>
+												<cell height="30px">
+													<label value="* "
+														style="color: red" tooltiptext="Campo obligatorio" />
+													<label
+														id="lbRevision_ciiu" value="Aportante: " />
+												</cell>
+												<cell>
+													<bandboxRegistros
+														id="tbxCodigo_aportante" widthBandbox="170px"
+														widthListbox="800px" heightListbox="300px"
+														columnas="Tipo identificación#120px|Identificación#120px|Nombre" />
+												</cell>
+												<cell colspan="2">
+													<textbox
+														id="tbxNomAportante" hflex="1"
+														style="text-transform:uppercase" readonly="true" />
+												</cell>
+												<cell>
+													<toolbarbutton
+														id="tbxAportanteBorrar" image="/images/borrar.gif" />
+												</cell>
+											</row>
+
+											<row>
+												<cell></cell>
+												<cell height="30px">
+													<label
+														id="lbRevision_ciiu2" value="Aportante Segundario: "
+														style="font-size:10px" />
+												</cell>
+												<cell>
+													<bandboxRegistros
+														id="tbxCodigo_aportante2" widthBandbox="170px"
+														widthListbox="800px" heightListbox="300px"
+														columnas="Tipo identificación#120px|Identificación#120px|Nombre" />
+												</cell>
+												<cell colspan="2">
+													<textbox
+														id="tbxNomAportante2" hflex="1"
+														style="text-transform:uppercase" readonly="true" />
+												</cell>
+												<cell>
+													<toolbarbutton
+														id="tbxAportanteBorrar2" image="/images/borrar.gif" />
+												</cell>
+											</row>
+
+											<row>
+												<cell />
+												<cell height="30px">
+													<label value="* "
+														style="color: red" tooltiptext="Campo obligatorio" />
+													<label
+														value="Fecha vinculación: " />
+												</cell>
+												<cell>
+													<datebox
+														format="yyyy-MM-dd" id="dtbxFecha_vinculacion" hflex="1" />
+												</cell>
+												<cell>
+													<label value="* "
+														style="color: red" tooltiptext="Campo obligatorio" />
+													<label  value="Cuota Moderadora: " />
+												</cell>
+												<cell>
+													<doublebox
+														id="dbxCuota_moderadora" hflex="1" format="#,###.00" />
+												</cell>
+											</row>
+											<row>
+												<cell />
+												<cell>
+													<label value="* "
+														style="color: red" tooltiptext="Campo obligatorio" />
+													<label  value="Porcentaje Copago: " />
+												</cell>
+												<cell>
+													<doublebox
+														id="dbxPorcentaje_copago" hflex="1" format="#,###.00" />
+												</cell>
+												<cell colspan="3" />
+											</row>
+										</rows>
+									</grid>
+								</groupbox>
+								<space/>
+							</div>
+						</tabpanel>
+						<tabpanel>
+							<groupbox visible="true" closable="false"
+								mold="3d" height="97%">
+								<toolbarbutton
+									label="Agregar Beneficiario" image="/images/add_perfil.png"
+									onClick="formAfiliaciones_me.mostrarBeneficiarios(null)" />
+								<grid vflex="1"
+									id="grid_beneficiarios">
+									<columns>
+										<column label="Tipo Id"
+											width="100px" />
+										<column label="Nro ID"
+											width="150px" />
+										<column label="Nombre" />
+										<column label="Apellido" />
+										<column label="Sexo"
+											width="100px" />
+										<column label="Fecha Afiliacion"
+											width="100px" />
+										<column label="Parentesco"
+											width="130px" />
+										<column label="Acciones"
+											width="90px" />
+									</columns>
+									<rows id="rows_beneficiarios" />
+								</grid>
+							</groupbox>
+						</tabpanel>
+					</tabpanels>
+				</tabbox>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

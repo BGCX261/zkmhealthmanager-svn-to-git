@@ -1,0 +1,891 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.informeprovisionarModel">
+	<sql id="sql_centro_salud">
+		<if test="param_centro_salud != null">
+			AND codigo_centro
+			IN
+			<foreach collection="param_centro_salud" item="item" open="("
+				separator="," close=")">
+				#{item.codigo_centro}
+			</foreach>
+		</if>
+	</sql>
+
+	<sql id="sql_estado_admision">
+		<if test="param_estado_admision != null">
+			AND estado IN
+			<foreach collection="param_estado_admision" item="item" open="("
+				separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+	</sql>
+
+	<sql id="sql_via_ingreso">
+		<if test="param_via_ingreso != null">
+			AND via_ingreso IN
+			<foreach collection="param_via_ingreso" item="item" open="("
+				separator="," close=")">
+				#{item.codigo}
+			</foreach>
+		</if>
+	</sql>
+
+	<sql id="sql_eps">
+		<if test="param_eps != null">
+			AND codigo_administradora || id_plan IN
+			<foreach collection="param_eps" item="item" open="("
+				separator="," close=")">
+				'${item.codigo_administradora}${item.id_plan}'
+			</foreach>
+		</if>
+	</sql>
+
+	<sql id="sql_medico">
+		<if test="param_medicos != null">
+			AND codigo_medico IN
+			<foreach collection="param_medicos" item="item" open="("
+				separator="," close=")">
+				#{item.nro_identificacion}
+			</foreach>
+		</if>
+	</sql>
+
+	<sql id="sql_dx_consulta">
+		<if test="param_diagnosticos != null">
+			AND (codigo_diagnostico_principal IN
+			<foreach collection="param_diagnosticos" item="item" open="("
+				separator="," close=")">
+				#{item.codigo}
+			</foreach>
+			OR codigo_diagnostico1 IN
+			<foreach collection="param_diagnosticos" item="item" open="("
+				separator="," close=")">
+				#{item.codigo}
+			</foreach>
+			OR codigo_diagnostico2 IN
+			<foreach collection="param_diagnosticos" item="item" open="("
+				separator="," close=")">
+				#{item.codigo}
+			</foreach>
+			OR codigo_diagnostico3 IN
+			<foreach collection="param_diagnosticos" item="item" open="("
+				separator="," close=")">
+				#{item.codigo}
+			</foreach>
+			)
+		</if>
+	</sql>
+
+
+	<sql id="sql_dx_procedimiento">
+		<if test="param_diagnosticos != null">
+			AND (codigo_diagnostico_principal IN
+			<foreach collection="param_diagnosticos" item="item" open="("
+				separator="," close=")">
+				#{item.codigo}
+			</foreach>
+			OR codigo_diagnostico_relacionado IN
+			<foreach collection="param_diagnosticos" item="item" open="("
+				separator="," close=")">
+				#{item.codigo}
+			</foreach>
+			)
+		</if>
+	</sql>
+
+	<sql id="sql_codigo_consulta">
+		<if test="param_procedimiento != null">
+			AND codigo_consulta IN
+			<foreach collection="param_procedimiento" item="item" open="("
+				separator="," close=")">
+				'${item.id_procedimiento}'
+			</foreach>
+		</if>
+	</sql>
+
+	<sql id="sql_codigo_procedimiento">
+		<if test="param_procedimiento != null">
+			AND codigo_procedimiento IN
+			<foreach collection="param_procedimiento" item="item" open="("
+				separator="," close=")">
+				'${item.id_procedimiento}'
+			</foreach>
+		</if>
+	</sql>
+
+	<sql id="sql_facturador">
+		<if test="param_facturador != null">
+			AND (usuario_creacion IN
+			<foreach collection="param_facturador" item="item" open="("
+				separator="," close=")">
+				#{item.codigo}
+			</foreach>
+			OR
+			usuario_modificacion IN
+			<foreach collection="param_facturador" item="item" open="("
+				separator="," close=")">
+				#{item.codigo}
+			</foreach>
+			)
+		</if>
+	</sql>
+
+	<sql id="sql_codigo_medicamento">
+		<if test="param_medicamento != null">
+			AND codigo_medicamento IN
+			<foreach collection="param_medicamento" item="item" open="("
+				separator="," close=")">
+				#{item.codigo_articulo}
+			</foreach>
+		</if>
+	</sql>
+
+	<sql id="sql_dx_triage">
+		<if test="param_diagnosticos != null">
+			AND (cie_principal IN
+			<foreach collection="param_diagnosticos" item="item" open="("
+				separator="," close=")">
+				#{item.codigo}
+			</foreach>
+			OR cie_relacionado1 IN
+			<foreach collection="param_diagnosticos" item="item" open="("
+				separator="," close=")">
+				#{item.codigo}
+			</foreach>
+			OR cie_relacionado2 IN
+			<foreach collection="param_diagnosticos" item="item" open="("
+				separator="," close=")">
+				#{item.codigo}
+			</foreach>
+			OR cie_relacionado3 IN
+			<foreach collection="param_diagnosticos" item="item" open="("
+				separator="," close=")">
+				#{item.codigo}
+			</foreach>
+			)
+		</if>
+	</sql>
+
+	<sql id="sql_paciente">
+		<if test="param_pacientes != null">
+			AND nro_identificacion IN
+			<foreach collection="param_pacientes" item="item" open="("
+				separator="," close=")">
+				#{item.nro_identificacion}
+			</foreach>
+		</if>
+	</sql>
+
+	<!-- DATOS CONSULTA -->
+	<select id="getCantidadDatosConsulta" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+		SELECT
+		<if test="fecha_realizacion != null">
+			fecha_consulta AS fecha,
+		</if>
+		<if test="fecha_creacion != null">
+			fecha_creacion AS fecha,
+		</if>
+		count(*) AS
+		cantidad
+		FROM public.vr_informe_datos_consulta_conteo
+		WHERE
+		codigo_empresa = #{codigo_empresa}
+		AND codigo_sucursal =
+		#{codigo_sucursal}
+		<if test="fecha_realizacion != null">
+			AND fecha_consulta BETWEEN #{fecha_inicio} AND
+			#{fecha_final}
+		</if>
+		<if test="fecha_creacion != null">
+			AND fecha_creacion BETWEEN #{fecha_inicio} AND
+			#{fecha_final}
+		</if>
+		<if test="param_tipo_facturacion != null">
+			AND tipo_factura IN
+			<foreach collection="param_tipo_facturacion" item="item"
+				open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<include refid="sql_centro_salud" />
+		<include refid="sql_via_ingreso" />
+		<include refid="sql_eps" />
+		<include refid="sql_medico" />
+		<include refid="sql_dx_consulta" />
+		<include refid="sql_codigo_consulta" />
+		<include refid="sql_facturador" />
+		<include refid="sql_paciente" />
+		<include refid="sql_estado_admision"/> 
+		GROUP BY fecha
+		ORDER BY fecha;
+	</select>
+
+
+	<!-- DATOS PROCEDIMIENTO -->
+	<select id="getCantidadDatosProcedimiento" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+		SELECT
+		<if test="fecha_realizacion != null">
+			fecha_procedimiento AS fecha,
+		</if>
+		<if test="fecha_creacion != null">
+			fecha_creacion AS fecha,
+		</if>
+		count(*) AS
+		cantidad
+		FROM public.vr_informe_datos_procedimiento_conteo
+		WHERE
+		codigo_empresa = #{codigo_empresa}
+		AND codigo_sucursal =
+		#{codigo_sucursal}
+		<if test="fecha_realizacion != null">
+			AND fecha_procedimiento BETWEEN #{fecha_inicio} AND
+			#{fecha_final}
+		</if>
+		<if test="fecha_creacion != null">
+			AND fecha_creacion BETWEEN #{fecha_inicio} AND
+			#{fecha_final}
+		</if>
+		<if test="param_tipo_facturacion != null">
+			AND tipo_factura IN
+			<foreach collection="param_tipo_facturacion" item="item"
+				open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<include refid="sql_centro_salud" />
+		<include refid="sql_via_ingreso" />
+		<include refid="sql_eps" />
+		<include refid="sql_medico" />
+		<include refid="sql_facturador" />
+		<include refid="sql_dx_procedimiento" />
+		<include refid="sql_codigo_procedimiento" />
+		<include refid="sql_paciente" />
+		<include refid="sql_estado_admision"/> 
+		GROUP BY fecha
+		ORDER BY fecha;
+	</select>
+
+	<!-- MEDICAMENTOS INSUMOS -->
+	<select id="getCantidadDatosMedicamento" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+		SELECT
+		<if test="fecha_realizacion != null">
+			fecha_medicamento AS fecha,
+		</if>
+		<if test="fecha_creacion != null">
+			fecha_creacion AS fecha,
+		</if>
+		count(*) AS
+		cantidad
+		FROM
+		public.vr_informe_datos_medicamentos_insumos_conteo
+		WHERE
+		codigo_empresa = #{codigo_empresa}
+		AND codigo_sucursal =
+		#{codigo_sucursal}
+		<if test="fecha_realizacion != null">
+			AND fecha_medicamento BETWEEN #{fecha_inicio} AND
+			#{fecha_final}
+		</if>
+		<if test="fecha_creacion != null">
+			AND fecha_creacion BETWEEN #{fecha_inicio} AND
+			#{fecha_final}
+		</if>
+		<if test="param_tipo_facturacion != null">
+			AND tipo_factura IN
+			<foreach collection="param_tipo_facturacion" item="item"
+				open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<include refid="sql_centro_salud" />
+		<include refid="sql_via_ingreso" />
+		<include refid="sql_eps" />
+		<include refid="sql_medico" />
+		<include refid="sql_facturador" />
+		<include refid="sql_codigo_medicamento" />
+		<include refid="sql_paciente" />
+		<include refid="sql_estado_admision"/> 
+		GROUP BY fecha
+		ORDER BY fecha;
+	</select>
+
+	<!-- ESTANCIAS -->
+	<select id="getCantidadEstancias" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+		SELECT
+		<if test="fecha_realizacion != null">
+			fecha_estancia AS fecha,
+		</if>
+		<if test="fecha_creacion != null">
+			fecha_creacion AS fecha,
+		</if>
+		count(*) AS
+		cantidad
+		FROM public.vr_reporte_estancias_conteo
+		WHERE
+		codigo_empresa = #{codigo_empresa}
+		AND codigo_sucursal =
+		#{codigo_sucursal}
+		<if test="fecha_realizacion != null">
+			AND CAST(fecha_estancia AS DATE) BETWEEN #{fecha_inicio}
+			AND
+			#{fecha_final}
+		</if>
+		<if test="fecha_creacion != null">
+			AND fecha_creacion BETWEEN #{fecha_inicio} AND
+			#{fecha_final}
+		</if>
+		<if test="param_tipo_facturacion != null">
+			AND tipo_factura IN
+			<foreach collection="param_tipo_facturacion" item="item"
+				open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<include refid="sql_centro_salud" />
+		<include refid="sql_via_ingreso" />
+		<include refid="sql_eps" />
+		<include refid="sql_medico" />
+		<include refid="sql_facturador" />
+		<include refid="sql_paciente" />
+		<include refid="sql_estado_admision"/> 
+		GROUP BY fecha
+		ORDER BY fecha;
+	</select>
+
+	<!-- TRIAGE -->
+	<select id="getCantidadTriage" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+		SELECT
+		<if test="fecha_realizacion != null">
+			fecha_ingreso AS fecha,
+		</if>
+		<if test="fecha_creacion != null">
+			fecha_creacion AS fecha,
+		</if>
+		count(*) AS
+		cantidad
+		FROM public.vr_reporte_triage_conteo
+		WHERE
+		codigo_empresa = #{codigo_empresa}
+		AND codigo_sucursal =
+		#{codigo_sucursal}
+		<if test="fecha_realizacion != null">
+			AND CAST(fecha_ingreso AS DATE) BETWEEN #{fecha_inicio}
+			AND
+			#{fecha_final}
+		</if>
+		<if test="fecha_creacion != null">
+			AND fecha_creacion BETWEEN #{fecha_inicio} AND
+			#{fecha_final}
+		</if>
+		<if test="nivel_triage != null">
+			AND nivel_triage IN
+			<foreach collection="nivel_triage" item="item" open="("
+				close=")" separator=",">
+				#{item}
+			</foreach>
+		</if>
+		<if test="param_tipo_facturacion != null">
+			AND tipo_factura IN
+			<foreach collection="param_tipo_facturacion" item="item"
+				open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<include refid="sql_centro_salud" />
+		<include refid="sql_via_ingreso" />
+		<include refid="sql_eps" />
+		<include refid="sql_medico" />
+		<include refid="sql_facturador" />
+		<include refid="sql_dx_triage" />
+		<include refid="sql_paciente" />
+		<include refid="sql_estado_admision"/> 
+		GROUP BY fecha
+		ORDER BY fecha;
+	</select>
+
+	<!-- URG SIN TRIAGE -->
+	<select id="getCantidadUrgSinTriage" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+		SELECT
+		<if test="fecha_realizacion != null">
+			fecha_ingreso AS fecha,
+		</if>
+		<if test="fecha_creacion != null">
+			fecha_creacion AS fecha,
+		</if>
+		count(*) AS
+		cantidad
+		FROM public.vr_reporte_urg_sin_triage_conteo
+		WHERE
+		codigo_empresa = #{codigo_empresa}
+		AND codigo_sucursal =
+		#{codigo_sucursal}
+		<if test="fecha_realizacion != null">
+			AND CAST(fecha_ingreso AS DATE) BETWEEN #{fecha_inicio}
+			AND
+			#{fecha_final}
+		</if>
+		<if test="fecha_creacion != null">
+			AND fecha_creacion BETWEEN #{fecha_inicio} AND
+			#{fecha_final}
+		</if>
+		<if test="param_tipo_facturacion != null">
+			AND tipo_factura IN
+			<foreach collection="param_tipo_facturacion" item="item"
+				open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<include refid="sql_centro_salud" />
+		<include refid="sql_via_ingreso" />
+		<include refid="sql_eps" />
+		<include refid="sql_medico" />
+		<include refid="sql_facturador" />
+		<include refid="sql_dx_triage" />
+		<include refid="sql_paciente" />
+		<include refid="sql_estado_admision"/> 
+		GROUP BY fecha
+		ORDER BY fecha;
+	</select>
+
+
+	<!-- scripts de consulta de informacion -->
+	<!-- DATOS CONSULTA -->
+	<select id="getDatosConsulta" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+		SELECT
+		codigo_centro,
+		nombre_centro,
+		tipo_factura,
+		nombre_via_ingreso,
+		via_ingreso,
+		nro_identificacion,
+		id_plan,
+		fecha_consulta,
+		numero_autorizacion,
+		codigo_prestador,
+		codigo_consulta,
+		finalidad_consulta,
+		causa_externa,
+		tipo_diagnostico,
+		codigo_diagnostico_principal,
+		codigo_diagnostico1,
+		codigo_diagnostico2,
+		codigo_diagnostico3,
+		valor_consulta,
+		valor_cuota,
+		valor_neto,
+		facturacion,
+		codigo_administradora,
+		nombre_administradora,
+		documento,
+		tipo_identificacion,
+		apellido1,
+		apellido2,
+		nombre1,
+		nombre2,
+		fecha_nacimiento,
+		sexo,
+		codigo_medico,
+		apellido_medico,
+		nombre_medico,
+		codigo_usr_creacion,
+		apellidos_creacion,
+		nombre_creacion,
+		codigo_modificacion,
+		apellido_mod,
+		nombre_mod,
+		nombre_consulta,
+		codigo_cups,
+		descripcion_finalidad_consulta,
+		descripcion_causa_externa,
+		descripcion_tipo_dx,
+		estado
+		FROM public.vr_informe_datos_consulta
+		WHERE
+		codigo_empresa =
+		#{codigo_empresa}
+		AND codigo_sucursal =
+		#{codigo_sucursal}
+		<if test="fecha_realizacion != null">
+			AND fecha_consulta = #{fecha_seleccionada}
+		</if>
+		<if test="fecha_creacion != null">
+			AND fecha_creacion = #{fecha_seleccionada}
+		</if>
+		<if test="param_tipo_facturacion != null">
+			AND tipo_factura IN
+			<foreach collection="param_tipo_facturacion" item="item"
+				open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<include refid="sql_centro_salud" />
+		<include refid="sql_via_ingreso" />
+		<include refid="sql_eps" />
+		<include refid="sql_medico" />
+		<include refid="sql_dx_consulta" />
+		<include refid="sql_codigo_consulta" />
+		<include refid="sql_facturador" />
+		<include refid="sql_paciente" />
+		<include refid="sql_estado_admision"/> 
+		${limite_paginado}
+	</select>
+
+	<!-- DATOS PROCEDIMIENTO -->
+	<select id="getDatosProcedimiento" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+		SELECT
+		codigo_empresa,
+		codigo_sucursal,
+		codigo_centro,
+		nombre_centro,
+		tipo_factura,
+		nombre_via_ingreso,
+		via_ingreso,
+		nro_identificacion,
+		id_plan,
+		fecha_procedimiento,
+		numero_autorizacion,
+		codigo_prestador,
+		codigo_procedimiento,
+		finalidad_procedimiento,
+		ambito_procedimiento,
+		codigo_diagnostico_principal,
+		codigo_diagnostico_relacionado,
+		valor_procedimiento,
+		valor_neto,
+		unidades,
+		facturacion,
+		codigo_administradora,
+		nombre_administradora,
+		documento,
+		tipo_identificacion,
+		apellido1,
+		apellido2,
+		nombre1,
+		nombre2,
+		fecha_nacimiento,
+		sexo,
+		codigo_medico,
+		apellido_medico,
+		nombre_medico,
+		codigo_usr_creacion,
+		apellidos_creacion,
+		nombre_creacion,
+		codigo_modificacion,
+		apellido_mod,
+		nombre_mod,
+		descripcion_vacunacion,
+		nombre_procedimiento,
+		codigo_cups,
+		descripcion_finalidad_procedimiento,
+		descripcion_ambito_procedimiento,
+		estado
+		FROM
+		public.vr_informe_datos_procedimiento
+		WHERE
+		codigo_empresa =
+		#{codigo_empresa}
+		AND codigo_sucursal = #{codigo_sucursal}
+		<if test="fecha_realizacion != null">
+			AND fecha_procedimiento = #{fecha_seleccionada}
+		</if>
+		<if test="fecha_creacion != null">
+			AND fecha_creacion = #{fecha_seleccionada}
+		</if>
+		<if test="param_tipo_facturacion != null">
+			AND tipo_facturacion IN
+			<foreach collection="param_tipo_facturacion" item="item"
+				open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<include refid="sql_centro_salud" />
+		<include refid="sql_via_ingreso" />
+		<include refid="sql_eps" />
+		<include refid="sql_medico" />
+		<include refid="sql_facturador" />
+		<include refid="sql_dx_procedimiento" />
+		<include refid="sql_codigo_procedimiento" />
+		<include refid="sql_paciente" />
+		<include refid="sql_estado_admision"/> 
+		${limite_paginado}
+	</select>
+
+	<!-- DATOS MEDICAMENTOS E INSUMOS -->
+	<select id="getDatosMedicamentosInsumos" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+		SELECT
+		codigo_centro,
+		nombre_centro,
+		tipo_factura,
+		nombre_via_ingreso,
+		via_ingreso,
+		nro_identificacion,
+		id_plan,
+		fecha_medicamento,
+		numero_autorizacion,
+		codigo_medico,
+		codigo_medicamento,
+		valor_unitario,
+		valor_total,
+		facturacion,
+		codigo_administradora,
+		nombre,
+		documento,
+		tipo_identificacion,
+		apellido1,
+		apellido2,
+		nombre1,
+		nombre2,
+		fecha_nacimiento,
+		sexo,
+		apellido_medico,
+		nombre_medico,
+		nombre_medicamento,
+		tipo_medicamento,
+		descripcion_tipo,
+		unidades,
+		estado
+		FROM
+		vr_informe_datos_medicamento_insumos
+		WHERE
+		codigo_empresa =
+		#{codigo_empresa}
+		AND codigo_sucursal = #{codigo_sucursal}
+		<if test="fecha_realizacion != null">
+			AND fecha_medicamento = #{fecha_seleccionada}
+		</if>
+		<if test="fecha_creacion != null">
+			AND fecha_creacion = #{fecha_seleccionada}
+		</if>
+		<if test="param_tipo_facturacion != null">
+			AND tipo_facturacion IN
+			<foreach collection="param_tipo_facturacion" item="item"
+				open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<include refid="sql_centro_salud" />
+		<include refid="sql_via_ingreso" />
+		<include refid="sql_eps" />
+		<include refid="sql_medico" />
+		<include refid="sql_facturador" />
+		<include refid="sql_codigo_medicamento" />
+		<include refid="sql_paciente" />
+		<include refid="sql_estado_admision"/> 
+		${limite_paginado}
+	</select>
+
+	<!-- ESTANCIAS -->
+	<select id="getDatosEstancias" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+		SELECT
+		id_plan,
+		fecha_estancia,
+		documento_paciente,
+		tipo_identificacion,
+		numero_autorizacion,
+		codigo_prestador,
+		estancia,
+		valor_total,
+		facturacion,
+		tipo_facturacion,
+		codigo_centro,
+		nombre_centro,
+		codigo_administradora,
+		nombre,
+		apellido1,
+		apellido2,
+		nombre1,
+		nombre2,
+		fecha_nacimiento,
+		sexo,
+		tipo_identificacion_medico,
+		nro_identificacion_medico,
+		apellidos_medico,
+		nombres_medico,
+		fecha_ingreso,
+		fecha_egreso,
+		dias,
+		diagnostico,
+		estado_salida,
+		descipcion_estado_salida,
+		nombre_pcd,
+		causa_externa,
+		descripcion_causa_externa,
+		destino_salida,
+		descripcion_destino_salida,
+		descripcion_via_ingreso,
+		estado
+		FROM vr_reporte_estancias
+		WHERE
+		codigo_empresa =
+		#{codigo_empresa}
+		AND codigo_sucursal =
+		#{codigo_sucursal}
+		<if test="fecha_realizacion != null">
+			AND CAST(fecha_estancia AS DATE) = #{fecha_seleccionada}
+		</if>
+		<if test="fecha_creacion != null">
+			AND fecha_creacion = #{fecha_seleccionada}
+		</if>
+		<if test="param_tipo_facturacion != null">
+			AND tipo_facturacion IN
+			<foreach collection="param_tipo_facturacion" item="item"
+				open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<include refid="sql_centro_salud" />
+		<include refid="sql_via_ingreso" />
+		<include refid="sql_eps" />
+		<include refid="sql_medico" />
+		<include refid="sql_facturador" />
+		<include refid="sql_paciente" />
+		<include refid="sql_estado_admision"/> 
+		${limite_paginado}
+	</select>
+
+	<!-- TRIAGE -->
+	<select id="getDatosTriage" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+		SELECT
+		nro_ingreso,
+		nro_identificacion,
+		id_plan,
+		fecha_ingreso,
+		nivel_triage,
+		fecha_triage,
+		codigo_medico_triage,
+		apellido_medico_triage,
+		nombre_medico_triage,
+		fecha_atencion,
+		codigo_medico,
+		apellido_medico,
+		nombre_medico,
+		cie_principal,
+		cie_relacionado1,
+		cie_relacionado2,
+		cie_relacionado3,
+		tipo_identificacion,
+		documento,
+		apellido1,
+		apellido2,
+		nombre1,
+		nombre2,
+		fecha_nacimiento,
+		sexo,
+		fecha_creacion,
+		tipo_factura,
+		estado
+		FROM
+		vr_reporte_triage
+		WHERE
+		codigo_empresa =
+		#{codigo_empresa}
+		AND
+		codigo_sucursal =
+		#{codigo_sucursal}
+		<if test="fecha_realizacion != null">
+			AND CAST(fecha_ingreso AS DATE) = #{fecha_seleccionada}
+		</if>
+		<if test="fecha_creacion != null">
+			AND fecha_creacion = #{fecha_seleccionada}
+		</if>
+		<if test="nivel_triage != null">
+			AND nivel_triage IN
+			<foreach collection="nivel_triage" item="item" open="("
+				close=")" separator=",">
+				#{item}
+			</foreach>
+		</if>
+		<if test="param_tipo_facturacion != null">
+			AND tipo_factura IN
+			<foreach collection="param_tipo_facturacion" item="item"
+				open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<include refid="sql_centro_salud" />
+		<include refid="sql_via_ingreso" />
+		<include refid="sql_eps" />
+		<include refid="sql_medico" />
+		<include refid="sql_facturador" />
+		<include refid="sql_dx_triage" />
+		<include refid="sql_paciente" />
+		<include refid="sql_estado_admision"/> 
+		${limite_paginado}
+	</select>
+
+
+	<!-- TRIAGE -->
+	<select id="getUrgSinTriage" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+		SELECT
+		nro_ingreso,
+		nro_identificacion,
+		id_plan,
+		fecha_ingreso,
+		codigo_medico_triage,
+		apellido_medico_triage,
+		nombre_medico_triage,
+		fecha_atencion,
+		codigo_medico,
+		apellido_medico,
+		nombre_medico,
+		cie_principal,
+		cie_relacionado1,
+		cie_relacionado2,
+		cie_relacionado3,
+		tipo_identificacion,
+		documento,
+		apellido1,
+		apellido2,
+		nombre1,
+		nombre2,
+		fecha_nacimiento,
+		sexo,
+		fecha_creacion,
+		tipo_factura,
+		estado
+		FROM
+		vr_reporte_urg_sin_triage
+		WHERE
+		codigo_empresa =
+		#{codigo_empresa}
+		AND
+		codigo_sucursal =
+		#{codigo_sucursal}
+		<if test="fecha_realizacion != null">
+			AND CAST(fecha_ingreso AS DATE) = #{fecha_seleccionada}
+		</if>
+		<if test="fecha_creacion != null">
+			AND fecha_creacion = #{fecha_seleccionada}
+		</if>
+		<if test="param_tipo_facturacion != null">
+			AND tipo_factura IN
+			<foreach collection="param_tipo_facturacion" item="item"
+				open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<include refid="sql_centro_salud" />
+		<include refid="sql_via_ingreso" />
+		<include refid="sql_eps" />
+		<include refid="sql_medico" />
+		<include refid="sql_facturador" />
+		<include refid="sql_dx_triage" />
+		<include refid="sql_paciente" />
+		<include refid="sql_estado_admision"/> 
+		${limite_paginado}
+	</select>
+</mapper>

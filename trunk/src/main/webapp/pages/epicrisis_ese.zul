@@ -1,0 +1,984 @@
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<?component name="impresionDiagnostica" macroURI="/WEB-INF/macros/impresionDiagnostica.zul"?>
+<?component name="signosVitales" macroURI="/WEB-INF/macros/signosVitales.zul"?>
+<?component name="informacionPacientes" macroURI="/WEB-INF/macros/informacionPacientes.zul"?>
+<?page title="Epicrisis_ese" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formEpicrisis_ese" width="100%" height="97%"
+		use="healthmanager.controller.Epicrisis_eseAction">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+
+
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="false" closable="false"
+			mold="3d" height="98%">
+			<caption label="Consultar Historias Clínicas "
+				style="font-weight: bold">
+				<toolbarbutton image="/images/add_perfil.png"
+					style="font-weight:bold;float:right;margin-right:50px"
+					label="PACIENTE ADMISIONADO"
+					id="toolbarbuttonPaciente_admisionado1" />
+			</caption>
+
+			<listbox id="lbxAtendida" mold="select" sclass="combobox"
+				width="150px" visible="false" />
+
+			<separator />
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" height="90%" mold="paging"
+				pageSize="20" vflex="1">
+				<auxhead>
+					<auxheader colspan="5">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="120px" />
+							<space width="5px" />
+							<textbox id="tbxValue" width="120px"
+								onOK="formEpicrisis_ese.buscarDatos();"
+								style="text-transform:uppercase" />
+							<space />
+
+							<label value="Tipo" visible="false"/>
+							<space width="5px" />
+							<listbox id="lbxTipo_historia" mold="select" visible="false"
+								width="120px" onSelect="formEpicrisis_ese.buscarDatos()">
+								<listitem label="Todas" selected="true"
+									value="0" />
+								<listitem label="Primera Vez" value="1" />
+								<listitem label="Control" value="2" />
+							</listbox>
+
+							<space />
+							<toolbarbutton label="Consultar"
+								image="/images/Magnifier.gif"
+								onClick="formEpicrisis_ese.buscarDatos();"
+								tooltiptext="Consultar Adulto mayor" />
+							<space width="5px" />
+							<button mold="trendy"
+								image="/images/New16.gif"
+								onClick='formEpicrisis_ese.accionForm(healthmanager.controller.ZKWindow.OpcionesFormulario.REGISTRAR,null);'
+								tooltiptext="Nuevo Adulto mayor" visible="false" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Código historia" width="150px" />
+					<column label="Identificación" width="200px" />
+					<column label="Nombre" />
+					<column label="Fecha" width="150px" />
+					<column label="Tipo Historia" width="150px" />
+					<column label="Acciones" align="center"
+						width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<groupbox id="groupboxEditar" visible="true" closable="false"
+			mold="3d" height="100%">
+
+			<borderlayout width="100%" height="100%"
+				id="borderlayoutEditar" visible="true">
+				<north border="none" id="northEditar">
+					<div height="50px">
+						<toolbar width="100%" align="start">
+							<textbox id="tbxAccion" value="registrar"
+								visible="false" />
+							<toolbarbutton image="/images/Save16.gif"
+								label="Guardar Epicrisis"
+								onClick="formEpicrisis_ese.guardarDatos();" id="btGuardar" />
+
+							<space />
+							
+							<toolbarbutton image="/images/print_ico.gif"
+								label="Imprimir Epicrisis" onClick="formEpicrisis_ese.imprimir()"
+								id="btnImprimir" />
+							<space />
+							<toolbarbutton image="/images/trasladar.gif"
+								label="Cancelar" visible="false"
+								onClick='formEpicrisis_ese.accionForm(healthmanager.controller.ZKWindow.OpcionesFormulario.CONSULTAR,null);'
+								id="btnCancelar"  />
+							<toolbarbutton image="/images/print_ico.gif"
+								label="Imprimir Historia"
+								onClick="formEpicrisis_ese.imprimir();" id="btImprimir"
+								visible="false" />
+							<space />
+							<label value="Formato impresión: "
+								visible="false" />
+							<listbox id="lbxFormato" mold="select"
+								width="150px" visible="false" sclass="combobox">
+								<listitem value="pdf" label="PDF"
+									selected="true" />
+								<listitem value="rtf" label="WORD" />
+							</listbox>
+
+						</toolbar>
+						<toolbarbutton image="/images/info_icon.png"
+							style="font-weight:bold;float:right;margin-right:50px"
+							label="Historia Clínica de Control"
+							id="toolbarbuttonTipo_historia" visible="false" />
+					</div>
+				</north>
+				<center autoscroll="true" border="none">
+					<div align="center">
+
+						<!-- *************************** -->
+						<!-- *** Insertar/Actualizar *** -->
+						<!-- *************************** -->
+						<groupbox closable="false" width="905px"
+							mold="3d">
+							<grid sclass="GridSinBorde" hflex="1">
+								<columns>
+									<column label="" width="10px" />
+									<column label="" width="150px" />
+									<column label="" />
+									<column label="" width="10px" />
+								</columns>
+								<rows>
+									<row>
+										<cell />
+										<cell colspan="2">
+											<groupbox>
+												<informacionPacientes
+													id="infoPacientes" />
+											</groupbox>
+										</cell>
+										<cell />
+									</row>
+									<row>
+										<cell />
+										<cell colspan="2" align="center">
+											<label
+												value="Servicio de Ingreso: " />
+											<space />
+											<listbox
+												id="lbxServicio_ingreso" width="178px" mold="select"
+												name="servicio" />
+											<space />
+											<label value="Fecha: " />
+											<datebox id="dtbxIngreso"
+												onCreate="self.value = new Date();"
+												format="yyyy-MM-dd HH:mm a" width="160px" />
+
+										</cell>
+										<cell />
+									</row>
+
+									<row>
+										<cell />
+										<cell colspan="2" align="center">
+											<label
+												value="Servicio de Egreso: " />
+											<space />
+											<listbox
+												id="lbxServicio_egreso" width="178px" mold="select"
+												name="servicio" />
+											<space />
+											<label id="lbEgreso"
+												value="Fecha: " />
+											<datebox id="dtbxEgreso"
+												onCreate="self.value = new Date();"
+												format="yyyy-MM-dd HH:mm a" width="160px" />
+										</cell>
+										<cell />
+									</row>
+									
+									<row>
+										<cell />
+										<cell colspan="2">
+											<groupbox>
+												<grid>
+													<columns>
+														<column
+															width="2px"/>
+														<column
+															width="100px" />
+														<column />
+														<column
+															width="70px" />
+														<column />
+														<column
+															width="2px" />
+													</columns>
+													<rows>
+														<row>
+															<cell />
+															<cell>
+																<label
+																	id="lbEstancia" value="Estancia: " />
+															</cell>
+															<cell>
+																<textbox
+																	id="tbxEstancia" width="170px"
+																	style="text-transform:uppercase" maxlength="-5" />
+																<label
+																	value="(Días)" />
+															</cell>
+															<cell
+																colspan="3" />
+														</row>
+
+
+														<!-- fila 12 -->
+														<row>
+															<cell></cell>
+															<cell>
+																<label
+																	id="lbCausa_salida" value="Causa salida: " />
+															</cell>
+															<cell
+																colspan="4">
+																<textbox
+																	id="tbxCausa_salida" width="170px"
+																	style="text-transform:uppercase" maxlength="-5" />
+																<space
+																	width="30px" />
+
+																<label
+																	id="lbDestino" value="Destino: " />
+																<space />
+																<listbox
+																	id="lbxDestino" width="158px" mold="select"
+																	name="destino_paciente" />
+																<space
+																	width="30px" />
+																<label
+																	value="Estado de la salida: " />
+																<space />
+																<listbox
+																	id="lbxEstado_salida" width="158px" mold="select"
+																	name="estado_salida" />
+															</cell>
+														</row>
+
+														<!-- fila 14 -->
+														<row>
+															<cell></cell>
+															<cell>
+																<label
+																	id="lbAntecedentes" value="Antecedentes: " />
+															</cell>
+															<cell
+																colspan="3">
+																<textbox
+																	id="tbxAntecedentes" hflex="1" rows="8"
+																	style="text-transform:uppercase" maxlength="-1" />
+															</cell>
+															<cell></cell>
+														</row>
+
+														<row>
+															<cell></cell>
+															<cell>
+																<label
+																	id="lbSintesis_enfermedad"
+																	value="Sintesis enfermedad: " />
+															</cell>
+															<cell
+																colspan="3">
+																<textbox
+																	id="tbxSintesis_enfermedad" hflex="1" rows="5"
+																	style="text-transform:uppercase" maxlength="-1" />
+															</cell>
+															<cell></cell>
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+										<cell />
+									</row>
+									
+									<row>
+									<cell/>			
+											<cell colspan="2">
+												<groupbox
+													closable="false">
+													<caption
+														label="Signos Vitales" />
+													<signosVitales
+														id="mcSignosVitales" anchoComp="45px" configTalla="C"
+														configEdad="A" />
+												</groupbox>
+											</cell>
+											<cell/>	
+										</row>
+
+									<row>
+										<cell />
+										<cell colspan="2">
+											<impresionDiagnostica
+												id="macroImpresion_diagnostica" />
+										</cell>
+										<cell />
+									</row>
+
+																		<row>
+																			<cell />
+																			<cell colspan="2">
+																				<impresionDiagnostica
+																					id="macroImpresion_diagnosticaEpicrisis" />
+																			</cell>
+																			<cell />
+																		</row>
+
+									<!-- fila 9 -->
+									
+									<row>
+										<cell></cell>
+										<cell colspan="2">
+											<groupbox>
+												<grid>
+													<columns>
+														<column />
+														<column
+															width="30px" />
+														<column />
+														<column
+															width="30px" />
+														<column />
+														<column
+															width="30px" />
+														<column />
+														<column
+															width="30px" />
+														<column />
+														<column
+															width="30px" />
+													</columns>
+													<rows>
+
+														<!-- fila 16 -->
+														<row>
+															<cell>
+																<label
+																	id="lbHemograma" value="Hemograma: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbHemograma" />
+															</cell>
+
+															<cell>
+																<label
+																	id="lbN_ureico" value="N. Ureico: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbN_ureico" />
+															</cell>
+
+															<cell>
+																<label
+																	id="lbC_antibiograma" value="C. Antibiograma: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbC_antibiograma" />
+															</cell>
+
+															<cell>
+																<label
+																	id="lbCitoquimico" value="Citoquimico: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbCitoquimico" />
+															</cell>
+
+															<cell>
+																<label
+																	id="lbPatologia" value="Patología: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbPatologia" />
+															</cell>
+														</row>
+
+														<!-- fila 21 -->
+														<row>
+															<cell>
+																<label
+																	id="lbV_sedimentacion" value="V. Sedimentación: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbV_sedimentacion" />
+															</cell>
+
+															<cell>
+																<label
+																	id="lbCoprologico" value="Coprologico: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbCoprologico" />
+															</cell>
+
+															<cell>
+																<label
+																	id="lbBilirrubinemia" value="Bilirrubinemia: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbBilirrubinemia" />
+															</cell>
+
+															<cell>
+																<label
+																	id="lbInmunologicos" value="Inmunológicos: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbInmunologicos" />
+															</cell>
+
+															<cell>
+																<label
+																	id="lbRx_simple" value="Rx. Simple: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbRx_simple" />
+															</cell>
+														</row>
+
+														<!-- fila 26 -->
+														<row>
+															<cell>
+																<label
+																	id="lbH_clasificar" value="H. Clasificar: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbH_clasificar" />
+															</cell>
+
+															<cell>
+																<label
+																	id="lbFalciformia" value="Falciformía: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbFalciformia" />
+															</cell>
+
+															<cell>
+																<label
+																	id="lbTransaminasas" value="Transaminasas: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbTransaminasas" />
+															</cell>
+
+															<cell>
+																<label
+																	id="lbVih" value="VIH: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbVih" />
+															</cell>
+
+															<cell>
+																<label
+																	id="lbRx_contrastada" value="Rx. Contrastada: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbRx_contrastada" />
+															</cell>
+														</row>
+
+														<!-- fila 31 -->
+														<row>
+															<cell>
+																<label
+																	id="lbP_cruzada" value="P. Cruzada: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbP_cruzada" />
+															</cell>
+
+															<cell>
+																<label
+																	id="lbProtelnograma" value="Protelnograma: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbProtelnograma" />
+															</cell>
+
+															<cell>
+																<label
+																	id="lbP_upidlco" value="P. Upidlco: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbP_upidlco" />
+															</cell>
+
+															<cell>
+																<label
+																	id="lbE_cardiograma" value="E. Cardiograma: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbE_cardiograma" />
+															</cell>
+
+															<cell>
+																<label
+																	id="lbRx_invasivos" value="Rx. Invasivos: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbRx_invasivos" />
+															</cell>
+														</row>
+
+														<!-- fila 36 -->
+														<row>
+															<cell>
+																<label
+																	id="lbTpt" value="TPT: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbTpt" />
+															</cell>
+
+															<cell>
+																<label
+																	id="lbElectroferesis_hb" value="Electroferesis HB: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbElectroferesis_hb" />
+															</cell>
+
+															<cell>
+																<label
+																	id="lbExt_sangre" value="Ext. sangre: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbExt_sangre" />
+															</cell>
+
+															<cell>
+																<label
+																	id="lbEcocardiograma" value="Ecocardiograma: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbEcocardiograma" />
+															</cell>
+
+															<cell>
+																<label
+																	id="lbTac" value="TAC: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbTac" />
+															</cell>
+														</row>
+
+														<!-- fila 41 -->
+														<row>
+															<cell>
+																<label
+																	id="lbT_p" value="T. P: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbT_p" />
+															</cell>
+
+															<cell>
+																<label
+																	id="lbVdrl" value="VDRL: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbVdrl" />
+															</cell>
+
+															<cell>
+																<label
+																	id="lbIonograma" value="Ionograma: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbIonograma" />
+															</cell>
+
+															<cell>
+																<label
+																	id="lbDoppler" value="Doppler: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbDoppler" />
+															</cell>
+
+															<cell>
+																<label
+																	id="lbR_magnetica" value="R. Magnética: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbR_magnetica" />
+															</cell>
+														</row>
+
+														<!-- fila 46 -->
+														<row>
+															<cell>
+																<label
+																	id="lbR_plaquetas" value="R. Plaquetas: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbR_plaquetas" />
+															</cell>
+
+															<cell>
+																<label
+																	id="lbWidal" value="Widal: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbWidal" />
+															</cell>
+
+															<cell>
+																<label
+																	id="lbG_arteriales" value="G. Arteriales: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbG_arteriales" />
+															</cell>
+
+															<cell>
+																<label
+																	id="lbE_encefalograma" value="E. Encefalograma: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbE_encefalograma" />
+															</cell>
+
+															<cell>
+																<label
+																	id="lbEcografia" value="Ecografía: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbEcografia" />
+															</cell>
+														</row>
+
+														<!-- fila 51 -->
+														<row>
+															<cell>
+																<label
+																	id="lbGlicemia" value="Glicemia: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbGlicemia" />
+															</cell>
+
+															<cell>
+																<label
+																	id="lbAsto" value="Asto: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbAsto" />
+															</cell>
+
+															<cell>
+																<label
+																	id="lbEnzimas" value="Enzimas: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbEnzimas" />
+															</cell>
+
+															<cell>
+																<label
+																	id="lbBiopsia" value="Biopsia: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbBiopsia" />
+															</cell>
+
+															<cell>
+																<label
+																	id="lbGamagrafias" value="Gamagrafias: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbGamagrafias" />
+															</cell>
+														</row>
+
+														<!-- fila 56 -->
+														<row>
+															<cell>
+																<label
+																	id="lbUrianalisis" value="Urianalisis: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbUrianalisis" />
+															</cell>
+
+															<cell>
+																<label
+																	id="lbProteina_cr" value="Proteina CR: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbProteina_cr" />
+															</cell>
+
+															<cell>
+																<label
+																	id="lbHormonas" value="Hormonas: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbHormonas" />
+															</cell>
+
+															<cell>
+																<label
+																	id="lbMedulograma" value="Medulograma: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbMedulograma" />
+															</cell>
+
+															<cell>
+																<label
+																	id="lbBaciloscopias" value="Baciloscopias: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbBaciloscopias" />
+															</cell>
+														</row>
+
+														<!-- fila 61 -->
+														<row>
+															<cell>
+																<label
+																	id="lbCreatinina" value="Creatinina: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbCreatinina" />
+															</cell>
+
+															<cell>
+																<label
+																	id="lbGram" value="Gram: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbGram" />
+															</cell>
+
+															<cell>
+																<label
+																	id="lbDrogas_sericas" value="Drogas séricas: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbDrogas_sericas" />
+															</cell>
+
+															<cell>
+																<label
+																	id="lbEndoscopia" value="Endoscopia: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbEndoscopia" />
+															</cell>
+
+															<cell>
+																<label
+																	id="lbOtros" value="Otros: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbOtros"
+																	onCheck="rowOtros1.setVisible(self.isChecked());rowOtros2.setVisible(self.isChecked());" />
+															</cell>
+														</row>
+														<row
+															id="rowOtros1" visible="false">
+															<cell
+																colspan="10">
+																<label
+																	id="lbOtros_txt" value="Otros: " />
+															</cell>
+														</row>
+														<row
+															id="rowOtros2" visible="false">
+															<cell
+																colspan="10">
+																<textbox
+																	id="tbxOtros_txt" rows="4"
+																	style="text-transform:uppercase" maxlength="-1"
+																	hflex="1" />
+															</cell>
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+										<cell></cell>
+									</row>
+									<row>
+										<cell></cell>
+										<cell colspan="2">
+											<groupbox>
+												<grid>
+													<rows>
+														<row>
+															<cell>
+																<label
+																	id="lbComentarios_paraclinicos_positivos"
+																	value="Comentarios paraclinicos positivos: " />
+															</cell>
+														</row>
+														<row>
+															<cell>
+																<textbox
+																	id="tbxComentarios_paraclinicos_positivos" hflex="1"
+																	rows="4" style="text-transform:uppercase"
+																	maxlength="-1" />
+															</cell>
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+										<cell></cell>
+									</row>
+
+									<row>
+										<cell></cell>
+										<cell colspan="2">
+											<groupbox>
+												<grid>
+													<rows>
+														<row>
+															<cell>
+																<label
+																	id="lbCirugia_tratamiento_medico"
+																	value="Cirugia tratamiento medico: " />
+															</cell>
+														</row>
+
+														<row>
+															<cell>
+																<textbox
+																	id="tbxCirugia_tratamiento_medico" hflex="1" rows="4"
+																	style="text-transform:uppercase" maxlength="-1" />
+															</cell>
+														</row>
+
+														<row>
+															<cell>
+																<label
+																	id="lbInterconsultas_juntas_medicas"
+																	value="Interconsultas juntas medicas: " />
+															</cell>
+														</row>
+
+														<row>
+															<cell>
+																<textbox
+																	id="tbxInterconsultas_juntas_medicas" hflex="1"
+																	rows="4" style="text-transform:uppercase"
+																	maxlength="-1" />
+															</cell>
+														</row>
+
+														<row>
+															<cell>
+																<label
+																	id="lbComplicaciones" value="Complicaciones: " />
+															</cell>
+														</row>
+
+														<row>
+															<cell>
+																<textbox
+																	id="tbxComplicaciones" hflex="1" rows="4"
+																	style="text-transform:uppercase" maxlength="-1" />
+															</cell>
+														</row>
+
+														<row>
+															<cell>
+																<label
+																	id="lbRecomendaciones" value="Recomendaciones: " />
+															</cell>
+														</row>
+
+														<row>
+															<cell>
+																<textbox
+																	id="tbxRecomendaciones" hflex="1" rows="4"
+																	style="text-transform:uppercase" maxlength="-1" />
+															</cell>
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+										<cell />
+									</row>
+								</rows>
+							</grid>
+
+						</groupbox>
+					</div>
+				</center>
+			</borderlayout>
+		</groupbox>
+	</window>
+</zk>

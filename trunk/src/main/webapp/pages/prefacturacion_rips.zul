@@ -1,0 +1,431 @@
+<?page title="Prefacturacion_rips" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formPrefacturacion_rips" width="100%" height="100%"
+		use="healthmanager.controller.Facturacion_ripsAction">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+		<!-- **************** -->
+		<!-- Zona de Objetivo -->
+		<!-- **************** -->
+
+
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="false" closable="false"
+			mold="3d" height="100%">
+
+			<separator />
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" height="100%" mold="paging"
+				pageSize="20" vflex="1">
+				<auxhead>
+					<auxheader colspan="8">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<separator />
+							<textbox id="tbxValue" width="200px"
+								onOK="formPrefacturacion_rips.buscarDatos();"
+								style="text-transform:uppercase" />
+							<separator />
+							<button mold="trendy"
+								image="/images/Magnifier.gif"
+								onClick="formPrefacturacion_rips.buscarDatos();"
+								tooltiptext="Consultar Facturacion servicio" />
+							<separator />
+							<button mold="trendy"
+								image="/images/New16.gif"
+								onClick='formPrefacturacion_rips.accionForm(true,"registrar");'
+								tooltiptext="Nuevo Facturacion servicio" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Codigo Documento"  width="150px"/>
+					<column label="Fecha" width="100px"/>
+					<column label="Nro identificación" width="110px"/>
+					<column label="Nro ingreso" width="80px" />
+					<column label="Apellidos" />
+					<column label="Nombres" />
+					<column label="Cont" width="60px"/>
+					<column label="Anul" width="60px"/>
+					<column label="Acciones" align="center"	width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<borderlayout width="100%" height="100%" id="groupboxEditar"
+			visible="true">
+			<north border="none">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<textbox id="tbxCodigo_documento" value=""
+						visible="false" />
+					<textbox id="tbxCodigo_comprobante" value=""
+						visible="false" />
+					<toolbarbutton image="/images/Save16.gif"
+						label="Guardar" visible="false"
+						onClick="formPrefacturacion_rips.guardarDatos();" id="btGuardar"/>
+					<toolbarbutton image="/images/New16.gif"
+						label="Nuevo"
+						onClick='formPrefacturacion_rips.nuevoRegistro();'
+						id="btNew" />
+					<space />
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Cancelar"
+						onClick='formPrefacturacion_rips.accionForm(false,tbxAccion.getText());'
+						id="btCancel" />
+					<toolbarbutton image="/images/print_ico.gif"
+						label="Imprimir"
+						onClick="formPrefacturacion_rips.imprimir(tbxCodigo_documento.getValue());" id="btImprimir"
+						visible="false" />
+						
+					<toolbarbutton image="/images/print_ico.gif"
+						label="Prefactura"
+						onClick="formPrefacturacion_rips.prefactura(tbxCodigo_documento.getValue());" id="btImprimir_pre"
+						visible="true" />
+						
+					<toolbarbutton image="/images/contabilizar.gif"
+						label="Contabilizar"
+						onClick='formPrefacturacion_rips.contabilizar(tbxCodigo_documento.getValue(),true);'
+						id="btCont" visible="false"/>
+					
+					<toolbarbutton image="/images/print_ico.gif"
+						label="Imprimir contabilización"
+						onClick='formPrefacturacion_rips.imprimirNota_contable(tbxCodigo_documento.getValue())'
+						id="btPrintCont" visible="false"/>
+
+					<toolbarbutton image="/images/contabilizar.gif"
+						label="Ver contabilización"
+						onClick='formPrefacturacion_rips.contabilizar(tbxCodigo_documento.getValue(),false);'
+						id="btPrintVerCont" visible="false"/>
+						
+					<toolbarbutton image="/images/print_ico.gif"
+						label="Imprimir copago"
+						onClick='formPrefacturacion_rips.imprimirCopago(tbxCodigo_documento.getValue())'
+						id="btPrintCop" visible="false"/>
+
+
+					<space />
+					<label value="Formato impresión: " visible="false" />
+					<listbox id="lbxFormato" mold="select" width="150px"
+						visible="true" sclass="combobox">
+						<listitem value="pdf" label="PDF"
+							selected="true" />
+						<listitem value="rtf" label="WORD" />
+					</listbox>
+					<space/>
+					<image src="/images/refresh.png" width="15px"
+						height="15px" style="cursor:pointer"
+						onClick="formPrefacturacion_rips.consultarServiciosFacturas(true)" />
+
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center">
+
+					<!-- *************************** -->
+					<!-- *** Insertar/Actualizar *** -->
+					<!-- *************************** -->
+					
+					<groupbox closable="false" width="760px"
+						mold="3d">
+						<grid>
+							<auxhead>
+								<auxheader colspan="4"
+									label="REGISTRAR FACTURACION"
+									style="font-weight:bold" align="center" />
+							</auxhead>
+							<columns visible="false">
+								<column width="100px" />
+								<column width="160px" />
+								<column />
+								<column width="170px" />
+							</columns>
+
+							<rows>
+								<!-- Fila 1 -->
+								<row>
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label value="Paciente:" />
+									</cell>
+									<cell>
+										<bandboxRegistros
+											id="tbxNro_identificacion" widthBandbox="150px" 
+											widthListbox="600px" heightListbox="300px"
+											columnas="Tipo Ident#65px|Identificación|Nombres|Apellidos" />
+									</cell>
+									<cell colspan="2">
+										<textbox id="tbxNomPaciente"
+											width="420px" style="text-transform:uppercase"
+											readonly="true" />
+										<space width="2px"/>
+										<toolbarbutton
+											id="btnLimpiarPaciente" image="/images/borrar.gif" />
+									</cell>
+								</row>
+
+								<!-- Fila 2 -->
+								<row>
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label value="Nro Ingreso:" />
+									</cell>
+									<cell colspan="3">
+										<listbox id="lbxNro_ingreso"
+											mold="select" width="150px" sclass="combobox"
+											onSelect="formPrefacturacion_rips.selectedAdmision(self.getSelectedItem())" />
+										<space /><space />
+										<label value="Aseguradora:" />
+										<space width="18px"/>
+										<textbox
+											id="tbxAseguradora" width="317px"
+											style="text-transform:uppercase" readonly="true"/>
+										<space />
+									</cell>
+
+
+								</row>
+								<!-- Fila 3 -->
+								<row>
+									<cell valign="top">
+										<label value="Fecha:" />
+									</cell>
+									<cell colspan="3">
+										<hlayout>
+											<datebox id="dtbxFecha"
+												onCreate="self.value = new Date();" format="dd/MM/yyyy"
+												width="150px" />
+											<space />
+											<label value="Fecha Ingreso:" /><space width="2px"/>
+											<datebox id="dtbxFecha_ingreso"
+												onCreate="self.value = new Date();" format="dd/MM/yyyy hh:mm"
+												width="110px" buttonVisible="false" readonly="true"/>
+											<space width="10px"/>
+											<label value="Fecha Egreso:" />
+											<datebox id="dtbxFecha_egreso"
+												onCreate="self.value = new Date();" format="dd/MM/yyyy hh:mm"
+												width="108px" onChange="formPrefacturacion_rips.consultarServiciosFacturas(true)"/>
+										</hlayout>
+										
+									</cell>
+								</row>
+								<!-- Fila 4-->
+								<row>
+									<cell valign="top">
+										<label value="Nro Poliza:" />
+									</cell>
+									<cell colspan="3">
+										<hlayout>
+											<textbox id="tbxNro_poliza"
+												width="143px" style="text-transform:uppercase"
+												maxlength="20" />
+											<space />
+											<label value="Observacion:" /><space width="13px"/>
+											<textbox id="tbxObservacion"
+												width="315px" style="text-transform:uppercase"/>
+										</hlayout>
+										
+									</cell>
+								</row>
+								
+								<!-- Fila 5-->
+								<row>
+									<cell valign="top">
+										<label value="Plazo :" />
+									</cell>
+									<cell colspan="3">
+										<hlayout>
+											<intbox
+												constraint="no negative:Este valor no puede ser negativo"
+												id="ibxPlazo" width="143px" style="text-transform:uppercase"
+												value="30" />
+											<space />
+											<label value="Concepto:" />
+											<space width="28px"/>
+											<textbox id="tbxDescripcion"
+												width="315px" style="text-transform:uppercase"/>
+											<space />
+										</hlayout>
+										
+									</cell>
+								</row>
+								
+								<!-- Fila 6 -->
+								<row>
+									<cell valign="top" colspan="4">
+										<!-- Para consultas por lotes -->
+										<listbox id="lbxServicios" width="100%" height="300px">
+											<auxhead>
+												<auxheader label="" colspan="7">
+													<hlayout>
+														<toolbarbutton
+															image="/images/add.png" label="Agregar"
+															onClick='formPrefacturacion_rips.cargarServiciosAdmsion("adicionar")' />
+															
+													    <toolbarbutton
+															image="/images/editar02.gif" label="Editar"
+															onClick='formPrefacturacion_rips.cargarServiciosAdmsion("editar")' />
+															
+<!-- 													    <toolbarbutton -->
+<!-- 															image="/images/eliminar.gif" label="Quitar" -->
+<!-- 															onClick="formPrefacturacion_rips.quitarServicio()" visible="false"/> -->
+														<space/>
+														<listbox id="lbxModulo"
+															mold="select" width="150px" sclass="combobox">
+															<listitem
+																value="01" label="Consulta" selected="true" />
+															<listitem
+																value="02" label="Procedimiento" />
+															<listitem
+																value="03" label="Medicamento" />
+															<listitem
+																value="04" label="Materiales" />
+															<listitem
+																value="05" label="Servicio" />
+															<listitem
+																value="06" label="Quirurgicos" />
+														</listbox>
+														<space/>
+														<space />
+														<checkbox id="chkIncluir_paquetes" checked="true" label="Mostrar detalles de la facturación de paquetes" style="float:right" onCheck="formPrefacturacion_rips.consultarServiciosFacturas(true)" />
+<!-- 														<toolbarbutton -->
+<!-- 															image="/images/editar.gif" label="Editar Admisión" visible="false"/> -->
+
+													</hlayout>
+												</auxheader> 
+											</auxhead>
+											<listhead>
+											    <listheader label="" width="30px"/>
+												<listheader label="Codigo" width="85px"/>
+												<listheader label="Concepto" />
+												<listheader label="Cant" width="50px" />
+												<listheader label="Vlr Unitario" width="90px" />
+												<listheader label="Total" width="90px" />
+												<listheader label="Tipo" width="120px" />
+											</listhead>
+											<!-- <listitem>
+												<listcell label=""></listcell>
+												<listcell label="" />
+												<listcell label="" />
+												<listcell label="" />
+												<listcell label="" />
+												<listcell label="" />
+												<listcell label="" />
+												<listcell label="" />
+											</listitem> -->
+											
+											
+											<listfoot>
+												<listfooter span="7">
+													<grid>
+														<columns>
+															<column value="" width="100px"/>
+															<column value="" width="150px"/>
+															<column value="" width="60px"/>
+															<column value="" width="150px"/>
+															<column value="" width="90px"/>
+															<column value=""/>
+														</columns>
+														<rows>
+															<row>
+																<cell><label value="Valor Moderado:"/></cell>
+																<cell>
+																	<doublebox
+																		id="dbxValor_cuota" format="#,##0" width="130px"
+																		readonly="false" value="0.0" disabled="true"/>
+																</cell>
+																<cell><label value="Subtotal:"/></cell>
+																<cell>
+																	<doublebox
+																		id="dbxSubtotal" format="#,##0" width="130px"
+																		readonly="true" value="0.0" disabled="true"/>
+																</cell>
+																<cell><label value="Dto Facturas:"/></cell>
+																<cell>
+																	<doublebox
+																		id="dbxDto_factura" format="#,##0" width="130px"
+																		readonly="true" value="0.0" disabled="true"/>
+																</cell>
+															</row>
+															<row>
+																<cell><label value="Copago:"/></cell>
+																<cell>
+																	<doublebox
+																		id="dbxValor_copago" format="#,##0" width="130px" disabled="true"
+																		readonly="false" value="0.0" onChange="formPrefacturacion_rips.calcularCopagoManual();"/>
+																</cell>
+																<cell><label value="Total:"/></cell>
+																<cell>
+																	<doublebox
+																		id="dbxValor_total" format="#,##0" width="130px"
+																		readonly="true" value="0.0" disabled="true"/>
+																</cell>
+																<cell><label value="Dto Copago:"/></cell>
+																<cell>
+																	<doublebox
+																		id="dbxDto_copago" format="#,##0" width="130px"
+																		readonly="false" value="0.0" disabled="true"/>
+																</cell>
+															</row>
+															<row>
+																<cell colspan="2" align="left">
+																	<checkbox id="chbNocopago" label="No Copago"
+																	onCheck="formPrefacturacion_rips.calcularCopago(self.isChecked())"/>
+																</cell>
+																<cell colspan="2" align="center">
+																	<hlayout>
+																		<checkbox id="chbMediana" label="Media Hoja"/>
+																		<space/>
+																		<checkbox id="chbAgrupar" label="Agrupar" />
+																	</hlayout>
+																</cell>
+																
+																<cell><label value="Copago canc:"/></cell>
+																<cell>
+																	<doublebox
+																		id="dbxCop_canc" format="#,##0" width="130px"
+																		readonly="true" value="0.0" disabled="true"/>
+																</cell>
+															</row>
+														</rows>
+													</grid>
+												</listfooter>
+											</listfoot>
+										</listbox>
+									</cell>
+								</row>
+								
+							</rows>
+
+						</grid>
+
+
+					</groupbox>
+				</div>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

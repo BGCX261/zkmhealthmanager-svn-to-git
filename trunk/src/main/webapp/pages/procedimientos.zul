@@ -1,0 +1,436 @@
+<?page title="Procedimiento" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formProcedimientos" width="100%" height="97%"
+		use="healthmanager.controller.ProcedimientosAction">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="false" closable="false"
+			mold="3d" height="85%">
+			<caption label="Consultar"
+				style="color: blue;font-weight: bold" />
+
+			<separator />
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" height="90%" mold="paging"
+				pageSize="20" vflex="1">
+				<auxhead>
+					<auxheader colspan="9">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<separator />
+							<textbox id="tbxValue" width="200px"
+								onOK="formProcedimientos.buscarDatos();"
+								style="text-transform:uppercase" />
+							<separator />
+							<button mold="trendy"
+								image="/images/Magnifier.gif"
+								onClick="formProcedimientos.buscarDatos();"
+								tooltiptext="Consultar Procedimiento" />
+							<separator />
+							<button mold="trendy"
+								image="/images/New16.gif"
+								onClick='formProcedimientos.accionForm(true,"registrar");'
+								tooltiptext="Nuevo Procedimiento" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Codigo soat" />
+					<column label="Codigo cups" />
+					<column label="Descripcion" />
+					<column label="Porcentaje" />
+					<column label="Sexo" />
+					<column label="Limite inferior" />
+					<column label="Limite superior" />
+					<column label="Pyp" />
+					<column label="Acciones" align="center"
+						width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<borderlayout width="100%" height="90%" id="groupboxEditar"
+			visible="true">
+			<north border="none">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<toolbarbutton image="/images/Save16.gif"
+						label="Guardar Procedimiento"
+						onClick="formProcedimientos.guardarDatos();" id="btGuardar" />
+					<toolbarbutton image="/images/New16.gif"
+						label="Nueva Procedimiento"
+						onClick='formProcedimientos.accionForm(true,"registrar");'
+						id="btNew" visible="false" />
+					<space />
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Cancelar"
+						onClick='formProcedimientos.accionForm(false,tbxAccion.getText());'
+						id="btCancel" visible="false" />
+					<toolbarbutton image="/images/print_ico.gif"
+						label="Imprimir Procedimiento"
+						onClick="formProcedimientos.imprimir();" id="btImprimir"
+						visible="false" />
+					<space />
+					<label value="Formato impresión: " visible="false" />
+					<listbox id="lbxFormato" mold="select" width="150px"
+						visible="false" sclass="combobox">
+						<listitem value="pdf" label="PDF"
+							selected="true" />
+						<listitem value="rtf" label="WORD" />
+					</listbox>
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center">
+					<!-- *************************** -->
+					<!-- *** Insertar/Actualizar *** -->
+					<!-- *************************** -->
+					<groupbox closable="false" width="740px" mold="3d"
+						style="margin-top:10px">
+						<grid sclass="GridSinBorde" hflex="1">
+							<auxhead>
+								<auxheader colspan="6"
+									label="PROCEDIMIENTOS" align="center" />
+							</auxhead>
+							<columns visible="false">
+								<column label="" width="10px" />
+								<column label="" width="170px"
+									align="left" />
+								<column label="" width="182px"
+									align="left" />
+								<column label="" width="170px"
+									align="left" />
+								<column label="" width="182px"
+									align="left" />
+								<column label="" width="10px" />
+							</columns>
+							<rows>
+
+								<!-- fila 1 -->
+								<row>
+									<cell></cell>
+
+									<cell height="30px">
+										<label id="lbCodigo_cups"
+											value="Código cups: " />
+									</cell>
+									<cell>
+										<textbox id="tbxCodigo_cups"
+											width="170px" style="text-transform:uppercase"
+											maxlength="20" />
+									</cell>
+									<cell height="30px"></cell>
+									<cell><longbox id="longboxId_procedimiento" visible="false" /> </cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 3 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbDescripcion"
+											value="Nombre: " />
+									</cell>
+									<cell colspan="3" align="left">
+										<textbox id="tbxDescripcion"
+											width="530px" style="text-transform:uppercase"
+											maxlength="100" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<checkbox id="chbPyp"
+											label="Pyp" />
+									</cell>
+									<cell>
+										<checkbox
+											id="chbConsulta_especializada"
+											label="Consulta especializada" />
+									</cell>
+									<cell height="30px">
+										<label id="lbTipo_procedimiento"
+											value="Tipo Servicio: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxTipoProcedimiento" width="170px" />
+									</cell>
+									<cell></cell>
+								</row>
+								<!-- fila 4 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+									</cell>
+									<cell>
+									</cell>
+
+									<cell height="30px">
+										<label id="lbClasificacion"
+											value="Clasificacion: " />
+									</cell>
+									<cell>
+										<listbox id="lbxClasificacion"
+											name="clasificacion" mold="select" width="170px"
+											sclass="combobox" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label id="lbLimite_inferior"
+											value="Limite inferior: " />
+									</cell>
+									<cell>
+										<intbox
+											constraint="no negative:Este valor no puede ser negativo"
+											id="ibxLimite_inferior" width="170px"
+											style="text-transform:uppercase" maxlength="3" />
+									</cell>
+									<cell height="30px">
+										<label id="lbLimite_superior"
+											value="Limite superior: " />
+									</cell>
+									<cell>
+										<intbox
+											constraint="no negative:Este valor no puede ser negativo"
+											id="ibxLimite_superior" width="170px"
+											style="text-transform:uppercase" maxlength="3" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 17 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label
+											id="lbCodigo_contabilidad" value="Codigo contabilidad: " />
+									</cell>
+									<cell>
+										<listbox
+											id="lbxCodigo_contabilidad" name="codigo_contabilidad"
+											mold="select" width="170px" sclass="combobox" />
+									</cell>
+
+									<cell height="30px">
+										<label id="lbSexo"
+											value="Sexo: " />
+									</cell>
+									<cell>
+										<listbox id="lbxSexo"
+											name="sexo" mold="select" width="170px" sclass="combobox">
+											<listitem value="A"
+												label="Ambos sexo" selected="true">
+											</listitem>
+											<listitem value="H"
+												label="Hombres">
+											</listitem>
+											<listitem value="M"
+												label="Mujeres">
+											</listitem>
+										</listbox>
+
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 6 -->
+								<row>
+									<cell></cell>
+									<cell>
+										<checkbox id="chbConsulta"
+											label="Consulta" />
+									</cell>
+									<cell>
+										<checkbox id="chbQuirurgico"
+											label="Quirurgico" />
+									</cell>
+									<cell height="30px">
+										<label id="lbTipo_quirurgico"
+											value="Tipo quirurgico: " />
+									</cell>
+									<cell>
+										<listbox id="lbxTipo_quirurgico"
+											name="tipo_quirurgico" mold="select" width="170px"
+											sclass="combobox" disabled="true" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<row>
+									<cell></cell>
+									<cell height="30px">
+									
+									</cell>
+									<cell>
+									</cell>
+									<cell colspan="2">
+										<checkbox id="chbUrgencias"
+											label="Urgencias:" />
+										<checkbox
+											id="chbHospitalizacion" label="Hospitalizacion:" />
+										<checkbox id="chbRecien_nacido"
+											label="Recien nacido:" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 12 -->
+
+
+								<!-- fila 14 -->
+								<row visible="false">
+									<cell></cell>
+									<cell height="30px">
+										<label id="lbArea_intervencion"
+											value="Area intervencion: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxArea_intervencion" width="170px"
+											style="text-transform:uppercase" maxlength="20" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 15 -->
+								<row visible="false">
+									<cell></cell>
+									<cell height="30px">
+										<label id="lbMeta"
+											value="Meta: " />
+									</cell>
+									<cell>
+										<doublebox id="dbxMeta"
+											format="#,##0.00" width="170px" value="0.00" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label id="lbCobra_copago"
+											value="Cobra copago: " />
+									</cell>
+									<cell>
+										<checkbox id="chbCobra_copago" />
+									</cell>
+
+									<cell height="30px">
+										<label id="lbFrecuencia_orden"
+											value="Frecuencia orden(Dias): " />
+									</cell>
+									<cell>
+										<intbox
+											constraint="no negative:Este valor no puede ser negativo"
+											id="ibxFrecuencia_orden" width="170px"
+											style="text-transform:uppercase" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 25 -->
+								<row visible="false">
+									<cell />
+									<cell>
+										<label
+											value="Tipo de procedimiento: " />
+									</cell>
+									<cell>
+										<listbox
+											id="lbxTipo_procedimiento" name="tipo_procedimiento"
+											mold="select" width="170px" sclass="combobox" />
+									</cell>
+									<cell colspan="2">
+										<checkbox
+											id="chbConsulta_especializada_med_esp"
+											label="Consulta especializada med esp" />
+									</cell>
+									<cell />
+								</row>
+
+								<row visible="false"
+									id="rowAutorizacionMedico">
+									<cell></cell>
+									<cell colspan="2">
+										<checkbox
+											id="chbAut_medi_general" label="Autorizado medico general" />
+									</cell>
+									<cell colspan="2">
+										<checkbox
+											id="chbAut_medi_especialista"
+											label="Autorizado medico especialista" />
+									</cell>
+									<cell></cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<space width="8px" />
+										<label id="lbNivel"
+											value="Nivel: " />
+									</cell>
+									<cell>
+										<listbox id="lbxNivel"
+											name="nivel" mold="select" width="175px" sclass="combobox" />
+									</cell>
+									<cell height="30px">
+									
+									</cell>
+									<cell>
+									
+									</cell>
+									<cell></cell>
+								</row>
+								<row>
+									<cell />
+									<cell colspan="4">
+										<listbox id="lbxNiveles"
+											checkmark="true" multiple="true" hflex="1">
+											<listhead>
+												<listheader
+													label="PERMITIR EN LOS SIGUIENTES NIVELES" />
+											</listhead>
+										</listbox>
+									</cell>
+									<cell />
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+				</div>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

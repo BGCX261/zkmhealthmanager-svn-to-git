@@ -1,0 +1,195 @@
+<?page title="Configuracion_servicios_autorizacion" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formConfiguracion_servicios_autorizacion" width="100%"
+		height="100%"
+		use="healthmanager.controller.Configuracion_servicios_autorizacionAction">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+		<groupbox id="groupboxConsulta" visible="true" closable="false"
+			mold="3d" height="100%">
+			<caption label="Consultar"
+				style="color: blue;font-weight: bold" />
+
+			<separator />
+
+			<grid id="gridResultado" height="90%" mold="paging"
+				pageSize="20" vflex="1">
+				<auxhead>
+					<auxheader colspan="5">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<separator />
+							<textbox id="tbxValue" width="200px"
+								onOK="formConfiguracion_servicios_autorizacion.buscarDatos();"
+								style="text-transform:uppercase" />
+							<separator />
+							<toolbarbutton
+								label="Consultar Configuración" image="/images/Magnifier.gif"
+								onClick="formConfiguracion_servicios_autorizacion.buscarDatos();"
+								tooltiptext="Consultar Configuracion servicios autorizacion" />
+							<separator />
+							<toolbarbutton label="Nueva Configuración"
+								image="/images/New16.gif"
+								onClick='formConfiguracion_servicios_autorizacion.accionForm(true,"registrar");'
+								tooltiptext="Nuevo Configuracion servicios autorizacion" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Descripción" />
+					<column label="Via Ingreso" />
+					<column label="Tipo Usuario" />
+					<column label="Estado" width="100px" />
+					<column label="Acciones" align="center"
+						width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<borderlayout width="100%" height="100%" id="groupboxEditar"
+			visible="false">
+			<north border="none">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<toolbarbutton image="/images/Save16.gif"
+						label="Guardar Configuracion"
+						onClick="formConfiguracion_servicios_autorizacion.guardarDatos();"
+						id="btGuardar" />
+					<toolbarbutton image="/images/New16.gif"
+						label="Nueva Configuracion"
+						onClick='formConfiguracion_servicios_autorizacion.accionForm(true,"registrar");'
+						id="btNew" />
+					<space />
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Consultar"
+						onClick='formConfiguracion_servicios_autorizacion.accionForm(false,tbxAccion.getText());'
+						id="btCancel" />
+					<toolbarbutton image="/images/print_ico.gif"
+						label="Imprimir Configuracion servicios autorizacion"
+						onClick="formConfiguracion_servicios_autorizacion.imprimir();"
+						id="btImprimir" visible="false" />
+					<space />
+					<label value="Formato impresión: " visible="false" />
+					<listbox id="lbxFormato" mold="select" width="150px"
+						visible="false" sclass="combobox">
+						<listitem value="pdf" label="PDF"
+							selected="true" />
+						<listitem value="rtf" label="WORD" />
+					</listbox>
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center">
+					<separator />
+					<groupbox closable="false" width="700px"
+						mold="3d">
+						<caption
+							label="CONFIGURACIÓN DE SERVICIOS PARA AUTORIZACIÓN" />
+						<grid sclass="GridSinBorde" hflex="1">
+							<columns>
+								<column label="" width="10px" />
+								<column label="" width="110px" />
+								<column label="" />
+								<column label="" width="110px" />
+								<column label="" />
+								<column label="" width="10px" />
+							</columns>
+							<rows>
+								<row>
+									<cell />
+									<cell height="30px">
+										<label id="lbNombre"
+											value="Nombre: " />
+									</cell>
+									<cell colspan="3">
+										<textbox id="tbxNombre"
+											hflex="1" style="text-transform:uppercase" />
+									</cell>
+									<cell />
+								</row>
+								<row>
+									<cell />
+									<cell colspan="2">
+										<listbox id="lbxTipo_usuarios"
+											name="tipo_usuario_config" multiple="true" checkmark="true"
+											hflex="1" height="200px">
+											<listhead>
+												<listheader
+													label="Tipo usuario" />
+											</listhead>
+										</listbox>
+									</cell>
+									<cell colspan="2">
+										<listbox id="lbxVia_ingreso"
+											name="via_ingreso" multiple="true" checkmark="true" hflex="1"
+											height="200px">
+											<listhead>
+												<listheader
+													label="Via Ingreso" />
+											</listhead>
+										</listbox>
+									</cell>
+									<cell />
+								</row>
+								<row>
+									<cell />
+									<cell height="30px">
+										<label value="Tipo de servicio: " />
+									</cell>
+									<cell>
+										<listbox id="lbxTipoServicio"
+											name="tipo_servicio_auto" mold="select" hflex="1" 
+											onSelect="formConfiguracion_servicios_autorizacion.onSeleccionarTipoServicio(true)"/> 
+									</cell>
+									<cell height="30px">
+										<label id="lbEstado"
+											value="Estado: " />
+									</cell>
+									<cell>
+										<listbox id="lbxEstado"
+											name="estado" mold="select" hflex="1" />
+									</cell>
+									<cell />
+								</row>
+								<row id="rwProcedimientos" visible="false"> 
+									<cell />
+									<cell height="30px">
+										<label value="Modo cobro: " />
+									</cell>
+									<cell>
+										<listbox id="lbxModoCobro"
+											name="modo_cobro_caja" mold="select" hflex="1" />
+									</cell>
+									<cell colspan="2" >
+										<checkbox
+											id="chkSolicitarTipoProcedimientos"
+											label="Solicitar tipo procedimiento" />
+									</cell>
+									<cell />
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+					<separator />
+					<div id="servicios_arbol" width="700px" /> 
+					<space />
+				</div>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

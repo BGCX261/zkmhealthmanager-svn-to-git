@@ -1,0 +1,1401 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Historia_uci2" pageWidth="612" pageHeight="792" whenNoDataType="AllSectionsNoDetail" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.2100000000000002"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="125"/>
+	<parameter name="codigo_empresa" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="codigo_sucursal" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="nro_historia" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT h.nro_historia, h.nro_identificacion as id_pct,sexo.descripcion as sexo_pct,
+	get_edad(pct.fecha_nacimiento,CURRENT_DATE, '0') as edad,
+ ad.codigo_cita as cod_cita, c.area_intervencion as area_intervencion, a1.descripcion as ante_fam_hipertension, a2.descripcion as ante_fam_ecv, a3.descripcion as ante_fam_enf_coronaria,
+ a4.descripcion as ante_fam_muerte_im_acv, a5.descripcion as ante_fam_dislipidemia,
+ a6.descripcion as ante_fam_nefropatias, a7.descripcion as ante_fam_obesos,
+a8.descripcion as ante_fam_diabetes, a9.descripcion as ante_fam_enf_mental, a10.descripcion as ante_fam_cancer,
+a11.descripcion as ante_fam_hematologia, a12.descripcion as ante_fam_otros,
+
+ant1.codigo_metodo_planificacion as ant1, ant2.codigo_metodo_planificacion as ant2,
+ant3.codigo_metodo_planificacion as ant3,
+ant4.codigo_metodo_planificacion as ant4, ant5.codigo_metodo_planificacion as ant5,
+ant6.codigo_metodo_planificacion as ant6, ant7.codigo_metodo_planificacion as ant7,
+ant8.codigo_metodo_planificacion as ant8, ant9.codigo_metodo_planificacion as ant9, ant10.codigo_metodo_planificacion as ant10,
+ant11.codigo_metodo_planificacion as ant11,
+
+ h.ante_fam_estecifique, h.ante_fam_observaciones,
+ h.ant_gin_fecha_ultima_regla, h.ant_gin_fecha_espectante_parto, h.ant_gin_actividad_sexual,
+ h.ant_gin_tiene_citologia, h.ant_gin_fecha_ultima_citologia, h.ant_gin_tiene_mamografia,
+ h.ant_gin_fecha_mamografia, h.ant_gin_tiene_planificacion, h.ant_gin_g, h.ant_gin_p, h.ant_gin_c,
+ h.ant_gin_a, h.ant_gin_v, h.ant_gin_menarca, h.ant_gin_e_menopaudia, h.ant_gin_ciclo_1, h.ant_gin_ciclo_2,
+ h.ant_gin_citologia_resultado, h.ant_gin_mamografia_resultado, h.ant_gin_fecha_incio_planificacion,
+ h.patologia_embarazo_parto, h.hab_frecuencia_alcohol, h.hab_licor_alcohol, h.hab_frecuencia_tabaquismo,
+ h.hab_ejercicio_cual, h.hab_tabaquismo, h.hab_alcohol, h.hab_ejercicio,
+ h.ant_nios_peso, h.ant_nios_talla, h.ant_nios_psicomotor, h.ant_nios_dieta, h.ant_nios_vacunas,
+ h.ant_gin_fecha_actividad_sexual, h.conf_fur, h.hab_ejercicio_horas_semana, h.hab_dietas, h.hab_dietas_frecuencia, h.hab_factores_psicologicos, h.hab_factores_psicologicos_cual, h.metodos_orales
+
+from historia_clinica_uci h
+left join paciente pct on (pct.codigo_empresa = h.codigo_empresa
+	and pct.codigo_sucursal = h.codigo_sucursal and pct.nro_identificacion = h.nro_identificacion)
+left join elemento sexo on (sexo.tipo = 'sexo' and sexo.codigo = pct.sexo)
+left join admision ad on (ad.nro_ingreso = h.nro_ingreso and ad.nro_identificacion = h.nro_identificacion)
+left join citas c on (c.codigo_cita = ad.codigo_cita)
+left join elemento a1 on (a1.tipo = 'ante_familiares'and a1.codigo = h.ante_fam_hipertension)
+left join elemento a2 on (a2.tipo = 'ante_familiares'and a2.codigo = h.ante_fam_ecv)
+left join elemento a3 on (a3.tipo = 'ante_familiares'and a3.codigo = h.ante_fam_enf_coronaria)
+left join elemento a4 on (a4.tipo = 'ante_familiares'and a4.codigo = h.ante_fam_muerte_im_acv)
+left join elemento a5 on (a5.tipo = 'ante_familiares'and a5.codigo = h.ante_fam_dislipidemia)
+left join elemento a6 on (a6.tipo = 'ante_familiares'and a6.codigo = h.ante_fam_nefropatias)
+left join elemento a7 on (a7.tipo = 'ante_familiares'and a7.codigo = h.ante_fam_obesos)
+left join elemento a8 on (a8.tipo = 'ante_familiares'and a8.codigo = h.ante_fam_diabetes)
+left join elemento a9 on (a9.tipo = 'ante_familiares'and a9.codigo = h.ante_fam_enf_mental)
+left join elemento a10 on (a10.tipo = 'ante_familiares'and a10.codigo = h.ante_fam_cancer)
+left join elemento a11 on (a11.tipo = 'ante_familiares'and a11.codigo = h.ante_fam_hematologia)
+left join elemento a12 on (a12.tipo = 'ante_familiares'and a12.codigo = h.ante_fam_otros)
+
+left join metodos_planificacion ant1 on (ant1.nro_historia = h.nro_historia and ant1.codigo_metodo_planificacion = '01')
+left join metodos_planificacion ant2 on (ant2.nro_historia = h.nro_historia and ant2.codigo_metodo_planificacion = '02')
+left join metodos_planificacion ant3 on (ant3.nro_historia = h.nro_historia and ant3.codigo_metodo_planificacion = '03')
+left join metodos_planificacion ant4 on (ant4.nro_historia = h.nro_historia and ant4.codigo_metodo_planificacion = '04')
+left join metodos_planificacion ant5 on (ant5.nro_historia = h.nro_historia and ant5.codigo_metodo_planificacion = '05')
+left join metodos_planificacion ant6 on (ant6.nro_historia = h.nro_historia and ant6.codigo_metodo_planificacion = '06')
+left join metodos_planificacion ant7 on (ant7.nro_historia = h.nro_historia and ant7.codigo_metodo_planificacion = '07')
+left join metodos_planificacion ant8 on (ant8.nro_historia = h.nro_historia and ant8.codigo_metodo_planificacion = '08')
+left join metodos_planificacion ant9 on (ant9.nro_historia = h.nro_historia and ant9.codigo_metodo_planificacion = '09')
+left join metodos_planificacion ant10 on (ant10.nro_historia = h.nro_historia and ant10.codigo_metodo_planificacion = '10')
+left join metodos_planificacion ant11 on (ant11.nro_historia = h.nro_historia and ant11.codigo_metodo_planificacion = '11')
+where h.codigo_empresa = $P{codigo_empresa}
+and h.codigo_sucursal = $P{codigo_sucursal}
+and h.nro_historia = $P{nro_historia}]]>
+	</queryString>
+	<field name="nro_historia" class="java.lang.String"/>
+	<field name="id_pct" class="java.lang.String"/>
+	<field name="sexo_pct" class="java.lang.String"/>
+	<field name="edad" class="java.lang.String"/>
+	<field name="cod_cita" class="java.lang.String"/>
+	<field name="area_intervencion" class="java.lang.String"/>
+	<field name="ante_fam_hipertension" class="java.lang.String"/>
+	<field name="ante_fam_ecv" class="java.lang.String"/>
+	<field name="ante_fam_enf_coronaria" class="java.lang.String"/>
+	<field name="ante_fam_muerte_im_acv" class="java.lang.String"/>
+	<field name="ante_fam_dislipidemia" class="java.lang.String"/>
+	<field name="ante_fam_nefropatias" class="java.lang.String"/>
+	<field name="ante_fam_obesos" class="java.lang.String"/>
+	<field name="ante_fam_diabetes" class="java.lang.String"/>
+	<field name="ante_fam_enf_mental" class="java.lang.String"/>
+	<field name="ante_fam_cancer" class="java.lang.String"/>
+	<field name="ante_fam_hematologia" class="java.lang.String"/>
+	<field name="ante_fam_otros" class="java.lang.String"/>
+	<field name="ant1" class="java.lang.String"/>
+	<field name="ant2" class="java.lang.String"/>
+	<field name="ant3" class="java.lang.String"/>
+	<field name="ant4" class="java.lang.String"/>
+	<field name="ant5" class="java.lang.String"/>
+	<field name="ant6" class="java.lang.String"/>
+	<field name="ant7" class="java.lang.String"/>
+	<field name="ant8" class="java.lang.String"/>
+	<field name="ant9" class="java.lang.String"/>
+	<field name="ant10" class="java.lang.String"/>
+	<field name="ant11" class="java.lang.String"/>
+	<field name="ante_fam_estecifique" class="java.lang.String"/>
+	<field name="ante_fam_observaciones" class="java.lang.String"/>
+	<field name="ant_gin_fecha_ultima_regla" class="java.sql.Timestamp"/>
+	<field name="ant_gin_fecha_espectante_parto" class="java.sql.Timestamp"/>
+	<field name="ant_gin_actividad_sexual" class="java.lang.Boolean"/>
+	<field name="ant_gin_tiene_citologia" class="java.lang.Boolean"/>
+	<field name="ant_gin_fecha_ultima_citologia" class="java.sql.Timestamp"/>
+	<field name="ant_gin_tiene_mamografia" class="java.lang.Boolean"/>
+	<field name="ant_gin_fecha_mamografia" class="java.sql.Timestamp"/>
+	<field name="ant_gin_tiene_planificacion" class="java.lang.Boolean"/>
+	<field name="ant_gin_g" class="java.lang.String"/>
+	<field name="ant_gin_p" class="java.lang.String"/>
+	<field name="ant_gin_c" class="java.lang.String"/>
+	<field name="ant_gin_a" class="java.lang.String"/>
+	<field name="ant_gin_v" class="java.lang.String"/>
+	<field name="ant_gin_menarca" class="java.lang.String"/>
+	<field name="ant_gin_e_menopaudia" class="java.lang.String"/>
+	<field name="ant_gin_ciclo_1" class="java.lang.String"/>
+	<field name="ant_gin_ciclo_2" class="java.lang.String"/>
+	<field name="ant_gin_citologia_resultado" class="java.lang.String"/>
+	<field name="ant_gin_mamografia_resultado" class="java.lang.String"/>
+	<field name="ant_gin_fecha_incio_planificacion" class="java.sql.Timestamp"/>
+	<field name="patologia_embarazo_parto" class="java.lang.String"/>
+	<field name="hab_frecuencia_alcohol" class="java.lang.String"/>
+	<field name="hab_licor_alcohol" class="java.lang.String"/>
+	<field name="hab_frecuencia_tabaquismo" class="java.lang.String"/>
+	<field name="hab_ejercicio_cual" class="java.lang.String"/>
+	<field name="hab_tabaquismo" class="java.lang.Boolean"/>
+	<field name="hab_alcohol" class="java.lang.Boolean"/>
+	<field name="hab_ejercicio" class="java.lang.Boolean"/>
+	<field name="ant_nios_peso" class="java.lang.String"/>
+	<field name="ant_nios_talla" class="java.lang.String"/>
+	<field name="ant_nios_psicomotor" class="java.lang.String"/>
+	<field name="ant_nios_dieta" class="java.lang.String"/>
+	<field name="ant_nios_vacunas" class="java.lang.String"/>
+	<field name="ant_gin_fecha_actividad_sexual" class="java.sql.Timestamp"/>
+	<field name="conf_fur" class="java.lang.String"/>
+	<field name="hab_ejercicio_horas_semana" class="java.lang.String"/>
+	<field name="hab_dietas" class="java.lang.Boolean"/>
+	<field name="hab_dietas_frecuencia" class="java.lang.String"/>
+	<field name="hab_factores_psicologicos" class="java.lang.Boolean"/>
+	<field name="hab_factores_psicologicos_cual" class="java.lang.String"/>
+	<field name="metodos_orales" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="513" splitType="Stretch">
+			<rectangle>
+				<reportElement x="1" y="10" width="571" height="193"/>
+			</rectangle>
+			<textField>
+				<reportElement x="349" y="41" width="110" height="12"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{ante_fam_hipertension}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="85" y="41" width="14" height="12"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[Static text]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="349" y="53" width="110" height="12"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{ante_fam_ecv}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="85" y="53" width="14" height="12"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[Static text]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="99" y="53" width="250" height="12"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["ECV"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="85" y="77" width="14" height="12"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[Static text]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="349" y="77" width="110" height="12"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{ante_fam_muerte_im_acv}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="99" y="77" width="250" height="12"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Muerte menor 60 años"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="349" y="65" width="110" height="12"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{ante_fam_enf_coronaria}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="85" y="65" width="14" height="12"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[Static text]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="99" y="65" width="250" height="12"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Enf. Coronaria"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="99" y="113" width="250" height="12"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Obesos"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="85" y="101" width="14" height="12"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[Static text]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="349" y="101" width="110" height="12"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{ante_fam_nefropatias}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="99" y="101" width="250" height="12"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Nefropatias"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="85" y="125" width="14" height="12"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[Static text]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="349" y="125" width="110" height="12"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{ante_fam_diabetes}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="85" y="113" width="14" height="12"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[Static text]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="349" y="89" width="110" height="12"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{ante_fam_dislipidemia}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="99" y="125" width="250" height="12"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Diabetes"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="85" y="89" width="14" height="12"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[Static text]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="99" y="89" width="250" height="12"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Dislipidemia"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="349" y="113" width="110" height="12"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{ante_fam_obesos}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="99" y="161" width="250" height="12"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Hematologia"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="85" y="149" width="14" height="12"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[Static text]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="349" y="149" width="110" height="12"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{ante_fam_cancer}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="99" y="149" width="250" height="12"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Cancer"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="85" y="173" width="14" height="12"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[Static text]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="349" y="173" width="110" height="12"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{ante_fam_otros}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="85" y="161" width="14" height="12"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[Static text]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="349" y="137" width="110" height="12"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{ante_fam_enf_mental}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="99" y="173" width="250" height="12"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Otros"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="85" y="137" width="14" height="12"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[Static text]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="99" y="137" width="250" height="12"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Enf. Mental"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="349" y="161" width="110" height="12"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{ante_fam_hematologia}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="85" y="29" width="264" height="12"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["ANTECEDENTES FAMILIARES"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="349" y="29" width="110" height="12"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["FAMILIAR"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="99" y="41" width="250" height="12"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Hipertension"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="16" y="5" width="124" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Antecedentes Familiares"]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="0" y="219" width="572" height="31"/>
+			</rectangle>
+			<textField>
+				<reportElement x="99" y="226" width="84" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{ant_nios_peso}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="7" y="226" width="92" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Peso:"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="18" y="214" width="155" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Antecedentes - Niños(Perinatales)"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="191" y="226" width="92" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Talla:"]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="0" y="259" width="572" height="79"/>
+			</rectangle>
+			<textField>
+				<reportElement x="283" y="226" width="84" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{ant_nios_talla}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="386" y="226" width="92" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Vacunas:"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="478" y="226" width="84" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{ant_nios_vacunas}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="7" y="238" width="92" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Ant. Psicomotor:"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="99" y="238" width="84" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{ant_nios_psicomotor}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="191" y="238" width="92" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Dieta:"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="283" y="238" width="84" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{ant_nios_dieta}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="358" y="266" width="77" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{hab_alcohol}?"Licor:":""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="18" y="254" width="55" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Habitos"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="163" y="266" width="63" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{hab_alcohol}?"Frecuencia:":""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="226" y="266" width="84" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{hab_alcohol}?$F{hab_frecuencia_alcohol}:""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="7" y="266" width="107" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Alcohol:"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="435" y="266" width="84" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{hab_alcohol}?$F{hab_licor_alcohol}:""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="114" y="266" width="26" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{hab_alcohol}?"SI":"NO"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="435" y="278" width="84" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{hab_tabaquismo}?$F{hab_frecuencia_tabaquismo}:""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="7" y="278" width="107" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Tabaquismo:"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="163" y="278" width="63" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{hab_tabaquismo}?"Frecuencia:":""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="358" y="278" width="77" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{hab_tabaquismo}?"Cajas al año":""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="226" y="278" width="84" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{hab_tabaquismo}?$F{hab_frecuencia_tabaquismo}:""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="114" y="278" width="26" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{hab_tabaquismo}?"SI":"NO"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="435" y="290" width="84" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{hab_ejercicio}?$F{hab_ejercicio_horas_semana}:""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="7" y="290" width="107" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Ejercicio:"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="163" y="290" width="63" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{hab_ejercicio}?"Cual:":""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="358" y="290" width="77" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{hab_ejercicio}?"Horas por Semana:":""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="226" y="290" width="84" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{hab_ejercicio}?$F{hab_ejercicio_cual}:""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="114" y="290" width="26" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{hab_ejercicio}?"SI":"NO"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="7" y="302" width="107" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Dietas:"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="163" y="302" width="63" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{hab_dietas}?"Frecuencia:":""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="226" y="302" width="84" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{hab_dietas}?$F{hab_dietas_frecuencia}:""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="114" y="302" width="26" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{hab_dietas}?"SI":"NO"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="7" y="314" width="107" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Factores Psicológicos:"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="163" y="314" width="63" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{hab_factores_psicologicos}?"Cual:":""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="226" y="314" width="84" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{hab_factores_psicologicos}?$F{hab_factores_psicologicos_cual}:""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="114" y="314" width="26" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{hab_factores_psicologicos}?"SI":"NO"]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="1" y="353" width="571" height="156">
+					<printWhenExpression><![CDATA[$F{sexo_pct}.equals("Femenino")]]></printWhenExpression>
+				</reportElement>
+			</rectangle>
+			<textField>
+				<reportElement x="342" y="386" width="51" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?($F{ant_gin_actividad_sexual}?"Fecha Inicio:":""):""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="539" y="447" width="23" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?($F{ant_gin_tiene_planificacion}?($F{ant8}.equals("08")?" X ":" - "):""):""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="114" y="398" width="59" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?($F{ant_gin_tiene_citologia}?"SI":"NO"):""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1" y="470" width="448" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?"Patologia de Embarazo o parto:":""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="290" y="447" width="114" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?($F{ant_gin_tiene_planificacion}?"Ligadura de Trompas":""):""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="17" y="350" width="131" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?" Antecedentes Ginecobstétricos":""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="143" y="459" width="115" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?($F{ant_gin_tiene_planificacion}?"Inyectables trimestrales":""):""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="114" y="422" width="59" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?($F{ant_gin_tiene_planificacion}?"SI":"NO"):""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="232" y="374" width="51" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?"FUM:":""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="4" y="422" width="110" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?"Planificacion sexual:":""]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="283" y="374" width="59" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.sql.Timestamp"><![CDATA[$F{sexo_pct}.equals("Femenino")?$F{ant_gin_fecha_ultima_regla}:null]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="96" y="386" width="18" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?$F{ant_gin_ciclo_2}:""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="4" y="410" width="110" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?"Mamografia:":""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="4" y="459" width="110" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?($F{ant_gin_tiene_planificacion}?"Inyectables mensuales":""):""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="55" y="374" width="59" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?$F{ant_gin_menarca}:""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="393" y="362" width="59" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?$F{ant_gin_a}:""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="435" y="434" width="104" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?($F{ant_gin_tiene_planificacion}?"Condón":""):""]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="224" y="410" width="59" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.sql.Timestamp"><![CDATA[$F{sexo_pct}.equals("Femenino")?($F{ant_gin_tiene_mamografia}?$F{ant_gin_fecha_mamografia}:null):null]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="267" y="447" width="23" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?($F{ant_gin_tiene_planificacion}?($F{ant6}.equals("06")?" X ":" - "):""):""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="283" y="398" width="59" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?($F{ant_gin_tiene_citologia}?"Resultado:":""):""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="232" y="362" width="51" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?"C":""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="55" y="386" width="18" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?$F{ant_gin_ciclo_1}:""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="283" y="362" width="59" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?$F{ant_gin_c}:""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="412" y="434" width="23" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?($F{ant_gin_tiene_planificacion}?($F{ant3}.equals("03")?" X ":" - "):""):""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="267" y="434" width="23" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?($F{ant_gin_tiene_planificacion}?($F{ant2}.equals("02")?" X ":" - "):""):""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="4" y="374" width="51" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?"Menarquia:":""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="117" y="460" width="23" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?($F{ant_gin_tiene_planificacion}?($F{ant9}.equals("09")?" X ":" - "):""):""]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="342" y="410" width="110" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?($F{ant_gin_tiene_mamografia}?$F{ant_gin_mamografia_resultado}:""):""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="412" y="459" width="23" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?($F{ant_gin_tiene_planificacion}?($F{ant11}.equals("11")?" X ":" - "):""):""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="342" y="362" width="51" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?"A":""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="55" y="362" width="59" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?$F{ant_gin_g}:""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="143" y="447" width="115" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?($F{ant_gin_tiene_planificacion}?"Dispositivo Intrauterinos":""):""]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="224" y="398" width="59" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.sql.Timestamp"><![CDATA[$F{sexo_pct}.equals("Femenino")?($F{ant_gin_tiene_citologia}?$F{ant_gin_fecha_ultima_citologia}:null):null]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="114" y="374" width="59" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?"Menopaucia:":""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="393" y="374" width="59" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?$F{conf_fur}:""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="4" y="398" width="110" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?"F. Ultima Citologia:":""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="173" y="422" width="51" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?($F{ant_gin_tiene_planificacion}?"Fecha:":""):""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="173" y="374" width="59" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?$F{ant_gin_e_menopaudia}:""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="117" y="435" width="23" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?($F{ant_gin_tiene_planificacion}?($F{ant1}.equals("01")?" X ":" - "):""):""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="290" y="434" width="114" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?($F{ant_gin_tiene_planificacion}?"Espermicidas":""):""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="117" y="448" width="23" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?($F{ant_gin_tiene_planificacion}?($F{ant5}.equals("05")?" X ":" - "):""):""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="4" y="434" width="110" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?($F{ant_gin_tiene_planificacion}?"Implantes subdérmicos":""):""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="4" y="482" width="558" height="24"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?$F{patologia_embarazo_parto}:""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="412" y="446" width="23" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?($F{ant_gin_tiene_planificacion}?($F{ant7}.equals("07")?" X ":" - "):""):""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="452" y="374" width="51" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?($F{area_intervencion}.equals("06")?"FPP:":""):""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="503" y="362" width="59" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?$F{ant_gin_v}:""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="173" y="386" width="110" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?"Actividad Sexual:":""]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="393" y="386" width="59" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.sql.Timestamp"><![CDATA[$F{sexo_pct}.equals("Femenino")?($F{ant_gin_actividad_sexual}?$F{ant_gin_fecha_actividad_sexual}:null):null]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="283" y="410" width="59" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?($F{ant_gin_tiene_mamografia}?"Resultado:":""):""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="267" y="459" width="23" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?($F{ant_gin_tiene_planificacion}?($F{ant10}.equals("10")?" X ":" - "):""):""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="452" y="362" width="51" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?"V":""]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="342" y="398" width="110" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?($F{ant_gin_tiene_citologia}?$F{ant_gin_citologia_resultado}:""):""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="4" y="386" width="51" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?"Ciclos:":""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="173" y="362" width="59" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?$F{ant_gin_p}:""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="114" y="362" width="59" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?"P":""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="73" y="386" width="18" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?"X":""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="114" y="410" width="59" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?($F{ant_gin_tiene_mamografia}?"SI":"NO"):""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="283" y="386" width="59" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?($F{ant_gin_actividad_sexual}?"SI":"NO"):""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="435" y="447" width="104" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?($F{ant_gin_tiene_planificacion}?"Vasectomía":""):""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="539" y="434" width="23" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?($F{ant_gin_tiene_planificacion}?($F{ant4}.equals("04")?" X ":" - "):""):""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="173" y="410" width="51" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?($F{ant_gin_tiene_mamografia}?"Fecha:":""):""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="342" y="374" width="51" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?"Estado:":""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="290" y="459" width="114" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?($F{ant_gin_tiene_planificacion}?"Método natural":""):""]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="503" y="374" width="59" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.sql.Timestamp"><![CDATA[$F{sexo_pct}.equals("Femenino")?($F{area_intervencion}.equals("06")?$F{ant_gin_fecha_espectante_parto}:null):null]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="173" y="398" width="51" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?($F{ant_gin_tiene_citologia}?"Fecha:":""):""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="4" y="362" width="51" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?"G":""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="143" y="434" width="115" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?($F{ant_gin_tiene_planificacion}?"Píldoras anticonceptivas":""):""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="4" y="447" width="110" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}.equals("Femenino")?($F{ant_gin_tiene_planificacion}?"Diafragma":""):""]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="224" y="422" width="59" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.sql.Timestamp"><![CDATA[$F{sexo_pct}.equals("Femenino")?($F{ant_gin_tiene_planificacion}?$F{ant_gin_fecha_incio_planificacion}:null):null]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

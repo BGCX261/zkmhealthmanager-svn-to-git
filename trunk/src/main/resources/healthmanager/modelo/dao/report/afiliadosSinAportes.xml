@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.afiliadosSinAportesReport">
+	<select id="select" resultType="java.util.HashMap" parameterType="java.util.Map">
+		SELECT
+			pac.documento,
+			pac.apellido1,
+			pac.apellido2,
+			pac.nombre1,
+			pac.nombre2,
+			pac.sexo,
+			CASE WHEN  elm_tipo_emp.descripcion IS NOT NULL THEN elm_tipo_emp.descripcion ELSE '(NO ESPECIFICADO)' END  AS tipo_empleado
+			FROM
+			public.afiliaciones_me AS afil
+			INNER JOIN public.paciente AS pac ON pac.codigo_empresa = afil.codigo_empresa 
+											AND pac.codigo_sucursal = afil.codigo_sucursal AND pac.nro_identificacion = afil.nro_identificacion_afiliado
+			LEFT JOIN public.elemento AS elm_tipo_emp ON elm_tipo_emp.codigo = afil.tipo_empleado  AND elm_tipo_emp.tipo = 'tipo_empleado'
+			WHERE NOT EXISTS (SELECT * FROM aportes_cotizaciones AS apo
+							WHERE apo.codigo_empresa = afil.codigo_empresa 	AND apo.codigo_sucursal = afil.codigo_sucursal 
+								AND apo.nro_identificacion = afil.nro_identificacion_afiliado
+								<if test="anio != null">
+			    					AND apo.anio = #{anio}
+								</if>
+								<if test="mes != null">
+			    					AND apo.mes = #{mes}
+								</if>
+								)
+			AND afil.tipo_afiliado = 'C' AND afil.tipo_empleado != 'R'
+			AND afil.codigo_empresa = #{codigo_empresa}
+			AND afil.codigo_sucursal = #{codigo_sucursal}
+    </select>
+</mapper>

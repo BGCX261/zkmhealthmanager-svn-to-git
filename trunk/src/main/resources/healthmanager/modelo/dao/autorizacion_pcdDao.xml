@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.Autorizacion_pcdDao">
+
+	
+
+	<resultMap id="autorizacion_pcdMap" type="autorizacion_pcd">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="nro_autorizacion" property="nro_autorizacion" />
+		<result column="fecha" property="fecha" />
+		<result column="nro_ingreso" property="nro_ingreso" />
+		<result column="nro_identificacion" property="nro_identificacion" />
+		<result column="codigo_ordenador" property="codigo_ordenador" />
+		<result column="facturacion" property="facturacion" />
+		<result column="creacion_date" property="creacion_date" />
+		<result column="ultimo_update" property="ultimo_update" />
+		<result column="creacion_user" property="creacion_user" />
+		<result column="ultimo_user" property="ultimo_user" />
+		<result column="codigo_administradora" property="codigo_administradora" />
+		<result column="id_plan" property="id_plan" />
+	</resultMap>
+
+	<insert id="crear" parameterType="autorizacion_pcd">
+		insert into public.autorizacion_pcd (codigo_empresa,codigo_sucursal,
+		nro_autorizacion,fecha,nro_ingreso,
+		nro_identificacion,codigo_ordenador,facturacion,
+		creacion_date,ultimo_update,creacion_user,
+		ultimo_user,codigo_administradora,id_plan)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{nro_autorizacion},#{fecha},#{nro_ingreso},
+		#{nro_identificacion},#{codigo_ordenador},#{facturacion},
+		#{creacion_date},#{ultimo_update},#{creacion_user},
+		#{ultimo_user},#{codigo_administradora},#{id_plan})
+	</insert>
+
+	<update id="actualizar" parameterType="autorizacion_pcd">
+		update public.autorizacion_pcd set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},nro_autorizacion = #{nro_autorizacion},
+		fecha = #{fecha},nro_ingreso = #{nro_ingreso},
+		nro_identificacion = #{nro_identificacion},codigo_ordenador = #{codigo_ordenador},
+		facturacion = #{facturacion},creacion_date = #{creacion_date},
+		ultimo_update = #{ultimo_update},creacion_user = #{creacion_user},
+		ultimo_user = #{ultimo_user},codigo_administradora = #{codigo_administradora},
+		id_plan = #{id_plan}
+		where 		codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and nro_autorizacion = #{nro_autorizacion}
+	</update>
+
+	<select id="consultar" resultMap="autorizacion_pcdMap" parameterType="autorizacion_pcd">
+		select codigo_empresa,codigo_sucursal,
+		nro_autorizacion,fecha,nro_ingreso,nro_identificacion,
+		codigo_ordenador,facturacion,creacion_date,ultimo_update,
+		creacion_user,ultimo_user,codigo_administradora,id_plan
+		from public.autorizacion_pcd where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and nro_autorizacion = #{nro_autorizacion}
+	</select>
+
+	<delete id="eliminar" parameterType="autorizacion_pcd">
+		delete from public.autorizacion_pcd
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and nro_autorizacion = #{nro_autorizacion}
+	</delete>
+
+	<select id="listar" resultMap="autorizacion_pcdMap" parameterType="java.util.Map">
+		select codigo_empresa,codigo_sucursal,
+		nro_autorizacion,fecha,nro_ingreso,nro_identificacion,
+		codigo_ordenador,facturacion,creacion_date,ultimo_update,
+		creacion_user,ultimo_user,codigo_administradora,id_plan
+		from public.autorizacion_pcd 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">AND codigo_empresa = #{codigo_empresa}</if>
+			<if test="codigo_sucursal != null">AND codigo_sucursal = #{codigo_sucursal}</if>
+			<if test="parameter != null">AND ${parameter} like '${value}'</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

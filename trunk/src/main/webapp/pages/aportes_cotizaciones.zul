@@ -1,0 +1,499 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formAportes_cotizaciones" width="100%" height="98%"
+		use="healthmanager.controller.Aportes_cotizacionesAction"
+		border="none">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+		<groupbox id="groupboxConsulta" visible="true" closable="false"
+			height="90%" mold="3d">
+			<caption label="Consultar"
+				style="color: black;font-weight: bold" />
+
+			<grid id="gridResultado" mold="paging" pageSize="20"
+				vflex="1">
+				<auxhead>
+					<auxheader colspan="10">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<separator />
+							<textbox id="tbxValue" width="200px"
+								onOK="formAportes_cotizaciones.buscarDatos();"
+								style="text-transform:uppercase" />
+							<separator />
+							<toolbarbutton label="Buscar"
+								image="/images/Magnifier.gif"
+								onClick="formAportes_cotizaciones.buscarDatos();"
+								tooltiptext="Consultar Prueba" />
+							<separator />
+							<toolbarbutton label="Nuevo"
+								image="/images/New16.gif"
+								onClick='formAportes_cotizaciones.accionForm(true,"registrar");'
+								tooltiptext="Nuevo Prueba" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Nro Id Cotizante" />
+					<column label="Nombre Cotizante" />
+					<column label="Fecha_ingreso" />
+					<column label="Año y Mes" />
+					<column label="Id Aportadores" />
+					<column label="Nombre Aportadores" />
+					<column label="Valor cotizacion" />
+					<column label="Ibc" />
+					<column label="Estado" />
+					<column label="Acciones" width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<groupbox visible="false" id="groupboxEditar" closable="false"
+			mold="3d" height="98%" contentStyle="border:0">
+
+			<tabbox height="100%">
+				<tabs>
+					<tab label="Registro Básico" />
+					<tab label="Registro por Archivos Planos" />
+				</tabs>
+				<tabpanels>
+					<tabpanel>
+
+						<borderlayout width="100%" height="95%">
+							<north border="none">
+								<toolbar width="100%" align="start">
+									<textbox id="tbxAccion"
+										value="registrar" visible="false" />
+									<toolbarbutton
+										image="/images/Save16.gif" label="Guardar Aporte"
+										onClick="formAportes_cotizaciones.guardarDatos();"
+										id="btGuardar" />
+									<toolbarbutton
+										image="/images/New16.gif" label="Nuevo Aporte"
+										onClick='formAportes_cotizaciones.accionForm(true,"registrar");'
+										id="btNew" />
+									<space />
+									<toolbarbutton
+										image="/images/trasladar.gif" label="Cancelar"
+										onClick='formAportes_cotizaciones.accionForm(false,"registrar");'
+										id="btCancel" />
+								</toolbar>
+							</north>
+							<center autoscroll="true" border="none">
+								<div align="center">
+									<space />
+									<groupbox closable="false" mold="3d"
+										height="90%" width="660px">
+										<caption
+											label="Registrar/Actualizar"
+											style="color: black;font-weight: bold" />
+										<grid sclass="GridSinBorde"
+											vflex="1">
+											<columns>
+												<column label=""
+													width="10px" />
+												<column label=""
+													width="130px" align="left" />
+												<column label=""
+													width="182px" align="left" />
+												<column label=""
+													width="130px" align="left" />
+												<column label=""
+													width="182px" align="left" />
+												<column label=""
+													width="10px" align="left" />
+											</columns>
+											<rows>
+												<row>
+													<cell></cell>
+													<cell
+														height="30px">
+														<label
+															value="* " style="color: red"
+															tooltiptext="Campo obligatorio" />
+														<label
+															id="lbNro_identificacion" value="Cotizante: " />
+													</cell>
+													<cell>
+														<bandbox
+															id="tbxNro_identificacion" autodrop="true"
+															readonly="true" hflex="1"
+															onOpen='formAportes_cotizaciones.buscarCotizante(tbxValueCotizante.getValue(),lbxCotizante)'>
+															<bandpopup>
+																<vbox>
+																	<toolbar>
+																		<label
+																			value="Buscar: " />
+																		<textbox
+																			id="tbxValueCotizante"
+																			onChanging='formAportes_cotizaciones.buscarCotizante(event.getValue(),lbxCotizante)'
+																			style="text-transform:uppercase;" />
+																		<toolbarbutton
+																			image="/images/borrar.gif" tooltiptext="Quitar"
+																			onClick='formAportes_cotizaciones.selectedCotizante(new Listitem())' />
+																	</toolbar>
+																	<listbox
+																		height="300px" width="600px" mold="paging"
+																		pageSize="8" id="lbxCotizante"
+																		onSelect='formAportes_cotizaciones.selectedCotizante(self.getSelectedItem())'>
+																		<listhead>
+																			<listheader
+																				label="Tipo id" width="50px" />
+																			<listheader
+																				label="Nro identificación" width="110px" />
+																			<listheader
+																				label="Nombre" />
+																			<listheader
+																				label="Sexo" width="100px" />
+																		</listhead>
+																	</listbox>
+																</vbox>
+															</bandpopup>
+														</bandbox>
+													</cell>
+													<cell colspan="2">
+														<textbox
+															id="tbxNomCotizante" hflex="1"
+															style="text-transform:uppercase" readonly="true" />
+
+													</cell>
+													<cell />
+												</row>
+
+												<!-- fila 2 -->
+												<row>
+													<cell></cell>
+													<cell
+														height="30px">
+														<label
+															id="lbFecha_ingreso" value="Fecha ingreso: " />
+													</cell>
+													<cell>
+														<datebox
+															id="dtbxFecha_ingreso" format="yyyy-MM-dd"
+															readonly="true" hflex="1" />
+													</cell>
+
+													<cell
+														height="30px">
+														<label
+															id="lbMes" value="Año y Mes Cotizacion: " />
+													</cell>
+													<cell>
+														<datebox
+															id="dtbxMes" format="yyyy-MM" hflex="1" />
+													</cell>
+													<cell></cell>
+												</row>
+
+												<!-- fila 4 -->
+												<row>
+													<cell></cell>
+													<cell
+														height="30px">
+														<label
+															value="* " style="color: red"
+															tooltiptext="Campo obligatorio" />
+														<label
+															id="lbCodigo_aportadores" value="Aportante: " />
+													</cell>
+													<cell>
+														<bandbox
+															id="tbxCodigo_aportadores" autodrop="true"
+															readonly="true" width="170px"
+															onOpen='formAportes_cotizaciones.buscarAportante(tbxValueAportante.getValue(),lbxAportante)'>
+															<bandpopup>
+																<vbox>
+																	<toolbar>
+																		<label
+																			value="Buscar: " />
+																		<textbox
+																			id="tbxValueAportante"
+																			onChanging='formAportes_cotizaciones.buscarAportante(event.getValue(),lbxAportante)'
+																			style="text-transform:uppercase;" />
+																		<toolbarbutton
+																			image="/images/borrar.gif" tooltiptext="Quitar"
+																			onClick='formAportes_cotizaciones.selectedAportante(new Listitem())' />
+																	</toolbar>
+																	<listbox
+																		height="300px" width="600px" mold="paging"
+																		pageSize="8" id="lbxAportante"
+																		onSelect='formAportes_cotizaciones.selectedAportante(self.getSelectedItem())'>
+																		<listhead>
+																			<listheader
+																				label="Tipo ID" width="65px" />
+																			<listheader
+																				label="Nro Id" width="102px" />
+																			<listheader
+																				label="Nombre" />
+																		</listhead>
+																	</listbox>
+																</vbox>
+															</bandpopup>
+														</bandbox>
+													</cell>
+													<cell colspan="2">
+														<textbox
+															id="tbxNomAportante" hflex="1"
+															style="text-transform:uppercase" readonly="true" />
+													</cell>
+													<cell />
+												</row>
+
+												<!-- fila 5 -->
+												<row>
+													<cell></cell>
+													<cell
+														height="30px">
+														<label
+															value="* " style="color: red"
+															tooltiptext="Campo obligatorio" />
+														<label
+															id="lbIbc" value="IBC: " />
+													</cell>
+													<cell>
+														<doublebox
+															id="dbxIbc" format="#,##0.00" hflex="1" value="0.00" />
+													</cell>
+													<cell
+														height="30px">
+														<label
+															value="* " style="color: red"
+															tooltiptext="Campo obligatorio" />
+														<label
+															id="lbValor_cotiza" value="Valor Cotizacion: " />
+													</cell>
+													<cell>
+														<doublebox
+															id="dbxValor_cotiza" format="#,##0.00" hflex="1"
+															value="0.00" />
+													</cell>
+													<cell></cell>
+												</row>
+
+												<row>
+													<cell></cell>
+													<cell
+														height="30px">
+														<label
+															id="lbNovedades" value="Novedades: " />
+													</cell>
+													<cell>
+														<listbox
+															id="lbxNovedades" name="novedades" mold="select"
+															hflex="1" sclass="combobox" />
+													</cell>
+													<cell
+														height="30px">
+														<label
+															id="lbEstado" value="Activo: " />
+													</cell>
+													<cell>
+														<checkbox
+															id="chbEstado" checked="true" />
+													</cell>
+													<cell></cell>
+												</row>
+											</rows>
+										</grid>
+									</groupbox>
+								</div>
+							</center>
+						</borderlayout>
+					</tabpanel>
+					<tabpanel>
+						<borderlayout width="100%" height="95%">
+							<north border="none">
+								<toolbar width="100%" align="start">
+									<toolbarbutton
+										image="/images/Save16.gif" label="Guardar Aporte"
+										onClick="formAportes_cotizaciones.guardarDatos2();" />
+									<toolbarbutton
+										image="/images/New16.gif" label="Nuevo Aporte"
+										onClick='formAportes_cotizaciones.accionForm(true,"registrar");' />
+									<space />
+									<toolbarbutton
+										image="/images/trasladar.gif" label="Cancelar"
+										onClick='formAportes_cotizaciones.accionForm(false,"registrar");' />
+								</toolbar>
+							</north>
+							<center autoscroll="true" border="none">
+								<div align="center">
+									<space />
+									<groupbox closable="false" mold="3d"
+										height="90%" width="660px">
+										<caption
+											label="Registrar/Actualizar"
+											style="color: black;font-weight: bold" />
+										<grid sclass="GridSinBorde"
+											vflex="1">
+											<columns>
+												<column label=""
+													width="10px" />
+												<column label=""
+													width="130px" align="left" />
+												<column label=""
+													width="182px" align="left" />
+												<column label=""
+													width="130px" align="left" />
+												<column label=""
+													width="182px" align="left" />
+												<column label=""
+													width="10px" align="left" />
+											</columns>
+											<rows>
+												<row>
+													<cell />
+													<cell>
+														<label
+															value="* " style="color: red"
+															tooltiptext="Campo obligatorio" />
+														<label
+															value="Especificaciones: " />
+													</cell>
+													<cell colspan="3">
+														<listbox
+															id="lbxEspecificaciones" mold="select" hflex="1"
+															sclass="combobox" />
+													</cell>
+													<cell />
+												</row>
+
+												<row
+													id="row_aportante">
+													<cell></cell>
+													<cell
+														height="30px">
+														<label
+															value="* " style="color: red"
+															tooltiptext="Campo obligatorio" />
+														<label
+															value="Aportante: " />
+													</cell>
+													<cell>
+														<bandbox
+															id="tbxCodigo_aportadores2" autodrop="true"
+															readonly="true" width="170px"
+															onOpen='formAportes_cotizaciones.buscarAportante(tbxValueAportante2.getValue(),lbxAportante2)'>
+															<bandpopup>
+																<vbox>
+																	<toolbar>
+																		<label
+																			value="Buscar: " />
+																		<textbox
+																			id="tbxValueAportante2"
+																			onChanging='formAportes_cotizaciones.buscarAportante(event.getValue(),lbxAportante2)'
+																			style="text-transform:uppercase;" />
+																		<toolbarbutton
+																			image="/images/borrar.gif" tooltiptext="Quitar"
+																			onClick='formAportes_cotizaciones.selectedAportante2(new Listitem())' />
+																	</toolbar>
+																	<listbox
+																		height="300px" width="600px" mold="paging"
+																		pageSize="8" id="lbxAportante2"
+																		onSelect='formAportes_cotizaciones.selectedAportante2(self.getSelectedItem())'>
+																		<listhead>
+																			<listheader
+																				label="Tipo id" width="65px" />
+																			<listheader
+																				label="Nro Identificación" width="102px" />
+																			<listheader
+																				label="Nombre" />
+																		</listhead>
+																	</listbox>
+																</vbox>
+															</bandpopup>
+														</bandbox>
+													</cell>
+													<cell colspan="2">
+														<textbox
+															id="tbxNomAportante2" hflex="1"
+															style="text-transform:uppercase" readonly="true" />
+													</cell>
+													<cell />
+												</row>
+
+												<row>
+													<cell />
+													<cell>
+														<label
+															value="Especificaciones: " />
+													</cell>
+													<cell colspan="3">
+														<textbox
+															id="tbxDescipcionEspecificaciones" rows="5"
+															readonly="true" hflex="1" />
+													</cell>
+													<cell />
+												</row>
+												<row>
+													<cell></cell>
+													<cell colspan="3">
+														<textbox
+															id="nameCT" hflex="1" style="text-transform:uppercase"
+															readonly="true" />
+
+													</cell>
+													<cell>
+														<toolbarbutton
+															image="/images/upload.png" sclass="attachBtn"
+															upload="true" label="Cargar(TXT)"
+															tooltiptext="Subir Aportes(TXT)">
+															<attribute name="onUpload">
+	{
+		org.zkoss.util.media.Media media = event.getMedia();
+		if (media.getName().toLowerCase().endsWith("txt")) {
+			String txtString = media.getStringData();
+			if (txtString.trim().isEmpty()) {
+				formAportes_cotizaciones.setAporte_txt(null);
+				nameCT.setValue("");
+				alert("Este archivo no puede estar vacio");
+			} else {
+				formAportes_cotizaciones.setAporte_txt(txtString);
+				nameCT.setValue(media.getName());
+			}
+		} else {
+			formAportes_cotizaciones.setAporte_txt(null);
+			nameCT.setValue("");
+			alert("Debe ser de tipo txt");
+		}
+	}
+</attribute>
+														</toolbarbutton>
+														<toolbarbutton
+															image="/images/limpiar_mini.png" tooltiptext="Limpiar"
+															label="Limpiar" style="font-size:12px">
+															<attribute name="onClick">
+	formAportes_cotizaciones.setAporte_txt(null);
+	nameCT.setValue("");
+</attribute>
+														</toolbarbutton>
+													</cell>
+													<cell></cell>
+												</row>
+											</rows>
+										</grid>
+									</groupbox>
+								</div>
+							</center>
+						</borderlayout>
+					</tabpanel>
+				</tabpanels>
+			</tabbox>
+		</groupbox>
+	</window>
+</zk>

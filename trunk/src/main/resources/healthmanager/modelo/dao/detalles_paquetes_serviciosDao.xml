@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Detalles_paquetes_serviciosDao">
+
+	<resultMap id="detalles_paquetes_serviciosMap" type="detalles_paquetes_servicios">
+		<result column="id" property="id" />
+		<result column="id_paquete" property="id_paquete" />
+		<result column="codigo_detalle" property="codigo_detalle" />
+		<result column="tipo_detalle" property="tipo_detalle" />
+		<result column="codigo_item" property="codigo_item" />
+		<result column="nombre_detalle" property="nombre_detalle" />
+		<result column="creacion_date" property="creacion_date" />
+		<result column="creacion_user" property="creacion_user" />
+		<association column="{id=id_paquete}" property="paquetes_servicios" select="healthmanager.modelo.dao.Paquetes_serviciosDao.consultar" />
+	</resultMap>
+
+	<insert id="crear" parameterType="detalles_paquetes_servicios">
+		insert into public.detalles_paquetes_servicios (id_paquete,codigo_detalle,
+		tipo_detalle,codigo_item,nombre_detalle,
+		creacion_date,creacion_user)
+
+		values (#{id_paquete},#{codigo_detalle},
+		#{tipo_detalle},#{codigo_item},#{nombre_detalle},
+		#{creacion_date},#{creacion_user})
+	</insert>
+
+	<update id="actualizar" parameterType="detalles_paquetes_servicios">
+		update public.detalles_paquetes_servicios set id_paquete = #{id_paquete},
+		codigo_detalle = #{codigo_detalle},
+		tipo_detalle = #{tipo_detalle},
+		codigo_item = #{codigo_item},
+		nombre_detalle = #{nombre_detalle},
+		creacion_date = #{creacion_date},
+		creacion_user = #{creacion_user} 
+		where id = #{id} 
+	</update>
+
+	<select id="consultar" parameterType="detalles_paquetes_servicios" resultMap="detalles_paquetes_serviciosMap">
+		select id, id_paquete,codigo_detalle,
+		tipo_detalle,codigo_item,nombre_detalle,
+		creacion_date,creacion_user 
+		from public.detalles_paquetes_servicios 
+		where id = #{id} 
+	</select>
+
+	<delete id="eliminar" parameterType="detalles_paquetes_servicios">
+		delete from public.detalles_paquetes_servicios
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="id != null">
+			AND id = #{id}
+			</if>
+			<if test="id_paquete != null">
+			AND id_paquete = #{id_paquete}
+			</if>
+		</trim>
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="detalles_paquetes_serviciosMap">
+		select id, id_paquete,codigo_detalle,
+		tipo_detalle,codigo_item,nombre_detalle,
+		creacion_date,creacion_user 
+		from public.detalles_paquetes_servicios 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_detalle != null">
+			AND codigo_detalle = #{codigo_detalle}
+			</if>
+			<if test="codigo_item != null">
+			AND codigo_item = #{codigo_item}
+			</if>
+			<if test="id_paquete != null">
+			AND id_paquete = #{id_paquete}
+			</if>
+			<if test="tipo_detalle != null">
+			AND tipo_detalle = #{tipo_detalle}
+			</if>
+		</trim>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from public.detalles_paquetes_servicios 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_detalle != null">
+			AND codigo_detalle = #{codigo_detalle}
+			</if>
+			<if test="codigo_item != null">
+			AND codigo_item = #{codigo_item}
+			</if>
+			<if test="id_paquete != null">
+			AND id_paquete = #{id_paquete}
+			</if>
+			<if test="tipo_detalle != null">
+			AND tipo_detalle = #{tipo_detalle}
+			</if>
+		</trim>
+	</select>
+
+</mapper>

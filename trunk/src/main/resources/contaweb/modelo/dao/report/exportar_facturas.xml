@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="contaweb.modelo.dao.report.exportarFacturaModel">
+	<select id="select" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+		SELECT
+		'' AS nombre_empresa,
+		'FV' AS documento,
+		'' AS prefijo,
+		fact.codigo_documento AS nro_factura,
+		fact.fecha,
+		'' AS codigo_vendedor,
+		'' AS nit_cliente,
+		'Credito' AS forma_pago,
+		'0' AS anulado,
+		'' AS producto,
+		'Principal' AS bodega,
+		'Und' AS unidad_medida,
+		dtt_fact.cantidad,
+		dtt_fact.valor_unitario,
+		0 AS iva,
+		'' AS centro_costo,
+		fecha_vencimiento,
+		dtt_fact.cantidad AS cantidad_conversion,
+		dtt_fact.valor_unitario AS valor_conversion,
+		nro_ingreso,
+		codigo_tercero, codigo_administradora,
+		dtt_fact.codigo_articulo,
+		dtt_fact.tipo, dtt_fact.detalle 
+		FROM
+		contaweb.detalle_factura AS dtt_fact
+		INNER JOIN
+		contaweb.facturacion AS fact ON dtt_fact.codigo_empresa =
+		fact.codigo_empresa AND dtt_fact.codigo_sucursal =
+		fact.codigo_sucursal AND dtt_fact.codigo_comprobante =
+		fact.codigo_comprobante AND dtt_fact.codigo_documento =
+		fact.codigo_documento
+		WHERE fact.codigo_empresa = #{codigo_empresa}
+		AND fact.codigo_sucursal = #{codigo_sucursal}
+		AND dtt_fact.tipo IN ('CONSULTA' , 'ESTANCIA', 'PROCEDIMIENTO')
+		<if test="fecha_inicio != null">
+	             <![CDATA[ AND CAST(fact.fecha AS DATE) >=  CAST(#{fecha_inicio} AS DATE)]]>
+		</if>
+		<if test="fecha_final != null">
+	            <![CDATA[ AND CAST(fact.fecha AS DATE) <=  CAST(#{fecha_final} AS DATE)]]>
+		</if>
+		<if test="contratos != null">
+			AND fact.id_plan || fact.codigo_administradora
+			<foreach collection="contratos" item="item" open="IN(" close=")"
+				separator=",">
+				'${item.id_plan}${item.codigo_administradora}'
+			</foreach>
+		</if>
+		<if test="eps != null">
+			AND fact.codigo_administradora
+			<foreach collection="eps" item="item" open="IN(" close=")"
+				separator=",">
+				#{item.codigo}
+			</foreach>
+		</if>
+		ORDER BY
+		fact.codigo_documento ASC,
+		dtt_fact.consecutivo ASC
+	</select>
+</mapper>

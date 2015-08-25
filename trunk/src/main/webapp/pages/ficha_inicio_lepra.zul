@@ -1,0 +1,595 @@
+<?page title="Ficha_inicio_lepra" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formFicha_inicio_lepra" width="100%" height="100%"
+		use="healthmanager.controller.Ficha_inicio_lepraAction"
+		onCreate="formFicha_inicio_lepra.init();">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+			
+			.z-label{
+			font-size:11px
+			}
+			
+			.z-checkbox-cnt{
+			font-size:11px
+			}
+		</style>
+
+		
+
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="false" closable="false"
+			mold="3d" height="90%">
+			
+
+			<separator />
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" height="100%" mold="paging"
+				pageSize="20" vflex="1">
+				<auxhead>
+					<auxheader colspan="5">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<separator />
+							<textbox id="tbxValue" width="200px"
+								onOK="formFicha_inicio_lepra.buscarDatos();"
+								style="text-transform:uppercase" />
+							<separator />
+							<button mold="trendy"
+								image="/images/Magnifier.gif"
+								onClick="formFicha_inicio_lepra.buscarDatos();"
+								tooltiptext="Consultar" />
+							<separator />
+							<button mold="trendy"
+								image="/images/New16.gif"
+								onClick='formFicha_inicio_lepra.accionForm(true,"registrar");'
+								tooltiptext="Nuevo" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Codigo ficha" />
+					<column label="Nro identificacion" />
+					<column label="Apellidos" />
+					<column label="Nombres" />
+					<column label="Fecha diligenciamiento" />
+					<column label="Acciones" align="center"
+						width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<borderlayout width="100%" height="100%" id="groupboxEditar"
+			visible="true">
+			<north border="none">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<toolbarbutton image="/images/Save16.gif"
+						label="Guardar"
+						onClick="formFicha_inicio_lepra.guardarDatos();" id="btGuardar" />
+					<toolbarbutton image="/images/New16.gif"
+						label="Nuevo" visible="false"
+						onClick='formFicha_inicio_lepra.accionForm(true,"registrar");'
+						id="btNew" />
+					<space />
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Consultar" visible="false"
+						onClick='formFicha_inicio_lepra.accionForm(false,tbxAccion.getText());'
+						id="btCancel" />
+					
+		
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center">
+
+					<!-- *************************** -->
+					<!-- *** Insertar/Actualizar *** -->
+					<!-- *************************** -->
+					<groupbox closable="false" width="905px"
+						mold="3d">
+						<grid>
+							<auxhead>
+								<auxheader colspan="6" align="center"
+									label="FICHA INDIVIDUAL INICIO TRATAMIENTO" />
+							</auxhead>
+							<columns visible="false">
+								<column width="145px" />
+								<column width="170px" />
+								<column width="128px" />
+								<column width="180px" />
+								<column width="120px" />
+								<column />
+							</columns>
+							<rows>
+
+								<!-- fila 1 -->
+								<row>
+								
+									<cell><label value="* " style="color: red" tooltiptext="Campo obligatorio"/><label value="Fecha diligenciamiento:" /></cell>
+									<cell><datebox id="dtbxFecha_diligenciamiento" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="150px" /></cell>
+									
+									<cell><label value="* " style="color: red" tooltiptext="Campo obligatorio"/><label value="Nro Ingreso:"/></cell>
+									<cell><textbox id="tbxNro_ingreso" width="167px"  readonly="true"/></cell>
+									
+									<cell><label value="Código Ficha:"/></cell>
+									<cell><textbox id="tbxCodigo_ficha" width="98%" readonly="true"/></cell>
+									
+									
+									
+								</row>
+							</rows>
+						</grid>
+
+						<groupbox mold="3d" closable="false"
+							visible="true" id="gbxIdentificacion">
+							<caption label="IDENTIFICACIÓN DEL PACIENTE"
+								style="font-weight:bold" />
+							<!--  <informacionPacientes id="infoPacientes" />-->
+							
+							<grid>
+							
+								<columns visible="false">
+									<column width="140px" />
+									<column width="160px" />
+									<column width="138px" />
+									<column width="180px" />
+									<column width="120px" />
+									<column />
+								</columns>
+								<rows>
+
+									<!-- fila 1 -->
+									<row>
+									
+										<cell><label value="* " style="color: red" tooltiptext="Campo obligatorio"/><label value="Paciente:" /></cell>
+										<cell><bandbox
+									    		id="tbxNro_identificacion" width="150px" disabled="false" readonly="true"/></cell>
+										
+										<cell colspan="2">
+										<textbox id="tbxNomPaciente"
+											width="270px"
+											readonly="true" />
+										
+										</cell>
+										
+										<cell><label value="Tipo Identificación:"/></cell>
+										<cell><textbox id="tbxTipo_id" width="98%" readonly="true"/></cell>
+									
+									</row>
+									
+									<row>
+										<cell><label value="Edad (Años cumplidos):"/></cell>
+										<cell><textbox id="tbxEdad" width="143px" readonly="true"/></cell>
+										
+										<cell><label value="Ocupación:"/></cell>
+										<cell><textbox id="tbxOcupacion" width="163px" readonly="true"/></cell>
+										
+										<cell><label value="Sexo:"/></cell>
+										<cell><textbox id="tbxSexo" width="98%" readonly="true"/></cell>
+									</row>
+									
+									<row>
+										<cell><label value="País:"/></cell>
+										<cell><textbox id="tbxPais" width="143px" readonly="true"/></cell>
+										
+										<cell><label value="Departamento:"/></cell>
+										<cell><textbox id="tbxDpto" width="163px" readonly="true"/></cell>
+										
+										<cell><label value="Municipio:"/></cell>
+										<cell><textbox id="tbxMun" width="98%" readonly="true"/></cell>
+									</row>
+									
+									<row>
+										<cell><label value="Administradora:"/></cell>
+										<cell colspan="3"><textbox id="tbxAdmin" hflex="1" readonly="true"/></cell>
+										
+										
+										<cell><label value="Regimen:"/></cell>
+										<cell><textbox id="tbxTipo_usuario" width="98%" readonly="true"/></cell>
+									</row>
+									
+									<row>
+										<cell><label value="Dirección"/></cell>
+										<cell colspan="3"><textbox id="tbxDireccion" hflex="1" readonly="true"/></cell>
+										
+										
+										<cell><label value="Barrio:"/></cell>
+										<cell><textbox id="tbxBarrio" width="98%" readonly="true"/></cell>
+									</row>
+									
+									<row>
+										<cell><label value="Área:"/></cell>
+										<cell><textbox id="tbxArea_paciente" width="143px" readonly="true"/></cell>
+										
+										<cell><label value="Pertenencia étnica:"/></cell>
+										<cell><textbox id="tbxPertenencia_etnica" width="163px" readonly="true"/></cell>
+										
+										<cell><label value="Grupo poblacional:"/></cell>
+										<cell><textbox id="tbxGrupo_poblacional" width="98%" readonly="true"/></cell>
+									</row>
+								</rows>
+						</grid>
+
+
+						</groupbox>
+						
+						<separator/>
+
+						<groupbox mold="3d" closable="false"
+							visible="true" id="gbxClasificacion">
+							<caption label="CLASIFICACION E INGRESO A POLIQUIMIOTERAPIA - PQT"
+								style="font-weight:bold" />
+							<grid>
+								<columns visible="false">
+									<column width="140px" />
+									<column width="160px" />
+									<column width="138px" />
+									<column width="180px" />
+									<column width="120px" />
+									<column />
+								</columns>
+								
+								<rows>
+									<row>
+										<cell><label value="* " style="color: red" tooltiptext="Campo obligatorio"/><label value="Fecha diagnóstico:"/></cell>
+										<cell><datebox id="dtbxFecha_diagnostico" width="150px" format="yyyy-MM-dd"/></cell>
+										
+										<cell><label value="* " style="color: red" tooltiptext="Campo obligatorio"/><label value="Causa ingreso programa"/></cell>
+										<cell><listbox id="lbxCausa_ingreso" name="causa_ingreso_lepra" mold="select" width="170px"/></cell>
+										
+										<cell><label value="* " style="color: red" tooltiptext="Campo obligatorio"/><label value="Criterios diagnóstico"/></cell>
+										<cell><listbox id="lbxCriterio_diagnostico" name="criterio_diagnostico" mold="select" width="98%"/></cell>
+									</row>
+									
+									<row>
+										<cell><label value="* " style="color: red" tooltiptext="Campo obligatorio"/><label value="Lesiones dermatológica"/></cell>
+										<cell><listbox id="lbxNro_lesiones_derma" name="lesiones_dermatologicas" mold="select" width="150px"/></cell>
+										
+										<cell><label value="Resultado Baciloscopia:"/></cell>
+										<cell><listbox id="lbxResultado_bacilo" name="resultado_bacilo" mold="select" width="170px"/></cell>
+										
+										<cell><label value="* " style="color: red" tooltiptext="Campo obligatorio"/><label value="Clasificación Ingreso:"/></cell>
+										<cell><listbox id="lbxClasificacion_ingreso" name="clasificacion_ingreso" mold="select" width="98%"/></cell>
+									</row>
+									
+									<row>
+										<cell><label value="Resultado biopsia:"/></cell>
+										<cell colspan="3"><textbox id="tbxResultado_biopsia" style="text-transform:uppercase" hflex="1"/></cell>
+										
+										
+										<cell><label value="* " style="color: red" tooltiptext="Campo obligatorio"/><label value="Fuente contagio:"/></cell>
+										<cell><listbox id="lbxFuente_contagio" name="fuente_contagio" mold="select" width="98%"/></cell>
+									</row>
+								</rows>
+							</grid>
+							
+							
+						</groupbox>
+						
+						<separator/>
+						
+						<groupbox mold="3d" closable="false"
+							visible="true" id="gbxResumen">
+							<caption label="RESUMEN HISTORIA CLINICA"
+								style="font-weight:bold" />
+							<grid>
+								<columns visible="false">
+									<column width="140px" />
+									<column width="160px" />
+									<column width="138px" />
+									<column width="180px" />
+									<column width="120px" />
+									<column />
+								</columns>
+								
+								<rows>
+								
+									<row>
+										<cell><label value="* " style="color: red" tooltiptext="Campo obligatorio"/><label value="Primeros sintomas:"/></cell>
+										<cell colspan="5"><textbox id="tbxPrimeros_sintomas" style="text-transform:uppercase" hflex="1" rows="2"/></cell>
+										
+										
+									</row>
+									
+									
+									<row>
+										<cell colspan="2">
+										<label value="* " style="color: red" tooltiptext="Campo obligatorio"/><label value="Tiempo evolución (Meses):"/>
+										<space></space>
+										<intbox constraint="no negative:Este valor no puede ser negativo" id="ibxTiempo_evolucion" hflex="1" width="100px"/></cell>
+										
+										<cell><label value="* " style="color: red" tooltiptext="Campo obligatorio"/><label value="Tipo lesiones:"/></cell>
+										<cell><listbox id="lbxTipo_lesiones" name="tipo_lesiones" mold="select" width="170px"/></cell>
+										
+										<cell><label value="* " style="color: red" tooltiptext="Campo obligatorio"/><label value="Sensibilidad lesiones:"/></cell>
+										<cell><listbox id="lbxSensibilidad_lesiones" name="sensibilidad_lesiones" mold="select" width="98%"/></cell>
+									</row>
+									
+									<row>
+										<cell colspan="2">
+											<groupbox closable="false">
+												<caption
+													label="Lesiones neurológicas" style="font-size:11px" />
+												<vlayout>
+													<hlayout>
+														<vlayout>
+															<label
+																value="Derecho" />
+															<checkbox id="chbNervios_derecho"
+																label="Nervios trigéminos" />
+															<checkbox id="chbAuricular_derecho"
+																label="Auricular posterior" />
+															<checkbox id="chbCubital_derecho"
+																label="Cubital" />
+															<checkbox id="chbMediano_derecho"
+																label="Mediano" />
+															<checkbox id="chbRadial_derecho"
+																label="Radial" />
+															<checkbox id="chbCiaticopopliteo_derecho"
+																label="Ciaticopopitleo Externo" />
+															<checkbox id="chbTivial_derecho"
+																label="Tibial posterior" />
+														</vlayout>
+
+														<vlayout>
+															<label
+																value="Izquierdo" />
+															<checkbox id="chbNervios_izquierdo"
+																label="Nervios trigéminos" />
+															<checkbox id="chbAuricular_izquierdo"
+																label="Auricular posterior" />
+															<checkbox id="chbCubital_izquierdo"
+																label="Cubital" />
+															<checkbox id="chbMediano_izquierdo"
+																label="Mediano" />
+															<checkbox id="chbRadial_izquierdo"
+																label="Radial" />
+															<checkbox id="chbCiaticopopliteo_izquierdo"
+																label="Ciaticopopitleo Externo" />
+															<checkbox id="chbTivial_izquierdo"
+																label="Tibial posterior" />
+														</vlayout>
+
+													</hlayout>
+													<space
+														height="5px" />
+												</vlayout>
+
+											</groupbox>
+										</cell>
+										
+										<cell colspan="4" valign="top">
+											<groupbox closable="false">
+												<caption
+													label="Grado discapacidad al ingreso del paciente a programa" style="font-size:11px" />
+													
+													<grid>
+														<columns>
+															<column label="" width="110px"/>
+															<column label="Ojos"/>
+															<column label="Manos"/>
+															<column label="Pies"/>
+														</columns>
+														<rows>
+														 	<row>
+														 		<cell><label value="Derecho"/></cell>
+														 		<cell>
+														 			<radiogroup orient="vertical" id="rdbGrado_ojos_derecho">
+														 				<radio label="Grado 0" value="0" checked="true"/>
+														 				<radio label="Grado 1" value="1"/>
+														 				<radio label="Grado 2" value="2"/>
+														 			</radiogroup>
+														 		</cell>
+														 		<cell>
+														 			<radiogroup orient="vertical" id="rdbGrado_manos_derecho">
+														 				<radio label="Grado 0" value="0" checked="true"/>
+														 				<radio label="Grado 1" value="1"/>
+														 				<radio label="Grado 2" value="2"/>
+														 			</radiogroup>
+														 		</cell>
+														 		<cell>
+														 			<radiogroup orient="vertical" id="rdbGrado_pies_derecho">
+														 				<radio label="Grado 0" value="0" checked="true"/>
+														 				<radio label="Grado 1" value="1"/>
+														 				<radio label="Grado 2" value="2"/>
+														 			</radiogroup>
+														 		</cell>
+														 	</row>
+														 	<row>
+														 		<cell><label value="Izquierdo"/></cell>
+														 		<cell>
+														 			<radiogroup orient="vertical" id="rdbGrado_ojos_izquierdo">
+														 				<radio label="Grado 0" value="0" checked="true"/>
+														 				<radio label="Grado 1" value="1"/>
+														 				<radio label="Grado 2" value="2"/>
+														 			</radiogroup>
+														 		</cell>
+														 		<cell>
+														 			<radiogroup orient="vertical" id="rdbGrado_manos_izquierdo">
+														 				<radio label="Grado 0" value="0" checked="true"/>
+														 				<radio label="Grado 1" value="1"/>
+														 				<radio label="Grado 2" value="2"/>
+														 			</radiogroup>
+														 		</cell>
+														 		<cell>
+														 			<radiogroup orient="vertical" id="rdbGrado_pies_izquierdo">
+														 				<radio label="Grado 0" value="0" checked="true"/>
+														 				<radio label="Grado 1" value="1"/>
+														 				<radio label="Grado 2" value="2"/>
+														 			</radiogroup>
+														 		</cell>
+														 	</row>
+														 	<row>
+														 		<cell><label value="Grado Máximo"/></cell>
+														 		<cell  colspan="3">
+														 			<radiogroup id="rdbGrado_maximo_izquierdo">
+														 				<radio label="Grado 0" value="0" checked="true"/><space width="96px"/>
+														 				<radio label="Grado 1" value="1"/><space width="96px"/>
+														 				<radio label="Grado 2" value="2"/>
+														 			</radiogroup>
+														 		</cell>
+														 	</row>
+														</rows>
+													</grid>
+										    </groupbox>
+                                        </cell>
+									</row>
+									
+									
+									
+									
+								</rows>
+							</grid>
+							
+							
+						</groupbox>
+						
+						<separator/>
+						
+						<groupbox mold="3d" closable="false"
+							visible="true" id="gbxControl">
+							<caption label="CONTROL MENSUAL DEL TRATAMIENTO SUPERVISADO"
+								style="font-weight:bold" />
+								
+							<hlayout>
+								<label value="Seguimiento mensual de la entrega de la PQT"/>
+								<space/>
+								<listbox mold="select" width="150px" id="lbxAnio" />
+									
+								
+								<toolbarbutton
+									image="/images/add.png" label="Agregar"
+									onClick='formFicha_inicio_lepra.adicionarControl();' />
+								
+							</hlayout>
+							<grid id="gridControl">
+								<columns>
+									<column label="Año" align="center"/>
+									<column width="70px" label="Enero"  align="center"/>
+									<column width="70px" label="Febrero"  align="center"/>
+									<column width="70px" label="Marzo"  align="center"/>
+									<column width="70px" label="Abril"  align="center"/>
+									<column width="70px" label="Mayo"  align="center"/>
+									<column width="70px" label="Junio"  align="center"/>
+									<column width="70px" label="Julio"  align="center"/>
+									<column width="70px" label="Agosto"  align="center"/>
+									<column width="75px" label="Septiembre"  align="center"/>
+									<column width="70px" label="Octubre"  align="center"/>
+									<column width="70px" label="Noviembre"  align="center"/>
+									<column width="70px" label="Diciembre"  align="center"/>
+									<column width="30px" label=""  align="center"/>
+									
+								</columns>
+								
+								<rows id="rowsControl">
+									<row>
+										<cell>
+											<label value="2011"/>
+										</cell>
+										<cell>					
+											<combobox readonly="true" hflex="1">
+												<comboitem value="30" label="30"/>
+											</combobox>
+										</cell>
+										<cell>
+											<combobox readonly="true" hflex="1">
+												<comboitem value="30" label="30"/>
+											</combobox>
+										</cell>
+										<cell>
+											<combobox readonly="true" hflex="1">
+												<comboitem value="30" label="30"/>
+											</combobox>
+										</cell>
+										<cell>
+											<combobox readonly="true" hflex="1">
+												<comboitem value="30" label="30"/>
+											</combobox>
+										</cell>
+										<cell>
+											<combobox readonly="true" hflex="1">
+												<comboitem value="30" label="30"/>
+											</combobox>
+										</cell>
+										<cell>
+											<combobox readonly="true" hflex="1">
+												<comboitem value="30" label="30"/>
+											</combobox>
+										</cell>
+										<cell>
+											<combobox readonly="true" hflex="1">
+												<comboitem value="30" label="30"/>
+											</combobox>
+										</cell>
+										<cell>
+											<combobox readonly="true" hflex="1">
+												<comboitem value="30" label="30"/>
+											</combobox>
+										</cell>
+										<cell>
+											<combobox readonly="true" hflex="1">
+												<comboitem value="30" label="30"/>
+											</combobox>
+										</cell>
+										<cell>
+											<combobox readonly="true" hflex="1">
+												<comboitem value="30" label="30"/>
+											</combobox>
+										</cell>
+										<cell>
+											<combobox readonly="true" hflex="1">
+												<comboitem value="30" label="30"/>
+											</combobox>
+										</cell>
+										<cell>
+											<combobox readonly="true" hflex="1">
+												<comboitem value="30" label="30"/>
+											</combobox>
+										</cell>
+									</row>
+									
+									
+								</rows>
+								
+								<foot>
+									<footer span="13">
+										<hlayout>
+											<label value="Numero de dosis recibidas: "/>
+											<intbox id="ibxNumero_dosis" width="120px" readonly="true"/>
+											
+											<space/>
+											
+											<label value="* " style="color: red" tooltiptext="Campo obligatorio"/><label value="Período de tiempo requerido en meses: "/>
+											<intbox constraint="no negative:Este valor no puede ser negativo" id="ibxPeriodo_requerido" width="120px"/>
+										</hlayout>
+									</footer>
+								</foot>
+							</grid>
+						</groupbox>
+
+					</groupbox>
+				</div>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

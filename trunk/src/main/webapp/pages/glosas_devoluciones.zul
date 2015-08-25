@@ -1,0 +1,743 @@
+<?page title="Glosas y Devoluciones" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formGlosasDevoluciones" width="100%" height="100%"
+		use="healthmanager.controller.GlosasDevolucionesAction">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+		<groupbox id="groupboxConsulta" visible="true" closable="false"
+			mold="3d" height="100%">
+
+			<separator />
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" height="100%" mold="paging"
+				pageSize="20" vflex="1">
+				<auxhead>
+					<auxheader colspan="8">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :"
+								style="font-size:10px" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<separator />
+							<textbox id="tbxValue" width="150px"
+								onOK="formGlosasDevoluciones.buscarDatos();"
+								style="text-transform:uppercase" />
+							<separator />
+							<toolbarbutton image="/images/Magnifier.gif"
+								onClick="formGlosasDevoluciones.buscarDatos();"
+								tooltiptext="Consultar Facturacion servicio" />
+							<separator />
+
+							<space bar="true" />
+							<toolbarbutton id="btnConfiguracionBusqeuda"
+								image="/images/configuracion_mini.png">
+								<attribute name="onClick">
+	popup.open(btnConfiguracionBusqeuda);
+</attribute>
+							</toolbarbutton>
+							<popup id="popup">
+								<vlayout>
+									<hbox>
+										<label value="Fecha inicial: " />
+										<datebox format="yyyy-MM-dd"
+											id="dtbxFecha_inicial" width="100px" />
+										<space />
+										<label value="Fecha final: " />
+										<datebox format="yyyy-MM-dd"
+											id="dtbxFecha_final" width="100px" />
+									</hbox>
+									<space bar="true"
+										orient="horizontal" />
+									<checkbox
+										id="chkConfigFacturasAuditadas" label="Facturas auditadas"
+										visible="false" />
+									<checkbox
+										id="chkConfigFacturasNoAuditadas" label="Facturas" />
+									<checkbox
+										id="chkConfigFacturasGlosadas" label="Glosas" />
+									<checkbox
+										id="chkConfigFacturasDevoluciones" label="Devoluciones" />
+								</vlayout>
+							</popup>
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Codigo Documento" width="130px" />
+					<column label="Fecha" width="100px" />
+					<column label="Nro ingreso" width="80px" />
+					<column label="Paciente" />
+					<column label="Contrato" width="110px" />
+					<column label="Tipo" width="110px" />
+					<column label="Valor factura" width="110px"
+						align="right" />
+					<column label="Glosa inicial" width="110px"
+						align="right" />
+					<column label="Glosa definitiva" width="110px"
+						align="right" />
+					<column label="Valor total" width="110px"
+						align="right" />
+					<column label="Acciones" align="center"
+						width="120px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<!-- ***************************** -->
+		<!--  Resultado edicion de factura  -->
+		<!-- ***************************** -->
+
+		<borderlayout width="100%" height="100%" id="groupboxEditar"
+			visible="false">
+			<north border="none">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<textbox id="tbxCodigo_documento" value=""
+						visible="false" />
+					<textbox id="tbxCodigo_comprobante" value=""
+						visible="false" />
+					<toolbarbutton image="/images/Save16.gif"
+						label="Registrar Glosa de factura"
+						onClick="formGlosasDevoluciones.guardar()" id="btGuardar" />
+					<toolbarbutton image="/images/Save16.gif"
+						label="Aceptar factura"
+						onClick="formGlosasDevoluciones.aceptarFactura()" id="btAceptarFactura" />
+					<toolbarbutton image="/images/quit.png"
+						label="Cancelar" onClick='formGlosasDevoluciones.cancelar()'
+						id="btCancel" />
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center">
+					<space height="10px" />
+					<!-- *************************** -->
+					<!-- *** Insertar/Actualizar *** -->
+					<!-- *************************** -->
+
+					<groupbox closable="false" width="900px"
+						mold="3d">
+						<caption id="capHeadTitulo">
+							<hbox id="hboxConceptoGeneral">
+								<label value="Concepto General: " />
+								<listbox id="lbx_concepto"
+									name="concepto_general_glosa" mold="select" width="170px" />
+							</hbox>
+						</caption>
+						<grid>
+							<columns visible="false">
+								<column width="100px" />
+								<column width="160px" />
+								<column />
+								<column width="170px" />
+							</columns>
+							<rows>
+								<!-- Fila 1 -->
+								<row id="rowPaciente">
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label value="Paciente:" />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxNro_identificacion" hflex="1" readonly="true" />
+									</cell>
+									<cell colspan="2">
+										<textbox id="tbxNomPaciente"
+											width="602px" style="text-transform:uppercase"
+											readonly="true" />
+										<space width="2px" />
+										<toolbarbutton visible="false"
+											id="btnLimpiarPaciente" image="/images/borrar.gif" />
+									</cell>
+								</row>
+
+								<!-- Fila 2 -->
+								<row>
+									<cell id="cellInformacionIngreso">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label value="Nro Ingreso:" />
+									</cell>
+									<cell colspan="4">
+										<listbox id="lbxNro_ingreso"
+											mold="select" width="150px" sclass="combobox"
+											onSelect="formGlosasDevoluciones.selectedAdmision(self.getSelectedItem())" />
+										<space />
+										<space />
+										<label value="Aseguradora:" />
+										<space width="18px" />
+										<textbox id="tbxAseguradora"
+											width="500px" style="text-transform:uppercase"
+											readonly="true" />
+										<space />
+									</cell>
+
+
+								</row>
+								<!-- Fila 3 -->
+								<row>
+									<cell valign="top">
+										<label value="Fecha:" />
+									</cell>
+									<cell colspan="3">
+										<hlayout>
+											<datebox id="dtbxFecha"
+												format="dd/MM/yyyy" width="150px" />
+											<space />
+											<label
+												value="Fecha Ingreso:" />
+											<space width="2px" />
+											<datebox
+												id="dtbxFecha_ingreso" format="dd/MM/yyyy" width="110px"
+												buttonVisible="false" readonly="true" />
+											<space width="10px" />
+											<label
+												value="Fecha Egreso:" />
+											<datebox
+												id="dtbxFecha_egreso" format="dd/MM/yyyy" width="108px"
+												onChange="formGlosasDevoluciones.consultarServiciosFacturas(true)" />
+										</hlayout>
+
+									</cell>
+								</row>
+								<!-- Fila 4-->
+								<row>
+									<cell valign="top">
+										<label value="Nro Poliza:" />
+									</cell>
+									<cell colspan="3">
+										<hlayout>
+											<textbox id="tbxNro_poliza"
+												width="143px" style="text-transform:uppercase"
+												maxlength="20" />
+											<space />
+											<label value="Observacion:" />
+											<space width="13px" />
+											<textbox id="tbxObservacion"
+												width="500px" style="text-transform:uppercase" />
+										</hlayout>
+
+									</cell>
+								</row>
+
+								<!-- Fila 5-->
+								<row>
+									<cell valign="top">
+										<label value="Plazo :" />
+									</cell>
+									<cell colspan="3">
+										<hlayout>
+											<intbox
+												constraint="no negative:Este valor no puede ser negativo"
+												id="ibxPlazo" width="143px" style="text-transform:uppercase"
+												value="30" />
+											<space />
+											<label value="Concepto:" />
+											<space width="28px" />
+											<textbox id="tbxDescripcion"
+												width="500px" style="text-transform:uppercase" />
+											<space />
+										</hlayout>
+
+									</cell>
+								</row>
+
+								<!-- Fila 6 -->
+								<row>
+									<cell valign="top" colspan="4">
+										<!-- Para consultas por lotes -->
+										<groupbox
+											id="grbAccionesMultiples" width="100%" closable="false"
+											open="false" mold="3d">
+											<caption>
+												<hlayout>
+													<listbox
+														id="lbxModulo" mold="select" width="150px"
+														sclass="combobox" visible="false">
+														<listitem
+															value="01" label="Consulta" selected="true" />
+														<listitem
+															value="02" label="Procedimiento" />
+														<listitem
+															value="03" label="Medicamento" />
+														<listitem
+															value="04" label="Materiales" />
+														<listitem
+															value="05" label="Servicio" />
+														<listitem
+															value="06" label="Quirurgicos" />
+													</listbox>
+													<label
+														value="Concepto específico: " />
+													<bandboxRegistros
+														id="tbxConceptoAplicar" widthBandbox="150px"
+														widthListbox="600px" heightListbox="300px"
+														columnas="Codigo#100px|Descripción" />
+
+													<toolbarbutton
+														id="btnLimpiarConceptoAplicar" image="/images/borrar.gif" />
+													<toolbarbutton
+														id="btnAplicarGlosa" image="/images/activo.gif"
+														label="Aplicar a seleccionados"
+														onClick='formGlosasDevoluciones.aplicarSeleccionados()' />
+
+													<space />
+													<toolbarbutton
+														id="btnLimpiarSeleccionados" image="/images/borrar.gif"
+														label="Limpiar seleccionadas"
+														onClick='formGlosasDevoluciones.limpiarSeleccionados()' />
+												</hlayout>
+											</caption>
+										</groupbox>
+										<tabbox style="border:0">
+											<tabs>
+												<tab label="Servicios" />
+												<tab
+													label="Descripción Agrupada" id="tabDescripcionAgrupada"
+													onClick="formGlosasDevoluciones.cargarPestaniaDescripcionAgrupada()"
+													visible="false" />
+												<tab
+													label="Hospitalizacion" id="tabHospitalizacon"
+													onClick="formGlosasDevoluciones.cargarPestaniaHospitalizacion()"
+													visible="false" />
+												<tab label="Urgencias"
+													id="tabUrgencia"
+													onClick="formGlosasDevoluciones.cargarPestaniaUrgencia()"
+													visible="false" />
+												<tab
+													label="Recien Nacidos" id="tabRecienNacidos"
+													onClick="formGlosasDevoluciones.cargarPestaniaRecienNacido()"
+													visible="false" />
+											</tabs>
+											<tabpanels>
+												<tabpanel>
+													<listbox
+														id="lbxServicios" sizedByContent="true" width="100%"
+														height="300px" multiple="true" checkmark="true"
+														mold="paging" pageSize="20">
+														<frozen
+															columns="4" />
+														<listhead>
+															<listheader
+																label="" id="listheaderSeleccion" width="30px" />
+															<listheader
+																label="" width="40px" />
+															<listheader
+																label="Codigo" width="60px" />
+															<listheader
+																label="Concepto" width="250px" />
+															<listheader
+																label="Cant" width="50px" />
+															<listheader
+																label="Vlr Unitario" width="90px" />
+															<listheader
+																label="Total" width="90px" />
+															<listheader
+																label="Tipo" width="120px" />
+
+															<listheader
+																id="listheadMotivo" label="Motivo" width="120px" />
+
+															<listheader
+																id="listheadFechaMotivo" label="Fecha" width="120px" />
+
+															<listheader
+																id="listheadObservacionesMotivo" label="Observaciones"
+																width="120px" />
+
+															<listheader
+																id="res_ac" label="Respuesta" visible="false" />
+
+															<listheader
+																id="listheadFechaRespuesta" label="Fecha" width="120px" />
+
+															<listheader
+																label="Observaciones" id="column_obser_respuesta_ac"
+																visible="false" />
+
+
+															<listheader
+																label="Glosa Definitiva" id="column_glosa_definitiva_ac"
+																visible="false" />
+
+															<listheader
+																id="listheadFechaGlosaDefinitiva" label="Fecha"
+																width="120px" />
+
+															<listheader
+																label="Observación" id="column_Obseglosa_definitiva_ac"
+																visible="false" />
+
+															<listheader
+																id="listheadRepuestaFinalGlosa" label="Respuesta final"
+																width="120px" />
+														</listhead>
+														<listfoot
+															visible="false">
+															<listfooter
+																span="7">
+
+															</listfooter>
+														</listfoot>
+													</listbox>
+												</tabpanel>
+												<tabpanel
+													id="tabPanelDescripcionAgrupada" />
+												<tabpanel
+													id="tabpanelHospitalizacion" />
+												<tabpanel
+													id="tabpanelUrgencia" />
+												<tabpanel
+													id="tabpanelReciennacido" />
+											</tabpanels>
+										</tabbox>
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+
+					<space height="2px"
+						id="spaceMotivoRespuestaAgrupado" />
+					<groupbox width="900px" id="groupMotivosRespuesta"
+						visible="false">
+						<grid>
+							<columns>
+								<column label="Concepto" />
+								<column label="Motivo" />
+								<column label="Fecha" />
+								<column label="Observaciones" />
+								<column label="Valor Glosa" />
+							</columns>
+							<rows>
+								<row>
+									<cell>
+										<label id="lbDescripcionGlosa"
+											value="Motivo de glosa" />
+									</cell>
+									<cell>
+										<bandbox id="bandMotivoGlosa"
+											use="com.framework.macros.macro_row.BandBoxRowMacro"
+											hflex="1" />
+									</cell>
+									<cell>
+										<datebox
+											id="dtxFechaMotivoGlosa" hflex="1" />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxobservacionesMotivoGlosa"
+											use="com.framework.macros.CampoObservacionesPopupMacro"
+											hflex="1" />
+									</cell>
+									<cell>
+										<doublebox
+											id="dbxvalorGlosaIncial" hflex="1" format="#,##0.0" />
+									</cell>
+								</row>
+								<row id="rowRespuestaGlosa">
+									<cell>
+										<label
+											value="Respuesta de glosa" />
+									</cell>
+									<cell>
+										<bandbox id="bandRespuestaGlosa"
+											use="com.framework.macros.macro_row.BandBoxRowMacro"
+											hflex="1" />
+									</cell>
+									<cell>
+										<datebox id="dtxFechaRespuesta"
+											hflex="1" />
+									</cell>
+									<cell colspan="2">
+										<textbox
+											id="tbxobservacionesRespuestaGlosa"
+											use="com.framework.macros.CampoObservacionesPopupMacro"
+											hflex="1" />
+									</cell>
+								</row>
+								<row id="rowRespuestaDefinitivaGlosa">
+									<cell>
+										<label
+											value="Motivo de glosa definitivo" />
+									</cell>
+									<cell>
+										<bandbox
+											id="bandRespuestaDefinitivaGlosa"
+											use="com.framework.macros.macro_row.BandBoxRowMacro"
+											hflex="1" />
+									</cell>
+									<cell>
+										<datebox
+											id="dtxFechaRespuestaDefinitiva" hflex="1" />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxobservacionesRespuestaDefinitivaGlosa"
+											use="com.framework.macros.CampoObservacionesPopupMacro"
+											hflex="1" />
+									</cell>
+									<cell>
+										<doublebox
+											id="dbxvalorGlosaDefinitiva" hflex="1" format="#,##0.0" />
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+
+					<space height="2px" />
+					<groupbox mold="3d" closable="false"
+						contentStyle="margin:0;padding:0;" width="900px">
+						<grid>
+							<columns>
+								<column value="" width="100px" />
+								<column value="" width="150px" />
+								<column value="" width="60px" />
+								<column value="" width="150px" />
+								<column value="" width="90px" />
+								<column value="" width="150px" />
+								<column value="" width="90px" />
+								<column value="" />
+							</columns>
+							<rows>
+								<row>
+									<cell>
+										<label value="Valor Moderado:" />
+									</cell>
+									<cell>
+										<doublebox id="dbxValor_cuota"
+											format="#,##0" width="130px" readonly="false" value="0.0" />
+									</cell>
+									<cell>
+										<label value="Subtotal:" />
+									</cell>
+									<cell>
+										<doublebox id="dbxSubtotal"
+											format="#,##0" width="130px" readonly="true" value="0.0" />
+									</cell>
+									<cell>
+										<label value="Dto Facturas:" />
+									</cell>
+									<cell>
+										<doublebox id="dbxDto_factura"
+											format="#,##0" width="130px" readonly="true" value="0.0" />
+									</cell>
+									<cell>
+										<label value="Copago canc:" />
+									</cell>
+									<cell>
+										<doublebox id="dbxCop_canc"
+											format="#,##0" hflex="1" readonly="true" value="0.0" />
+									</cell>
+								</row>
+								<row>
+									<cell>
+										<label value="Copago:" />
+									</cell>
+									<cell>
+										<doublebox id="dbxValor_copago"
+											format="#,##0" width="130px" readonly="false" value="0.0"
+											onChange="formGlosasDevoluciones.calcularCopagoManual();" />
+									</cell>
+									<cell>
+										<label value="Total:" />
+									</cell>
+									<cell>
+										<doublebox id="dbxValor_total"
+											format="#,##0" width="130px" readonly="true" value="0.0" />
+									</cell>
+									<cell>
+										<label value="Dto Copago:" />
+									</cell>
+									<cell>
+										<doublebox id="dbxDto_copago"
+											format="#,##0" width="130px" readonly="false" value="0.0" />
+									</cell>
+									<cell colspan="2" />
+								</row>
+								<row visible="false">
+									<cell colspan="2" align="left">
+										<checkbox id="chbNocopago"
+											label="No Copago"
+											onCheck="formGlosasDevoluciones.calcularCopago(self.isChecked())" />
+									</cell>
+									<cell colspan="2" align="center">
+										<hlayout>
+											<checkbox id="chbMediana"
+												label="Media Hoja" />
+											<space />
+											<checkbox id="chbAgrupar"
+												label="Agrupar" />
+										</hlayout>
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+					<space height="2px" />
+					<groupbox mold="3d" closable="false"
+						id="grpDiferencias" contentStyle="margin:0;padding:0;"
+						width="900px">
+						<caption label="Diferencias de totales">
+							<hlayout visible="false">
+								<label value="Diferencia:"
+									style="color: black;font-weight: bold;" />
+								<label id="lb_diferencia"
+									style="color: black;font-weight: bold;" />
+								<space />
+								<div id="div_valor_glosado"
+									visible="false">
+									<label value="Valor Glosado:"
+										style="color: black;font-weight: bold;" />
+									<label id="lb_valor_glosado"
+										style="color: red;font-weight: bold;" />
+									<space />
+									<label
+										value="Diferencia despues glosa:"
+										style="color: black;font-weight: bold;" />
+									<label
+										id="lb_diferencia_despues_glosa"
+										style="color: red;font-weight: bold;" />
+								</div>
+							</hlayout>
+						</caption>
+						<!-- grafica -->
+						<hlayout>
+							<chart id="chart" height="170px" type="bar"
+								showLegend="true" threeD="true" orient="horizontal"
+								fgAlpha="255" />
+							<space width="20px" />
+							<grid mold="paging" pageSize="20" vflex="1"
+								sclass="GridSinBorde" width="320px">
+								<columns sizable="true">
+									<column width="5px" />
+									<column width="150px" />
+									<column width="150px" />
+									<column width="5px" />
+								</columns>
+								<rows>
+									<row>
+										<cell />
+										<cell>
+											<label
+												value="Total Consultas:"
+												style="color: black;font-weight: bold;" />
+										</cell>
+										<cell>
+											<div align="right">
+												<label id="total_ac_g"
+													style="color: black;font-weight: bold;" />
+											</div>
+										</cell>
+										<cell />
+									</row>
+									<row>
+										<cell />
+										<cell>
+											<label
+												value="Total Procedimientos:"
+												style="color: black;font-weight: bold;" />
+										</cell>
+										<cell>
+											<div align="right">
+												<label id="total_ap_g"
+													style="color: black;font-weight: bold;" />
+											</div>
+										</cell>
+										<cell />
+									</row>
+									<row>
+										<cell />
+										<cell>
+											<label
+												value="Total Medicamentos:"
+												style="color: black;font-weight: bold;" />
+
+										</cell>
+										<cell>
+											<div align="right">
+												<label id="total_am_g"
+													style="color: black;font-weight: bold;" />
+											</div>
+										</cell>
+										<cell />
+									</row>
+									<row>
+										<cell />
+										<cell>
+											<label
+												value="Total Otros Servicios:"
+												style="color: black;font-weight: bold;" />
+										</cell>
+										<cell>
+											<div align="right">
+												<label id="total_at_g"
+													style="color: black;font-weight: bold;" />
+											</div>
+										</cell>
+										<cell />
+									</row>
+									<row>
+										<cell />
+										<cell align="right">
+											<label value="Total:"
+												style="color: black;font-weight: bold;" />
+										</cell>
+										<cell>
+											<div align="right">
+												<label id="total_af_g"
+													style="color: red;font-weight: bold;" />
+											</div>
+										</cell>
+										<cell />
+									</row>
+									<row>
+										<cell colspan="4">
+											<space bar="true"
+												width="100%" orient="horizontal" />
+										</cell>
+									</row>
+									<row>
+										<cell />
+										<cell align="right">
+											<label
+												value="Total Factura:"
+												style="color: black;font-weight: bold;" />
+										</cell>
+										<cell align="right">
+											<label id="total_af_total"
+												style="color: red;font-weight: bold;" />
+										</cell>
+										<cell />
+									</row>
+
+								</rows>
+							</grid>
+						</hlayout>
+					</groupbox>
+
+					<space height="50px" />
+				</div>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

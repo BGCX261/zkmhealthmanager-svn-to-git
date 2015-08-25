@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.ConsecutivoDao">
+
+	
+
+	<resultMap id="consecutivoMap" type="consecutivo">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="tipo" property="tipo" />
+		<result column="consecutivo" property="consecutivo" />
+		<result column="creacion_date" property="creacion_date" />
+		<result column="ultimo_update" property="ultimo_update" />
+	</resultMap>
+
+	<insert id="crear" parameterType="consecutivo">
+		insert into public.consecutivo (codigo_empresa,codigo_sucursal,
+		tipo,consecutivo,creacion_date,
+		ultimo_update)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{tipo},#{consecutivo},#{creacion_date},
+		#{ultimo_update})
+	</insert>
+
+	<update id="actualizar" parameterType="consecutivo">
+		update public.consecutivo set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},tipo = #{tipo},
+		consecutivo = #{consecutivo},creacion_date = #{creacion_date},
+		ultimo_update = #{ultimo_update}
+		where 		codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and tipo = #{tipo}
+	</update>
+
+	<select id="consultar" resultMap="consecutivoMap" parameterType="consecutivo">
+		select codigo_empresa,codigo_sucursal,
+		tipo,consecutivo,creacion_date,ultimo_update
+		from public.consecutivo where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and tipo = #{tipo}
+	</select>
+
+	<delete id="eliminar" parameterType="consecutivo">
+		delete from public.consecutivo
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and tipo = #{tipo}
+	</delete>
+
+	<select id="listar" resultMap="consecutivoMap" parameterType="java.util.Map">
+		select codigo_empresa,codigo_sucursal,
+		tipo,consecutivo,creacion_date,ultimo_update
+		from public.consecutivo 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">AND codigo_empresa = #{codigo_empresa}</if>
+			<if test="codigo_sucursal != null">AND codigo_sucursal = #{codigo_sucursal}</if>
+			<if test="parameter != null">AND ${parameter} like '${value}'</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

@@ -1,0 +1,1182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.resolucion4505Model">
+
+	<sql id="sql_filtros">
+		<if test="fecha_inicio != null and fecha_final != null">
+			ads.fecha_ingreso BETWEEN #{fecha_inicio} AND
+			#{fecha_final} AND
+		</if>
+		ads.codigo_empresa = #{codigo_empresa}
+		AND ads.codigo_sucursal =
+		#{codigo_sucursal}
+		AND ads.codigo_administradora =
+		#{codigo_administradora}
+		AND ads.nro_identificacion =
+		#{nro_identificacion}
+	</sql>
+
+
+	<sql id="sql_filtros_dc">
+		<if test="fecha_inicio != null and fecha_final != null">
+			dtt_cons.fecha_consulta BETWEEN #{fecha_inicio} AND
+			#{fecha_final} AND
+		</if>
+		dtt_cons.codigo_empresa = #{codigo_empresa}
+		AND
+		dtt_cons.codigo_sucursal = #{codigo_sucursal}
+		AND
+		dtt_cons.codigo_administradora = #{codigo_administradora}
+		AND
+		dtt_cons.nro_identificacion = #{nro_identificacion}
+	</sql>
+
+
+
+
+	<!-- Resolución 4505 - Variable de la 3 a la 13 -->
+	<select id="getVariable3_13" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+		SELECT
+		id_paciente,
+		variable_3,
+		variable_4,
+		variable_5,
+		variable_6,
+		variable_7,
+		variable_8,
+		variable_9,
+		variable_10,
+		variable_11,
+		variable_12,
+		variable_13
+		FROM vr_variable3_13
+		WHERE CAST(fecha_ingreso AS
+		DATE) BETWEEN
+		#{fecha_inicio} AND #{fecha_final}
+		AND
+		codigo_empresa =
+		#{codigo_empresa} AND codigo_sucursal =
+		#{codigo_sucursal}
+		AND
+		codigo_administradora =
+		#{codigo_administradora}
+	</select>
+
+
+	<!-- Variable 14 -->
+	<select id="getVariable14" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+
+		SELECT
+		adm.nro_identificacion,
+		CASE
+		WHEN (adm.via_ingreso =
+		'1')
+		THEN
+		(SELECT
+		hisc.gineco_nro_gestaciones FROM hisc_urgencia hisc
+		WHERE
+		hisc.codigo_empresa = adm.codigo_empresa
+		AND
+		hisc.codigo_sucursal =
+		adm.codigo_sucursal
+		AND
+		hisc.nro_identificacion = adm.nro_identificacion
+		AND
+		hisc.codigo_historia = hc.codigo_historia)::VARCHAR
+		WHEN
+		(adm.via_ingreso = '2')
+		THEN
+		(SELECT hisc.gineco_nro_gestaciones FROM
+		hisc_consulta_externa hisc
+		WHERE
+		hisc.codigo_empresa =
+		adm.codigo_empresa
+		AND
+		hisc.codigo_sucursal = adm.codigo_sucursal
+		AND
+		hisc.nro_identificacion = adm.nro_identificacion
+		AND
+		hisc.codigo_historia = hc.codigo_historia)::VARCHAR
+		WHEN
+		(adm.via_ingreso = '6')
+		THEN
+		(SELECT hisc."g" FROM
+		hisc_hipertenso_diabetico hisc
+		WHERE
+		hisc.codigo_empresa =
+		adm.codigo_empresa
+		AND
+		hisc.codigo_sucursal = adm.codigo_sucursal
+		AND
+		hisc.identificacion = adm.nro_identificacion
+		AND
+		hisc.codigo_historia =
+		hc.codigo_historia)::VARCHAR
+		WHEN (adm.via_ingreso = '11')
+		THEN
+		(SELECT
+		hisc.num_embarazo_g FROM hisc_deteccion_alt_embarazo hisc
+		WHERE
+		hisc.codigo_empresa = adm.codigo_empresa
+		AND
+		hisc.codigo_sucursal =
+		adm.codigo_sucursal
+		AND
+		hisc.identificacion = adm.nro_identificacion
+		AND
+		hisc.codigo_historia = hc.codigo_historia)::VARCHAR
+		WHEN
+		(adm.via_ingreso = '12')
+		THEN
+		(SELECT hisc.obstetricos_g FROM
+		adulto_mayor hisc
+		WHERE
+		hisc.codigo_empresa = adm.codigo_empresa
+		AND
+		hisc.codigo_sucursal = adm.codigo_sucursal
+		AND
+		hisc.identificacion =
+		adm.nro_identificacion
+		AND
+		hisc.codigo_historia =
+		hc.codigo_historia)::VARCHAR
+		WHEN (adm.via_ingreso = '13')
+		THEN
+		(SELECT
+		hisc.obstetricos_g FROM alteracion_joven hisc
+		WHERE
+		hisc.codigo_empresa
+		= adm.codigo_empresa
+		AND
+		hisc.codigo_sucursal = adm.codigo_sucursal
+		AND
+		hisc.identificacion = adm.nro_identificacion
+		AND
+		hisc.codigo_historia =
+		hc.codigo_historia)::VARCHAR
+		WHEN (adm.via_ingreso = '14')
+		THEN
+		(SELECT
+		hisc.obstetricos_g FROM planificacion_familiar hisc
+		WHERE
+		hisc.codigo_empresa = adm.codigo_empresa
+		AND
+		hisc.codigo_sucursal =
+		adm.codigo_sucursal
+		AND
+		hisc.identificacion = adm.nro_identificacion
+		AND
+		hisc.codigo_historia = hc.codigo_historia)::VARCHAR
+		WHEN
+		(adm.via_ingreso = '26')
+		THEN
+		(SELECT hisc.gineco_nro_gestaciones FROM
+		hisc_urgencia hisc
+		WHERE
+		hisc.codigo_empresa = adm.codigo_empresa
+		AND
+		hisc.codigo_sucursal = adm.codigo_sucursal
+		AND
+		hisc.nro_identificacion =
+		adm.nro_identificacion
+		AND
+		hisc.codigo_historia =
+		hc.codigo_historia)::VARCHAR
+		WHEN (adm.via_ingreso = '44')
+		THEN
+		'CITOLOGíA'
+		END AS variable_14
+		FROM admision adm
+		INNER JOIN paciente pac
+		ON
+		pac.codigo_empresa = adm.codigo_empresa
+		AND
+		pac.codigo_sucursal =
+		adm.codigo_sucursal
+		AND
+		pac.nro_identificacion = adm.nro_identificacion
+		AND
+		getedad(pac.fecha_nacimiento, adm.fecha_ingreso, '1') >= 10
+		AND
+		pac.sexo = 'F'
+		INNER JOIN historia_clinica hc ON
+		hc.codigo_empresa =
+		adm.codigo_empresa
+		AND
+		hc.codigo_sucursal = adm.codigo_sucursal
+		AND
+		hc.nro_ingreso = adm.nro_ingreso
+		AND
+		hc.nro_identificacion =
+		adm.nro_identificacion
+		WHERE adm.via_ingreso in
+		('1','2','6','11','12','13','14','26','44')
+		AND adm.fecha_ingreso
+		BETWEEN #{fecha_inicio} AND #{fecha_final}
+		AND adm.codigo_empresa =
+		#{codigo_empresa} AND adm.codigo_sucursal =
+		#{codigo_sucursal}
+		AND
+		adm.codigo_administradora = #{codigo_administradora}
+		AND
+		adm.nro_identificacion = #{nro_identificacion}
+		GROUP BY
+		adm.nro_identificacion, adm.fecha_ingreso, adm.via_ingreso,
+		adm.codigo_sucursal,
+		adm.codigo_empresa, hc.codigo_historia
+		ORDER BY
+		adm.fecha_ingreso ASC
+
+	</select>
+
+
+	<!-- Variable 15 -->
+	<select id="getVariable15" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+
+		SELECT
+		1 AS evaluo_sifilis
+		FROM
+		public.impresion_diagnostica AS imp_diag
+		INNER
+		JOIN paciente AS pac ON
+		pac.codigo_empresa = imp_diag.codigo_empresa
+		AND pac.codigo_sucursal =
+		imp_diag.codigo_sucursal
+		AND
+		pac.nro_identificacion =
+		imp_diag.nro_identificacion
+		WHERE
+		(imp_diag.cie_principal IN
+		('A500','A501','A502','A503','A504','A505','A506',
+		'A507','A509','A510','A511','A512','A513','A514',
+		'A515','A519','A520','A521','A522','A523','A527',
+		'A528','A529','A530','A539' )
+		OR imp_diag.cie_relacionado1 IN
+		('A500','A501','A502','A503','A504','A505','A506',
+		'A507','A509','A510','A511','A512','A513','A514',
+		'A515','A519','A520','A521','A522','A523','A527',
+		'A528','A529','A530','A539' )
+		OR imp_diag.cie_relacionado2 IN
+		('A500','A501','A502','A503','A504','A505','A506',
+		'A507','A509','A510','A511','A512','A513','A514',
+		'A515','A519','A520','A521','A522','A523','A527',
+		'A528','A529','A530','A539' )
+		OR imp_diag.cie_relacionado3 IN
+		('A500','A501','A502','A503','A504','A505','A506',
+		'A507','A509','A510','A511','A512','A513','A514',
+		'A515','A519','A520','A521','A522','A523','A527',
+		'A528','A529','A530','A539' )
+		OR imp_diag.cie_relacionado4 IN
+		('A500','A501','A502','A503','A504','A505','A506',
+		'A507','A509','A510','A511','A512','A513','A514',
+		'A515','A519','A520','A521','A522','A523','A527',
+		'A528','A529','A530','A539'))
+		AND imp_diag.creacion_date BETWEEN
+		#{fecha_inicio} AND #{fecha_final}
+		AND imp_diag.codigo_empresa =
+		#{codigo_empresa} AND
+		imp_diag.codigo_sucursal = #{codigo_sucursal}
+		AND
+		pac.codigo_administradora = #{codigo_administradora}
+		AND
+		imp_diag.nro_identificacion = #{nro_identificacion}
+
+	</select>
+
+	<!-- Variable 28 -->
+	<select id="getVariable28" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+
+		SELECT
+		odont_grama_presenta_fluorosis FROM odontologia
+		AS
+		odont
+		INNER JOIN
+		paciente AS pac ON
+		(pac.codigo_empresa =
+		odont.codigo_empresa
+		AND
+		pac.codigo_sucursal = odont.codigo_sucursal
+		AND
+		pac.nro_identificacion
+		= odont.identificacion)
+		WHERE
+		odont.fecha_ingreso
+		BETWEEN
+		#{fecha_inicio} AND #{fecha_final}
+		AND
+		odont.codigo_empresa =
+		#{codigo_empresa}
+		AND odont.codigo_sucursal =
+		#{codigo_sucursal}
+		AND
+		pac.codigo_administradora =
+		#{codigo_administradora}
+		AND
+		pac.nro_identificacion =
+		#{nro_identificacion}
+		ORDER BY fecha_ingreso
+		DESC
+		LIMIT 1 OFFSET 0
+
+	</select>
+
+	<!-- variable 29 a la 32 -->
+	<select id="getVariable29_32" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+
+		SELECT peso, talla FROM(
+		SELECT
+		sig_v.codigo_empresa,
+		sig_v.codigo_sucursal,
+		sig_v.peso::varchar,
+		sig_v.talla::varchar,
+		sig_v.nro_identificacion as
+		identificacion,
+		hic.nro_ingreso FROM
+		sigvitales AS sig_v
+		INNER JOIN
+		historia_clinica AS
+		hic ON
+		(hic.codigo_empresa =
+		sig_v.codigo_empresa
+		AND
+		hic.codigo_sucursal
+		=
+		sig_v.codigo_sucursal
+		AND hic.codigo_historia
+		=
+		sig_v.codigo_historia)
+		UNION
+		SELECT codigo_empresa,
+		codigo_sucursal,
+		odont.peso::varchar,
+		odont.talla::varchar,
+		identificacion AS
+		identificacion, nro_ingreso
+		FROM
+		odontologia AS odont
+		UNION
+		SELECT
+		codigo_empresa, codigo_sucursal,
+		peso,
+		talla, identificacion AS
+		identificacion, nro_ingreso FROM
+		alteracion_joven
+
+		UNION
+		SELECT
+		codigo_empresa,
+		codigo_sucursal, peso,
+		talla, identificacion,
+		nro_ingreso FROM
+		adulto_mayor
+
+		UNION
+		SELECT
+		codigo_empresa,
+		codigo_sucursal, peso, talla_examen_fisico AS talla,
+		identificacion,
+		nro_ingreso FROM hisc_deteccion_alt_embarazo
+
+		UNION
+		SELECT
+		codigo_empresa, codigo_sucursal,
+		peso_grs AS peso, talla_cm AS
+		talla,
+		identificacion, nro_ingreso FROM
+		hisc_deteccion_alt_menor_2m_2a
+
+		UNION
+		SELECT codigo_empresa, codigo_sucursal, peso_grs AS peso,
+		talla_cm AS
+		talla,
+		identificacion, nro_ingreso FROM
+		hisc_deteccion_alt_menor_5a_10a
+
+		UNION
+		SELECT codigo_empresa,
+		codigo_sucursal, examen_fisico_peso AS
+		peso,
+		examen_fisico_talla AS
+		talla, identificacion, nro_ingreso FROM
+		hisc_deteccion_alt_mn_2mes
+		UNION
+		SELECT codigo_empresa, codigo_sucursal,
+		peso, talla,
+		identificacion,
+		nro_ingreso FROM hisc_recien_nacido
+		UNION
+		SELECT
+		codigo_empresa, codigo_sucursal, signos_vitales_peso AS peso,
+		signos_vitales_talla AS talla, identificacion, nro_ingreso FROM
+		hisc_aiepi_mn_2_meses_5_anios
+		UNION
+		SELECT
+		codigo_empresa,
+		codigo_sucursal,
+		(CAST(signos_vitales_peso AS DOUBLE
+		PRECISION) *
+		0.001)::varchar AS
+		peso, signos_vitales_talla AS talla,
+		identificacion,
+		nro_ingreso FROM
+		hisc_aiepi_mn_2_meses
+		UNION
+		SELECT
+		hp.codigo_empresa, hp.codigo_sucursal, hp.peso, hp.talla,
+		hp.identificacion, hc.nro_ingreso FROM his_parto AS hp
+		INNER JOIN
+		historia_clinica AS hc ON (hc.codigo_empresa = hp.codigo_empresa
+		AND
+		hc.codigo_sucursal = hp.codigo_sucursal
+		AND hc.codigo_historia::VARCHAR
+		=
+		hp.codigo_historia)
+		) AS res
+		INNER
+		JOIN
+		admision AS
+		ads
+		ON
+		(ads.codigo_empresa = res.codigo_empresa
+		AND
+		ads.codigo_sucursal =
+		res.codigo_sucursal
+		AND ads.nro_identificacion =
+		res.identificacion
+		AND
+		ads.nro_ingreso = res.nro_ingreso)
+		WHERE
+		(res.peso
+		IS NOT NULL OR
+		res.peso
+		!= '' OR res.talla IS NOT NULL OR res.talla
+		!= '')
+		AND
+		<include refid="sql_filtros" />
+		ORDER
+		BY
+		ads.fecha_ingreso DESC
+		LIMIT 1 OFFSET 0
+	</select>
+
+	<select id="getVariable33" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+
+		SELECT fecha FROM (
+		SELECT codigo_empresa,
+		codigo_sucursal,
+		fecha_probable_parto_fpp AS fecha,
+		identificacion,
+		nro_ingreso FROM
+		hisc_deteccion_alt_embarazo
+		UNION
+		SELECT
+		codigo_empresa,
+		codigo_sucursal,
+		gineco_fep AS fecha,
+		nro_identificacion AS
+		identificacion, nro_ingreso
+		FROM
+		hisc_consulta_externa
+		UNION
+		SELECT
+		codigo_empresa, codigo_sucursal,
+		gineco_fep AS fecha,
+		nro_identificacion AS identificacion, nro_ingreso
+		FROM hisc_urgencia
+		) AS res
+		INNER JOIN admision AS
+		ads ON
+		(ads.codigo_empresa = res.codigo_empresa
+		AND ads.codigo_sucursal
+		=
+		res.codigo_sucursal
+		AND
+		ads.nro_identificacion = res.identificacion
+		AND
+		ads.nro_ingreso =
+		res.nro_ingreso)
+		WHERE
+		<include refid="sql_filtros" />
+		ORDER BY ads.fecha_ingreso DESC
+		LIMIT 1 OFFSET 0
+	</select>
+
+	<select id="getVariable34" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+
+		SELECT res.sem_gestacion FROM (
+		SELECT
+		codigo_empresa,
+		codigo_sucursal,sem_gestacion, identificacion,
+		nro_ingreso FROM
+		hisc_deteccion_alt_mn_2mes
+		UNION
+		SELECT codigo_empresa,
+		codigo_sucursal,sem_gestacion, identificacion,
+		nro_ingreso FROM
+		hisc_deteccion_alt_menor_2m_2a
+		UNION
+		SELECT codigo_empresa,
+		codigo_sucursal,sem_gestacion, identificacion,
+		nro_ingreso FROM
+		his_atencion_crecimiento_menor2_5
+		UNION
+		SELECT codigo_empresa,
+		codigo_sucursal,sem_gestacion, identificacion,
+		nro_ingreso FROM
+		hisc_deteccion_alt_menor_5a_10a
+		) AS res
+		INNER JOIN admision AS ads ON
+		(ads.codigo_empresa = res.codigo_empresa
+		AND ads.codigo_sucursal =
+		res.codigo_sucursal
+		AND ads.nro_identificacion = res.identificacion
+		AND
+		ads.nro_ingreso = res.nro_ingreso)
+		WHERE
+		<include refid="sql_filtros" />
+		ORDER BY
+		ads.fecha_ingreso DESC
+		LIMIT 1 OFFSET 0
+	</select>
+
+	<select id="getVariable48" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+
+		SELECT count(1) AS total_control FROM
+		datos_procedimiento AS dt_p
+		INNER
+		JOIN procedimientos AS pro ON
+		(pro.id_procedimiento::VARCHAR =
+		dt_p.codigo_procedimiento)
+		INNER JOIN
+		admision AS ads ON
+		(ads.codigo_empresa
+		= dt_p.codigo_empresa
+		AND
+		ads.codigo_sucursal =
+		dt_p.codigo_sucursal
+		AND
+		ads.nro_identificacion =
+		dt_p.nro_identificacion
+		AND ads.nro_ingreso =
+		dt_p.nro_ingreso)
+		WHERE
+		pro.codigo_cups =
+		#{codigo_cups_control_placa}
+		AND
+		<include refid="sql_filtros" />
+		GROUP BY
+		ads.nro_identificacion
+	</select>
+
+
+	<select id="getVariable49_50" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+
+		SELECT dtp.fecha_procedimiento AS
+		fecha_atencion, urg.fecha_egreso
+		FROM
+		datos_procedimiento AS dtp
+		INNER
+		JOIN procedimientos AS pro ON
+		(pro.id_procedimiento::VARCHAR =
+		dtp.codigo_procedimiento)
+		INNER JOIN
+		admision AS ads ON
+		(ads.codigo_empresa = dtp.codigo_empresa AND
+		ads.codigo_sucursal =
+		dtp.codigo_sucursal
+		AND ads.nro_ingreso =
+		dtp.nro_ingreso AND
+		ads.nro_identificacion =
+		dtp.nro_identificacion)
+		LEFT JOIN urgencias AS
+		urg ON (urg.codigo_empresa = ads.codigo_empresa
+		AND
+		urg.codigo_sucursal
+		= ads.codigo_sucursal
+		AND urg.nro_ingreso =
+		ads.nro_ingreso AND
+		urg.nro_identificacion =
+		ads.nro_identificacion)
+		WHERE
+		pro.codigo_cups =
+		<foreach collection="codigo_cups_parto" item="i" open="("
+			close=")" separator=",">
+			#{i}
+		</foreach>
+		AND
+		<include refid="sql_filtros" />
+		ORDER BY dtp.fecha_procedimiento DESC
+
+	</select>
+
+
+	<select id="getVariable25" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+
+		SELECT res.aplica,
+		cie_principal,cie_relacionado1,
+		cie_relacionado2,
+		cie_relacionado3,
+		cie_relacionado4 FROM (
+		SELECT
+		CASE WHEN
+		( (
+		imp_diag.cie_principal LIKE
+		'F1%'
+		OR
+		imp_diag.cie_principal LIKE 'F20%'
+		OR
+		imp_diag.cie_principal LIKE
+		'F31%'
+		OR
+		imp_diag.cie_principal LIKE
+		'F33%'
+		OR
+		imp_diag.cie_principal
+		LIKE 'F40%'
+		OR
+		imp_diag.cie_principal LIKE
+		'F41%'
+		OR
+		imp_diag.cie_principal LIKE 'F90%'
+		)
+		OR
+		(
+		imp_diag.cie_relacionado1 LIKE
+		'F1%'
+		OR
+		imp_diag.cie_relacionado1 LIKE
+		'F20%'
+		OR
+		imp_diag.cie_relacionado1 LIKE 'F31%'
+		OR
+		imp_diag.cie_relacionado1 LIKE
+		'F33%'
+		OR
+		imp_diag.cie_relacionado1 LIKE
+		'F40%'
+		OR
+		imp_diag.cie_relacionado1 LIKE 'F41%'
+		OR
+		imp_diag.cie_relacionado1 LIKE
+		'F90%'
+		)
+		OR
+		(
+		imp_diag.cie_relacionado2 LIKE
+		'F1%'
+		OR
+		imp_diag.cie_relacionado2 LIKE 'F20%'
+		OR
+		imp_diag.cie_relacionado2 LIKE
+		'F31%'
+		OR
+		imp_diag.cie_relacionado2 LIKE
+		'F33%'
+		OR
+		imp_diag.cie_relacionado2 LIKE 'F40%'
+		OR
+		imp_diag.cie_relacionado2 LIKE
+		'F41%'
+		OR
+		imp_diag.cie_relacionado2 LIKE
+		'F90%'
+		)
+		OR
+		(
+		imp_diag.cie_relacionado3 LIKE 'F1%'
+		OR
+		imp_diag.cie_relacionado3 LIKE
+		'F20%'
+		OR
+		imp_diag.cie_relacionado3 LIKE
+		'F31%'
+		OR
+		imp_diag.cie_relacionado3 LIKE 'F33%'
+		OR
+		imp_diag.cie_relacionado3 LIKE
+		'F40%'
+		OR
+		imp_diag.cie_relacionado3 LIKE
+		'F41%'
+		OR
+		imp_diag.cie_relacionado3 LIKE 'F90%'
+		)
+		OR
+		(
+		imp_diag.cie_relacionado4
+		LIKE 'F1%'
+		OR
+		imp_diag.cie_relacionado4 LIKE
+		'F20%'
+		OR
+		imp_diag.cie_relacionado4 LIKE 'F31%'
+		OR
+		imp_diag.cie_relacionado4 LIKE
+		'F33%'
+		OR
+		imp_diag.cie_relacionado4 LIKE
+		'F40%'
+		OR
+		imp_diag.cie_relacionado4 LIKE 'F41%'
+		OR
+		imp_diag.cie_relacionado4 LIKE
+		'F90%'
+		))
+		THEN TRUE ELSE FALSE END AS
+		aplica,
+		imp_diag.codigo_empresa,
+		imp_diag.codigo_sucursal,imp_diag.codigo_historia,imp_diag.cie_principal,imp_diag.cie_relacionado1,
+		imp_diag.cie_relacionado2, imp_diag.cie_relacionado3,
+		imp_diag.cie_relacionado4
+		FROM
+		public.impresion_diagnostica AS imp_diag
+		ORDER BY imp_diag.creacion_date DESC
+		) AS res
+		INNER JOIN
+		historia_clinica AS hisc ON (hisc.codigo_empresa =
+		res.codigo_empresa
+		AND hisc.codigo_sucursal = res.codigo_sucursal AND
+		hisc.codigo_historia =
+		res.codigo_historia)
+		INNER JOIN admision AS ads
+		ON (ads.codigo_empresa = hisc.codigo_empresa AND
+		ads.codigo_sucursal =
+		hisc.codigo_sucursal
+		AND ads.nro_ingreso = hisc.nro_ingreso AND
+		ads.nro_identificacion =
+		hisc.nro_identificacion)
+		WHERE
+		<include refid="sql_filtros" />
+		ORDER BY ads.fecha_ingreso DESC
+		LIMIT 1
+
+	</select>
+
+	<select id="getVariablePorDx" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+
+		SELECT res.aplica,
+		cie_principal,cie_relacionado1,
+		cie_relacionado2,
+		cie_relacionado3,
+		cie_relacionado4, res.fecha_dx FROM (
+		SELECT
+		CASE WHEN
+		imp_diag.cie_principal IN
+		<foreach collection="diagnosticos" open="(" item="i"
+			separator="," close=")">
+			#{i}
+		</foreach>
+		OR imp_diag.cie_relacionado1 IN
+		<foreach collection="diagnosticos" open="(" item="i"
+			separator="," close=")">
+			#{i}
+		</foreach>
+		OR imp_diag.cie_relacionado2 IN
+		<foreach collection="diagnosticos" open="(" item="i"
+			separator="," close=")">
+			#{i}
+		</foreach>
+		OR imp_diag.cie_relacionado3 IN
+		<foreach collection="diagnosticos" open="(" item="i"
+			separator="," close=")">
+			#{i}
+		</foreach>
+		OR imp_diag.cie_relacionado4 IN
+		<foreach collection="diagnosticos" open="(" item="i"
+			separator="," close=")">
+			#{i}
+		</foreach>
+		THEN TRUE ELSE FALSE END AS aplica,
+		imp_diag.codigo_empresa,
+		imp_diag.codigo_sucursal,imp_diag.codigo_historia,imp_diag.cie_principal,imp_diag.cie_relacionado1,
+		imp_diag.cie_relacionado2, imp_diag.cie_relacionado3,
+		imp_diag.cie_relacionado4, imp_diag.creacion_date AS fecha_dx
+		FROM
+		public.impresion_diagnostica AS imp_diag
+		WHERE
+		CAST(creacion_date AS
+		DATE) BETWEEN #{fecha_inicio} AND #{fecha_final}
+		AND
+		imp_diag.codigo_empresa = #{codigo_empresa}
+		AND
+		imp_diag.codigo_sucursal = #{codigo_sucursal}
+		AND
+		imp_diag.nro_identificacion = #{nro_identificacion}
+		LIMIT 1
+		) AS res;
+	</select>
+
+	<select id="getVariableConsultaCups" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+
+		SELECT fecha_consulta, pro.codigo_cups
+		<if test="inyectar_cantidad != null">
+			,(
+			SELECT "count"(*) FROM
+			datos_consulta AS dtt_cons
+			INNER JOIN
+			procedimientos AS pro ON
+			(pro.id_procedimiento::VARCHAR =
+			dtt_cons.codigo_consulta)
+			INNER JOIN
+			admision AS ads ON
+			(ads.codigo_empresa = dtt_cons.codigo_empresa
+			AND
+			ads.codigo_sucursal =
+			dtt_cons.codigo_sucursal
+			AND
+			ads.nro_identificacion =
+			dtt_cons.nro_identificacion
+			AND
+			ads.nro_ingreso = dtt_cons.nro_ingreso)
+			WHERE
+			pro.codigo_cups IN
+			<foreach collection="codigo_cups" open="(" item="i"
+				separator="," close=")">
+				#{i}
+			</foreach>
+			AND
+			<include refid="sql_filtros" />
+			) AS cantidad
+		</if>
+		FROM
+		datos_consulta AS dtt_cons
+		INNER JOIN procedimientos AS pro ON
+		(pro.id_procedimiento::VARCHAR =
+		dtt_cons.codigo_consulta)
+		WHERE
+		pro.codigo_cups IN
+		<foreach collection="codigo_cups" open="(" item="i" separator=","
+			close=")">
+			#{i}
+		</foreach>
+		<if test="ftro_dx != null and ftro_finalidad != null">
+			AND (finalidad_consulta IN
+			<foreach collection="ftro_finalidad" item="codigo_finalidad"
+				separator="," open="(" close=")">
+				#{codigo_finalidad}
+			</foreach>
+			OR
+			(dtt_cons.codigo_diagnostico_principal IN
+			<foreach collection="ftro_dx" item="codigo_dx" separator=","
+				open="(" close=")">
+				#{codigo_dx}
+			</foreach>
+			OR dtt_cons.codigo_diagnostico1 IN
+			<foreach collection="ftro_dx" item="codigo_dx" separator=","
+				open="(" close=")">
+				#{codigo_dx}
+			</foreach>
+			OR dtt_cons.codigo_diagnostico2 IN
+			<foreach collection="ftro_dx" item="codigo_dx" separator=","
+				open="(" close=")">
+				#{codigo_dx}
+			</foreach>
+			OR dtt_cons.codigo_diagnostico3 IN
+			<foreach collection="ftro_dx" item="codigo_dx" separator=","
+				open="(" close=")">
+				#{codigo_dx}
+			</foreach>
+			)
+			)
+		</if>
+		AND
+		<include refid="sql_filtros_dc" />
+		ORDER BY dtt_cons.fecha_consulta DESC
+		LIMIT 1 OFFSET 0
+	</select>
+
+	<select id="getVariable51" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+
+		SELECT ads.fecha_ingreso,
+		ads.fecha_atencion
+		FROM
+		hisc_deteccion_alt_embarazo AS hisc_d
+		INNER JOIN admision AS ads ON
+		(ads.codigo_empresa = hisc_d.codigo_empresa
+		AND ads.codigo_sucursal =
+		hisc_d.codigo_sucursal
+		AND ads.nro_identificacion =
+		hisc_d.identificacion
+		AND ads.nro_ingreso = hisc_d.nro_ingreso)
+		WHERE
+		<include refid="sql_filtros" />
+		ORDER BY ads.fecha_ingreso DESC
+		LIMIT 1 OFFSET 0
+
+	</select>
+
+	<select id="getVariable54" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+
+		SELECT metodo_adoptado FROM
+		planificacion_familiar AS plan
+		INNER JOIN
+		admision AS ads ON
+		(ads.codigo_empresa = plan.codigo_empresa
+		AND
+		ads.codigo_sucursal =
+		plan.codigo_sucursal
+		AND ads.nro_identificacion =
+		plan.identificacion
+		AND ads.nro_ingreso = plan.nro_ingreso)
+		WHERE
+		<include refid="sql_filtros" />
+		ORDER BY ads.fecha_ingreso DESC
+		LIMIT 1 OFFSET 0
+
+	</select>
+
+	<select id="getVariable55" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+
+		SELECT fecha_atencion, fecha_ingreso FROM
+		planificacion_familiar AS
+		plan
+		INNER JOIN admision AS ads ON
+		(ads.codigo_empresa =
+		plan.codigo_empresa
+		AND
+		ads.codigo_sucursal =
+		plan.codigo_sucursal
+		AND
+		ads.nro_identificacion =
+		plan.identificacion
+		AND
+		ads.nro_ingreso =
+		plan.nro_ingreso)
+		WHERE metodo_adoptado NOT IN ('0',
+		'16', '17', '18',
+		'20', '21') AND
+		metodo_adoptado != '' AND
+		<include refid="sql_filtros" />
+		ORDER BY ads.fecha_ingreso DESC
+		LIMIT 1 OFFSET 0
+
+	</select>
+
+	<select id="getVariableConsultarMedicamento" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+		SELECT fecha_medicamento FROM
+		datos_medicamentos AS dtt_med
+		INNER JOIN
+		facturacion_medicamento AS
+		fac_med ON
+		(fac_med.codigo_empresa =
+		dtt_med.codigo_empresa AND
+		fac_med.codigo_sucursal =
+		dtt_med.codigo_sucursal AND
+		fac_med.nro_factura =
+		dtt_med.nro_factura)
+		INNER JOIN admision AS ads ON
+		(ads.codigo_empresa =
+		fac_med.codigo_empresa
+		AND
+		ads.codigo_sucursal =
+		fac_med.codigo_sucursal
+		AND
+		ads.nro_identificacion =
+		fac_med.nro_identificacion
+		AND
+		ads.nro_ingreso = fac_med.nro_ingreso)
+		WHERE
+		<include refid="sql_filtros" />
+		AND dtt_med.codigo_medicamento IN
+		<foreach collection="codigo_medicamento" open="(" item="i"
+			separator="," close=")">
+			#{i}
+		</foreach>
+		ORDER BY ads.fecha_ingreso DESC
+		LIMIT 1 OFFSET 0
+
+	</select>
+
+	<select id="getVariableContadorMedicamento" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+		SELECT count(1) AS cantidad
+		FROM public.datos_medicamentos AS dtt_med
+		INNER JOIN
+		public.facturacion_medicamento AS
+		fac_med ON (fac_med.codigo_empresa =
+		dtt_med.codigo_empresa AND
+		fac_med.codigo_sucursal =
+		dtt_med.codigo_sucursal
+		AND fac_med.nro_factura = dtt_med.nro_factura)
+		WHERE fac_med.fecha_medicamento
+		BETWEEN #{fecha_inicio} AND #{fecha_final}
+		AND fac_med.codigo_empresa = #{codigo_empresa}
+		AND fac_med.codigo_sucursal
+		= #{codigo_sucursal}
+		AND fac_med.nro_identificacion =
+		#{nro_identificacion}
+	</select>
+
+
+	<select id="getVariableConsultarProcedimiento" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+		SELECT fecha_procedimiento FROM
+		datos_procedimiento AS dt_p
+		INNER JOIN
+		procedimientos AS pro ON
+		(pro.id_procedimiento::VARCHAR =
+		dt_p.codigo_procedimiento)
+		WHERE
+		dt_p.fecha_procedimiento BETWEEN
+		#{fecha_inicio} AND #{fecha_final}
+		AND dt_p.codigo_empresa =
+		#{codigo_empresa}
+		AND dt_p.codigo_sucursal =
+		#{codigo_sucursal}
+		AND
+		dt_p.codigo_administradora =
+		#{codigo_administradora}
+		AND
+		dt_p.nro_identificacion =
+		#{nro_identificacion}
+		AND pro.codigo_cups IN
+		<foreach collection="codigo_cups" open="(" item="i" separator=","
+			close=")">
+			#{i}
+		</foreach>
+		ORDER BY fecha_procedimiento DESC LIMIT 1
+	</select>
+
+
+	<select id="getVariableVacunas" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+		SELECT
+		vac_pac.fecha_vacunacion,
+		esq_vac.respuesta_4505,
+		codigo_vacuna
+		FROM
+		vacunas_pacientes AS vac_pac
+		INNER JOIN esquema_vacunacion AS
+		esq_vac
+		ON (esq_vac.codigo_empresa =
+		vac_pac.codigo_empresa AND
+		esq_vac.codigo_sucursal =
+		vac_pac.codigo_sucursal
+		AND
+		esq_vac.codigo_vacuna =
+		vac_pac.codigo_procedimiento_vacuna AND
+		esq_vac.consecutivo =
+		vac_pac.id_esquema_vacunacion)
+		INNER JOIN
+		procedimientos AS pro ON
+		(pro.id_procedimiento::VARCHAR =
+		esq_vac.codigo_vacuna)
+		INNER JOIN
+		paciente AS pac ON (pac.codigo_empresa
+		= vac_pac.codigo_empresa
+		AND pac.codigo_sucursal =
+		vac_pac.codigo_sucursal
+		AND pac.nro_identificacion =
+		vac_pac.nro_identificacion)
+		WHERE
+		pro.codigo_cups IN
+		<foreach collection="codigo_cups" open="(" item="i" separator=","
+			close=")">
+			#{i}
+		</foreach>
+		AND vac_pac.fecha_vacunacion BETWEEN #{fecha_inicio} AND
+		#{fecha_final} AND
+		vac_pac.codigo_empresa = #{codigo_empresa}
+		AND
+		vac_pac.codigo_sucursal =
+		#{codigo_sucursal}
+		AND
+		pac.codigo_administradora =
+		#{codigo_administradora}
+		AND
+		vac_pac.nro_identificacion =
+		#{nro_identificacion}
+		ORDER BY
+		vac_pac.fecha_vacunacion DESC
+		LIMIT 1
+		OFFSET 0
+
+	</select>
+
+	<select id="getVariableLaboratorio" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+		SELECT fecha_resultado, valor_resultado, codigo_item, codigo_respuesta
+		FROM resultado_laboratorios AS res_lab
+		WHERE res_lab.codigo_cups IN
+		<foreach collection="codigo_cups" open="(" item="i" separator=","
+			close=")">
+			#{i}
+		</foreach>
+		AND CAST(res_lab.fecha_resultado AS DATE) BETWEEN #{fecha_inicio} AND
+		#{fecha_final}
+		AND res_lab.codigo_empresa = #{codigo_empresa}
+		AND
+		res_lab.codigo_sucursal = #{codigo_sucursal}
+		AND
+		res_lab.nro_identificacion = #{nro_identificacion}
+		ORDER BY
+		res_lab.fecha_resultado DESC LIMIT 1
+	</select>
+
+
+	<select id="getVariablePorDxDC" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+		SELECT respuesta FROM (
+		SELECT TRUE AS respuesta
+		FROM resolucion4505.pacientes_vih
+		WHERE tipo_identificacion = #{tipo_identificacion}
+		AND nro_identificacion = #{nro_identificacion}
+		UNION ALL
+		SELECT TRUE respuesta
+		FROM resolucion4505.vr_diagnostico AS dx
+		WHERE
+		('(F024)(B200)(B201)(B232)(B204)(B220)(B209)(B202)(B227)(B207)(B231)(B211)(B206)(B221)(B238)(B208)(B203)(B205)(B212)(B218)(B213)(B210)(B222)(B217)(B219)(B24X)(Z21X)(R75X)(B230)'
+		LIKE '%(' || dx.codigo || ')%')
+		AND dx.codigo_empresa = #{codigo_empresa}
+		AND dx.codigo_sucursal = #{codigo_sucursal}
+		AND dx.nro_identificacion = #{id_paciente}
+		LIMIT 1
+		) AS res
+	</select>
+	
+	<select id="getVariablePorDx_Consulta" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+		SELECT fecha_dx FROM (
+			    SELECT  1 AS prioridad,CAST(creacion_date AS DATE)  AS fecha_dx
+				FROM "public".impresion_diagnostica AS imp
+				WHERE  CAST(creacion_date AS DATE) BETWEEN #{fecha_inicio} AND #{fecha_final}
+				AND imp.codigo_empresa = #{codigo_empresa} AND imp.codigo_sucursal = #{codigo_sucursal} 
+				AND imp.nro_identificacion = #{nro_identificacion}
+				AND (imp.cie_principal = #{codigo_dx} OR imp.cie_relacionado1 = #{codigo_dx} 
+				      OR imp.cie_relacionado2 = #{codigo_dx} OR imp.cie_relacionado3 = #{codigo_dx})
+			UNION ALL
+				SELECT 2 AS prioridad, CAST(fecha_consulta AS DATE) AS fecha_dx
+				FROM "public".datos_consulta AS dt_cons
+				INNER JOIN "public".admision AS ads ON (ads.codigo_empresa = dt_cons.codigo_empresa AND ads.codigo_sucursal = dt_cons.codigo_sucursal 
+                   AND ads.nro_identificacion = dt_cons.nro_identificacion AND ads.nro_ingreso = dt_cons.nro_ingreso)
+				WHERE  CAST(fecha_consulta AS DATE) BETWEEN #{fecha_inicio} AND #{fecha_final}
+				AND dt_cons.codigo_empresa = #{codigo_empresa} AND dt_cons.codigo_sucursal = #{codigo_sucursal}
+				AND dt_cons.nro_identificacion = #{nro_identificacion}
+				AND 
+				<if test="incluir != null">
+				    NOT 
+				</if>
+				 ads.via_ingreso IN 
+				<foreach collection="listado_dx" open="(" item="dx" separator="," close=")">
+				    #{dx}
+				</foreach>
+		) AS res ORDER BY prioridad ASC,fecha_dx DESC;
+	</select>
+
+</mapper>

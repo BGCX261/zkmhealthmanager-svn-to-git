@@ -1,0 +1,347 @@
+<?page title="Urgencias" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formUrgencias" width="100%" height="100%"
+		use="healthmanager.controller.UrgenciasAction" border="none">
+		<style src="estilo.css" />
+
+		<!-- **************** -->
+		<!-- Zona de Objetivo -->
+		<!-- **************** -->
+		<groupbox id="groupboxObjetivo" closable="false" mold="3d"
+			visible="false">
+			<caption label="Modulo de Urgencias"
+				style="color: blue;font-weight: bold" visible="false" />
+			<label value="Esta pagina permite gestionar las urgencias."
+				visible="false" />
+		</groupbox>
+
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- ****-->
+		<groupbox id="groupboxConsulta" visible="false" closable="false"
+			mold="3d" height="100%">
+			<textbox id="tbxNro_factura" visible="false" />
+			<caption label="Consultar"
+				style="color: blue;font-weight: bold" visible="false" />
+
+			<separator />
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" height="90%" mold="paging"
+				pageSize="20" vflex="1">
+				<auxhead>
+					<auxheader colspan="7">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<separator />
+							<textbox id="tbxValue" width="200px"
+								onOK="formUrgencias.buscarDatos();"
+								style="text-transform:uppercase" />
+							<separator />
+							<button mold="trendy"
+								image="/images/Magnifier.gif"
+								onClick="formUrgencias.buscarDatos();"
+								tooltiptext="Consultar urgencia" />
+							<separator />
+							<button mold="trendy"
+								image="/images/New16.gif"
+								onClick='formUrgencias.accionForm(true,"registrar");'
+								tooltiptext="Nueva urgencia" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Nro factura" width="100px" />
+					<column label="Tipo identificacion" width="80px" />
+					<column label="Nro identificacion" width="120px" />
+					<column label="Nro ingreso" width="80px" />
+					<column label="Fecha ingreso" width="95px" />
+					<column label="Fecha egreso" width="95px" />
+					<column label="Apellidos" />
+					<column label="Nombres" />
+					<column label="Acciones" align="center"
+						width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<borderlayout width="100%" height="100%" id="borderlayoutEditar"
+			visible="true">
+			<north border="none">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<toolbarbutton image="/images/Save16.gif"
+						label="Guardar Urgencia" onClick="formUrgencias.guardarDatos();"
+						id="btGuardar" />
+					<toolbarbutton image="/images/New16.gif"
+						label="Nueva Urgencia" onClick='formUrgencias.nuevoRegistro();'
+						id="btNew" />
+					<space />
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Cancelar"
+						onClick='formUrgencias.accionForm(false,tbxAccion.getText());'
+						id="btCancel" />
+				</toolbar>
+			</north>
+			<center>
+				<groupbox width="690px" id="groupboxEditar"
+					height="100%">
+					<grid vflex="1">
+						<auxhead>
+							<auxheader colspan="4"
+								label="REGISTRAR URGENCIA" style="font-weight:bold"
+								align="center" />
+						</auxhead>
+						<columns visible="false">
+							<column width="120px" />
+							<column width="180px" />
+							<column width="185px" />
+							<column />
+						</columns>
+
+						<rows>
+							<row>
+								<cell>
+									<label value="* " style="color: red"
+										tooltiptext="Campo obligatorio" />
+									<label value="Paciente" />
+								</cell>
+								<cell>
+									<bandboxRegistros
+										id="bandboxPaciente" widthBandbox="150px" widthListbox="600px"
+										heightListbox="300px"
+										columnas="Tipo Ident#65px|Identificación|Nombres|Apellidos" />
+								</cell>
+								<cell colspan="2">
+									<textbox id="tbxInfoPaciente"
+										width="310px" style="text-transform:uppercase"
+										readonly="true" />
+									<space />
+									<toolbarbutton
+										id="btnLimpiarPaciente" image="/images/borrar.gif" />
+								</cell>
+							</row>
+
+							<row>
+								<cell>
+									<label value="* " style="color: red"
+										tooltiptext="Campo obligatorio" />
+									<label value="Número Ingreso" />
+								</cell>
+								<cell>
+									<listbox id="lbxNumeroIngreso"
+										width="150px" mold="select"
+										onSelect="formUrgencias.selectedAdmision(self.getSelectedItem());" />
+								</cell>
+								<cell colspan="3">
+									<label value="Aseguradora" />
+									<space />
+									<textbox id="tbxInfoAseguradora"
+										readonly="true" width="232px" />
+								</cell>
+							</row>
+							<row>
+								<cell>
+									<label value="Nacimiento" />
+								</cell>
+								<cell>
+									<textbox id="tbxNacimiento"
+										readonly="true" width="70px" />
+									<space />
+									<label value="Edad" />
+									<space />
+									<textbox id="tbxEdad"
+										readonly="true" width="20px" />
+								</cell>
+								<cell colspan="2">
+									<label value="Sexo" />
+									<space />
+									<textbox id="tbxSexo"
+										readonly="true" width="20px" />
+									<space />
+									<label value="Estrato" />
+									<space />
+									<textbox id="tbxEstrato"
+										readonly="true" width="20px" />
+									<space />
+									<label value="Tipo Afiliado" />
+									<space />
+									<textbox id="tbxTipoAfiliado"
+										readonly="true" width="78px" />
+								</cell>
+							</row>
+							<row>
+								<cell>
+									<label value="* " style="color: red"
+										tooltiptext="Campo obligatorio" />
+									<label value="Médico" />
+								</cell>
+								<cell>
+									<bandboxRegistros
+										id="bandboxPrestador" idthBandbox="150px" widthListbox="600px"
+										heightListbox="300px"
+										columnas="Identificación|Nombres|Apellidos|Especialidad" />
+								</cell>
+								<cell colspan="2">
+									<textbox id="tbxInfoPrestador"
+										width="310px" readonly="true" />
+									<space />
+									<toolbarbutton
+										id="btnLimpiarPrestador" image="/images/borrar.gif" />
+								</cell>
+							</row>
+							<row>
+								<cell></cell>
+								<cell>
+									<label value="Autorización" />
+									<textbox id="tbxAutorizacion"
+										width="145px" />
+								</cell>
+
+								<cell>
+									<label value="* " style="color: red"
+										tooltiptext="Campo obligatorio" />
+									<label value="Causa Externa" />
+									<listbox id="lbxCausaExterna"
+										width="150px" mold="select" name="causa_externa" />
+								</cell>
+								<cell>
+									<label value="Fecha Ingreso" />
+									<space />
+									<datebox id="dtbxFechaIngreso"
+										readonly="true" width="130px" format="dd/MM/yyyy HH:mm a" />
+								</cell>
+							</row>
+							<row>
+								<cell></cell>
+								<cell>
+									<label value="* " style="color: red"
+										tooltiptext="Campo obligatorio" />
+									<label
+										value="Destino salida del usuario" />
+									<listbox id="lbxDestinoSalida"
+										width="150px" mold="select" name="destino_salida" />
+								</cell>
+								<cell>
+									<label value="* " style="color: red"
+										tooltiptext="Campo obligatorio" />
+									<label value="Estado de la Salida" />
+									<listbox id="lbxEstadoSalida"
+										width="150px" mold="select" name="estado_salida" />
+								</cell>
+
+								<cell>
+									<label value="Fecha Egreso" />
+									<space />
+									<datebox id="dtbxFechaEgreso"
+										readonly="true" width="130px" format="dd/MM/yyyy HH:mm a" />
+								</cell>
+							</row>
+
+							<row>
+								<cell>
+									<label value="* " style="color: red"
+										tooltiptext="Campo obligatorio" />
+									<label value="Diag Ppal:" />
+								</cell>
+								<cell>
+									<bandboxRegistros
+										id="bandboxDiagPrincipal" idthBandbox="150px"
+										widthListbox="600px" heightListbox="300px"
+										columnas="Código|Nombre|Sexo|L. inferior|L. superior" />
+								</cell>
+								<cell colspan="2">
+									<textbox id="tbxInfoDiagPrincipal"
+										width="310px" readonly="true" />
+									<space />
+									<toolbarbutton
+										id="btnLimpiarDiagPrincipal" image="/images/borrar.gif" />
+								</cell>
+							</row>
+
+							<row>
+								<cell>
+									<label value="Diag R. No 1:" />
+								</cell>
+								<cell>
+									<bandboxRegistros id="bandboxDiagR1"
+										idthBandbox="150px" widthListbox="600px" heightListbox="300px"
+										columnas="Código|Nombre|Sexo|L. inferior|L. superior" />
+								</cell>
+								<cell colspan="2">
+									<textbox id="tbxInfoDiagR1"
+										width="310px" readonly="true" />
+									<space />
+									<toolbarbutton id="btnLimpiarDiagR1"
+										image="/images/borrar.gif" />
+								</cell>
+							</row>
+							<row>
+								<cell>
+									<label value="Diag R. No 2:" />
+								</cell>
+								<cell>
+									<bandboxRegistros id="bandboxDiagR2"
+										idthBandbox="150px" widthListbox="600px" heightListbox="300px"
+										columnas="Código|Nombre|Sexo|L. inferior|L. superior" />
+								</cell>
+								<cell colspan="2">
+									<textbox id="tbxInfoDiagR2"
+										width="310px" readonly="true" />
+									<space />
+									<toolbarbutton id="btnLimpiarDiagR2"
+										image="/images/borrar.gif" />
+								</cell>
+							</row>
+							<row>
+								<cell>
+									<label value="Diag R. No 3:" />
+								</cell>
+								<cell>
+									<bandboxRegistros id="bandboxDiagR3"
+										idthBandbox="150px" widthListbox="600px" heightListbox="300px"
+										columnas="Código|Nombre|Sexo|L. inferior|L. superior" />
+								</cell>
+								<cell colspan="2">
+									<textbox id="tbxInfoDiagR3"
+										width="310px" readonly="true" />
+									<space />
+									<toolbarbutton id="btnLimpiarDiagR3"
+										image="/images/borrar.gif" />
+								</cell>
+							</row>
+							<row>
+								<cell>
+									<label value="* " style="color: red"
+										tooltiptext="Campo obligatorio" />
+									<label value="Causa de muerte" />
+								</cell>
+								<cell>
+									<bandboxRegistros
+										id="bandboxCausaMuerte" idthBandbox="150px"
+										widthListbox="600px" heightListbox="300px"
+										columnas="Código|Nombre|Sexo|L. inferior|L. superior" />
+								</cell>
+								<cell colspan="2">
+									<textbox id="tbxInfoCausaMuerte"
+										width="310px" readonly="true" />
+									<space />
+									<toolbarbutton
+										id="btnLimpiarCausaMuerte" image="/images/borrar.gif" />
+								</cell>
+							</row>
+						</rows>
+					</grid>
+				</groupbox>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.Detalle_autorizacion_pcdDao">
+
+	
+
+	<resultMap id="detalle_autorizacion_pcdMap" type="detalle_autorizacion_pcd">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="nro_autorizacion" property="nro_autorizacion" />
+		<result column="consecutivo" property="consecutivo" />
+		<result column="codigo_procedimiento" property="codigo_procedimiento" />
+	</resultMap>
+
+	<insert id="crear" parameterType="detalle_autorizacion_pcd">
+		insert into public.detalle_autorizacion_pcd (codigo_empresa,codigo_sucursal,
+		nro_autorizacion,consecutivo,codigo_procedimiento)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{nro_autorizacion},#{consecutivo},#{codigo_procedimiento})
+	</insert>
+
+	<update id="actualizar" parameterType="detalle_autorizacion_pcd">
+		update public.detalle_autorizacion_pcd set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},nro_autorizacion = #{nro_autorizacion},
+		consecutivo = #{consecutivo},codigo_procedimiento = #{codigo_procedimiento}
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and nro_autorizacion = #{nro_autorizacion}
+		and consecutivo = #{consecutivo}
+	</update>
+
+	<select id="consultar" resultMap="detalle_autorizacion_pcdMap" parameterType="detalle_autorizacion_pcd">
+		select codigo_empresa,codigo_sucursal,
+		nro_autorizacion,consecutivo,codigo_procedimiento
+		from public.detalle_autorizacion_pcd where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and nro_autorizacion = #{nro_autorizacion}
+		and consecutivo = #{consecutivo}
+	</select>
+	
+	<select id="consultarPcd" resultMap="detalle_autorizacion_pcdMap" parameterType="detalle_autorizacion_pcd">
+	    select DISTINCT ds.codigo_procedimiento
+	    from public.detalle_autorizacion_pcd ds
+	    left join public.autorizacion_pcd aut
+	    on (ds.codigo_empresa = aut.codigo_empresa
+	    and ds.codigo_sucursal = aut.codigo_sucursal
+	    and ds.nro_autorizacion = aut.nro_autorizacion)
+	    <trim prefix="WHERE" prefixOverrides="AND |OR ">
+	    	<if test="codigo_empresa != null">AND ds.codigo_empresa = #{codigo_empresa}</if>
+			<if test="codigo_sucursal != null">AND ds.codigo_sucursal = #{codigo_sucursal}</if>
+			<if test="nro_ingreso != null">AND aut.nro_ingreso = #{nro_ingreso}</if>
+			<if test="nro_identificacion != null">AND aut.nro_identificacion = #{nro_identificacion}</if>
+			<if test="nro_autorizacion != null">AND ds.nro_autorizacion = #{nro_autorizacion}</if>
+			<if test="codigo_procedimiento != null">AND ds.codigo_procedimiento = #{codigo_procedimiento}</if>
+	    </trim>
+	    limit 1 offset 0
+	</select>
+
+	<delete id="eliminar" parameterType="detalle_autorizacion_pcd">
+		delete from public.detalle_autorizacion_pcd
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and nro_autorizacion = #{nro_autorizacion}
+		and consecutivo = #{consecutivo}
+	</delete>
+
+	<select id="listar" resultMap="detalle_autorizacion_pcdMap" parameterType="java.util.Map">
+		select codigo_empresa,codigo_sucursal,
+		nro_autorizacion,consecutivo,codigo_procedimiento
+		from public.detalle_autorizacion_pcd 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">AND codigo_empresa = #{codigo_empresa}</if>
+			<if test="codigo_sucursal != null">AND codigo_sucursal = #{codigo_sucursal}</if>
+			<if test="parameter != null">AND ${parameter} like '${value}'</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

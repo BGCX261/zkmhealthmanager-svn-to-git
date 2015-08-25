@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Tarifas_procedimientosDao">
+
+	<resultMap id="tarifas_procedimientosMap" type="tarifas_procedimientos">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="codigo_administradora" property="codigo_administradora" />
+		<result column="id_plan" property="id_plan" />
+		<result column="consecutivo_manual" property="consecutivo_manual" />
+		<result column="id_procedimiento" property="id_procedimiento" />
+		<result column="valor" property="valor" />
+		<result column="descripcion" property="descripcion" />
+		<result column="creacion_date" property="creacion_date" />
+		<result column="creacion_user" property="creacion_user" />
+		<result column="ultimo_update" property="ultimo_update" />
+		<result column="ultimo_user" property="ultimo_user" />
+	</resultMap>
+
+	<insert id="crear" parameterType="tarifas_procedimientos">
+		insert into public.tarifas_procedimientos (codigo_empresa,codigo_sucursal,
+		codigo_administradora,id_plan,consecutivo_manual,
+		id_procedimiento,valor,descripcion,
+		creacion_date,creacion_user,ultimo_update,
+		ultimo_user)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{codigo_administradora},#{id_plan},#{consecutivo_manual},
+		#{id_procedimiento},#{valor},#{descripcion},
+		#{creacion_date},#{creacion_user},#{ultimo_update},
+		#{ultimo_user})
+	</insert>
+
+	<update id="actualizar" parameterType="tarifas_procedimientos">
+		update public.tarifas_procedimientos set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},codigo_administradora = #{codigo_administradora},
+		id_plan = #{id_plan},consecutivo_manual = #{consecutivo_manual},
+		id_procedimiento = #{id_procedimiento},valor = #{valor},
+		descripcion = #{descripcion},creacion_date = #{creacion_date},
+		creacion_user = #{creacion_user},ultimo_update = #{ultimo_update},
+		ultimo_user = #{ultimo_user}
+		where 		codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and codigo_administradora = #{codigo_administradora}
+		and id_plan = #{id_plan}
+		and consecutivo_manual = #{consecutivo_manual}
+		and id_procedimiento = #{id_procedimiento}
+	</update>
+
+	<select id="consultar" parameterType="tarifas_procedimientos" resultMap="tarifas_procedimientosMap">
+		select trp.codigo_empresa,trp.codigo_sucursal,
+		trp.codigo_administradora,trp.id_plan,trp.consecutivo_manual,trp.id_procedimiento,
+		trp.valor,trp.descripcion,trp.creacion_date,trp.creacion_user,
+		trp.ultimo_update,trp.ultimo_user
+		from public.tarifas_procedimientos trp where  trp.codigo_empresa = #{codigo_empresa}
+		and  trp.codigo_sucursal = #{codigo_sucursal} and  trp.codigo_administradora = #{codigo_administradora}
+		and  trp.id_plan = #{id_plan} and  trp.consecutivo_manual = #{consecutivo_manual}
+		and  trp.id_procedimiento = #{id_procedimiento}
+	</select>
+
+	<delete id="eliminar" parameterType="tarifas_procedimientos">
+		DELETE from public.tarifas_procedimientos
+		WHERE codigo_empresa = #{codigo_empresa}
+		AND codigo_sucursal = #{codigo_sucursal} AND codigo_administradora = #{codigo_administradora}
+		AND id_plan = #{id_plan} 
+		<if test="consecutivo_manual != null">
+		   AND consecutivo_manual = #{consecutivo_manual}
+		</if>
+		<if test="id_procedimiento != null">
+		   AND id_procedimiento = #{id_procedimiento}
+		</if>
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="tarifas_procedimientosMap">
+		select  trp.codigo_empresa, trp.codigo_sucursal,
+		 trp.codigo_administradora, trp.id_plan, trp.consecutivo_manual, trp.id_procedimiento,
+		 trp.valor, trp.descripcion, trp.creacion_date, trp.creacion_user,
+		 trp.ultimo_update, trp.ultimo_user
+		from public.tarifas_procedimientos trp  
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND trp.codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND trp.codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="id_plan != null">
+				AND trp.id_plan = #{id_plan} 
+			</if>
+			<if test="id_contrato != null">
+				AND trp.id_plan = #{id_contrato} 
+			</if>
+			<if test="codigo_administradora != null">
+				AND trp.codigo_administradora = #{codigo_administradora} 
+			</if>
+			<if test="consecutivo_manual != null">
+				AND trp.consecutivo_manual = #{consecutivo_manual} 
+			</if>
+			<if test="filtro_consulta != null">
+			${filtro_consulta}
+			</if>
+		</trim>
+		<if test="limite_paginado != null">
+			${limite_paginado}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from public.tarifas_procedimientos 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

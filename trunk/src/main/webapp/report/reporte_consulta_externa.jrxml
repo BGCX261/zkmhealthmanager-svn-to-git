@@ -1,0 +1,605 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="reporte_consulta_externa" pageWidth="630" pageHeight="792" columnWidth="590" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="aa4be66a-fa4a-43c9-a4f2-a022cdcb086b">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="empresa" class="java.lang.String"/>
+	<parameter name="direccion" class="java.lang.String"/>
+	<parameter name="telefono" class="java.lang.String"/>
+	<parameter name="codigo_empresa" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="codigo_sucursal" class="java.lang.String"/>
+	<parameter name="nro_historia" class="java.lang.String"/>
+	<parameter name="imagen" class="java.io.InputStream" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="nombre_antecedente1" class="java.lang.String"/>
+	<parameter name="nombre_antecedente2" class="java.lang.String"/>
+	<parameter name="valor_antecedente1" class="java.lang.String"/>
+	<parameter name="valor_antecedente2" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+     get_edad(paciente.fecha_nacimiento,CURRENT_DATE,'1') AS edad,
+     hisc_consulta_externa."codigo_empresa" AS hisc_consulta_externa_codigo_empresa,
+	   hisc_consulta_externa."codigo_historia" AS hisc_consulta_externa_codigo_historia,
+     hisc_consulta_externa."nro_identificacion" AS hisc_consulta_externa_nro_identificacion,
+     hisc_consulta_externa."codigo_prestador" AS hisc_consulta_externa_codigo_prestador,
+     hisc_consulta_externa."fecha_cierre" AS hisc_consulta_externa_fecha_cierre,
+     hisc_consulta_externa."acompaniante" AS hisc_consulta_externa_acompaniante,
+     hisc_consulta_externa."relacion" AS hisc_consulta_externa_relacion,
+     hisc_consulta_externa."tel_acompaniante" AS hisc_consulta_externa_tel_acompaniante,
+     hisc_consulta_externa."esquema_vacunacion" AS hisc_consulta_externa_esquema_vacunacion,
+     hisc_consulta_externa."motivo_consulta" AS hisc_consulta_externa_motivo_consulta,
+     hisc_consulta_externa."enfermedad_actual" AS hisc_consulta_externa_enfermedad_actual,
+     hisc_consulta_externa."espeficacion_antecedentes" AS hisc_consulta_externa_espeficacion_antecedentes,
+     hisc_consulta_externa."patologia_embarazo_parto" AS hisc_consulta_externa_patologia_embarazo_parto,
+     hisc_consulta_externa."rev_pisfucion_erectil" AS hisc_consulta_externa_rev_pisfucion_erectil,
+     hisc_consulta_externa."rev_lipotamia" AS hisc_consulta_externa_rev_lipotamia,
+     hisc_consulta_externa."analisis_recomendaciones" AS hisc_consulta_externa_analisis_recomendaciones,
+     hisc_consulta_externa."metodos_orales" AS hisc_consulta_externa_metodos_orales,
+     hisc_consulta_externa."primera_presentacion" AS hisc_consulta_externa_primera_presentacion,
+     hisc_consulta_externa."intensidad" AS hisc_consulta_externa_intensidad,
+     hisc_consulta_externa."sintomatico_piel_desc" AS hisc_consulta_externa_sintomatico_piel_desc,
+		 hisc_consulta_externa."cedula_acomp" AS hisc_consulta_externa_cedula_acomp,
+     hisc_consulta_externa."actualmente_se_presenta_con" AS hisc_consulta_externa_actualmente_se_presenta_con,
+     hisc_consulta_externa."codigo_historia_anterior" AS hisc_consulta_externa_codigo_historia_anterior,
+     hisc_consulta_externa."sintomatico_respiratorio" AS hisc_consulta_externa_sintomatico_respiratorio,
+     hisc_consulta_externa."sintomatico_piel" AS hisc_consulta_externa_sintomatico_piel,
+     hisc_consulta_externa."otro_acompaniante" AS hisc_consulta_externa_otro_acompaniante,
+     paciente."tipo_identificacion" AS paciente_tipo_identificacion,
+     paciente."nro_identificacion" AS paciente_nro_identificacion,
+     paciente."codigo_administradora" AS paciente_codigo_administradora,
+     paciente."tipo_usuario" AS paciente_tipo_usuario,
+     paciente."apellido1" AS paciente_apellido1,
+     paciente."apellido2" AS paciente_apellido2,
+     paciente."nombre1" AS paciente_nombre1,
+     paciente."nombre2" AS paciente_nombre2,
+     paciente."unidad_medidad" AS paciente_unidad_medidad,
+     paciente."sexo" AS paciente_sexo,
+     paciente."profesion" AS paciente_profesion,
+     paciente."tel_oficina" AS paciente_tel_oficina,
+     paciente."tel_res" AS paciente_tel_res,
+     paciente."direccion" AS paciente_direccion,
+     paciente."nivel_sisben" AS paciente_nivel_sisben,
+     paciente."edad" AS paciente_edad,
+     pertenencia_etnica."nombre" AS pert_etnica,
+     departamentos."nombre" AS departamento,
+     municipios."nombre" AS municipios,
+     administradora."codigo" AS administradora,
+     administradora."nombre" AS nombre_admin,
+     ocupaciones."nombre" AS ocupacion,
+     barrio."barrio" AS barrio,
+     elemento."descripcion" AS estado_civil,
+     prestadores."nombres" AS nombre_prestador,
+     prestadores."apellidos" AS apellidos_prestador,
+     elemento1."descripcion" AS regimen,
+     nivel_educativo."nombre" AS nivel_educativo,
+     localidad."localidad" AS localidad,
+     paciente."login" AS paciente_login,
+     paciente."fecha_nacimiento" AS paciente_fecha_nacimiento,
+     paciente."codigo_dpto" AS paciente_codigo_dpto,
+     paciente."codigo_municipio" AS paciente_codigo_municipio
+FROM
+     "public".hisc_consulta_externa hisc_consulta_externa INNER JOIN "public".admision admision ON
+      admision.codigo_empresa = hisc_consulta_externa.codigo_empresa
+      AND admision.codigo_sucursal = hisc_consulta_externa.codigo_sucursal
+      AND admision.nro_ingreso = hisc_consulta_externa.nro_ingreso
+      AND admision.nro_identificacion = hisc_consulta_externa.nro_identificacion
+
+     INNER JOIN "public"."paciente" paciente ON paciente."codigo_empresa" = admision."codigo_empresa"
+     AND paciente."nro_identificacion" = admision."nro_identificacion"
+     AND paciente."codigo_sucursal" = admision."codigo_sucursal"
+
+
+
+		INNER JOIN "public"."impresion_diagnostica" impresion_diagnostica ON hisc_consulta_externa."codigo_empresa" = impresion_diagnostica."codigo_empresa"
+		 AND hisc_consulta_externa."codigo_sucursal"=impresion_diagnostica."codigo_sucursal"
+			and hisc_consulta_externa."codigo_historia" = impresion_diagnostica."codigo_historia"
+
+	  INNER JOIN "public".pertenencia_etnica pertenencia_etnica on pertenencia_etnica."id" = paciente."pertenencia_etnica"
+
+		INNER JOIN "public".municipios municipios on municipios.codigo = paciente.codigo_municipio
+
+		INNER JOIN "public".departamentos departamentos on departamentos.codigo = paciente.codigo_dpto
+				AND municipios.coddep = paciente."codigo_dpto"
+
+		INNER JOIN "public".administradora administradora on administradora.codigo= paciente.codigo_administradora
+		INNER JOIN "public".ocupaciones ocupaciones on ocupaciones."id" = paciente.codigo_ocupacion
+
+    INNER JOIN "public".adicional_paciente adicional_paciente on adicional_paciente.codigo_empresa = paciente.codigo_empresa
+			AND adicional_paciente.codigo_sucursal = paciente.codigo_sucursal
+			and adicional_paciente.nro_identificacion = paciente.nro_identificacion
+
+			LEFT JOIN "public".barrio barrio on barrio.codigo_barrio = adicional_paciente.codigo_barrio
+
+			INNER JOIN "public".elemento elemento on elemento.codigo = paciente.estado_civil
+				AND elemento.tipo = 'estado_civil'
+
+		  LEFT JOIN "public".prestadores prestadores on prestadores.nro_identificacion= hisc_consulta_externa.codigo_prestador
+			LEFT JOIN "public".elemento elemento1 on elemento1.codigo = paciente.tipo_usuario and elemento1.tipo = 'tipo_usuario'
+			LEFT JOIN "public".nivel_educativo nivel_educativo on nivel_educativo."id" = paciente.codigo_educativo
+			LEFT JOIN "public".localidad localidad on localidad.codigo_localidad = barrio.codigo_localidad
+WHERE
+     hisc_consulta_externa.codigo_empresa = '1300102067'
+     and hisc_consulta_externa.codigo_sucursal = '130010206701'
+     and hisc_consulta_externa.codigo_historia = '0000001217']]>
+	</queryString>
+	<field name="edad" class="java.lang.String"/>
+	<field name="hisc_consulta_externa_codigo_empresa" class="java.lang.String"/>
+	<field name="hisc_consulta_externa_codigo_historia" class="java.lang.String"/>
+	<field name="hisc_consulta_externa_nro_identificacion" class="java.lang.String"/>
+	<field name="hisc_consulta_externa_codigo_prestador" class="java.lang.String"/>
+	<field name="hisc_consulta_externa_fecha_cierre" class="java.sql.Timestamp"/>
+	<field name="hisc_consulta_externa_acompaniante" class="java.lang.String"/>
+	<field name="hisc_consulta_externa_relacion" class="java.lang.String"/>
+	<field name="hisc_consulta_externa_tel_acompaniante" class="java.lang.String"/>
+	<field name="hisc_consulta_externa_esquema_vacunacion" class="java.lang.String"/>
+	<field name="hisc_consulta_externa_motivo_consulta" class="java.lang.String"/>
+	<field name="hisc_consulta_externa_enfermedad_actual" class="java.lang.String"/>
+	<field name="hisc_consulta_externa_espeficacion_antecedentes" class="java.lang.String"/>
+	<field name="hisc_consulta_externa_patologia_embarazo_parto" class="java.lang.String"/>
+	<field name="hisc_consulta_externa_rev_pisfucion_erectil" class="java.lang.Boolean"/>
+	<field name="hisc_consulta_externa_rev_lipotamia" class="java.lang.Boolean"/>
+	<field name="hisc_consulta_externa_analisis_recomendaciones" class="java.lang.String"/>
+	<field name="hisc_consulta_externa_metodos_orales" class="java.lang.String"/>
+	<field name="hisc_consulta_externa_primera_presentacion" class="java.lang.String"/>
+	<field name="hisc_consulta_externa_intensidad" class="java.lang.String"/>
+	<field name="hisc_consulta_externa_sintomatico_piel_desc" class="java.lang.String"/>
+	<field name="hisc_consulta_externa_cedula_acomp" class="java.lang.String"/>
+	<field name="hisc_consulta_externa_actualmente_se_presenta_con" class="java.lang.String"/>
+	<field name="hisc_consulta_externa_codigo_historia_anterior" class="java.lang.String"/>
+	<field name="hisc_consulta_externa_sintomatico_respiratorio" class="java.lang.String"/>
+	<field name="hisc_consulta_externa_sintomatico_piel" class="java.lang.String"/>
+	<field name="hisc_consulta_externa_otro_acompaniante" class="java.lang.String"/>
+	<field name="paciente_tipo_identificacion" class="java.lang.String"/>
+	<field name="paciente_nro_identificacion" class="java.lang.String"/>
+	<field name="paciente_codigo_administradora" class="java.lang.String"/>
+	<field name="paciente_tipo_usuario" class="java.lang.String"/>
+	<field name="paciente_apellido1" class="java.lang.String"/>
+	<field name="paciente_apellido2" class="java.lang.String"/>
+	<field name="paciente_nombre1" class="java.lang.String"/>
+	<field name="paciente_nombre2" class="java.lang.String"/>
+	<field name="paciente_unidad_medidad" class="java.lang.String"/>
+	<field name="paciente_sexo" class="java.lang.String"/>
+	<field name="paciente_profesion" class="java.lang.String"/>
+	<field name="paciente_tel_oficina" class="java.lang.String"/>
+	<field name="paciente_tel_res" class="java.lang.String"/>
+	<field name="paciente_direccion" class="java.lang.String"/>
+	<field name="paciente_nivel_sisben" class="java.lang.String"/>
+	<field name="paciente_edad" class="java.lang.String"/>
+	<field name="pert_etnica" class="java.lang.String"/>
+	<field name="departamento" class="java.lang.String"/>
+	<field name="municipios" class="java.lang.String"/>
+	<field name="administradora" class="java.lang.String"/>
+	<field name="nombre_admin" class="java.lang.String"/>
+	<field name="ocupacion" class="java.lang.String"/>
+	<field name="barrio" class="java.lang.String"/>
+	<field name="estado_civil" class="java.lang.String"/>
+	<field name="nombre_prestador" class="java.lang.String"/>
+	<field name="apellidos_prestador" class="java.lang.String"/>
+	<field name="regimen" class="java.lang.String">
+		<fieldDescription><![CDATA[Esto es para la resolucion 4505
+C:CONTRIBUTIVO
+S:SUBSIDIADO
+E:EXCEPCION
+P:ESPECIAL ]]></fieldDescription>
+	</field>
+	<field name="nivel_educativo" class="java.lang.String"/>
+	<field name="localidad" class="java.lang.String"/>
+	<field name="paciente_login" class="java.lang.String"/>
+	<field name="paciente_fecha_nacimiento" class="java.sql.Timestamp"/>
+	<field name="paciente_codigo_dpto" class="java.lang.String"/>
+	<field name="paciente_codigo_municipio" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="77" splitType="Stretch">
+			<staticText>
+				<reportElement x="52" y="57" width="492" height="20" uuid="eea0441c-9e6a-42c0-9f1e-d61cf9f12070"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[HISTORIA CLINICA CONSULTA EXTERNA]]></text>
+			</staticText>
+			<image scaleImage="FillFrame" isUsingCache="true" onErrorType="Icon">
+				<reportElement x="10" y="10" width="101" height="41" uuid="2941684b-b8db-4e14-801a-c45f3343b5a4"/>
+				<imageExpression><![CDATA[$P{imagen}]]></imageExpression>
+			</image>
+			<textField isBlankWhenNull="true">
+				<reportElement x="118" y="10" width="462" height="14" uuid="ad22f3b1-baae-4604-b48e-16c441935e16"/>
+				<textFieldExpression><![CDATA[$P{empresa}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="118" y="24" width="462" height="14" uuid="cc033725-3ffa-4701-95ff-520b7ec9cdc2"/>
+				<textFieldExpression><![CDATA[$P{direccion}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="118" y="38" width="462" height="13" uuid="f08d7994-82c4-4940-aa20-b2f87bf5da5a"/>
+				<textFieldExpression><![CDATA[$P{telefono}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<detail>
+		<band height="630" splitType="Stretch">
+			<rectangle>
+				<reportElement mode="Transparent" x="0" y="200" width="574" height="164" uuid="d45a8465-c248-486a-bb32-eb609c73501c"/>
+			</rectangle>
+			<rectangle>
+				<reportElement mode="Transparent" x="0" y="369" width="574" height="251" uuid="12aa084a-be31-4f9a-949b-f2981fa65514"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="0" y="10" width="574" height="184" uuid="03397efc-8cca-415e-9085-5c773a84c3aa"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="0" y="152" width="574" height="42" uuid="d9ca69f2-a274-48de-8445-75c71f13c547"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="5" y="161" width="144" height="13" uuid="f517556c-cdfd-4611-a0ea-0ed3943ae1ea"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nombre del acompañante:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="153" y="160" width="219" height="13" uuid="6a37d121-12cd-4822-8df0-bee974604845"/>
+				<textFieldExpression><![CDATA[$F{hisc_consulta_externa_acompaniante}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="379" y="161" width="100" height="13" uuid="62ab17fe-b5f0-4385-9891-cf938a577513"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Número de cédula:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="5" y="176" width="144" height="13" uuid="6c55726f-bd7d-4956-b88a-07dedd39271f"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Teléfono Acompañante:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="380" y="176" width="99" height="13" uuid="6ccca01f-83f7-4cf7-af63-6f333064356e"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Relación:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="479" y="176" width="93" height="13" uuid="f4dce077-49a0-4c60-98d3-f9815509605d"/>
+				<textFieldExpression><![CDATA[$F{hisc_consulta_externa_relacion}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="479" y="161" width="93" height="13" uuid="f2fe0bcc-9f10-4854-8e29-42f7fb9c7eff"/>
+				<textFieldExpression><![CDATA[$F{hisc_consulta_externa_cedula_acomp}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="1" y="11" width="573" height="17" backcolor="#CCCCCC" uuid="ddb5c630-779c-4b98-b5c7-92a6f3f269f3"/>
+				<box leftPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[DATOS DEL PACIENTE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="1" y="201" width="573" height="15" backcolor="#CCCCCC" uuid="3cd2796a-1074-49a1-9791-738100dad811"/>
+				<box leftPadding="5"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[MOTIVO DE CONSULTA Y ENFERMEDAD ACTUAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="10" y="215" width="101" height="14" uuid="220288b0-12d1-4df5-b050-1136500586ac"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Motivo de consulta]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="10" y="229" width="553" height="39" uuid="a5251643-9266-43ea-839f-b6d475d10ab0"/>
+				<textFieldExpression><![CDATA[$F{hisc_consulta_externa_motivo_consulta}.toLowerCase()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="10" y="268" width="101" height="15" uuid="46b7c1be-312e-4a01-aee0-0435337d94db"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[ Enfermedad actual]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="10" y="283" width="553" height="68" uuid="21ff3e87-b723-45c3-8b5c-be38bc4ba109"/>
+				<textFieldExpression><![CDATA[$F{hisc_consulta_externa_enfermedad_actual}.toLowerCase()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="10" y="351" width="122" height="13" uuid="10eebf47-f3d3-43ca-875d-8493e7189083"/>
+				<text><![CDATA[Sintomático respiratorio:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="131" y="351" width="114" height="13" uuid="28162f77-e4a6-4f20-bb7b-1a8f3256716d"/>
+				<textFieldExpression><![CDATA[$F{hisc_consulta_externa_sintomatico_respiratorio}.equalsIgnoreCase("N")?"No":"Si"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="297" y="351" width="104" height="13" uuid="8944fdb9-81ee-4fcc-bead-d6826f1ce82d"/>
+				<text><![CDATA[Sintomático de piel:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="408" y="351" width="44" height="13" uuid="3e471681-c391-4cbe-88aa-93426a62238c"/>
+				<textFieldExpression><![CDATA[$F{hisc_consulta_externa_sintomatico_piel}.equalsIgnoreCase("N")?"No":"Si"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="1" y="370" width="573" height="16" backcolor="#CCCCCC" uuid="c58776d3-8951-4a9e-bb41-bd542a0bbd8c"/>
+				<box leftPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[ANTECEDENTES PERSONALES]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="153" y="176" width="217" height="13" uuid="132ad953-879b-4366-9554-69f73f1ea074"/>
+				<textFieldExpression><![CDATA[$F{hisc_consulta_externa_tel_acompaniante}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="9" y="145" width="114" height="20" uuid="574118b3-6075-4a2c-b27b-54eb72af825c"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Datos del acompañante]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="28" width="574" height="1" uuid="6f3d3f48-e8f4-496e-8cc0-2f519ec8d474"/>
+			</line>
+			<line>
+				<reportElement x="0" y="216" width="574" height="1" uuid="8da521ea-87d9-4983-8b41-b75e9acf12aa"/>
+			</line>
+			<line>
+				<reportElement x="1" y="386" width="573" height="1" uuid="916a81d3-34c1-458c-ab63-22286f713ecc"/>
+			</line>
+			<line>
+				<reportElement x="0" y="268" width="574" height="1" uuid="d52429a8-3395-4c7e-8a14-831f8d1a670a"/>
+			</line>
+			<line>
+				<reportElement x="1" y="351" width="573" height="1" uuid="371e3b2e-3848-4d9c-a6a0-8d0e0a3a528c"/>
+			</line>
+			<textField>
+				<reportElement x="5" y="387" width="135" height="233" uuid="a7558882-2ccf-49dd-a216-a2b3894b3978"/>
+				<textFieldExpression><![CDATA[$P{nombre_antecedente1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="284" y="386" width="142" height="233" uuid="1c8b890f-4e21-4ca8-ac6c-3daf96b32a1e"/>
+				<textFieldExpression><![CDATA[$P{nombre_antecedente2}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="140" y="387" width="144" height="233" uuid="01b205db-b9a8-48f5-90ea-d2acfbd36033"/>
+				<textFieldExpression><![CDATA[$P{valor_antecedente1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="426" y="387" width="148" height="232" uuid="147b9dd9-0fb4-48d8-8146-67f9f2c62c81"/>
+				<textFieldExpression><![CDATA[$P{valor_antecedente2}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="3" y="74" width="98" height="15" uuid="748856bc-da08-43ed-a830-df4c4d9c4419"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Pertenecia étnica:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3" y="88" width="84" height="15" uuid="c24056b1-e8c6-4621-9632-05790c8727b0"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Barrio:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3" y="116" width="84" height="15" uuid="c1b4dfa3-2664-4f12-bee3-39da26f96241"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Regimen:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="192" y="61" width="31" height="14" uuid="2dc2b9e6-0e71-42a4-9801-77340e364aa8"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Edad:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="89" y="89" width="102" height="13" uuid="f85357f4-2e34-4311-8147-a58ce5527a8e"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{barrio}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="89" y="102" width="102" height="14" uuid="a86a7099-06e1-4ccf-9a66-d85f675a0ff1"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{paciente_tel_res}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="89" y="47" width="310" height="15" uuid="66f180a6-d3fd-4e26-a9a5-ffd5053a595f"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[($F{paciente_nro_identificacion}!=null?"("+$F{paciente_nro_identificacion}+") ":"")+
+($F{paciente_nombre1}!=null?$F{paciente_nombre1}:"")+
+($F{paciente_nombre2}!=null?" "+$F{paciente_nombre2}:"")+
+($F{paciente_apellido1}!=null?" "+$F{paciente_apellido1}:"")+
+($F{paciente_apellido2}!=null?" "+$F{paciente_apellido2}:"")]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="89" y="117" width="102" height="13" uuid="6629769d-b0f8-42d0-9bac-75b951acd19f"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{regimen}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="89" y="32" width="170" height="15" uuid="fd488be7-15fc-4209-8d04-08473652db6b"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{hisc_consulta_externa_fecha_cierre}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="3" y="61" width="84" height="15" uuid="41e08da4-bb7e-4a10-9652-0583c1b49a5f"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha nac:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="259" y="116" width="312" height="13" uuid="ac0d6955-fc48-4a88-9bdc-48770eb6784a"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[($F{administradora}.toUpperCase())+($F{nombre_admin}!=null?" "+$F{nombre_admin}.toUpperCase():"")]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="259" y="102" width="140" height="13" uuid="8fd1e08d-0614-427a-b7a8-63dc878c1716"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{ocupacion}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="400" y="33" width="78" height="13" uuid="66554ea3-8370-4f39-9bd9-13ac263d51ad"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nro. historia:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="400" y="46" width="78" height="15" uuid="d07c30c3-66f9-41e0-ba81-88bcb23cd7b2"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Género:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="192" y="74" width="78" height="14" uuid="7d5c985a-7a1d-4ac0-95da-c3f4b1730c55"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Lugar de nac:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="89" y="129" width="482" height="13" uuid="35f6ae18-5efb-4669-a64d-23d4a382f0d9"/>
+				<textFieldExpression><![CDATA[($F{hisc_consulta_externa_codigo_prestador}!=null?"("+$F{hisc_consulta_externa_codigo_prestador}+") ":"")+
+($F{nombre_prestador}!=null?$F{nombre_prestador}:"")+
+($F{apellidos_prestador}!=null?" "+$F{apellidos_prestador}:"")]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="478" y="102" width="93" height="13" uuid="ca19e2d1-dac4-4573-a269-929040cc2959"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{nivel_educativo}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="400" y="102" width="89" height="14" uuid="7feb3fab-f761-4f3b-b875-748390dc3173"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nivel educativo:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="192" y="116" width="66" height="14" uuid="297db2dc-14af-4408-bab4-7d0b3b61875d"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Aseguradora:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3" y="102" width="84" height="15" uuid="7ca80b16-76a4-4ee1-be26-3777b4636293"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Teléfono:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="89" y="61" width="102" height="14" uuid="aab708ab-d928-4b93-80e0-8a298aab988e"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{paciente_fecha_nacimiento}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="478" y="62" width="93" height="13" uuid="d89c936b-f24c-41ac-98e1-a998dcc9b99c"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{estado_civil}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="259" y="75" width="312" height="13" uuid="a5b4f5de-101c-4000-a68e-ce80bf364670"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[($F{municipios}!=null?$F{municipios}.toUpperCase():"")+($F{departamento}!=null?" - "+$F{departamento}.toUpperCase():"")]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="478" y="89" width="93" height="13" uuid="ab7361ca-82bb-4dc3-b4c0-547aadbe5f62"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{localidad}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="400" y="61" width="78" height="14" uuid="03aecd05-c965-44ea-af50-384ea67f83ab"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Estado civil:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3" y="46" width="84" height="15" uuid="b5778384-2662-40ff-a12e-e4e5cb4b7324"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Paciente:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="478" y="46" width="93" height="15" uuid="7df896b4-0e47-4c8b-99c0-ca98d6d06440"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{paciente_sexo}.equals("M")?"MASCULINO":"FEMENINO"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="89" y="75" width="102" height="13" uuid="dbeea2d3-15a4-448c-a3e9-04381c16aac8"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{pert_etnica}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="192" y="89" width="66" height="13" uuid="2235c4e2-ba96-493b-ab9f-9944a11263a7"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Dirección:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="224" y="62" width="73" height="13" uuid="c103eaf9-f641-4f85-9bcc-500712c32759"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{edad}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="400" y="89" width="78" height="13" uuid="77db48c5-b471-4c1b-a466-0d9bc89ea080"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Localidad:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3" y="32" width="85" height="15" uuid="ca0f8a3d-e84c-4379-a082-cc1508b548a1"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="192" y="102" width="66" height="14" uuid="08e05cdb-2c5f-49f6-a5bb-b949eda89e31"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ocupación:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="259" y="88" width="140" height="13" uuid="ab53e46b-1ffc-4d6b-a870-1447922f46d0"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{paciente_direccion}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="3" y="130" width="84" height="13" uuid="30987ad2-c88a-4c03-b201-797f556b1add"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Prestador:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="478" y="33" width="93" height="13" uuid="5e1bb775-e787-44c9-86b0-21c3eabe96c6"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{paciente_nro_identificacion}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

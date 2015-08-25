@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.Cuota_moderadoraDao">
+
+	
+
+	<resultMap id="cuota_moderadoraMap" type="cuota_moderadora">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="grupo" property="grupo" />
+		<result column="tipo_nivel" property="tipo_nivel" />
+		<result column="nivel1" property="nivel1" />
+		<result column="nivel2" property="nivel2" />
+		<result column="porcentaje_copago" property="porcentaje_copago" />
+		<result column="limite_evento" property="limite_evento" />
+		<result column="maximo_anio" property="maximo_anio" />
+		<result column="creacion_date" property="creacion_date" />
+		<result column="ultimo_update" property="ultimo_update" />
+		<result column="creacion_user" property="creacion_user" />
+		<result column="ultimo_user" property="ultimo_user" />
+		<result column="valor_cuota" property="valor_cuota" />
+	</resultMap>
+
+	<insert id="crear" parameterType="cuota_moderadora">
+		insert into public.cuota_moderadora (codigo_empresa,grupo,
+		tipo_nivel,nivel1,nivel2,
+		porcentaje_copago,limite_evento,maximo_anio,
+		creacion_date,ultimo_update,creacion_user,
+		ultimo_user,valor_cuota)
+
+		values (#{codigo_empresa},#{grupo},
+		#{tipo_nivel},#{nivel1},#{nivel2},
+		#{porcentaje_copago},#{limite_evento},#{maximo_anio},
+		#{creacion_date},#{ultimo_update},#{creacion_user},
+		#{ultimo_user},#{valor_cuota})
+	</insert>
+
+	<update id="actualizar" parameterType="cuota_moderadora">
+		update public.cuota_moderadora set codigo_empresa = #{codigo_empresa},
+		grupo = #{grupo},tipo_nivel = #{tipo_nivel},
+		nivel1 = #{nivel1},nivel2 = #{nivel2},
+		porcentaje_copago = #{porcentaje_copago},limite_evento = #{limite_evento},
+		maximo_anio = #{maximo_anio},
+		ultimo_update = #{ultimo_update},
+		ultimo_user = #{ultimo_user},valor_cuota=#{valor_cuota}
+		where 		codigo_empresa = #{codigo_empresa}
+		and grupo = #{grupo}
+	</update>
+
+	<select id="consultar" resultMap="cuota_moderadoraMap" parameterType="cuota_moderadora">
+		select codigo_empresa,grupo,
+		tipo_nivel,nivel1,nivel2,porcentaje_copago,
+		limite_evento,maximo_anio,creacion_date,ultimo_update,
+		creacion_user,ultimo_user,valor_cuota
+		from public.cuota_moderadora where codigo_empresa = #{codigo_empresa}
+		and grupo = #{grupo}
+	</select>
+
+	<delete id="eliminar" parameterType="cuota_moderadora">
+		delete from public.cuota_moderadora
+		where codigo_empresa = #{codigo_empresa}
+		and grupo = #{grupo}
+	</delete>
+
+	<select id="listar" resultMap="cuota_moderadoraMap" parameterType="java.util.Map">
+		select codigo_empresa,grupo,
+		tipo_nivel,nivel1,nivel2,porcentaje_copago,
+		limite_evento,maximo_anio,creacion_date,ultimo_update,
+		creacion_user,ultimo_user,valor_cuota
+		from public.cuota_moderadora 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">AND codigo_empresa = #{codigo_empresa}</if>
+			<if test="parameter != null">AND ${parameter} like '${value}'</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

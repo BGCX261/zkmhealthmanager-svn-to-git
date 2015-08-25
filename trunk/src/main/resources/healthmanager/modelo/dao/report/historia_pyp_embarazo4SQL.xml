@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.historia_pyp_embarazo4Model">
+	<select id="select" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+SELECT
+		analisis,recomendaciones_farmacol,gineco_obst,
+		nutricion,odontologia,psicologia,vacunacion,
+		hisc_deteccion_alt_embarazo.creacion_user,hisc_deteccion_alt_embarazo.ultimo_user,
+		hisc_deteccion_alt_embarazo.delete_user,tiempo,
+		espacio,hemogram,hemoclasificacio,v_drl,
+		prueba_hbs_ag,prueba_elisa_vih,urocultiv,glicemia_ayuna,
+		ptog_p,frotis_gr_vagina,ecografia_obste,numero_semana,
+		soporte_familiar2,soporte_familiar3,
+		embarazo_prolongado,codigo_historia_anterior,tipo_historia,abortadora_habitual,
+		nro_ingreso,diastolica,fecha_inicial,fecha_ultima_mestruacion,
+		fecha_probable_parto_fpp,fecha_ultimo_parto,fecha_antitetanica_previa_inmu_cito,fecha_cito_previa_inmu_cito,
+		tension_arterial_fisico,fecha_dosis1,fecha_dosis2,fecha_dosis3,observaciones_sifilis_gestacional,sifilis_gestacional,
+		hisc_deteccion_alt_embarazo.creacion_date,hisc_deteccion_alt_embarazo.ultimo_update,
+		hisc_deteccion_alt_embarazo.delete_date,
+		observaciones_ecografias,
+		impresion_diagnostica."cie_principal" AS impresion_diagnostica_cie_principal,
+		impresion_diagnostica."tipo_principal" AS
+		impresion_diagnostica_tipo_principal,
+		impresion_diagnostica."cie_relacionado1" AS
+		impresion_diagnostica_cie_relacionado1,
+		impresion_diagnostica."tipo_relacionado1" AS
+		impresion_diagnostica_tipo_relacionado1,
+		impresion_diagnostica."cie_relacionado2" AS
+		impresion_diagnostica_cie_relacionado2,
+		impresion_diagnostica."tipo_relacionado2" AS
+		impresion_diagnostica_tipo_relacionado2,
+		impresion_diagnostica."cie_relacionado3" AS
+		impresion_diagnostica_cie_relacionado3,
+		impresion_diagnostica."tipo_relacionado3" AS
+		impresion_diagnostica_tipo_relacionado3,
+		impresion_diagnostica."finalidad_consulta" AS
+		impresion_diagnostica_finalidad_consulta,
+		impresion_diagnostica."causas_externas" AS
+		impresion_diagnostica_causas_externas,
+		impresion_diagnostica."cie_relacionado4" AS
+		impresion_diagnostica_cie_relacionado4,
+		impresion_diagnostica."tipo_relacionado4" AS
+		impresion_diagnostica_tipo_relacionado4,
+		elemento.descripcion AS finalidad_consulta,
+		cie."nombre" AS principal,
+		cie1."nombre" AS relacionado1,
+		cie2."nombre" AS relacionado2,
+		cie3."nombre" AS relacionado3,
+		elemento1.descripcion AS causas_externa,
+		med.nombres,med.apellidos,med.firma,med.registro_medico,
+		med.codigo as codigo_medico,
+		paciente.sexo,
+		hisc_deteccion_alt_embarazo.creacion_user,
+		hisc_deteccion_alt_embarazo.creacion_date
+
+		from public.hisc_deteccion_alt_embarazo hisc_deteccion_alt_embarazo
+
+		INNER JOIN "public"."impresion_diagnostica"
+		impresion_diagnostica ON 
+		hisc_deteccion_alt_embarazo."codigo_historia" = impresion_diagnostica."codigo_historia"
+
+		INNER JOIN "public"."cie" cie ON 
+		impresion_diagnostica."cie_principal" = cie."codigo"
+
+		LEFT JOIN "public".elemento elemento on elemento.codigo =
+		impresion_diagnostica.finalidad_consulta
+		AND elemento.tipo = 'finalidad_cons'
+
+		LEFT JOIN "public".elemento elemento1 on elemento1.codigo =
+		impresion_diagnostica.causas_externas
+		AND elemento1.tipo='causa_externa'
+
+		INNER
+		JOIN "public"."paciente" paciente ON 
+		paciente."codigo_empresa" = hisc_deteccion_alt_embarazo."codigo_empresa"
+		AND paciente."nro_identificacion" = hisc_deteccion_alt_embarazo."identificacion"
+		AND paciente.codigo_sucursal = hisc_deteccion_alt_embarazo.codigo_sucursal
+		AND paciente."codigo_sucursal" = hisc_deteccion_alt_embarazo."codigo_sucursal"
+
+		
+		LEFT JOIN "public"."cie" AS cie1 ON
+		impresion_diagnostica."cie_relacionado1" = cie1."codigo"
+		LEFT JOIN "public"."cie" AS cie2 ON
+		impresion_diagnostica."cie_relacionado2" = cie2."codigo"
+		LEFT JOIN "public"."cie" AS cie3 ON
+		impresion_diagnostica."cie_relacionado3" = cie3."codigo"
+		
+		LEFT JOIN usuarios med on (med.codigo_empresa =
+		hisc_deteccion_alt_embarazo.codigo_empresa
+		and med.codigo_sucursal = hisc_deteccion_alt_embarazo.codigo_sucursal
+		and med.codigo = hisc_deteccion_alt_embarazo.creacion_user)
+
+		where
+		hisc_deteccion_alt_embarazo.codigo_empresa = #{codigo_empresa}
+		and
+		hisc_deteccion_alt_embarazo.codigo_sucursal = #{codigo_sucursal}
+		and
+		hisc_deteccion_alt_embarazo.codigo_historia = #{nro_historia}
+
+
+	</select>
+
+</mapper>

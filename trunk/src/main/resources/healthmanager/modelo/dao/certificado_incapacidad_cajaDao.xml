@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Certificado_incapacidad_cajaDao">
+
+	<resultMap id="certificado_incapacidad_cajaMap" type="certificado_incapacidad_caja">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="id" property="id" />
+		<result column="nro_identificacion" property="nro_identificacion" />
+		<result column="fecha" property="fecha" />
+		<result column="codigo" property="codigo" />
+		<result column="fecha_hasta" property="fecha_hasta" />
+		<result column="observaciones" property="observaciones" />
+		<result column="codigo_dx" property="codigo_dx" />
+		<result column="codigo_medico" property="codigo_medico" />
+		<result column="creacion_date" property="creacion_date" />
+		<result column="creacion_user" property="creacion_user" />
+		<result column="ultimo_update" property="ultimo_update" />
+		<result column="ultimo_user" property="ultimo_user" />
+		<result column="nro_ingreso" property="nro_ingreso" />
+		<result column="via_ingreso" property="via_ingreso" />
+		
+		<result column="nro_identificacion" property="paciente.nro_identificacion" />
+		<result column="pac_apellido1" property="paciente.apellido1" />
+		<result column="pac_apellido2" property="paciente.apellido2" />
+		<result column="pac_nombre1" property="paciente.nombre1" />
+		<result column="pac_nombre2" property="paciente.nombre2" />
+		<result column="pac_fecha_nacimiento" property="paciente.fecha_nacimiento" />
+		<result column="pac_sexo" property="paciente.sexo" />
+		<result column="pac_documento" property="paciente.documento" />
+		
+		<result column="codigo_dx" property="cie.codigo" />
+		<result column="cie_nombre" property="cie.nombre" />
+		
+		<result column="codigo_medico" property="medico.codigo" />
+		<result column="med_nombres" property="medico.nombres" />
+		<result column="med_apellidos" property="medico.apellidos" />
+		<result column="med_firma" property="medico.firma" />
+		<result column="med_registro_medico" property="medico.registro_medico" />
+		
+		<result column="via_ingreso" property="elm_via_ingreso.codigo" />
+		<result column="elm_descripcion_via_ingreso" property="elm_via_ingreso.descripcion" />
+		
+	</resultMap>
+
+	<insert id="crear" parameterType="certificado_incapacidad_caja">
+	    <selectKey keyProperty="id" resultType="java.lang.Long" >
+	        insert into public.certificado_incapacidad_caja (codigo_empresa,codigo_sucursal,
+	        nro_identificacion,fecha,
+			codigo,fecha_hasta,observaciones,
+			codigo_dx,codigo_medico,creacion_date,
+			creacion_user,ultimo_update,ultimo_user,nro_ingreso,via_ingreso)
+	
+			values (#{codigo_empresa},#{codigo_sucursal},
+			#{nro_identificacion},#{fecha},
+			#{codigo},#{fecha_hasta},#{observaciones},
+			#{codigo_dx},#{codigo_medico},#{creacion_date},
+			#{creacion_user},#{ultimo_update},#{ultimo_user},
+			#{nro_ingreso},#{via_ingreso})
+			RETURNING id;
+	    </selectKey>
+	</insert>
+
+	<update id="actualizar" parameterType="certificado_incapacidad_caja">
+		update public.certificado_incapacidad_caja set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},id = #{id},
+		nro_identificacion = #{nro_identificacion},fecha = #{fecha},
+		codigo = #{codigo},fecha_hasta = #{fecha_hasta},
+		observaciones = #{observaciones},codigo_dx = #{codigo_dx},
+		codigo_medico = #{codigo_medico},creacion_date = #{creacion_date},
+		creacion_user = #{creacion_user},ultimo_update = #{ultimo_update},
+		ultimo_user = #{ultimo_user},nro_ingreso =#{nro_ingreso},via_ingreso=#{via_ingreso}
+		where 		id = #{id}
+	</update>
+
+	<select id="consultar" parameterType="certificado_incapacidad_caja" resultMap="certificado_incapacidad_cajaMap">
+		SELECT
+			vr_cic.codigo_empresa,
+			vr_cic.codigo_sucursal,
+			vr_cic.id,
+			vr_cic.nro_identificacion,
+			vr_cic.fecha,
+			vr_cic.codigo,
+			vr_cic.fecha_hasta,
+			vr_cic.observaciones,
+			vr_cic.codigo_dx,
+			vr_cic.codigo_medico,
+			vr_cic.creacion_date,
+			vr_cic.creacion_user,
+			vr_cic.ultimo_update,
+			vr_cic.ultimo_user,
+			vr_cic.nro_ingreso,
+			vr_cic.via_ingreso,
+			vr_cic.pac_apellido1,
+			vr_cic.pac_apellido2,
+			vr_cic.pac_nombre1,
+			vr_cic.pac_nombre2,
+			vr_cic.pac_fecha_nacimiento,
+			vr_cic.pac_sexo,
+			vr_cic.pac_documento,
+			vr_cic.cie_nombre,
+			vr_cic.med_nombres,
+			vr_cic.med_apellidos,
+			vr_cic.med_firma,
+			vr_cic.med_registro_medico,
+			vr_cic.elm_descripcion_via_ingreso
+		FROM public.vr_certificado_incapacidad_caja AS vr_cic
+		where id = #{id}
+	</select>
+
+	<delete id="eliminar" parameterType="certificado_incapacidad_caja">
+		delete from public.certificado_incapacidad_caja
+		where id = #{id}
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="certificado_incapacidad_cajaMap">
+		SELECT
+			vr_cic.codigo_empresa,
+			vr_cic.codigo_sucursal,
+			vr_cic.id,
+			vr_cic.nro_identificacion,
+			vr_cic.fecha,
+			vr_cic.codigo,
+			vr_cic.fecha_hasta,
+			vr_cic.observaciones,
+			vr_cic.codigo_dx,
+			vr_cic.codigo_medico,
+			vr_cic.creacion_date,
+			vr_cic.creacion_user,
+			vr_cic.ultimo_update,
+			vr_cic.ultimo_user,
+			vr_cic.nro_ingreso,
+			vr_cic.via_ingreso,
+			vr_cic.pac_apellido1,
+			vr_cic.pac_apellido2,
+			vr_cic.pac_nombre1,
+			vr_cic.pac_nombre2,
+			vr_cic.pac_fecha_nacimiento,
+			vr_cic.pac_sexo,
+			vr_cic.pac_documento,
+			vr_cic.cie_nombre,
+			vr_cic.med_nombres,
+			vr_cic.med_apellidos,
+			vr_cic.med_firma,
+			vr_cic.med_registro_medico,
+			vr_cic.elm_descripcion_via_ingreso
+		FROM public.vr_certificado_incapacidad_caja AS vr_cic
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+				AND vr_cic.codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+				AND vr_cic.codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+				AND ${parameter} like '%${value}%'
+			</if>
+			<if test="fecha_in != null"><![CDATA[ AND CAST(vr_cic.fecha AS DATE) >= #{fecha_in}]]></if>
+			<if test="fecha_fn != null"><![CDATA[ AND CAST(vr_cic.fecha AS DATE) <= #{fecha_fn}]]></if>
+			<if test="nro_ingreso != null">
+				AND vr_cic.nro_ingreso = #{nro_ingreso}
+			</if>
+			<if test="nro_identificacion != null">
+				AND vr_cic.nro_identificacion = #{nro_identificacion}
+			</if>
+		</trim>
+		<if test="ordenar_por != null">
+		    ${ordenar_por}
+		</if>
+		<if test="limite_paginado != null">
+			${limite_paginado}
+		</if>
+	</select>
+
+	<select id="exist" resultType="java.lang.Boolean">
+		select count(*) != 0 AS exist 		from public.certificado_incapacidad_caja 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+	
+	<select id="totalResultados" resultType="java.lang.Integer"
+		parameterType="java.util.Map">
+		SET ENABLE_SEQSCAN TO OFF;
+		SELECT count(1) FROM vr_certificado_incapacidad_caja AS vr_cic
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+				AND vr_cic.codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+				AND vr_cic.codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+				AND ${parameter} like '%${value}%'
+			</if>
+			<if test="fecha_in != null"><![CDATA[ AND CAST(vr_cic.fecha AS DATE) >= #{fecha_in}]]></if>
+			<if test="fecha_fn != null"><![CDATA[ AND CAST(vr_cic.fecha AS DATE) <= #{fecha_fn}]]></if>
+		</trim>
+	</select>
+
+</mapper>
+

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.evolucion_medicaModel">
+    <select id="select" resultType="java.util.HashMap" parameterType="java.util.Map">
+    select p.apellido1 as apellido1_paciente,p.apellido2 as apellido2_paciente,
+	p.nombre1 as nombre1_paciente,p.nombre2 as nombre2_paciente,ev.nro_identificacion,
+	a.nombre as administradora,h.nombre as habitacion,c.nombre as cama,
+	de.fecha,de.evoluciones,de.ordenes,de.consecutivo,de.objetivos,de.analisis,u.codigo as codigo_prestador,(u.nombres || ' ' ||u.apellidos) as prestador, u.firma as firma
+	from evolucion_medica ev
+	left join paciente p on
+	p.codigo_empresa = ev.codigo_empresa
+	and p.codigo_sucursal = ev.codigo_sucursal
+	and p.nro_identificacion = ev.nro_identificacion
+	left join administradora a on
+	a.codigo = ev.codigo_administradora
+	left join habitacion h on
+	h.codigo_empresa = ev.codigo_empresa
+	and h.codigo_sucursal = ev.codigo_sucursal
+	and h.tipo_atencion = ev.tipo_atencion
+	and h.codigo_pabellon = ev.codigo_pabellon
+	and h.codigo = ev.codigo_habitacion
+	left join cama c on
+	c.codigo_empresa = ev.codigo_empresa
+	and c.codigo_sucursal = ev.codigo_sucursal
+	and c.tipo_atencion = ev.tipo_atencion
+	and c.codigo_pabellon = ev.codigo_pabellon
+	and c.codigo_habitacion = ev.codigo_habitacion
+	and c.codigo = ev.codigo_cama
+	inner join detalle_evolucion de on
+	de.codigo_empresa = ev.codigo_empresa
+	and de.codigo_sucursal = ev.codigo_sucursal
+	and de.codigo_evolucion = ev.codigo_evolucion
+	left join usuarios u on
+	u.codigo_empresa = de.codigo_empresa
+	and u.codigo_sucursal = de.codigo_sucursal
+	and u.codigo = de.prestador	
+	where ev.codigo_evolucion = #{codigo_evolucion}
+	and ev.codigo_empresa = #{codigo_empresa}
+	and ev.codigo_sucursal = #{codigo_sucursal}
+	order by de.fecha
+    </select>
+   
+</mapper>

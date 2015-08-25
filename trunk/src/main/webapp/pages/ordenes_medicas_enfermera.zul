@@ -1,0 +1,212 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formOrden" width="100%" height="100%"
+		use="healthmanager.controller.Ordenes_medicas_enfermeraAction">
+		<style src="estilo.css" />
+		<style>
+			body ,table{ margin:0; padding:0;
+
+			} .z-fieldset{ -moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; }
+
+			tr.z-row .z-cell{ background-image:none; }
+
+			tr.z-row td.z-row-inner{ background-image:none; }
+		</style>
+
+		<groupbox id="groupboxConsultar" visible="true" closable="false"
+			mold="3d" height="100%">
+			<caption label="Consultar Ordenes medicas del paciente"
+				style="color: blue;font-weight: bold" />
+
+			<listbox id="listboxOrdenes_medicas" height="99%" vflex="1"
+				multiple="false" checkmark="false" mold="paging" pageSize="20">
+
+				<auxhead>
+					<auxheader id="auxheaderOrdenes" colspan="7">
+						<hlayout valign="middle">
+							<label value="Fecha de orden: " />
+							<space />
+							<datebox id="dtbxFecha_orden_b"
+								format="yyyy-MM-dd" onCreate="self.setValue(new Date())" />
+							<space />
+							<label value="Ordenamiento" />
+							<listbox id="lbxEstados_ordenamientos"
+								mold="select" hflex="1" >
+								<listitem label="Todas" value=""
+									selected="true" />
+								<listitem label="Entregados totalmente"
+									value="1" />
+								<listitem
+									label="Entregados parcialmente" value="2" />
+								<listitem label="No Entregados"
+									value="3" />
+							</listbox>
+							<space />
+							<label value="Medicamentos" />
+							<listbox id="lbxEstados_medicamentos"
+								mold="select" hflex="1" >
+								<listitem label="Todas" value=""
+									selected="true" />
+								<listitem label="Entregados totalmente"
+									value="1" />
+								<listitem
+									label="Entregados parcialmente" value="2" />
+								<listitem label="No Entregados"
+									value="3" />
+							</listbox>
+							<label value="Paciente : " />
+							<textbox id="tbxValue" hflex="1"
+								style="text-transform:uppercase" onOK="formOrden.buscarDatos()" />
+							<toolbarbutton image="/images/Magnifier.gif"
+								id="toolbarbuttonConsultar" label="Consultar ordenes"
+								onClick='formOrden.buscarDatos()' />
+						</hlayout>
+					</auxheader>
+				</auxhead>
+
+				<listhead>
+					<listheader label="Codigo orden" width="100px" />
+					<listheader label="Tipo de orden" width="120px" />
+					<listheader label="Fecha de orden" width="120px" />
+					<listheader label="Ordenamientos" width="100px" />
+					<listheader label="Medicamentos" width="100px" />
+					<listheader label="Paciente" />
+					<listheader width="120px" label="Opciones" />
+				</listhead>
+			</listbox>
+		</groupbox>
+
+		<borderlayout width="100%" height="95%" id="borderlayoutEditar"
+			visible="true">
+			<north border="none">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Regresar"
+						onClick='formOrden.accionForm(false,tbxAccion.getText());'
+						id="btCancelar" />
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center" id="divEditar">
+					<separator height="3px" />
+					<groupbox closable="false" width="800px"
+						mold="3d">
+						<grid sclass="GridSinBorde">
+							<auxhead>
+								<auxheader colspan="4" align="center"
+									label="MODULO DE ORDENES MEDICAS" />
+							</auxhead>
+							<columns visible="false">
+								<column width="150px" />
+								<column />
+								<column />
+								<column width="150px" />
+							</columns>
+
+							<rows>
+								<row id="rowCodigo_orden">
+									<cell>
+										<label style="font-weight:bold"
+											value="Código Orden médica" id="labelCodigo_orden" />
+									</cell>
+									<cell>
+										<textbox id="tbxCodigo_orden_m"
+											readonly="true" />
+									</cell>
+									<cell align="right">
+										<label style="font-weight:bold"
+											value="Fecha de orden " />
+									</cell>
+									<cell>
+										<datebox id="dtbxFecha_orden_m"
+											format="yyyy-MM-dd" readonly="true" buttonVisible="false" />
+									</cell>
+								</row>
+
+								<row>
+									<cell>
+										<label style="font-weight:bold"
+											value="Paciente" />
+									</cell>
+									<cell colspan="3">
+										<textbox
+											id="tbxInformacion_paciente" readonly="true" hflex="1" />
+									</cell>
+								</row>
+
+								<row visible="false">
+									<cell colspan="4">
+										<vlayout>
+											<label
+												style="font-weight:bold" value="Observación medica" />
+											<textbox hflex="1"
+												id="tbxObservacion_medica" rows="5" />
+										</vlayout>
+									</cell>
+								</row>
+
+								<row>
+									<cell colspan="4">
+										<div style=""
+											id="divModuloFarmacologico" visible="true">
+										</div>
+									</cell>
+								</row>
+
+								<row>
+									<cell colspan="4">
+										<div style=""
+											id="divModuloOrdenamiento" visible="true">
+										</div>
+									</cell>
+								</row>
+
+								<row>
+									<cell colspan="4">
+
+										<toolbarbutton
+											image="/images/generar.png"
+											id="toolbarbuttonEntrega_medicamento"
+											label="Descargar de medicamentos" visible="true"
+											onClick='formOrden.mostrarEntregaMedicamentos()' />
+
+										<space />
+
+										<toolbarbutton
+											image="/images/generar.png" id="toolbarbuttonHoja_gasto"
+											label="Mostrar Hoja de gastos" visible="true"
+											onClick='formOrden.mostrarHojaGastos()' />
+
+										<space />
+
+										<toolbarbutton
+											image="/images/generar.png" id="btimprimir"
+											label="Imprimir hoja de gasto" visible="true"
+											onClick='formOrden.imprimir()' />
+
+
+										<space />
+
+										<toolbarbutton
+											image="/images/generar.png"
+											id="toolbarbuttonRealizacion_procedimientos"
+											label="Realización de procedimientos" visible="true"
+											onClick='formOrden.mostrarRealizacionProcedimientos()' />
+
+
+									</cell>
+								</row>
+
+							</rows>
+						</grid>
+					</groupbox>
+				</div>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.historia_urgenciaModel">
+	<select id="select" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+
+		SELECT
+		get_edad(paciente.fecha_nacimiento,CURRENT_DATE,paciente."unidad_medidad") AS edad,
+		hisc_urgencia.fecha_cierre AS fecha_cierre,
+		hisc_urgencia.conyugue AS acompanante,
+		hisc_urgencia.cedula_conyugue::varchar AS
+		id_acomp,
+		hisc_urgencia.escolaridad_conyugue AS escolaridad,
+		elemento2.descripcion AS acomp,
+		hisc_urgencia.motivo_consulta AS
+		motivo_consulta,
+		hisc_urgencia.enfermedad_actual AS enfermedad_actual,
+		hisc_urgencia.sintomatico_piel AS sintomatico_piel,
+		hisc_urgencia.sintomatico_respiratorio AS sintomatico_respiratorio,
+		paciente."tipo_identificacion" AS paciente_tipo_identificacion,
+		paciente."nro_identificacion" AS paciente_nro_identificacion,
+		paciente."codigo_administradora" AS paciente_codigo_administradora,
+		paciente."tipo_usuario" AS paciente_tipo_usuario,
+		paciente."apellido1"
+		AS paciente_apellido1,
+		paciente."apellido2" AS paciente_apellido2,
+		paciente."nombre1" AS paciente_nombre1,
+		paciente."nombre2" AS
+		paciente_nombre2,
+		paciente."unidad_medidad" AS paciente_unidad_medidad,
+		paciente."sexo" AS paciente_sexo,
+		paciente."profesion" AS
+		paciente_profesion,
+		paciente."tel_oficina" AS paciente_tel_oficina,
+		paciente."tel_res" AS paciente_tel_res,
+		paciente."direccion" AS
+		paciente_direccion,
+		paciente."nivel_sisben" AS paciente_nivel_sisben,
+		paciente."edad" AS paciente_edad,
+		pertenencia_etnica."nombre" AS
+		pert_etnica,
+		departamentos."nombre" AS departamento,
+		municipios."nombre" AS municipios,
+		administradora."codigo" AS
+		administradora,
+		administradora."nombre" AS nombre_admin,
+		ocupaciones."nombre" AS ocupacion,
+		barrio."barrio" AS
+		barrio,
+		elemento."descripcion" AS estado_civil,
+		prestadores.nro_identificacion AS codigo_medico,
+		prestadores."nombres"
+		AS nombre_prestador,
+		prestadores."apellidos" AS apellidos_prestador,
+		elemento1."descripcion" AS regimen,
+		nivel_educativo."nombre" AS
+		nivel_educativo,
+		localidad."localidad" AS localidad,
+		paciente."login" AS
+		paciente_login,
+		paciente."fecha_nacimiento" AS
+		paciente_fecha_nacimiento,
+		paciente."codigo_dpto" AS
+		paciente_codigo_dpto,
+		paciente."codigo_municipio" AS
+		paciente_codigo_municipio
+		FROM
+
+		"public"."hisc_urgencia" hisc_urgencia INNER JOIN "public".admision admision ON
+		admision.codigo_empresa = hisc_urgencia.codigo_empresa
+		AND
+		admision."nro_identificacion" = hisc_urgencia."nro_identificacion"
+		AND
+		admision.codigo_sucursal = hisc_urgencia.codigo_sucursal
+		AND hisc_urgencia."nro_ingreso" = admision."nro_ingreso"
+
+
+		INNER JOIN "public"."paciente" paciente ON
+		paciente."codigo_empresa" =
+		admision."codigo_empresa"
+		AND paciente."nro_identificacion" =
+		admision."nro_identificacion"
+		AND paciente."codigo_sucursal" =
+		admision."codigo_sucursal"
+
+
+		INNER JOIN
+		"public"."impresion_diagnostica" impresion_diagnostica ON
+		hisc_urgencia."codigo_empresa" =
+		impresion_diagnostica."codigo_empresa"
+		AND
+		hisc_urgencia."codigo_sucursal"=impresion_diagnostica."codigo_sucursal"
+		and hisc_urgencia."codigo_historia" =
+		impresion_diagnostica."codigo_historia"
+
+		LEFT JOIN
+		"public".pertenencia_etnica pertenencia_etnica on
+		pertenencia_etnica."id" = paciente."pertenencia_etnica"
+
+		INNER JOIN
+		"public".municipios municipios on municipios.codigo =
+		paciente.codigo_municipio
+
+		INNER JOIN "public".departamentos
+		departamentos on departamentos.codigo = paciente.codigo_dpto
+		AND
+		municipios.coddep = paciente."codigo_dpto"
+
+		LEFT JOIN
+		"public".administradora administradora on administradora.codigo=
+		paciente.codigo_administradora
+		LEFT JOIN "public".ocupaciones
+		ocupaciones on ocupaciones."id" = paciente.codigo_ocupacion
+
+		LEFT JOIN
+		"public".adicional_paciente adicional_paciente on
+		adicional_paciente.codigo_empresa = paciente.codigo_empresa
+		AND
+		adicional_paciente.codigo_sucursal = paciente.codigo_sucursal
+		and
+		adicional_paciente.nro_identificacion = paciente.nro_identificacion
+
+		LEFT JOIN "public".barrio barrio on barrio.codigo_barrio =
+		adicional_paciente.codigo_barrio
+
+		LEFT JOIN "public".elemento elemento
+		on elemento.codigo =
+		paciente.estado_civil
+		AND elemento.tipo =
+		'estado_civil'
+
+		INNER JOIN "public".prestadores prestadores on
+		prestadores.nro_identificacion= hisc_urgencia.codigo_prestador
+		INNER
+		JOIN "public".elemento elemento1 on elemento1.codigo =
+		paciente.tipo_usuario and elemento1.tipo = 'tipo_usuario'
+		INNER JOIN
+		"public".nivel_educativo nivel_educativo on nivel_educativo."id"
+		=
+		paciente.codigo_educativo
+		INNER JOIN "public".localidad localidad on
+		localidad.codigo_localidad =
+		barrio.codigo_localidad
+		LEFT JOIN
+		"public".elemento elemento2 on elemento2.codigo =
+		hisc_urgencia.relacion_acompanante AND elemento2.tipo='relacion_acomp'
+
+		where hisc_urgencia.codigo_empresa = #{codigo_empresa}
+		and
+		hisc_urgencia.codigo_sucursal = #{codigo_sucursal}
+		and
+		hisc_urgencia.codigo_historia = #{nro_historia}
+
+	</select>
+</mapper>

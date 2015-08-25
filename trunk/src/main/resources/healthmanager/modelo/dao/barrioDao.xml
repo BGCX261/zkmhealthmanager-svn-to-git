@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.BarrioDao">
+
+	<!--<typeAlias alias="barrio" type="healthmanager.modelo.bean.Barrio" />-->
+
+	<!--<mapper resource="healthmanager/modelo/dao/xml/barrioSQL.xml" />-->
+
+	<resultMap id="barrioMap" type="barrio">
+		<result column="codigo_barrio" property="codigo_barrio" />
+		<result column="barrio" property="barrio" />
+		<result column="descripcion" property="descripcion" />
+		<result column="tipo" property="tipo" />
+		<result column="codigo_localidad" property="codigo_localidad" />
+	</resultMap>
+
+	<insert id="crear" parameterType="barrio">
+		insert into public.barrio (codigo_barrio,barrio,
+		descripcion,tipo,codigo_localidad)
+
+		values (#{codigo_barrio},#{barrio},
+		#{descripcion},#{tipo},#{codigo_localidad})
+	</insert>
+
+	<update id="actualizar" parameterType="barrio">
+		update public.barrio set codigo_barrio = #{codigo_barrio},
+		barrio = #{barrio},descripcion = #{descripcion},
+		tipo = #{tipo},codigo_localidad = #{codigo_localidad}
+		where codigo_barrio = #{codigo_barrio}
+	</update>
+
+	<select id="consultar" parameterType="barrio" resultMap="barrioMap">
+		select codigo_barrio,barrio,
+		descripcion,tipo,codigo_localidad
+		from public.barrio where codigo_barrio = #{codigo_barrio}
+	</select>
+
+	<delete id="eliminar" parameterType="barrio">
+		delete from public.barrio
+		where codigo_barrio = #{codigo_barrio}
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="barrioMap">
+		select codigo_barrio,barrio,
+		descripcion,tipo,codigo_localidad
+		from public.barrio 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+			<if test="parametroTodo != null">
+			AND (lower(codigo_barrio) like '%${parametroTodo}%' or lower(barrio) like '%${parametroTodo}%')
+			</if>
+		</trim>
+		<if test="limite_paginado != null">
+		${limite_paginado}
+		</if>
+	</select>
+	
+		<select id="totalResultados" resultType="java.lang.Integer" parameterType="java.util.Map">
+		select count(1) 
+		from public.barrio
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_barrio != null">AND codigo_barrio = #{codigo_barrio}</if>
+			<if test="barrio != null">AND barrio = #{barrio}</if>
+			<if test="descripcion != null">AND descripcion = #{descripcion}</if>
+			<if test="tipo != null">AND tipo = #{tipo}</if>
+			<if test="codigo_localidad != null">AND codigo_localidad = #{codigo_localidad}</if>
+			<if test="parameter != null">AND ${parameter} like '${value}'</if>
+			<if test="parametroTodo != null">AND (LOWER(codigo_barrio) like '${value}' 
+			or LOWER(barrio) like '${value}%')
+			</if>
+		</trim>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from public.barrio 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

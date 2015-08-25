@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.Novedades_neDao">
+
+
+
+	<resultMap id="novedades_neMap" type="novedades_ne">
+		<result column="consecutivo" property="consecutivo" />
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="nro_id_afiliado" property="nro_id_afiliado" />
+		<result column="codigo_novedad" property="codigo_novedad" />
+		<result column="nuevo_valor1" property="nuevo_valor1" />
+		<result column="nuevo_valor2" property="nuevo_valor2" />
+		<result column="nuevo_valor3" property="nuevo_valor3" />
+		<result column="nuevo_valor4" property="nuevo_valor4" />
+		<result column="nuevo_valor5" property="nuevo_valor5" />
+		<result column="nuevo_valor6" property="nuevo_valor6" />
+		<result column="nuevo_valor7" property="nuevo_valor7" />
+		<result column="fecha_novedad" property="fecha_novedad" />
+		<result column="creacion_date" property="creacion_date" />
+		<result column="ultimo_update" property="ultimo_update" />
+		<result column="creacion_user" property="creacion_user" />
+		<result column="delete_date" property="delete_date" />
+		<result column="ultimo_user" property="ultimo_user" />
+		<result column="delete_user" property="delete_user" />
+	</resultMap>
+
+	<insert id="crear" parameterType="novedades_ne">
+		insert into public.novedades_ne
+		(consecutivo,codigo_empresa,
+		codigo_sucursal,nro_id_afiliado,codigo_novedad,
+		nuevo_valor1,nuevo_valor2,nuevo_valor3,
+		nuevo_valor4,nuevo_valor5,nuevo_valor6,
+		nuevo_valor7,fecha_novedad,creacion_date,
+		ultimo_update,creacion_user,delete_date,
+		ultimo_user,delete_user)
+
+		values (#{consecutivo},#{codigo_empresa},
+		#{codigo_sucursal},#{nro_id_afiliado},#{codigo_novedad},
+		#{nuevo_valor1},#{nuevo_valor2},#{nuevo_valor3},
+		#{nuevo_valor4},#{nuevo_valor5},#{nuevo_valor6},
+		#{nuevo_valor7},#{fecha_novedad},#{creacion_date},
+		#{ultimo_update},#{creacion_user},#{delete_date},
+		#{ultimo_user},#{delete_user})
+	</insert>
+
+	<update id="actualizar" parameterType="novedades_ne">
+		update public.novedades_ne
+		set consecutivo =
+		#{consecutivo},
+		codigo_empresa =
+		#{codigo_empresa},codigo_sucursal =
+		#{codigo_sucursal},
+		nro_id_afiliado
+		= #{nro_id_afiliado},codigo_novedad =
+		#{codigo_novedad},
+		nuevo_valor1 =
+		#{nuevo_valor1},nuevo_valor2 =
+		#{nuevo_valor2},
+		nuevo_valor3 =
+		#{nuevo_valor3},nuevo_valor4 =
+		#{nuevo_valor4},
+		nuevo_valor5 =
+		#{nuevo_valor5},nuevo_valor6 =
+		#{nuevo_valor6},
+		nuevo_valor7 =
+		#{nuevo_valor7},fecha_novedad =
+		#{fecha_novedad},
+		creacion_date =
+		#{creacion_date},ultimo_update =
+		#{ultimo_update},
+		creacion_user =
+		#{creacion_user},delete_date =
+		#{delete_date},
+		ultimo_user =
+		#{ultimo_user},delete_user = #{delete_user}
+		where consecutivo =
+		#{consecutivo}
+		and codigo_empresa = #{codigo_empresa}
+		and
+		codigo_sucursal = #{codigo_sucursal}
+		and nro_id_afiliado =
+		#{nro_id_afiliado}
+	</update>
+
+	<select id="consultar" resultMap="novedades_neMap"
+		parameterType="novedades_ne">
+		select
+		consecutivo,codigo_empresa,
+		codigo_sucursal,nro_id_afiliado,codigo_novedad,nuevo_valor1,
+		nuevo_valor2,nuevo_valor3,nuevo_valor4,nuevo_valor5,
+		nuevo_valor6,nuevo_valor7,fecha_novedad,creacion_date,
+		ultimo_update,creacion_user,delete_date,ultimo_user,
+		delete_user
+		from
+		public.novedades_ne where
+		codigo_empresa = #{codigo_empresa} and
+		codigo_sucursal = #{codigo_sucursal}
+		AND consecutivo = #{consecutivo}
+		AND
+		nro_id_afiliado = #{nro_id_afiliado}
+	</select>
+
+	<select id="getConsecutivo" resultType="java.lang.Integer"
+		parameterType="novedades_ne">
+		select (max(consecutivo)+1)
+		AS cons
+		from
+		public.novedades_ne where
+		codigo_empresa = #{codigo_empresa}
+		and
+		codigo_sucursal = #{codigo_sucursal}
+	</select>
+
+	<delete id="eliminar" parameterType="novedades_ne">
+		delete from
+		public.novedades_ne
+		where consecutivo =
+		#{consecutivo}
+		and codigo_empresa
+		= #{codigo_empresa} and codigo_sucursal
+		= #{codigo_sucursal}
+		and
+		nro_id_afiliado = #{nro_id_afiliado}
+	</delete>
+
+	<select id="listarMap" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+		SELECT ne.consecutivo as a, trim((SELECT codigo_ministerio FROM
+		parametros_empresa pe
+		WHERE pe.codigo_empresa = ne.codigo_empresa)) AS
+		b,
+		p.tipo_identificacion as c,
+		p.nro_identificacion as e, p.apellido1 f,
+		p.apellido2 g, p.nombre1 h, p.nombre2 i, p.fecha_nacimiento j,
+		a.departamento_afiliacion k, a.municipio_afiliacion l,
+		ne.codigo_novedad m,
+		ne.fecha_novedad n,
+		valores_null(ne.nuevo_valor1)
+		o, valores_null(ne.nuevo_valor2) p,
+		valores_null(ne.nuevo_valor3) q,
+		valores_null(ne.nuevo_valor4) r,valores_null(ne.nuevo_valor5)
+		s,valores_null(ne.nuevo_valor6) t,valores_null(ne.nuevo_valor7) u
+		FROM novedades_ne ne
+		INNER JOIN public.afiliaciones_me as a ON
+		(a.codigo_empresa = ne.codigo_empresa
+		AND a.codigo_sucursal =
+		ne.codigo_sucursal
+		AND
+		a.id::varchar =
+		ne.nro_id_afiliado)
+		INNER JOIN
+		public.paciente as p ON
+		(p.codigo_empresa = a.codigo_empresa
+		AND
+		p.codigo_sucursal =
+		a.codigo_sucursal
+		AND p.nro_identificacion =
+		a.nro_identificacion_afiliado)
+		WHERE
+		ne.codigo_empresa = #{codigo_empresa} and ne.codigo_sucursal = #{codigo_sucursal} and
+		ne.fecha_novedad BETWEEN #{fecha_init} AND #{fecha_end}
+		<if test="codigo_administradora != null">
+			AND p.codigo_administradora = #{codigo_administradora}
+		</if>
+	</select>
+
+
+	<select id="listar" resultMap="novedades_neMap" parameterType="java.util.Map">
+		select consecutivo,codigo_empresa,
+		codigo_sucursal,nro_id_afiliado,codigo_novedad,nuevo_valor1,
+		nuevo_valor2,nuevo_valor3,nuevo_valor4,nuevo_valor5,
+		nuevo_valor6,nuevo_valor7,fecha_novedad,creacion_date,
+		ultimo_update,creacion_user,delete_date,ultimo_user,
+		delete_user
+		from
+		public.novedades_ne
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">AND codigo_empresa =
+				#{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">AND codigo_sucursal =
+				#{codigo_sucursal}
+			</if>
+			<if test="parameter != null">AND ${parameter} like
+				'${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+			${limit}
+		</if>
+	</select>
+
+</mapper>

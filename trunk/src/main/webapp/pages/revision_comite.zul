@@ -1,0 +1,623 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formRevision_comite" width="100%" height="100%"
+		use="healthmanager.controller.Revision_comiteAction" border="none">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+		<groupbox id="groupboxConsulta" visible="true" closable="false"
+			height="90%" mold="3d">
+			<caption label="Consultar Usuario"
+				style="color: black;font-weight: bold" />
+			<grid id="gridResultado" mold="paging" pageSize="20"
+				vflex="1">
+				<auxhead>
+					<auxheader colspan="7">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<separator />
+							<textbox id="tbxValue" width="200px"
+								onOK="formRevision_comite.buscarDatos();"
+								style="text-transform:uppercase" />
+							<separator />
+							<toolbarbutton image="/images/Magnifier.gif"
+								label="Consultar actas"
+								onClick="formRevision_comite.buscarDatos();"
+								tooltiptext="Consultar Prueba" />
+							<separator />
+							<toolbarbutton image="/images/New16.gif"
+								label="Registar Actas"
+								onClick='formRevision_comite.accionForm(true,"registrar");'
+								tooltiptext="Nuevo Prueba" />
+
+							<toolbarbutton image="/images/print_ico.gif"
+								label="Imprimir"
+								onClick="formRevision_comite.imprimirSeleccionada()" />
+							<space bar="true" />
+							<toolbarbutton id="btnConfiguracionBusqeuda"
+								image="/images/configuracion_mini.png">
+								<attribute name="onClick">
+	popup.open(btnConfiguracionBusqeuda);
+</attribute>
+							</toolbarbutton>
+							<popup id="popup">
+								<groupbox mold="3d">
+									<caption
+										label="Configuración de Búsqueda">
+										<toolbarbutton label="X"
+											onClick="popup.close()" tooltiptext="Cerrar" />
+									</caption>
+									<vlayout>
+										<listbox id="lbxSearh"
+											visible="false" mold="select" sclass="combobox" hflex="1" />
+										<hbox>
+											<label
+												value="Fecha inicial: " />
+											<datebox format="yyyy-MM-dd"
+												id="dtbxFecha_inicial" width="100px" />
+											<space />
+											<label
+												value="Fecha final: " />
+											<datebox format="yyyy-MM-dd"
+												id="dtbxFecha_final" width="100px" />
+										</hbox>
+									</vlayout>
+								</groupbox>
+							</popup>
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="" align="center" width="30px">
+					<checkbox onCheck="formRevision_comite.cambiarEstadoSeleccionaLista(self.isChecked())"/>
+					</column>
+					<column label="Código Solicitud" align="center"
+						width="110px" />
+					<column label="Nro ACTA" align="center"
+						width="100px" />
+					<column label="Comentarios" align="center"
+						width="100px" />
+					<column label="Alternativas" align="center"
+						width="100px" />
+					<column label="Paciente" align="left" />
+					<column label="Fecha" align="center" width="100px" />
+					<column label="Casos" align="center" width="100px" />
+					<column label="Acciones" align="center"
+						width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+
+		</groupbox>
+
+
+		<borderlayout width="100%" height="90%" id="groupboxEditar"
+			visible="false">
+			<north>
+				<toolbar width="100%" align="start">
+					<toolbarbutton image="/images/Save16.gif"
+						label="Guardar Revisión"
+						onClick="formRevision_comite.guardarDatos();" id="btGuardar" />
+
+					<space />
+
+					<toolbarbutton image="/images/New16.gif"
+						label="Nueva Solicitud"
+						onClick='formRevision_comite.accionForm(true,"registrar");'
+						id="btNew" visible="false" />
+					<space />
+
+					<toolbarbutton image="/images/atras_.png"
+						label="Atras" onClick='formRevision_comite.atras()' id="btCancel" />
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+
+
+					<toolbarbutton image="/images/print_ico.gif"
+						label="Imprimir" onClick="formRevision_comite.imprimir();"
+						id="btImprimir" visible="false" />
+
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center">
+					<space />
+					<groupbox closable="false" mold="3d"
+						width="850px">
+						<caption label="DATOS DEL PACIENTE"
+							style="color: black;font-weight: bold" />
+						<grid sclass="GridSinBorde" vflex="1"
+							style="border:none">
+							<columns>
+								<column label="" width="5px" />
+								<column label="" width="130px"
+									align="left" />
+								<column label="" width="" align="left" />
+								<column label="" width="130px"
+									align="left" />
+								<column label="" width="" align="left" />
+								<column label="" width="5px"
+									align="left" />
+							</columns>
+							<rows>
+								<row>
+									<cell></cell>
+									<cell height="30px" align="left">
+										<label
+											value="Nro identificación: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxNroidentificacion" hflex="1"
+											style="text-transform:uppercase" readonly="true" />
+									</cell>
+									<cell height="30px" align="left">
+										<label
+											value="Tipo identificación: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxTipoidentificacion" hflex="1"
+											style="text-transform:uppercase" readonly="true" />
+									</cell>
+									<cell></cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell height="30px" align="left">
+										<label value="1er Apellido: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxapellido1Paciente" hflex="1"
+											style="text-transform:uppercase" readonly="true" />
+									</cell>
+									<cell height="30px" align="left">
+										<label value="2do Apellido: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxapellido2paciente" hflex="1"
+											style="text-transform:uppercase" readonly="true" />
+									</cell>
+									<cell></cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell height="30px" align="left">
+										<label value="1er Nombre: " />
+									</cell>
+									<cell>
+										<textbox id="tbxnombre1Paciente"
+											hflex="1" style="text-transform:uppercase" readonly="true" />
+									</cell>
+									<cell height="30px" align="left">
+										<label value="2do Nombre: " />
+									</cell>
+									<cell>
+										<textbox id="tbxnombre2paciente"
+											hflex="1" style="text-transform:uppercase" readonly="true" />
+									</cell>
+									<cell></cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell height="30px" align="left">
+										<label value="Tipo afiliado: " />
+									</cell>
+									<cell>
+										<textbox id="tbxTipoAfiliado"
+											hflex="1" style="text-transform:uppercase" readonly="true" />
+									</cell>
+									<cell height="30px" align="left">
+										<label value="Edad: " />
+									</cell>
+									<cell>
+										<textbox id="tbxEdadPaciente"
+											hflex="1" style="text-transform:uppercase" readonly="true" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<row visible="false">
+									<cell></cell>
+									<cell height="30px" align="left">
+										<label value="Meses: " />
+									</cell>
+									<cell>
+										<textbox id="tbxMesePacientes"
+											hflex="1" style="text-transform:uppercase" readonly="true" />
+									</cell>
+									<cell height="30px" align="left">
+										<label value="Años: " />
+									</cell>
+									<cell>
+										<textbox id="tbxAnios" hflex="1"
+											style="text-transform:uppercase" readonly="true" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<row visible="false">
+									<cell></cell>
+									<cell height="30px" align="left">
+										<label
+											value="Fecha de radicación de la solicitud: "
+											style="font-size:9px" />
+									</cell>
+									<cell>
+										<datebox id="tbxFecha" hflex="1"
+											format="dd/MM/yyyy" style="text-transform:uppercase"
+											readonly="true" buttonVisible="false" />
+									</cell>
+									<cell colspan="3" />
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+					<space height="5px" />
+					<groupbox visible="true" closable="false"
+						width="850px" mold="3d">
+						<caption
+							label="INFORMACION DE LA PERSONA QUE SOLICITA"
+							style="color: black;font-weight: bold" />
+
+						<grid sclass="GridSinBorde" vflex="1">
+							<columns>
+								<column label="" width="5px" />
+								<column label="" width="130px"
+									align="left" />
+								<column label="" width="" align="left" />
+								<column label="" width="130px"
+									align="left" />
+								<column label="" width="" align="left" />
+								<column label="" width="5px"
+									align="left" />
+							</columns>
+							<rows>
+								<row>
+									<cell height="30px" colspan="2">
+										<label id="lbNombre_solicita"
+											value="Nombre del médico tratante: " />
+									</cell>
+									<cell>
+										<textbox id="tbxNombre_solicita"
+											hflex="1" style="text-transform:uppercase" readonly="true" />
+									</cell>
+									<cell height="30px">
+										<label value="Telefono: " />
+									</cell>
+									<cell>
+										<textbox id="tbxTelefono"
+											hflex="1" style="text-transform:uppercase" readonly="true" />
+									</cell>
+									<cell></cell>
+								</row>
+								<row>
+									<cell height="30px" colspan="2">
+										<label
+											value="Cargo o actividad: " />
+									</cell>
+									<cell>
+										<textbox id="tbxCargo" hflex="1"
+											style="text-transform:uppercase" readonly="true" />
+									</cell>
+									<cell height="30px">
+										<label value="E-Mail: " />
+									</cell>
+									<cell>
+										<textbox id="tbxCel" hflex="1"
+											style="text-transform:uppercase" readonly="true" />
+									</cell>
+									<cell></cell>
+								</row>
+								<row>
+									<cell height="30px" colspan="2">
+										<label
+											value="Registro Medico: " />
+									</cell>
+									<cell>
+										<textbox id="tbxRegistroMedico"
+											hflex="1" style="text-transform:uppercase" readonly="true" />
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+					<space height="5px" />
+					<groupbox closable="false" mold="3d"
+						width="850px">
+						<caption label="DATOS DEL COMITE" />
+
+						<grid sclass="GridSinBorde" vflex="1"
+							style="border:none">
+							<columns>
+								<column label="" width="10px" />
+								<column label="" width="130px" />
+								<column label="" width="180px"
+									align="left" />
+								<column label="" />
+								<column label="" width="10px" />
+							</columns>
+							<rows>
+
+
+								<row>
+									<cell></cell>
+									<cell height="30px" align="left">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbComentarios"
+											value="Concepto CTC " />
+									</cell>
+									<cell align="left" colspan="2">
+										<textbox id="tbxComentarios"
+											hflex="1" rows="6" style="text-transform:uppercase" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 2 -->
+								<row>
+									<cell></cell>
+									<cell height="30px" align="left">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbAlternativas"
+											value="Justificacion: " />
+									</cell>
+									<cell align="left" colspan="2">
+										<textbox id="tbxAlternativas"
+											hflex="1" style="text-transform:uppercase" rows="4" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<row>
+									<cell></cell>
+									<cell height="30px" align="left">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbFecha"
+											value="Fecha: " />
+									</cell>
+									<cell align="left">
+										<datebox id="dtbxFecha"
+											format="yyyy-MM-dd" hflex="1" readonly="true" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 11 -->
+
+							</rows>
+						</grid>
+					</groupbox>
+					<space height="5px" />
+					<groupbox closable="false" mold="3d"
+						width="850px">
+						<caption
+							label="CRITERIOS PARA LA EVALUACION, APROBACION O DESAPROBACION" />
+						<grid sclass="GridSinBorde" vflex="1"
+							style="border:none">
+							<columns>
+								<column />
+							</columns>
+							<rows>
+								<row align="left">
+									<cell>
+										<vbox>
+											<label
+												value="a) la prescripción de servicos médicos y presentación de servicios no POS, solo podrá realizarce por el personal de la entidad administradora de planes de beneficios." />
+											<space height="10px" />
+										</vbox>
+									</cell>
+								</row>
+								<row align="left">
+									<cell>
+										<vbox>
+											<label
+												value="b) Sólo podrán prescribirse servicios médicos y presentaciones de salud que se encuentren debidamente autorizados para su uso y ejecución o realización por las respectivas normas vigentes en el pais como las expedidas por el invima y las referencias a la habilitación de servicios en el Sistema de Garantía de la Calidad de los servicios de salud." />
+											<space height="10px" />
+										</vbox>
+									</cell>
+								</row>
+								<row align="left">
+									<cell>
+										<vbox>
+											<label
+												value="c) La prescripción de los servicios médicos y prestaciones de salud, seá consecuencia de haber utilizado, agotado o descartado las posibilidades técnicas y cientificas para la promoción, prevención, diasnóstico y rehabilitacion de la enfermedad, contenidas tanto en el Manual Vigente de Actividades, intervenciones y Procedimientos del Sistema General de Seguridad Social en Salud, sin obtener resultado clínico o paraclínico satisfactorio en el término previsto en sus indicaciones o porque existan indicaciones o contraindicaciones expresas. De lo anterior, se deberá dejar constancia en la historia clínica." />
+											<space height="10px" />
+										</vbox>
+									</cell>
+								</row>
+								<row align="left">
+									<cell>
+										<vbox>
+											<label
+												value="d) Debe existir un riesgo inminente para la vida o salud del paciente, lo cual debe ser demostrado o constar en la historia clínica respectiva." />
+											<space height="10px" />
+										</vbox>
+									</cell>
+								</row>
+								<row align="left">
+									<cell>
+										<vbox>
+											<label
+												value="e) La prescripción de los servicios médicos o prestación de servicios no POS, será presentadas y debidamente sustentadas por escrito por el médico tratante, adjuntando epicrisis o resumen de historia clínica, la identificación de los servicios médicos y prestaciones de salud incluidos en el POS que lo reemplazan y si es necesario adjuntar información sobre resultado de ayudas, información bibliográfica, situaciones clínicas particulares y casuistica." />
+											<space height="10px" />
+										</vbox>
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+					<space height="5px" />
+					<groupbox closable="false" mold="3d"
+						width="850px">
+						<caption label="MEDICAMENTOS" />
+						<grid sclass="GridSinBorde"
+							id="gridMedicamentos" vflex="1" style="border:none"
+							height="240px">
+							<auxhead>
+								<auxheader label="MEDICAMENTOS"
+									colspan="3" align="center" />
+								<auxheader
+									label="CUMPLIMENTO DE CRITERIOS" colspan="5" align="center" />
+							</auxhead>
+							<columns>
+								<column label="Nro" width="35px" />
+								<column label="Codigo" width="70px" />
+								<column label="Nombre" />
+								<column label="A" width="40px"
+									align="center" />
+								<column label="B" width="40px"
+									align="center" />
+								<column label="C" width="40px"
+									align="center" />
+								<column label="D" width="40px"
+									align="center" />
+								<column label="E" width="40px"
+									align="center" />
+								<column label="Estado Autorizacion"
+									width="130px" />
+								<column width="50px" />
+							</columns>
+							<rows id="rowMedicamentos" />
+						</grid>
+					</groupbox>
+					<space height="5px" />
+					<groupbox visible="true" closable="false" mold="3d"
+						width="850px">
+
+						<grid sclass="GridSinBorde" vflex="1"
+							height="150px">
+							<columns>
+								<column label="" width="10px" />
+								<column label="" width="185px" />
+								<column label="" />
+								<column label="" width="10px" />
+							</columns>
+							<rows>
+								<!-- fila 3 -->
+								<row>
+									<cell></cell>
+									<cell height="30px" align="left">
+										<label id="lbNombre_presidente1"
+											value="Nombre representante EPS: " />
+									</cell>
+									<cell align="left">
+										<textbox
+											id="tbxNombre_presidente1" hflex="1"
+											style="text-transform:uppercase" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 5 -->
+								<row>
+									<cell></cell>
+									<cell height="30px" align="left">
+										<label id="lbNombre_presidente2"
+											value="Nombre representante IPS: " />
+									</cell>
+									<cell align="left">
+										<textbox
+											id="tbxNombre_presidente2" hflex="1"
+											style="text-transform:uppercase" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 5 -->
+								<row>
+									<cell></cell>
+									<cell height="30px" align="left">
+										<label id="lbNombre1"
+											value="Nombre Representante Usuarios: " />
+									</cell>
+									<cell align="left">
+										<textbox id="tbxNombre1"
+											hflex="1" style="text-transform:uppercase" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 5 -->
+								<row visible="false">
+									<cell></cell>
+									<cell height="30px" align="left">
+										<label id="lbNombre2"
+											value="Nombre: " />
+									</cell>
+									<cell align="left">
+										<textbox id="tbxNombre2"
+											hflex="1" style="text-transform:uppercase" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 7 -->
+								<row visible="false">
+									<cell></cell>
+									<cell height="30px" align="left">
+										<label id="lbNombre3"
+											value="Nombre: " />
+									</cell>
+									<cell align="left">
+										<textbox id="tbxNombre3"
+											width="170px" style="text-transform:uppercase" />
+									</cell>
+									<cell height="30px" align="left">
+										<label id="lbNombre4"
+											value="Nombre: " />
+									</cell>
+									<cell align="left">
+										<textbox id="tbxNombre4"
+											width="170px" style="text-transform:uppercase" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 9 -->
+								<row visible="false">
+									<cell></cell>
+									<cell height="30px" align="left">
+										<label id="lbNombre5"
+											value="Nombre: " />
+									</cell>
+									<cell align="left">
+										<textbox id="tbxNombre5"
+											width="170px" style="text-transform:uppercase" />
+									</cell>
+									<cell height="30px" align="left">
+										<label id="lbNombre6"
+											value="Nombre: " />
+									</cell>
+									<cell align="left">
+										<textbox id="tbxNombre6"
+											width="170px" style="text-transform:uppercase" />
+									</cell>
+									<cell></cell>
+								</row>
+							</rows>
+						</grid>
+
+					</groupbox>
+				</div>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

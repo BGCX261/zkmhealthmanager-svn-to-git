@@ -1,0 +1,532 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+<style src="estilo.css" />
+<style>
+body ,table{
+	margin:0;
+	padding:0;
+	
+}
+.z-fieldset{
+	-moz-border-radius:5px;
+	border-radius: 5px;
+	-webkit-border-radius: 5px;
+}
+.combobox{
+	font-size:12px;
+	border: 1px solid silver;
+}
+
+tr.z-row .z-cell{
+	background-image:none;
+}
+
+tr.z-row td.z-row-inner{
+	background-image:none;
+}
+</style>
+<borderlayout id="formRemision_salud_mental" width="100%" height="100%" use="healthmanager.controller.Remision_salud_mentalAction"  onCreate="formRemision_salud_mental.initRemision_salud_mental();">
+<center autoscroll="true" border="none">
+
+<!-- *********************** -->
+<!--        Principal        -->
+<!-- *********************** -->
+<groupbox id="groupboxPrincipal" style="border:0;padding:2px">
+
+<!-- **************** -->
+<!-- Zona de Consulta -->
+<!-- **************** -->
+<groupbox id="groupboxConsulta" visible="true" closable="false" style="border:0;padding:0">
+
+<textbox id="tbxEstado" value="" visible="false"/>
+<textbox id="tbxCodigo_administradora" value="" visible="false"/>
+<textbox id="tbxId_plan" value="" visible="false"/>
+<textbox id="tbxSexo_pct" value="" visible="false"/>
+<textbox id="tbxFecha_nac" value="" visible="false"/>
+<listbox id="lbxAtendida" mold="select" sclass="combobox" width="150px" visible="false"/>
+
+
+<toolbar sclass="vista">
+<label value="Criterios de B&#250;squeda :" />
+<listbox id="lbxParameter" mold="select" sclass="combobox" width="150px"/>
+<textbox id="tbxValue" width="200px" onOK="formRemision_salud_mental.buscarDatos();" style="text-transform:uppercase"/>
+<toolbarbutton image="/images/Magnifier.gif" label="Consultar" onClick="formRemision_salud_mental.buscarDatos();" tooltiptext="Consultar " id="btConsultar"/>
+<toolbarbutton image="/images/New16.gif" label="Nuevo" onClick='formRemision_salud_mental.accionForm(true,"registrar");' tooltiptext="Nuevo " id="btNew"/>
+</toolbar>
+
+<space/>
+
+<!-- ***************************** -->
+<!--  Resultado Consulta Maestros  -->
+<!-- ***************************** -->
+<grid id="gridResultado" height="300px" mold="paging" pageSize="20">
+<columns sizable="true">
+	<column label="Codigo_historia" align="center"/>
+	<column label="Identificacion" align="center"/>
+	<column label="Fecha_inicial" align="center"/>
+	<column label="Acciones" align="center" width="80px"/>
+</columns>
+<rows id="rowsResultado" width="100%" />
+</grid>
+</groupbox>
+
+<!-- *************************** -->
+<!-- *** Insertar/Actualizar *** -->
+<!-- *************************** -->
+<groupbox visible="false" id="groupboxEditar" closable="false" style="border:0;padding:0">
+
+<!-- *************************** -->
+<!-- **** Barra de Botones ***** -->
+<!-- *************************** -->
+
+<toolbar width="100%" align="start">
+<textbox id="tbxAccion" value="registrar" visible="false"/>
+<toolbarbutton image="/images/Save16.gif" label="Guardar" tooltiptext="Guardar Datos" onClick="formRemision_salud_mental.guardarDatos();" id="btGuardar"/>
+<toolbarbutton image="/images/New16.gif" label="Nuevo" onClick='formRemision_salud_mental.accionForm(true,"registrar");' tooltiptext="Nuevo" id="btNuevo"/>
+<toolbarbutton image="/images/cancel.jpg" label="Consultar" tooltiptext="Regresar a Consulta" onClick='formRemision_salud_mental.accionForm(false,tbxAccion.getText());' id="btCancelar"/>
+</toolbar>
+
+<space/>
+<grid sclass="GridSinBorde">
+<columns>
+<column label="" width="112px"/>
+<column label="" width="180px"/>
+<column label="" width="82px"/>
+<column label="" width="165px"/>
+<column label="" width="109px"/>
+<column label="" width="170px"/>
+</columns>
+<rows>
+
+<!-- fila 1 -->
+<row>
+<cell></cell>
+<cell></cell>
+<cell><textbox id="tbxCodigo_historia" width="170px" style="text-transform:uppercase" visible="false"/></cell>
+<cell></cell>
+<cell></cell>
+<cell></cell>
+</row>
+
+<!-- fila 2 -->
+<row>
+<cell><label id="lbFecha_inicial" value="Fecha inicial: "/></cell>
+<cell colspan="5"><datebox id="dtbxFecha_inicial" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="170px"/></cell>
+</row>
+
+<!-- fila 2 -->
+<row>
+<cell><label id="lbCentro_atencion" value="Centro de Atencion: "/></cell>
+<cell colspan="2"><textbox id="tbxCentro_atencion" width="200px" style="text-transform:uppercase" readonly="true"/></cell>
+<cell><label value="Remitido:"/></cell>
+<cell colspan="2">
+<hlayout>
+<textbox id="tbxCual_remitido" width="200px" style="text-transform:uppercase"/><space/>
+</hlayout>
+</cell>
+</row>
+
+
+<!-- fila 5 -->
+<row>
+<cell colspan="6">
+<groupbox mold="3d" width="100%" closable="false">
+<caption label="Datos Personales"/>
+			<grid sclass="GridSinBorde" style="border:none">
+				<columns>
+				<column label="" width="82px"/>
+				<column label="" width="180px"/>
+				<column label="" width="82px"/>
+				<column label="" width="225px"/>
+				<column label="" width="79px"/>
+				<column label="" width="145px"/>
+				</columns>
+				<rows>
+
+				<row>
+				<cell><label id="lbIdentificacion" value="Paciente: "/></cell>
+				<cell><textbox id="tbxIdentificacion" width="170px" style="text-transform:uppercase" readonly="true"/>
+				</cell>
+				<cell colspan="2">
+				<textbox id="tbxNomPaciente" width="289px" style="text-transform:uppercase" readonly="true"/>
+				</cell>
+				<cell><label id="lbNro_ingreso" value="Ingreso: "/></cell>
+				<cell>
+				<bandbox id="tbxNro_ingreso" autodrop="true" readonly="true" width="100px" onOpen='formRemision_salud_mental.buscarAdmision(tbxValueAdmision.getValue(),lbxEstado.getSelectedItem().getValue().toString(),lbxAdmision);'>
+				<bandpopup>
+					<vbox>
+						<toolbar>
+						    <label value="Estado: "/>
+						    <listbox id="lbxEstado" mold="select" width="145px" sclass="combobox" onSelect='formRemision_salud_mental.buscarAdmision(tbxValueAdmision.getValue(),self.getSelectedItem().getValue().toString(),lbxAdmision);'>
+						    <listitem value="1" label="Activo" selected="true"/>
+						    <listitem value="2" label="Terminada"/>
+						    <listitem value="" label="Todas"/>
+						    </listbox>
+							<label value="Buscar: "/>
+						    <textbox id="tbxValueAdmision" onChanging='formRemision_salud_mental.buscarAdmision(event.getValue(),lbxEstado.getSelectedItem().getValue().toString(),lbxAdmision);' style="text-transform:uppercase;"/>
+						    <toolbarbutton image="/images/borrar.gif" tooltiptext="Quitar" onClick='formRemision_salud_mental.selectedAdmision(new Listitem());'/>
+						</toolbar>
+						<listbox height="300px" width="600px" mold="paging" pageSize="8" id="lbxAdmision" onSelect='formRemision_salud_mental.selectedAdmision(self.getSelectedItem());' >
+						    <listhead>
+						    <listheader label="Ingreso" width="62px"/>
+						    <listheader label="Identificación" width="97px"/>
+						    <listheader label="Apellidos"/>
+						    <listheader label="Nombres"/>
+						    <listheader label="Fecha Ingreso" width="110px"/>
+						    <listheader label="Estado" width="65px"/>
+						    </listhead>
+						</listbox>
+					</vbox>
+				  </bandpopup>
+				</bandbox>
+				</cell>
+				</row>
+				
+				<!-- fila 4 -->
+				<row>
+				<cell colspan="2">
+				<hlayout>
+				<label id="lbNacimiento" value="Fecha de Nacimiento: "/><space></space>
+				<textbox id="tbxNacimiento" width="100px" style="text-transform:uppercase" readonly="true"/><space></space>
+				</hlayout>
+				</cell>
+				<cell colspan="4">
+				<hlayout>
+				<label id="lbEdad" value="Edad: "/>
+				<textbox id="tbxEdad" width="30px" style="text-transform:uppercase" readonly="true"/><space></space>
+				<label id="lbSexo" value="Sexo: "/>
+				<textbox id="tbxSexo" width="80px" style="text-transform:uppercase" readonly="true"/><space></space>
+				<label id="lbDireccion" value="Direccion: "/>
+				<textbox id="tbxDireccion" width="240px" style="text-transform:uppercase" readonly="true"/>
+				</hlayout>
+				</cell>
+				</row>
+				
+				<!-- fila 3 -->
+				<row>
+				<cell><label id="lbBarrio" value="Barrio: "/></cell>
+				<cell colspan="2"><textbox id="tbxBarrio" width="220px" style="text-transform:uppercase" readonly="true"/></cell>
+				<cell><label id="lbLocalidad" value="Localidad: "/></cell>
+				<cell colspan="2"><textbox id="tbxLocalidad" width="200px" style="text-transform:uppercase" readonly="true"/></cell>
+				</row>
+				
+				<!-- fila 5 -->
+				<row>
+				<cell><label value="Aseguradora:"/></cell>
+				<cell colspan="3">
+				<hlayout>
+				<textbox id="tbxAdministradora" width="252px" style="text-transform:uppercase" readonly="true"/><space/>
+				<label value="Contrato:"/><space width="7px"/>
+				<textbox id="tbxContrato" width="125px" style="text-transform:uppercase" readonly="true"/>
+				</hlayout>
+				</cell>
+				<cell><label id="lbTelefono" value="Telefono "/></cell>
+				<cell><textbox id="tbxTelefono" width="100px" style="text-transform:uppercase" readonly="true"/></cell>
+				</row>
+				
+				<!-- fila 7 -->
+				<row>
+				<cell><label value="Regimen:"/></cell>
+				<cell colspan="5">
+				<hlayout>
+				<textbox id="tbxRemitido" width="120px" style="text-transform:uppercase" readonly="true"/><space/>
+				</hlayout>
+				</cell>
+				
+				</row>
+								
+								
+				</rows>
+			</grid>
+</groupbox>
+</cell>
+</row>
+
+
+<!-- fila 14 -->
+<row>
+<cell colspan="6">
+<groupbox mold="3d" width="100%" closable="false">
+<caption label="Motivo"/>
+			<grid sclass="GridSinBorde" style="border:none">
+				<columns>
+				<column label="" width="82px"/>
+				<column label="" width="180px"/>
+				<column label="" width="82px"/>
+				<column label="" width="225px"/>
+				<column label="" width="79px"/>
+				<column label="" width="145px"/>
+				</columns>
+				<rows>
+				<row>
+				<cell colspan="6"><textbox id="tbxMotivo" width="750px" rows="8" style="text-transform:uppercase"/></cell>
+				</row>
+				</rows>
+			</grid>
+</groupbox>
+</cell>
+</row>
+
+<!-- fila 14 -->
+<row>
+<cell colspan="6">
+<groupbox mold="3d" width="100%" closable="false">
+<caption label="RIPS"/>
+			<grid sclass="GridSinBorde" style="border:none">
+				<columns>
+				<column label="" width="20%"/>
+				<column label="" width="20%"/>
+				<column label="" width="20%"/>
+				<column label="" width="20%"/>
+				<column label="" width="20%"/>
+				</columns>
+				<rows>
+						
+				<row>
+				<cell>
+				<label id="lbFinalidad_cons" value="Finalidad de consulta: " />
+				</cell>
+				<cell>
+				<listbox id="lbxFinalidad_cons" name="Finalidad_cons" mold="select" width="150px" sclass="combobox" />
+				</cell>
+				<cell><label id="lbTipo_disnostico" value="Tipo Diagnostico: "/></cell>
+				<cell colspan="2"><listbox id="lbxTipo_disnostico" name="tipo_disnostico" mold="select" width="170px" sclass="combobox"/></cell>
+				</row>
+			
+				
+				<row>
+				<cell>
+				<label id="lbCausas_externas" value="Causas Externas: " />
+				</cell>
+				<cell>
+					<listbox
+						id="lbxCausas_externas" name="Causas_externas"
+						mold="select" width="150px" sclass="combobox" 
+						onSelect="formRemision_salud_mental.seleccion(self, 15,new AbstractComponent[]{tbxOtros_consulta})"/>
+				</cell>
+				<cell colspan="3">
+				<textbox id="tbxOtros_consulta" width="200px" style="text-transform:uppercase" visible="false"/>
+				</cell>
+				
+				</row>
+				
+				<row>
+				
+				<cell><label id="lbTipo_principal" value="Tipo Principal: "/>
+				</cell>
+				<cell>
+					<bandbox
+						id="tbxTipo_principal" autodrop="true"
+						readonly="true" width="70px"
+						onOpen="formRemision_salud_mental.buscarDx(tbxValueDx.getValue(),lbxDx)">
+						<bandpopup>
+							<vbox>
+								<toolbar>
+									<label
+										value="Buscar: " />
+									<textbox
+										id="tbxValueDx"
+										onChanging='formRemision_salud_mental.buscarDx(event.getValue(),lbxDx)'
+										style="text-transform:uppercase;" />
+									<toolbarbutton
+										image="/images/borrar.gif" tooltiptext="Quitar"
+										onClick='formRemision_salud_mental.selectedDx(new Listitem(), tbxTipo_principal, tbxNomDx)' />
+								</toolbar>
+								<listbox
+									height="300px" width="600px" mold="paging"
+									pageSize="8" id="lbxDx"
+									onSelect='formRemision_salud_mental.selectedDx(self.getSelectedItem(), tbxTipo_principal, tbxNomDx)'>
+									<listhead>
+										<listheader
+											label="Código" width="65px" />
+										<listheader
+											label="Nombre" />
+										<listheader
+											label="Sexo" width="65px" />
+										<listheader
+											label="Limite inf" width="75px" />
+										<listheader
+											label="Limite sup" width="75px" />
+									</listhead>
+								</listbox>
+							</vbox>
+						</bandpopup>
+					</bandbox>
+				</cell>
+				<cell colspan="3">
+					<textbox
+						id="tbxNomDx" width="230px"
+						style="text-transform:uppercase" readonly="true" />
+				</cell>
+				
+			</row>
+			<row>
+				<cell>
+					<label
+						value="Relacionado 1: " />
+				</cell>
+				<cell>
+					<bandbox
+						id="tbxTipo_relacionado_1" autodrop="true" readonly="true"
+						width="70px"
+						onOpen="formRemision_salud_mental.buscarDx(tbxValueDx.getValue(),lbxDxRelacionado_1)">
+						<bandpopup>
+							<vbox>
+								<toolbar>
+									<label
+										value="Buscar: " />
+									<textbox
+										id="tbxValueDxRelacionado_1"
+										onChanging='formRemision_salud_mental.buscarDx(event.getValue(),lbxDxRelacionado_1)'
+										style="text-transform:uppercase;" />
+									<toolbarbutton
+										image="/images/borrar.gif" tooltiptext="Quitar"
+										onClick='formRemision_salud_mental.selectedDx(new Listitem(), tbxTipo_relacionado_1, tbxNomDxRelacionado_1)' />
+								</toolbar>
+								<listbox
+									height="300px" width="600px" mold="paging"
+									pageSize="8" id="lbxDxRelacionado_1"
+									onSelect='formRemision_salud_mental.selectedDx(self.getSelectedItem(), tbxTipo_relacionado_1, tbxNomDxRelacionado_1)'>
+									<listhead>
+										<listheader
+											label="Código" width="65px" />
+										<listheader
+											label="Nombre" />
+										<listheader
+											label="Sexo" width="65px" />
+										<listheader
+											label="Limite inf" width="75px" />
+										<listheader
+											label="Limite sup" width="75px" />
+									</listhead>
+								</listbox>
+							</vbox>
+						</bandpopup>
+					</bandbox>
+				</cell>
+				<cell colspan="3">
+					<textbox
+						id="tbxNomDxRelacionado_1" width="230px"
+						style="text-transform:uppercase" readonly="true" />
+				</cell>
+				
+			</row>
+
+			<!-- relacionado 2 -->
+			<row>
+				<cell>
+					<label
+						value="Relacionado 2: " />
+				</cell>
+				<cell>
+					<bandbox
+						id="tbxTipo_relacionado_2" autodrop="true" readonly="true"
+						width="70px"
+						onOpen="formRemision_salud_mental.buscarDx(tbxValueDx.getValue(),lbxDxRelacionado_2)">
+						<bandpopup>
+							<vbox>
+								<toolbar>
+									<label
+										value="Buscar: " />
+									<textbox
+										id="tbxValueDxRelacionado_2"
+										onChanging='formRemision_salud_mental.buscarDx(event.getValue(),lbxDxRelacionado_2)'
+										style="text-transform:uppercase;" />
+									<toolbarbutton
+										image="/images/borrar.gif" tooltiptext="Quitar"
+										onClick='formRemision_salud_mental.selectedDx(new Listitem(), tbxTipo_relacionado_2, tbxNomDxRelacionado_2)' />
+								</toolbar>
+								<listbox
+									height="300px" width="600px" mold="paging"
+									pageSize="8" id="lbxDxRelacionado_2"
+									onSelect='formRemision_salud_mental.selectedDx(self.getSelectedItem(), tbxTipo_relacionado_2, tbxNomDxRelacionado_2)'>
+									<listhead>
+										<listheader
+											label="Código" width="65px" />
+										<listheader
+											label="Nombre" />
+										<listheader
+											label="Sexo" width="65px" />
+										<listheader
+											label="Limite inf" width="75px" />
+										<listheader
+											label="Limite sup" width="75px" />
+									</listhead>
+								</listbox>
+							</vbox>
+						</bandpopup>
+					</bandbox>
+				</cell>
+				<cell colspan="3">
+					<textbox
+						id="tbxNomDxRelacionado_2" width="230px"
+						style="text-transform:uppercase" readonly="true" />
+				</cell>
+				
+			</row>
+			<!-- relacionado 3 -->
+			<row>
+				<cell>
+					<label
+						value="Relacionado 3: " />
+				</cell>
+				<cell>
+					<bandbox
+						id="tbxTipo_relacionado_3" autodrop="true" readonly="true"
+						width="70px"
+						onOpen="formRemision_salud_mental.buscarDx(tbxValueDx.getValue(),lbxDxRelacionado_3)">
+						<bandpopup>
+							<vbox>
+								<toolbar>
+									<label
+										value="Buscar: " />
+									<textbox
+										id="tbxValueDxRelacionado_3"
+										onChanging='formRemision_salud_mental.buscarDx(event.getValue(),lbxDxRelacionado_3)'
+										style="text-transform:uppercase;" />
+									<toolbarbutton
+										image="/images/borrar.gif" tooltiptext="Quitar"
+										onClick='formRemision_salud_mental.selectedDx(new Listitem(), tbxTipo_relacionado_3, tbxNomDxRelacionado_3)' />
+								</toolbar>
+								<listbox
+									height="300px" width="600px" mold="paging"
+									pageSize="8" id="lbxDxRelacionado_3"
+									onSelect='formRemision_salud_mental.selectedDx(self.getSelectedItem(), tbxTipo_relacionado_3, tbxNomDxRelacionado_3)'>
+									<listhead>
+										<listheader
+											label="Código" width="65px" />
+										<listheader
+											label="Nombre" />
+										<listheader
+											label="Sexo" width="65px" />
+										<listheader
+											label="Limite inf" width="75px" />
+										<listheader
+											label="Limite sup" width="75px" />
+									</listhead>
+								</listbox>
+							</vbox>
+						</bandpopup>
+					</bandbox>
+				</cell>
+				<cell colspan="3">
+					<textbox
+						id="tbxNomDxRelacionado_3" width="230px"
+						style="text-transform:uppercase" readonly="true" />
+				</cell>
+				
+			</row>
+						
+				</rows>
+			</grid>
+</groupbox>
+</cell>
+</row>
+
+</rows>
+</grid>
+</groupbox>
+</groupbox>
+</center>
+</borderlayout>
+</zk>

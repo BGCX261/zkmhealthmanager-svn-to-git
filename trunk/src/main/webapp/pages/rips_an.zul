@@ -1,0 +1,401 @@
+<?page title="Rips_an" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formRips_an" width="100%" height="100%"
+		use="healthmanager.controller.Rips_anAction">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="true" closable="false"
+			mold="3d" height="100%">
+
+			<separator />
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" height="200px" mold="paging"
+				pageSize="20" vflex="1">
+				<auxhead visible="false">
+					<auxheader colspan="14">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<separator />
+							<textbox id="tbxValue" width="200px"
+								onOK="formRips_an.buscarDatos();"
+								style="text-transform:uppercase" />
+							<separator />
+							<button mold="trendy"
+								image="/images/Magnifier.gif"
+								onClick="formRips_an.buscarDatos();"
+								tooltiptext="Consultar Rips an" />
+							<separator />
+							<button mold="trendy"
+								image="/images/New16.gif"
+								onClick='formRips_an.accionForm(true,"registrar");'
+								tooltiptext="Nuevo Rips an" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<frozen style="background: #DFDED8" columns="3">
+                  <div style="padding: 0 10px;" />
+                </frozen>
+				<columns sizable="true">
+					<column label="Tipo id madre" width="120px"/>
+					<column label="Nro id madre" width="120px"/>
+					<column label="Fecha nacto" width="120px"/>
+					<column label="Hora nacto" width="120px"/>
+					<column label="Edad gestnal" width="120px"/>
+					<column label="Control prenatal" width="120px"/>
+					<column label="Sexo" width="120px"/>
+					<column label="Peso" width="120px"/>
+					<column label="Diag recien nacido" width="120px"/>
+					<column label="Causa basica muerte" width="120px"/>
+					<column label="Fech muerte" width="120px"/>
+					<column label="Hra muerte recien nacido" width="130px"/>
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<borderlayout width="100%" height="90%" id="groupboxEditar"
+			visible="false">
+			<north border="none">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<toolbarbutton image="/images/Save16.gif"
+						label="Guardar Rips an" onClick="formRips_an.guardarDatos();"
+						id="btGuardar" />
+					<toolbarbutton image="/images/New16.gif"
+						label="Nueva Rips an"
+						onClick='formRips_an.accionForm(true,"registrar");' id="btNew" />
+					<space />
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Cancelar"
+						onClick='formRips_an.accionForm(false,tbxAccion.getText());'
+						id="btCancel" />
+					<toolbarbutton image="/images/print_ico.gif"
+						label="Imprimir Rips an" onClick="formRips_an.imprimir();"
+						id="btImprimir" visible="false" />
+					<space />
+					<label value="Formato impresión: " visible="false" />
+					<listbox id="lbxFormato" mold="select" width="150px"
+						visible="false" sclass="combobox">
+						<listitem value="pdf" label="PDF"
+							selected="true" />
+						<listitem value="rtf" label="WORD" />
+					</listbox>
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center">
+
+					<!-- *************************** -->
+					<!-- *** Insertar/Actualizar *** -->
+					<!-- *************************** -->
+					<groupbox closable="false" width="905px"
+						mold="3d">
+						<grid sclass="GridSinBorde" hflex="1">
+							<columns>
+								<column label="" width="276px" />
+								<column label="" width="170px"
+									align="left" />
+								<column label="" width="182px" />
+								<column label="" width="276px" />
+							</columns>
+							<rows>
+
+								<!-- fila 1 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbId" value="Id: " />
+									</cell>
+									<cell>
+										<intbox
+											constraint="no negative:Este valor no puede ser negativo"
+											id="ibxId" width="170px" style="text-transform:uppercase" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 2 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbNro_factura"
+											value="Nro factura: " />
+									</cell>
+									<cell>
+										<textbox id="tbxNro_factura"
+											width="170px" style="text-transform:uppercase"
+											maxlength="20" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 3 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbCodigo_factur"
+											value="Codigo factur: " />
+									</cell>
+									<cell>
+										<textbox id="tbxCodigo_factur"
+											width="170px" style="text-transform:uppercase"
+											maxlength="20" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 4 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbCodigo_prestador"
+											value="Codigo prestador: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxCodigo_prestador" width="170px"
+											style="text-transform:uppercase" maxlength="10" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 5 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbTipo_id_madre"
+											value="Tipo id madre: " />
+									</cell>
+									<cell>
+										<textbox id="tbxTipo_id_madre"
+											width="170px" style="text-transform:uppercase" maxlength="2" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 6 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbNro_id_madre"
+											value="Nro id madre: " />
+									</cell>
+									<cell>
+										<textbox id="tbxNro_id_madre"
+											width="170px" style="text-transform:uppercase"
+											maxlength="20" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 7 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbFecha_nacimiento"
+											value="Fecha nacimiento: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxFecha_nacimiento" width="170px"
+											style="text-transform:uppercase" maxlength="10" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 8 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbHora_nacimiento"
+											value="Hora nacimiento: " />
+									</cell>
+									<cell>
+										<textbox id="tbxHora_nacimiento"
+											width="170px" style="text-transform:uppercase" maxlength="5" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 9 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbEdad_gestacional"
+											value="Edad gestacional: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxEdad_gestacional" width="170px"
+											style="text-transform:uppercase" maxlength="2" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 10 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbControl_prenatal"
+											value="Control prenatal: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxControl_prenatal" width="170px"
+											style="text-transform:uppercase" maxlength="1" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 11 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbSexo"
+											value="Sexo: " />
+									</cell>
+									<cell>
+										<textbox id="tbxSexo"
+											width="170px" style="text-transform:uppercase" maxlength="1" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 12 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbPeso"
+											value="Peso: " />
+									</cell>
+									<cell>
+										<textbox id="tbxPeso"
+											width="170px" style="text-transform:uppercase" maxlength="4" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 13 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label
+											id="lbDiagnostico_recien_nacido"
+											value="Diagnostico recien nacido: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxDiagnostico_recien_nacido" width="170px"
+											style="text-transform:uppercase" maxlength="4" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 14 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label
+											id="lbCausa_basica_muerte" value="Causa basica muerte: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxCausa_basica_muerte" width="170px"
+											style="text-transform:uppercase" maxlength="4" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 15 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbFecha_muerte"
+											value="Fecha muerte: " />
+									</cell>
+									<cell>
+										<textbox id="tbxFecha_muerte"
+											width="170px" style="text-transform:uppercase"
+											maxlength="10" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 16 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label
+											id="lbHora_muerte_recien_nacido"
+											value="Hora muerte recien nacido: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxHora_muerte_recien_nacido" width="170px"
+											style="text-transform:uppercase" maxlength="5" />
+									</cell>
+									<cell></cell>
+								</row>
+
+							</rows>
+						</grid>
+
+					</groupbox>
+				</div>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

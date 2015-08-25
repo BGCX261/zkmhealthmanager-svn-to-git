@@ -1,0 +1,1196 @@
+<?page title="Ficha_epidemiologia_n23" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formFicha_epidemiologia_n23" width="890px" height="450px"
+		border="normal"
+		use="healthmanager.controller.Ficha_epidemiologia_n23Action">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="false" closable="false"
+			mold="3d" height="90%">
+			<caption label="Consultar"
+				style="color: blue;font-weight: bold" />
+
+			<separator />
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" height="90%" mold="paging"
+				pageSize="20" vflex="1">
+				<auxhead>
+					<auxheader colspan="4">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<separator />
+							<textbox id="tbxValue" width="200px"
+								onOK="formFicha_epidemiologia_n23.buscarDatos();"
+								style="text-transform:uppercase" />
+							<separator />
+							<button mold="trendy"
+								image="/images/Magnifier.gif"
+								onClick="formFicha_epidemiologia_n23.buscarDatos();"
+								tooltiptext="Consultar Ficha epidemiologia n23" />
+							<separator />
+							<button mold="trendy"
+								image="/images/New16.gif"
+								onClick='formFicha_epidemiologia_n23.accionForm(true,"registrar");'
+								tooltiptext="Nuevo Ficha epidemiologia n23" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Codigo ficha" />
+					<column label="Fecha inicial" />
+					<column label="Identificacion" />
+					<column label="Acciones" align="center"
+						width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<borderlayout width="100%" height="98%" id="groupboxEditar"
+			visible="true">
+			<north border="none" visible="false">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<toolbarbutton image="/images/Save16.gif"
+						label="Guardar Ficha"
+						onClick="formFicha_epidemiologia_n23.guardarDatos();"
+						id="btGuardar" />
+					<toolbarbutton image="/images/New16.gif"
+						label="Nueva Ficha"
+						onClick='formFicha_epidemiologia_n23.accionForm(true,"registrar");'
+						id="btNew" />
+					<space />
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Cancelar"
+						onClick='formFicha_epidemiologia_n23.accionForm(false,tbxAccion.getText());'
+						id="btCancel" />
+					<toolbarbutton image="/images/print_ico.gif"
+						label="Imprimir Ficha epidemiologia n23"
+						onClick="formFicha_epidemiologia_n23.imprimir();" id="btImprimir"
+						visible="false" />
+					<space />
+					<label value="Formato impresión: " visible="false" />
+					<listbox id="lbxFormato" mold="select" width="150px"
+						visible="false" sclass="combobox">
+						<listitem value="pdf" label="PDF"
+							selected="true" />
+						<listitem value="rtf" label="WORD" />
+					</listbox>
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center">
+
+					<!-- *************************** -->
+					<!-- *** Insertar/Actualizar *** -->
+					<!-- *************************** -->
+					<groupbox closable="false" width="845px"
+						mold="3d">
+
+						<groupbox mold="3d" closable="false">
+							<caption label="DATOS DE LA FICHA"
+								style="font-weight:bold" />
+							<grid>
+								<columns>
+									<column />
+								</columns>
+								<rows>
+									<row visible="false">
+										<cell></cell>
+										<cell height="30px">
+											<label
+												id="lbCodigo_diagnostico" value="Codigo diagnostico: " />
+										</cell>
+										<cell>
+											<textbox
+												id="tbxCodigo_diagnostico" width="170px"
+												style="text-transform:uppercase" maxlength="20" />
+										</cell>
+										<cell></cell>
+									</row>
+									<row>
+									<cell>
+										<hlayout>
+											<space width="130px" />
+											<label value="* "
+												style="color: red" tooltiptext="Campo obligatorio" />
+											<label id="lbFecha_inicial"
+												value="Fecha: " />
+											<datebox
+												id="dtbxFecha_inicial" onCreate="self.value = new Date();"
+												format="dd-MM-yyyy" width="170px" readonly="true" buttonVisible="false"/>
+											<space width="70px" />
+											<label value="* "
+												style="color: red" tooltiptext="Campo obligatorio" />
+											<label id="lbCodigo_ficha"
+												value="Codigo ficha: " />
+											<textbox readonly="true"
+												id="tbxCodigo_ficha" width="170px"
+												style="text-transform:uppercase" maxlength="20" />
+										</hlayout>
+									</cell>
+								</row>
+								</rows>
+							</grid>
+						</groupbox>
+
+						<groupbox mold="3d" closable="false">
+							<caption label="RELACIÓN CON DATOS BÁSICOS"
+								style="font-weight:bold" />
+							<grid>
+								<columns>
+								<column width="100px" />
+								<column />
+								<column />
+								<column />
+								<column />
+								<column width="220px" />
+								</columns>
+								<rows>
+									
+									<row>
+										<cell>
+											<label value="* " style="color: red"
+												tooltiptext="Campo obligatorio" />
+											<label value="Paciente: " />
+										</cell>
+										<cell colspan="4">
+											<textbox id="tbxIdentificacion" width="27%" readonly="true" disabled="true"/>
+												<!--  -->
+											<space width="1%" />
+											<textbox id="tbxNombres_y_apellidos" width="65%"
+												style="text-transform:uppercase" readonly="true" />
+										</cell>
+										<cell>
+											<space width="15px" />
+											<label value="Tipo: " />
+											<space width="23px" />
+											<textbox id="tbxTipo_identidad" width="135px" style="text-transform:uppercase" readonly="true"/>
+										</cell>
+											
+									</row>
+									<row>
+										<cell>
+											<label value="* " style="color: red"
+												tooltiptext="Campo obligatorio" />
+											<label value="Aseguradora: " />
+										</cell>
+										<cell colspan="4">
+											<textbox id="tbxAseguradora" width="27%" readonly="true" disabled="true"/>
+												<!--  -->
+											<space width="1%" />
+											<textbox id="tbxNombre_aseguradora" width="65%"
+												style="text-transform:uppercase" readonly="true" />
+										</cell>
+										<cell></cell>
+											
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+						<groupbox mold="3d" closable="false">
+							<caption
+								label="DATOS DE LA AGRESIÓN O CONTACTO"
+								style="font-weight:bold" />
+							<grid>
+								<columns>
+									<column
+										label="Tipo de agresión o contacto" />
+									<column width="17%"
+										label="Tipo de lesión" />
+								</columns>
+								<rows>
+									<row>
+										<cell>
+											<vlayout>
+
+												<radiogroup
+												onCheck="formFicha_epidemiologia_n23.deshabilitar_conRadio(self,new AbstractComponent[]{tbxCual_otro})"
+													id="rdbTipo_de_agresion" />
+												<hlayout>
+													<radio
+														label="Mordedura" value="1"
+														radiogroup="rdbTipo_de_agresion" />
+													<space />
+													<radio
+														label="Arañazo o rasguño" value="2"
+														radiogroup="rdbTipo_de_agresion" checked="true" />
+													<space width="14px" />
+													<radio
+														label="Sin dato" value="1"
+														radiogroup="rdbTipo_de_agresion" />
+													<space />
+													<radio label="Otro" onFocus="tbxCual_otro.focus()"
+														value="S" radiogroup="rdbTipo_de_agresion" />
+													<space />
+													<label
+														id="lbCual_otro" value="Cuál: " />
+													<textbox readonly="true"
+														id="tbxCual_otro" width="200px"
+														style="text-transform:uppercase" maxlength="200" />
+												</hlayout>
+												<hlayout>
+													<radio
+														label="Lamedura de mucosas o piel lesionada" value="1"
+														radiogroup="rdbTipo_de_agresion" />
+													<space />
+													<radio
+														label="Contacto de saliva con peil lesionada o mucosas"
+														value="1" radiogroup="rdbTipo_de_agresion" />
+												</hlayout>
+											</vlayout>
+										</cell>
+
+										<cell>
+											<vlayout>
+												<radiogroup
+													id="rdbTipo_de_lesion" />
+												<radio
+													label="Deconocida" value="1"
+													radiogroup="rdbTipo_de_lesion" />
+												<radio label="Única"
+													value="2" radiogroup="rdbTipo_de_lesion" checked="true" />
+												<radio label="Múltiple"
+													value="3" radiogroup="rdbTipo_de_lesion" />
+											</vlayout>
+										</cell>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+						<groupbox mold="3d" closable="false">
+							<grid>
+								<columns>
+									<column label="Profundidad" />
+									<column width="60%"
+										label="Localización anatómica" />
+								</columns>
+								<rows>
+									<row>
+										<cell>
+											<hlayout>
+												<radiogroup
+													id="rdbProfundidad">
+													<radio
+														label="Superficial" value="1" />
+													<space />
+													<radio
+														label="Profunda" value="2" checked="true" />
+													<space />
+													<radio
+														label="Desconocida" value="3" />
+												</radiogroup>
+											</hlayout>
+										</cell>
+
+										<cell>
+											<hlayout>
+												<checkbox
+													id="chbCabeza_cara_cuello" />
+												<label
+													id="lbCabeza_cara_cuello" value="Cabeza cara cuello " />
+												<space />
+
+												<checkbox
+													id="chbMano_dedo" />
+												<label id="lbMano_dedo"
+													value="Mano dedo " />
+												<space />
+
+												<checkbox
+													id="chbTronco" />
+												<label id="lbTronco"
+													value="Tronco " />
+												<space />
+
+												<checkbox
+													id="chbMiembro_superior" />
+												<label
+													id="lbMiembro_superior" value="Miembro superior " />
+												<space />
+
+											</hlayout>
+
+											<hlayout>
+												<checkbox
+													id="chbMiembro_inferior" />
+												<label
+													id="lbMiembro_inferior" value="Miembro inferior " />
+												<space width="28px" />
+
+												<checkbox
+													id="chbDeconocido" />
+												<label id="lbDeconocido"
+													value="Deconocido " />
+											</hlayout>
+										</cell>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+						<groupbox mold="3d" closable="false">
+							<caption
+								label="DATOS DE LA EXPOSICIÓN Y TIPO DE AGRESOR"
+								style="font-weight:bold" />
+							<grid>
+								<columns>
+									<column width="45%"
+										label="Fecha de la agresión o contacto" />
+									<column label="" />
+									<column width="45%"
+										label="Lugar de la exposición" />
+								</columns>
+								<rows>
+									<row>
+
+										<cell>
+											<datebox
+												id="dtbxFecha_de_agresion"
+												onCreate="self.value = new Date();" format="yyyy-MM-dd"
+												width="120px" />
+										</cell>
+										<cell />
+										<cell>
+											<radiogroup
+												id="rdbLugar_de_exposicion">
+												<radio
+													label="Espacio abierto" value="1" />
+												<space />
+												<radio
+													label="Espacio cerrado" value="2" checked="true" />
+												<space />
+												<radio
+													label="Desconocido" value="1" />
+											</radiogroup>
+										</cell>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+
+						<groupbox mold="3d" closable="false">
+							<grid>
+								<columns>
+									<column width="" />
+									<column width="" />
+									<column width="" />
+									<column width="" />
+									<column width="" />
+									<column width="10%" />
+								</columns>
+								<rows>
+									<row>
+										<cell colspan="6">
+											<label
+												style="font-weight:bold" value="Tipo de agresor" />
+											<radiogroup
+												id="rdbTipo_de_agresor" />
+										</cell>
+									</row>
+									<row>
+										<cell>
+											<radio label="Perro"
+												value="1" radiogroup="rdbTipo_de_agresor" />
+										</cell>
+										<cell>
+											<radio label="Bovino"
+												value="2" radiogroup="rdbTipo_de_agresor" checked="true" />
+										</cell>
+										<cell>
+											<radio
+												label="Porcino(cerdo)" value="3"
+												radiogroup="rdbTipo_de_agresor" />
+										</cell>
+										<cell>
+											<radio label="Zorro"
+												value="4" radiogroup="rdbTipo_de_agresor" />
+										</cell>
+										<cell>
+											<radio label="Humano"
+												value="5" radiogroup="rdbTipo_de_agresor" />
+										</cell>
+										<cell>
+											<radio label="Gato"
+												value="6" radiogroup="rdbTipo_de_agresor" />
+										</cell>
+									</row>
+									<row>
+										<cell>
+											<radio label="Equino"
+												value="7" radiogroup="rdbTipo_de_agresor" />
+										</cell>
+										<cell>
+											<radio label="Murciélago"
+												value="8" radiogroup="rdbTipo_de_agresor" />
+										</cell>
+										<cell>
+											<radio label="Mico"
+												value="9" radiogroup="rdbTipo_de_agresor" />
+										</cell>
+										<cell>
+											<radio
+												label="Sin información" value="10"
+												radiogroup="rdbTipo_de_agresor" />
+										</cell>
+										<cell>
+											<radio
+												label="Otros domésticos" value="11"
+												radiogroup="rdbTipo_de_agresor" />
+										</cell>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+						<groupbox mold="3d" closable="false">
+							<grid>
+								<columns>
+									<column width="50%" label="" />
+									<column width="" label="" />
+									<column width="" />
+									<column width="" />
+								</columns>
+								<rows>
+									<row>
+										<cell>
+											<label
+												style="font-weight:bold"
+												value="¿Animal con rabia confirmada por laboratorio?" />
+										</cell>
+										<cell colspan="3">
+											<label
+												style="font-weight:bold"
+												value="Prueba diagnóstica confirmatoria" />
+											<radiogroup
+											onCheck="formFicha_epidemiologia_n23.deshabilitar_conRadio(self,new AbstractComponent[]{tbxCual_otra})"
+												id="rdbPrueba_diagnostica" />
+										</cell>
+									</row>
+									<row>
+										<cell>
+											<radiogroup
+												id="rdbAnimal_con_rabia">
+												<radio label="SÍ"
+													value="S" />
+												<space />
+												<radio label="NO"
+													value="N" checked="true" />
+												<space />
+												<radio
+													label="Desconocido" value="S" />
+											</radiogroup>
+										</cell>
+										<cell colspan="3">
+											<vlayout>
+												<hlayout>
+													<radio label="I.F.D"
+														radiogroup="rdbPrueba_diagnostica" value="1" />
+													<space />
+													<radio
+														label="Inmunohistoquímica"
+														radiogroup="rdbPrueba_diagnostica" value="2"
+														checked="true" />
+													<space />
+													<radio
+														label="Prueba biológica"
+														radiogroup="rdbPrueba_diagnostica" value="3" />
+												</hlayout>
+												<hlayout>
+													<radio label="Otra" onFocus="tbxCual_otra.focus()"
+														radiogroup="rdbPrueba_diagnostica" value="S" />
+													<space />
+													<label
+														id="lbCual_otra" value="¿Cuál otra?: " />
+													<space />
+													<textbox
+														id="tbxCual_otra" width="240px" readonly="true"
+														style="text-transform:uppercase" maxlength="250" />
+												</hlayout>
+											</vlayout>
+										</cell>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+						<groupbox mold="3d" closable="false">
+							<caption
+								label="DATOS DE LA AGRESIÓN O CONTACTO"
+								style="font-weight:bold" />
+							<grid>
+								<columns>
+									<column width="228px" />
+									<column label="" width="45px" />
+									<column width="228px" />
+									<column label="" width="45px" />
+									<column width="228px" />
+									<column label="" width="45px" />
+								</columns>
+								<rows>
+									<row>
+										<cell>
+											<label id="lbFiebre"
+												value="Fiebre: " />
+										</cell>
+										<cell>
+											<checkbox id="chbFiebre" />
+										</cell>
+										<cell>
+											<label id="lbDisfagia"
+												value="Disfagia: " />
+										</cell>
+										<cell>
+											<checkbox id="chbDisfagia" />
+										</cell>
+										<cell>
+											<label id="lbAerofobia"
+												value="Aerofobia: " />
+										</cell>
+										<cell>
+											<checkbox id="chbAerofobia" />
+										</cell>
+									</row>
+									<row>
+										<cell>
+											<label id="lbHiporexia"
+												value="Hiporexia: " />
+										</cell>
+										<cell>
+											<checkbox id="chbHiporexia" />
+										</cell>
+										<cell>
+											<label id="lbOdinofagia"
+												value="Odinofagia: " />
+										</cell>
+										<cell>
+											<checkbox
+												id="chbOdinofagia" />
+										</cell>
+										<cell>
+											<label id="lbHidrofobia"
+												value="Hidrofobia: " />
+										</cell>
+										<cell>
+											<checkbox
+												id="chbHidrofobia" />
+										</cell>
+									</row>
+									<row>
+										<cell>
+											<label id="lbCefalea"
+												value="Cefalea: " />
+										</cell>
+										<cell>
+											<checkbox id="chbCefalea" />
+										</cell>
+										<cell>
+											<label
+												id="lbArreflexia_hiporreflexi"
+												value="Arreflexia/hiporreflexia: " />
+										</cell>
+										<cell>
+											<checkbox
+												id="chbArreflexia_hiporreflexi" />
+										</cell>
+										<cell>
+											<label id="lbDisnea"
+												value="Disnea: " />
+										</cell>
+										<cell>
+											<checkbox id="chbDisnea" />
+										</cell>
+									</row>
+									<row>
+										<cell>
+											<label id="lbVomito"
+												value="Vómito: " />
+										</cell>
+										<cell>
+											<checkbox id="chbVomito" />
+										</cell>
+										<cell>
+											<label
+												id="lbPsicosis_alucinacion" value="Psicosis/Alucinación: " />
+										</cell>
+										<cell>
+											<checkbox
+												id="chbPsicosis_alucinacion" />
+										</cell>
+										<cell>
+											<label
+												id="lbDificultad_respiratoria"
+												value="Dificultad respiratoria: " />
+										</cell>
+										<cell>
+											<checkbox
+												id="chbDificultad_respiratoria" />
+										</cell>
+									</row>
+									<row>
+										<cell>
+											<label id="lbParesias"
+												value="Paresias: " />
+										</cell>
+										<cell>
+											<checkbox id="chbParesias" />
+										</cell>
+										<cell>
+											<label
+												id="lbExpresion_de_terror" value="Expresión de terror: " />
+										</cell>
+										<cell>
+											<checkbox
+												id="chbExpresion_de_terror" />
+										</cell>
+										<cell>
+											<label id="lbParestesias"
+												value="Parestesias: " />
+										</cell>
+										<cell>
+											<checkbox
+												id="chbParestesias" />
+										</cell>
+									</row>
+									<row>
+										<cell>
+											<label
+												id="lbCricis_de_llanto" value="Cricis de llanto: " />
+										</cell>
+										<cell>
+											<checkbox
+												id="chbCricis_de_llanto" />
+										</cell>
+										<cell>
+											<label
+												id="lbDolor_neuropatic" value="Dolor neuropático: " />
+										</cell>
+										<cell>
+											<checkbox
+												id="chbDolor_neuropatic" />
+										</cell>
+										<cell>
+											<label id="lbSialorrea"
+												value="Sialorrea: " />
+										</cell>
+										<cell>
+											<checkbox id="chbSialorrea" />
+										</cell>
+									</row>
+									<row>
+										<cell>
+											<label id="lbOtro"
+												value="Otro: " />
+										</cell>
+										<cell>
+											<checkbox id="chbOtro" 
+											onFocus="tbxCual_otro2.focus();"
+												onCheck="formFicha_epidemiologia_n23.deshabilitar_conCheck(self, new AbstractComponent[]{tbxCual_otro2})"
+											/>
+										</cell>
+										<cell colspan="4">
+											<label id="lbCual_otro2"
+												value="¿Cuál otro?: " />
+											<space />
+											<textbox id="tbxCual_otro2"
+												readonly="true" width="450px"
+												style="text-transform:uppercase" maxlength="300" />
+										</cell>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+						<groupbox mold="3d" closable="false">
+							<caption
+								label="DATOS DE LABORATORIO Y TRATAMIENTO"
+								style="font-weight:bold" />
+							<grid>
+								<columns>
+									<column width="" />
+									<column width="" />
+									<column width="16%" />
+								</columns>
+								<rows>
+									<row>
+										<cell colspan="3">
+											<label
+												style="font-weight:bold" value="Tipo de muestra enviada" />
+										</cell>
+									</row>
+									<row>
+										<cell>
+											<radiogroup
+											onCheck="formFicha_epidemiologia_n23.deshabilitar_conRadio(self,new AbstractComponent[]{tbxCual_otro3})"
+												id="rdbTipo_de_muestra" />
+											<radio label="Suero"
+												value="1" radiogroup="rdbTipo_de_muestra" />
+										</cell>
+										<cell>
+											<radio
+												label="Improtas de córnea" value="2"
+												radiogroup="rdbTipo_de_muestra" checked="true" />
+										</cell>
+										<cell>
+											<radio
+												label="Cuero cabelludo" value="3"
+												radiogroup="rdbTipo_de_muestra" />
+										</cell>
+									</row>
+									<row>
+										<cell>
+											<radio label="Saliva"
+												value="4" radiogroup="rdbTipo_de_muestra" />
+										</cell>
+										<cell>
+											<radio label="L.C.R"
+												value="5" radiogroup="rdbTipo_de_muestra" checked="true" />
+										</cell>
+										<cell>
+											<radio
+												label="Tejido encefálico" value="6"
+												radiogroup="rdbTipo_de_muestra" />
+										</cell>
+									</row>
+									<row>
+										<cell colspan="4">
+											<radio label="Otro"
+											onFocus="tbxCual_otro3.focus()"
+												value="S" radiogroup="rdbTipo_de_muestra" />
+											<space />
+											<label id="lbCual_otro3"
+												value="¿Cuál otro?: " />
+											<space />
+											<textbox id="tbxCual_otro3" readonly="true"
+												width="82%" style="text-transform:uppercase"
+												maxlength="200" />
+										</cell>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+						<groupbox mold="3d" closable="false">
+							<grid>
+								<columns>
+									<column width="50%" />
+									<column width="" />
+									<column width="" />
+									<column width="" />
+								</columns>
+								<rows>
+									<row>
+										<cell>
+											<label
+												style="font-weight:bold" id="lbDestino_de_muestra"
+												value="Destino de muestra: " />
+										</cell>
+										<cell colspan="3">
+											<label
+												style="font-weight:bold" id="lbPrueba_diagnostica_confirm"
+												value="Prueba diagnóstica confirmatoria: " />
+										</cell>
+									</row>
+									<row>
+										<cell rowspan="2">
+											<radiogroup
+											onCheck="formFicha_epidemiologia_n23.deshabilitar_conRadio(self,new AbstractComponent[]{tbxCual_otro_10})"
+												id="rdbDestino_de_muestra" />
+											<radio label="I.N.S" checked="true"
+											radiogroup="rdbDestino_de_muestra"
+												value="1" />
+											<space />
+											<radio label="Otro" onFocus="tbxCual_otro_10.focus()"
+											radiogroup="rdbDestino_de_muestra"
+												value="S"  />
+											<space />
+											<label id="lbcual_otro_10"
+												value="¿Cuál otro?: " />
+											<space />
+											<textbox id="tbxCual_otro_10" readonly="true"
+												width="150px" style="text-transform:uppercase"
+												maxlength="200" />
+										</cell>
+										<cell>
+											<radiogroup
+											onCheck="formFicha_epidemiologia_n23.deshabilitar_conRadio(self,new AbstractComponent[]{tbxCual_otro_11})"
+												id="rdbPrueba_diagnostica_confirm" />
+											<radio label="I.F.D"
+												value="1" radiogroup="rdbPrueba_diagnostica_confirm" />
+										</cell>
+										<cell>
+											<radio
+												label="Prueba biológica" value="2"
+												radiogroup="rdbPrueba_diagnostica_confirm" checked="true" />
+										</cell>
+										<cell>
+											<radio
+												label="Inmunohistoquímica" value="3"
+												radiogroup="rdbPrueba_diagnostica_confirm" />
+										</cell>
+
+									</row>
+									<row>
+										<cell colspan="3">
+											<radio label="Otra" onFocus="tbxCual_otro_11.focus()"
+												value="S" radiogroup="rdbPrueba_diagnostica_confirm" />
+											<space />
+											<label
+												value="¿Cuál otro?: " />
+											<space />
+											<textbox id="tbxCual_otro_11" readonly="true"
+												width="259px" style="text-transform:uppercase"
+												maxlength="200" />
+										</cell>
+									</row>
+
+								</rows>
+							</grid>
+						</groupbox>
+						<groupbox mold="3d" closable="false">
+							<grid>
+								<columns>
+									<column width="" label="Resultado" />
+									<column width=""
+										label="Identificación variante" />
+								</columns>
+								<rows>
+									<row>
+										<cell>
+											<radiogroup
+												id="rdbResultado" />
+											<radio label="Positivo"
+												value="1" radiogroup="rdbResultado" />
+											<space />
+											<radio label="Negativo"
+												value="2" radiogroup="rdbResultado" checked="true" />
+											<space />
+											<radio label="Inadecuado"
+												value="1" radiogroup="rdbResultado" />
+											<space />
+											<radio label="Pendiente"
+												value="1" radiogroup="rdbResultado" />
+											<space />
+										</cell>
+
+										<cell>
+											<radiogroup
+												id="rdbIdentificacion_variante" />
+											<radio label="SÍ" value="1"
+												radiogroup="rdbIdentificacion_variante" />
+											<space width="70px" />
+											<radio label="NO" value="2"
+												radiogroup="rdbIdentificacion_variante" checked="true" />
+											<space width="70px" />
+											<radio label="Pendiente"
+												value="1" radiogroup="rdbIdentificacion_variante" />
+										</cell>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+
+						<groupbox mold="3d" closable="false">
+							<grid>
+								<columns>
+									<column width="55%" />
+									<column width="" />
+									<column width="18%" />
+								</columns>
+								<rows>
+
+									<row>
+										<cell>
+											<label
+												style="font-weight:bold" value="Variante identificada" />
+										</cell>
+										<cell>
+											<label
+												style="font-weight:bold" value="Aplicación del suero" />
+										</cell>
+										<cell>
+											<label
+												style="font-weight:bold" value="Fecha de aplicación" />
+										</cell>
+									</row>
+
+									<row>
+										<cell>
+											<radiogroup
+											onCheck="formFicha_epidemiologia_n23.deshabilitar_conRadio(self,new AbstractComponent[]{tbxCual_otro4})"
+												id="rdbVariante_identificada" />
+											<vlayout>
+												<hlayout>
+													<radio label="1"
+														value="1" radiogroup="rdbVariante_identificada" />
+													<space width="35px" />
+													<radio label="3"
+														value="2" radiogroup="rdbVariante_identificada"
+														checked="true" />
+													<space width="35px" />
+													<radio label="4"
+														value="3" radiogroup="rdbVariante_identificada" />
+													<space width="35px" />
+													<radio label="5"
+														value="4" radiogroup="rdbVariante_identificada" />
+													<space width="35px" />
+													<radio label="8"
+														value="5" radiogroup="rdbVariante_identificada" />
+												</hlayout>
+												<hlayout>
+													<radio label="Otra" onFocus="tbxCual_otro4.focus()"
+														value="S" radiogroup="rdbVariante_identificada" />
+													<space />
+													<label
+														id="lbCual_otro4" value="¿Cuál otro?: " />
+													<space />
+													<textbox 
+														id="tbxCual_otro4" width="170px" readonly="true"
+														style="text-transform:uppercase" maxlength="200" />
+												</hlayout>
+											</vlayout>
+										</cell>
+										<cell>
+											<space width="20px" />
+											<radiogroup
+											onCheck="formFicha_epidemiologia_n23.deshabilitar_conRadio(self,new AbstractComponent[]{dtbxFecha_de_aplicacion})"
+												id="rdbAplicacion_de_suero" />
+											<radio label="SÍ" value="S" 
+												radiogroup="rdbAplicacion_de_suero" />
+											<space />
+											<radio label="NO" value="N" checked="true"
+												radiogroup="rdbAplicacion_de_suero"  />
+										</cell>
+										<cell>
+											<datebox
+												id="dtbxFecha_de_aplicacion" readonly="true" buttonVisible="false"
+												onCreate="" format="yyyy-MM-dd"
+												width="110px" />
+										</cell>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+
+						<groupbox mold="3d" closable="false">
+							<grid>
+								<columns>
+									<column width=""
+										label="Aplicación de vacuna" />
+									<column width=""
+										label="Número de dosis aplicadas" />
+									<column width=""
+										label="Fecha de primera dosis" />
+									<column width="20%"
+										label="Fecha de última dosis" />
+								</columns>
+								<rows>
+									<row>
+										<cell>
+											<space width="30px" />
+											<radiogroup
+											onCheck="formFicha_epidemiologia_n23.deshabilitar_conRadio(self,new AbstractComponent[]{ibxNumero_de_dosis,dtbxFecha_de_primera_dosis,dtbxFecha_ultima_dosis})"
+												id="rdbAplicacion_de_vacuna" />
+											<radio label="SÍ" value="S"
+												radiogroup="rdbAplicacion_de_vacuna" />
+											<space width="50px" />
+											<radio label="NO" value="2"
+												radiogroup="rdbAplicacion_de_vacuna" checked="true" />
+										</cell>
+										<cell>
+											<space width="58px" />
+											<intbox readonly="true"
+												constraint="no negative:Este valor no puede ser negativo"
+												id="ibxNumero_de_dosis" width="90px"
+												style="text-transform:uppercase" />
+										</cell>
+										<cell>
+											<space width="49px" />
+											<datebox readonly="true" buttonVisible="false"
+												id="dtbxFecha_de_primera_dosis"
+												onCreate="" format="yyyy-MM-dd"
+												width="110px" />
+										</cell>
+										<cell>
+											<space width="15px" />
+											<datebox readonly="true" buttonVisible="false"
+												id="dtbxFecha_ultima_dosis"
+												onCreate="" format="yyyy-MM-dd"
+												width="110px" />
+										</cell>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+
+						<groupbox mold="3d" closable="false">
+							<caption label="CONTROL DE FOCO"
+								style="font-weight:bold" />
+							<grid>
+								<columns>
+									<column width="37%" />
+									<column width="" />
+									<column width="30%" />
+								</columns>
+								<rows>
+									<row
+										style="border: 1px solid #aaaaaa">
+										<cell>
+											<label
+												style="font-weight:bold"
+												value="Número de contactos humanos" />
+										</cell>
+
+										<cell>
+											<label
+												style="font-weight:bold"
+												value="Clasificación final de los contactos" />
+										</cell>
+
+										<cell>
+											<label
+												style="font-weight:bold"
+												value="Número de tratamientos completos aplicados" />
+										</cell>
+									</row>
+									<row
+										style="border: 1px solid #aaaaaa">
+										<cell>
+											<vlayout>
+												<hlayout>
+													<label
+														value="Personal de salud:" />
+													<textbox
+														id="tbxPersonal_salud" width="50px"
+														style="text-transform:uppercase" maxlength="200" />
+													<space />
+													<label
+														value="Amigos:" />
+													<textbox
+														id="tbxAmigos" width="50px"
+														style="text-transform:uppercase" maxlength="200" />
+													<space />
+												</hlayout>
+												<hlayout>
+													<label
+														value="Familiares:" />
+													<space width="38px" />
+													<textbox
+														id="tbxFamiliares" width="50px"
+														style="text-transform:uppercase" maxlength="200" />
+													<space />
+													<label
+														value="Otros:" />
+													<space />
+													<textbox
+														id="tbxOtros" width="46px"
+														style="text-transform:uppercase" maxlength="200" />
+												</hlayout>
+											</vlayout>
+										</cell>
+
+										<cell>
+											<vlayout>
+												<hlayout>
+													<space width="30px" />
+													<label
+														id="lbExposiciones_leves" value="Exposiciones leves: " />
+													<space width="4px" />
+													<checkbox
+														id="chbExposiciones_leves" />
+												</hlayout>
+												<hlayout>
+													<label
+														value="Numero de expocisiones:" />
+													<space />
+													<intbox
+														constraint="no negative:Este valor no puede ser negativo"
+														id="ibxNum_exposiciones" width="90px"
+														style="text-transform:uppercase" />
+												</hlayout>
+												<hlayout>
+													<space width="30px" />
+													<label
+														id="lbExposiciones_graves" value="Exposiciones graves: " />
+													<checkbox
+														id="chbExposiciones_graves" />
+												</hlayout>
+											</vlayout>
+										</cell>
+
+										<cell>
+											<vlayout>
+												<hlayout>
+													<space width="40px" />
+													<label
+														value="Suero:" />
+													<intbox
+														constraint="no negative:Este valor no puede ser negativo"
+														id="ibxSuero" width="90px"
+														style="text-transform:uppercase" />
+												</hlayout>
+												<hlayout>
+													<space width="40px" />
+													<label
+														value="Vacuna:" />
+													<intbox
+														constraint="no negative:Este valor no puede ser negativo"
+														id="ibxVacuna" width="82px"
+														style="text-transform:uppercase" />
+												</hlayout>
+											</vlayout>
+										</cell>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+						<groupbox mold="3d" closable="false" visible="false">
+							<grid>
+								<columns>
+									<column width="60%" />
+									<column width="40%" />
+								</columns>
+								<rows>
+									<row>
+										<cell>
+											<label
+												value="Diligenciado por:" visible="false" />
+											<space />
+											<textbox
+												id="tbxDiligenciado_por" width="350px"
+												style="text-transform:uppercase" maxlength="300"  visible="false"/>
+										</cell>
+										<cell>
+											<label
+												value="Telefono de contacto:"  visible="false"/>
+											<space />
+											<textbox
+												id="tbxTelefono_de_contacto" width="130px"
+												style="text-transform:uppercase" maxlength="300" visible="false" />
+										</cell>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+
+					</groupbox>
+				</div>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

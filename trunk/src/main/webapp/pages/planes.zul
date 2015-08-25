@@ -1,0 +1,709 @@
+<?page title="Planes" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formPlanes" width="100%" height="97%"
+		use="healthmanager.controller.PlanesAction">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+		<!-- **************** -->
+		<!-- Zona de Consulta -->  
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="true" closable="false"
+			mold="3d" height="90%">
+			<caption label="Consultar"
+				style="color: blue;font-weight: bold" />
+
+			<separator />
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" height="90%" mold="paging"
+				pageSize="20" vflex="1">
+				<auxhead>
+					<auxheader colspan="9">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<separator />
+							<textbox id="tbxValue" width="200px"
+								onOK="formPlanes.buscarDatos();"
+								style="text-transform:uppercase" />
+							<separator />
+							<button mold="trendy"
+								image="/images/Magnifier.gif"
+								onClick="formPlanes.buscarDatos();"
+								tooltiptext="Consultar Planes" />
+							<separator />
+							<button mold="trendy"
+								image="/images/New16.gif"
+								onClick='formPlanes.accionForm(true,"registrar");'
+								tooltiptext="Nuevo Planes" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Administradora" />
+					<column label="Codigo" />
+					<column label="Nombre" />
+					<column label="Manual tarifario" />
+					<column label="Año" />
+					<column label="Tarifa especial" />
+					<column label="Cerrado" />
+					<column label="Pyp" />
+					<column label="Acciones" align="center"
+						width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<groupbox width="100%" height="95%" id="groupboxEditar"
+			visible="false" style="border:0px">
+			<toolbar width="100%" align="start">
+				<textbox id="tbxAccion" value="registrar"
+					visible="false" />
+				<toolbarbutton image="/images/Save16.gif"
+					label="Guardar Planes" onClick="formPlanes.guardarDatos();"
+					id="btGuardar" />
+				<toolbarbutton image="/images/New16.gif"
+					label="Nueva Planes"
+					onClick='formPlanes.accionForm(true,"registrar");' id="btNew" />
+				<space />
+				<toolbarbutton image="/images/trasladar.gif"
+					label="Cancelar"
+					onClick='formPlanes.accionForm(false,tbxAccion.getText());'
+					id="btCancel" />
+				<toolbarbutton image="/images/print_ico.gif"
+					label="Imprimir Planes" onClick="formPlanes.imprimir();"
+					id="btImprimir" visible="false" />
+				<space />
+				<label value="Formato impresión: " visible="false" />
+				<listbox id="lbxFormato" mold="select" width="150px"
+					visible="false" sclass="combobox">
+					<listitem value="pdf" label="PDF" selected="true" />
+					<listitem value="rtf" label="WORD" />
+				</listbox>
+			</toolbar>
+			<tabbox height="90%">
+				<tabs>
+					<tab label="Contrato" />
+					<tab label="Tarifas Especiales SOAT"
+						id="tarifa_especial_soat" visible="false" />
+					<tab label="Tarifas Especiales ISS 2001"
+						id="tarifa_especial_iss01" visible="false" />
+					<tab label="Tarifas Especiales ISS 2004"
+						id="tarifa_especial_iss04" visible="false" />
+				</tabs>
+				<tabpanels>
+					<tabpanel>
+						<grid sclass="GridSinBorde" vflex="1">
+							<columns>
+								<column label="" width="11%" />
+								<column label="" width="14%" />
+								<column label="" width="25%" />
+								<column label="" width="14%" />
+								<column label="" width="25%" />
+								<column label="" width="11%" />
+							</columns>
+							<rows>
+								<row>
+									<cell colspan="6" align="center">
+
+										<!-- *************************** -->
+										<!-- *** Insertar/Actualizar *** -->
+										<!-- *************************** -->
+										<groupbox closable="false"
+											width="930px" mold="3d">
+
+											<groupbox closable="false"
+												style="border:0px" contentStyle="border:0">
+												<grid
+													sclass="GridSinBorde" hflex="1">
+													<columns>
+														<column label=""
+															width="100px" />
+														<column label=""
+															width="170px" align="left" />
+														<column label=""
+															width="182px" align="left" />
+														<column label=""
+															width="100px" align="left" />
+														<column label=""
+															width="182px" align="left" />
+														<column label=""
+															width="100px" />
+													</columns>
+													<rows>
+
+														<row>
+															<cell></cell>
+															<cell
+																height="30px">
+																<label
+																	value="* " style="color: red"
+																	tooltiptext="Campo obligatorio" />
+																<label
+																	id="lbId_plan" value=" ID Contrato: " />
+															</cell>
+															<cell>
+																<textbox
+																	id="tbxId_plan" width="170px"
+																	style="text-transform:uppercase" maxlength="20" />
+															</cell>
+															<cell
+																height="30px">
+																<space
+																	width="7px" />
+																<label
+																	id="lbCerrado" value="Cerrado: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbCerrado" />
+															</cell>
+															<cell></cell>
+														</row>
+														<row>
+															<cell></cell>
+															<cell
+																height="30px">
+																<label
+																	value="* " style="color: red"
+																	tooltiptext="Campo obligatorio" />
+																<label
+																	id="lbNombre" value="Nombre Contrato: " />
+															</cell>
+															<cell
+																colspan="4">
+																<textbox
+																	id="tbxNombre" width="453px"
+																	style="text-transform:uppercase" maxlength="30" />
+															</cell>
+														</row>
+														<row>
+															<cell></cell>
+															<cell
+																height="30px">
+																<label
+																	value="* " style="color: red"
+																	tooltiptext="Campo obligatorio" />
+																<label
+																	id="lbCodigo_administradora" value=" Aseguradora: " />
+															</cell>
+															<cell>
+
+																<listbox
+																	id="tbxCodigo_administradora" mold="select"
+																	sclass="combobox" width="150px" />
+															</cell>
+															<cell
+																height="30px">
+																<space
+																	width="7px" />
+																<label
+																	id="lbTipo_usuario" value="Regimen: " />
+															</cell>
+															<cell>
+																<listbox
+																	id="tbxTipo_usuario" mold="select" sclass="combobox"
+																	width="150px" />
+															</cell>
+															<cell></cell>
+														</row>
+
+														<!-- fila 27 -->
+														<row>
+															<cell></cell>
+															<cell
+																height="30px">
+
+																<label
+																	id="lbFecha_inicio" value="Fecha inicial: " />
+															</cell>
+															<cell>
+																<datebox
+																	id="dtbxFecha_inicio" format="yyyy-MM-dd" width="150px"
+																	mold="rounded" readonly="true" />
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbFecha_fin" value="Fecha final: " />
+															</cell>
+															<cell>
+																<datebox
+																	id="dtbxFecha_fin" format="yyyy-MM-dd" width="150px"
+																	mold="rounded" readonly="true" />
+															</cell>
+															<cell></cell>
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+
+											<!--  Manual tarifario  -->
+											<groupbox closable="false"
+												width="910px" mold="3d">
+												<caption
+													label="Manual tarifario" />
+												<groupbox
+													closable="false">
+													<grid
+														sclass="GridSinBorde" hflex="1">
+														<columns>
+															<column
+																label="" width="90px" />
+															<column
+																label="" width="170px" align="left" />
+															<column
+																label="" width="182px" align="left" />
+															<column
+																label="" width="100px" align="left" />
+															<column
+																label="" width="182px" align="left" />
+															<column
+																label="" width="100px" />
+														</columns>
+														<rows>
+															<row>
+																<cell></cell>
+																<cell
+																	height="30px">
+																	<space
+																		width="7px" />
+																	<label
+																		id="lbManual_tarifario" value="Manual tarifario: " />
+																</cell>
+																<cell>
+																	<listbox
+																		id="tbxManual_tarifario" mold="select"
+																		sclass="combobox" width="150px"
+																		onCreate="self.setSelectedIndex(0)">
+																		<listitem
+																			forEach="-- Seleccione --,SOAT,ISS04,ISS01"
+																			value="${each}" label="${each}" />
+																	</listbox>
+																</cell>
+																<cell
+																	height="30px">
+																	<space
+																		width="7px" />
+																	<label
+																		id="lbAnio" value="Año: " />
+																</cell>
+																<cell>
+																	<listbox
+																		id="tbxAnio" mold="select" sclass="combobox"
+																		width="150px" />
+																</cell>
+																<cell></cell>
+															</row>
+															<row>
+																<cell />
+																<cell>
+																	<space
+																		width="7px" />
+																	<label
+																		value="Tarifa especial: " />
+																</cell>
+																<cell>
+																	<checkbox
+																		id="chbTarifa_especial" />
+																</cell>
+																<cell>
+																	<space
+																		width="7px" />
+																	<label
+																		value="Pyp: " />
+																</cell>
+																<cell>
+																	<checkbox
+																		id="chbPyp" />
+																</cell>
+															</row>
+														</rows>
+													</grid>
+												</groupbox>
+												<div align="left">
+													<groupbox
+														closable="false" mold="3d">
+														<caption
+															label="Contrato" />
+														<grid
+															sclass="GridSinBorde" vflex="1">
+															<columns>
+																<column
+																	label="" width="87px" />
+																<column
+																	label="" width="170px" align="left" />
+																<column
+																	label="" width="182px" align="left" />
+																<column
+																	label="" width="100px" align="left" />
+																<column
+																	label="" width="182px" align="left" />
+																<column
+																	label="" width="50px" />
+															</columns>
+															<rows>
+																<row>
+																	<cell></cell>
+																	<cell
+																		height="30px">
+																		<space
+																			width="7px" />
+																		<label
+																			id="lbNro_contrato" value="Nro contrato: " />
+																	</cell>
+																	<cell>
+																		<textbox
+																			id="tbxNro_contrato" width="170px"
+																			style="text-transform:uppercase" maxlength="50" />
+																	</cell>
+																	<cell
+																		height="30px">
+																		<space
+																			width="7px" />
+																		<label
+																			id="lbNocopago" value="Nocopago: " />
+																	</cell>
+																	<cell>
+																		<checkbox
+																			id="tbxNocopago" />
+																	</cell>
+																	<cell></cell>
+																</row>
+																<row
+																	visible="false">
+																	<cell />
+																	<cell
+																		height="30px">
+																		<space
+																			width="7px" />
+																		<label
+																			id="lbMonto_contrato" value="Monto contrato: " />
+																	</cell>
+																	<cell>
+																		<doublebox
+																			id="dbxMonto_contrato" format="#,##0.00"
+																			width="170px" value="0.00" />
+																	</cell>
+																</row>
+															</rows>
+														</grid>
+
+														<groupbox
+															closable="false">
+
+															<!-- colocamos los radio group  -->
+															<radiogroup
+																id="groupServicio" name="groupServicio" />
+															<radiogroup
+																id="groupMedicamento" name="groupMedicamento" />
+															<radiogroup
+																id="groupGeneral" name="groupGeneral" />
+															<caption
+																label="Detalle del contrato" />
+															<grid
+																sclass="GridSinBorde" hflex="1">
+																<columns>
+																	<column
+																		label="" width="100px" />
+																	<column
+																		label="" width="170px" align="left" />
+																	<column
+																		label="" width="182px" align="left" />
+																	<column
+																		label="" width="100px" align="left" />
+																	<column
+																		label="" width="182px" align="left" />
+																	<column
+																		label="" width="100px" />
+																</columns>
+																<rows>
+																	<row>
+																		<cell></cell>
+																		<cell
+																			height="30px">
+																			<space
+																				width="7px" />
+																			<label
+																				id="lbServicios" value="Otros: " />
+																		</cell>
+																		<cell>
+																			<listbox
+																				id="lbxServicios" name="servicios" mold="select"
+																				width="100px" sclass="combobox" />
+																			<label
+																				value="%" />
+																		</cell>
+
+																		<cell
+																			height="30px">
+																			<radio
+																				selected="true" radiogroup="groupServicio"
+																				label="Menos" value="01" />
+																		</cell>
+																		<cell>
+																			<radio
+																				radiogroup="groupServicio" label="Mas" value="02" />
+																		</cell>
+																		<cell></cell>
+																	</row>
+																	<row>
+																		<cell></cell>
+																		<cell
+																			height="30px">
+																			<space
+																				width="7px" />
+																			<label
+																				id="lbMedicamentos" value="Medicamentos: " />
+																		</cell>
+																		<cell>
+																			<listbox
+																				id="lbxMedicamentos" name="servicios" mold="select"
+																				width="100px" sclass="combobox" />
+																			<label
+																				value="%" />
+																		</cell>
+
+																		<cell
+																			height="30px">
+																			<radio
+																				selected="true" radiogroup="groupMedicamento"
+																				label="Menos" value="01" />
+																		</cell>
+																		<cell>
+																			<radio
+																				radiogroup="groupMedicamento" label="Mas"
+																				value="02" />
+																		</cell>
+																		<cell></cell>
+																	</row>
+																	<row>
+																		<cell></cell>
+																		<cell
+																			height="30px">
+																			<space
+																				width="7px" />
+																			<label
+																				id="lbGeneral" value="General: " />
+																		</cell>
+																		<cell>
+																			<listbox
+																				id="lbxGeneral" name="servicios" mold="select"
+																				width="100px" sclass="combobox" />
+																			<label
+																				value="%" />
+																		</cell>
+
+																		<cell
+																			height="30px">
+																			<radio
+																				selected="true" radiogroup="groupGeneral"
+																				label="Menos" value="01" />
+																		</cell>
+																		<cell>
+																			<radio
+																				radiogroup="groupGeneral" label="Mas" value="02" />
+																		</cell>
+																		<cell></cell>
+																	</row>
+																</rows>
+															</grid>
+
+														</groupbox>
+													</groupbox>
+												</div>
+											</groupbox>
+											<space />
+											<!-- Facturacion -->
+											<groupbox closable="false"
+												width="910px" mold="3d">
+												<caption
+													label="Facturación" />
+
+												<grid
+													sclass="GridSinBorde" hflex="1">
+													<columns>
+														<column label=""
+															width="100px" />
+														<column label=""
+															width="170px" align="left" />
+														<column label=""
+															width="182px" align="left" />
+														<column label=""
+															width="100px" align="left" />
+														<column label=""
+															width="182px" align="left" />
+														<column label=""
+															width="100px" />
+													</columns>
+													<rows>
+														<row>
+															<cell></cell>
+															<cell
+																colspan="4" align="center">
+																<radiogroup
+																	id="tbxTipo_facturacion">
+																	<radio
+																		label="Agrupada" selected="true" value="01" />
+																	<radio
+																		label="Individual/Evento" value="02" />
+																	<radio
+																		label="Capitación" value="03" />
+																</radiogroup>
+															</cell>
+															<cell></cell>
+														</row>
+
+														<row>
+															<cell></cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbValor_mes" value="Valor mes: " />
+															</cell>
+															<cell>
+																<doublebox
+																	id="dbxValor_mes" format="#,##0.00" width="170px"
+																	value="0.00" />
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbValor_total" value="Valor total: " />
+															</cell>
+															<cell>
+																<doublebox
+																	id="dbxValor_total" format="#,##0.00" width="170px"
+																	value="0.00" />
+															</cell>
+															<cell></cell>
+														</row>
+														<row
+															visible="false">
+															<cell></cell>
+															<cell
+																height="30px">
+																<label
+																	value="* " style="color: red"
+																	tooltiptext="Campo obligatorio" />
+																<label
+																	id="lbCodificacion" value="Codificacion: " />
+															</cell>
+															<cell>
+																<listbox
+																	id="lbxCodificacion" name="codificacion" mold="select"
+																	width="170px" sclass="combobox"
+																	onCreate="self.setSelectedIndex(0)">
+																	<listitem
+																		forEach="CUPS,SOAT,ISS" value="${each}"
+																		label="${each}" />
+																</listbox>
+															</cell>
+															<cell></cell>
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+											<space />
+											<!-- observaciones -->
+											<groupbox closable="false"
+												width="910px" mold="3d">
+												<caption
+													label="Observación" />
+												<grid
+													sclass="GridSinBorde" hflex="1">
+													<columns>
+														<column label=""
+															width="100px" />
+														<column label=""
+															width="170px" align="left" />
+														<column label=""
+															width="182px" align="left" />
+														<column label=""
+															width="100px" align="left" />
+														<column label=""
+															width="182px" align="left" />
+														<column label=""
+															width="100px" />
+													</columns>
+													<rows>
+														<row>
+															<cell></cell>
+															<cell
+																height="30px">
+																<space
+																	width="7px" />
+																<label
+																	id="lbObservacion" value="Observacion: " />
+															</cell>
+															<cell
+																colspan="3">
+																<textbox
+																	id="tbxObservacion" width="445px" rows="4"
+																	style="text-transform:uppercase" maxlength="-1" />
+															</cell>
+															<cell></cell>
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+											<space />
+											<!-- procedimientos especificos -->
+											<groupbox width="910px"
+												open="false" mold="3d" id="chbRestriccion">
+												<caption
+													label="Procedimientos especificos" />
+												<grid vflex="1"
+													id="grid_procedimientos" height="300px">
+													<auxhead>
+														<auxheader
+															align="left" colspan="5">
+															<button
+																label="Agregar Procedimientos" mold="trendy"
+																image="/images/add.png" onClick="formPlanes.openPcd()" />
+														</auxheader>
+													</auxhead>
+													<columns>
+														<column
+															label="Codigo" width="100px" />
+														<column
+															label="Cups" width="100px" />
+														<column
+															label="Descripción"  />
+														<column
+															label="Requ Aut." width="100px" />
+														<column
+															label="Acciones" width="90px" />
+													</columns>
+													<rows
+														id="rows_procedimientos" />
+												</grid>
+											</groupbox>
+										</groupbox>
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</tabpanel>
+					<tabpanel id="tabpanel_soat" />
+					<tabpanel id="tabpanel_iss01" />
+					<tabpanel id="tabpanel_iss04" />
+				</tabpanels>
+			</tabbox>
+		</groupbox>
+	</window>
+</zk>

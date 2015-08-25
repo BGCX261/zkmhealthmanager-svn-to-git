@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Ficha_epidemiologiaDao">
+
+	<resultMap id="ficha_epidemiologiaMap" type="ficha_epidemiologia">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="codigo" property="codigo" />
+		<result column="titulo" property="titulo" />
+		<result column="descripcion" property="descripcion" />
+		<result column="url_pagina" property="url_pagina" />
+		<result column="repetitivo" property="repetitivo" />
+		<result column="estado" property="estado" />
+		
+	</resultMap>
+
+	<insert id="crear" parameterType="ficha_epidemiologia">
+		insert into public.ficha_epidemiologia (codigo_empresa,codigo_sucursal,
+		codigo,titulo,descripcion,
+		url_pagina,repetitivo,estado)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{codigo},#{titulo},#{descripcion},
+		#{url_pagina},#{repetitivo},#{estado})
+	</insert>
+
+	<update id="actualizar" parameterType="ficha_epidemiologia">
+		update public.ficha_epidemiologia set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},codigo = #{codigo},
+		titulo = #{titulo},descripcion = #{descripcion},
+		url_pagina = #{url_pagina}, repetitivo = #{repetitivo},
+		estado = #{estado}
+		where 		codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and codigo = #{codigo}
+	</update>
+
+	<select id="consultar" parameterType="ficha_epidemiologia" resultMap="ficha_epidemiologiaMap">
+		select codigo_empresa,codigo_sucursal,
+		codigo,titulo,descripcion,url_pagina,repetitivo,estado
+		from public.ficha_epidemiologia where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo = #{codigo}
+	</select>
+
+	<delete id="eliminar" parameterType="ficha_epidemiologia">
+		delete from public.ficha_epidemiologia
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo = #{codigo}
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="ficha_epidemiologiaMap">
+		select codigo_empresa,codigo_sucursal,
+		codigo,titulo,descripcion,url_pagina,repetitivo,estado
+		from public.ficha_epidemiologia 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limite_paginado != null">
+			${limite_paginado}
+		</if>
+		<if test="orden != null">
+		order by cast(codigo as integer)
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from public.ficha_epidemiologia 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limite_paginado != null">
+			${limite_paginado}
+		</if>
+	</select>
+
+</mapper>

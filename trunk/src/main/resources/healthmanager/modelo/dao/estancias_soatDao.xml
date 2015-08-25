@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.Estancias_soatDao">
+
+	
+
+	<resultMap id="estancias_soatMap" type="estancias_soat">
+		<result column="estancia" property="estancia" />
+		<result column="nivel" property="nivel" />
+		<result column="nro_camas" property="nro_camas" />
+		<result column="codigo" property="codigo" />
+		<result column="descripcion" property="descripcion" />
+		<result column="porcentaje" property="porcentaje" />
+	</resultMap>
+
+	<insert id="crear" parameterType="estancias_soat">
+		insert into public.estancias_soat (estancia,nivel,
+		nro_camas,codigo,descripcion,
+		porcentaje)
+
+		values (#{estancia},#{nivel},
+		#{nro_camas},#{codigo},#{descripcion},
+		#{porcentaje})
+	</insert>
+
+	<update id="actualizar" parameterType="estancias_soat">
+		update public.estancias_soat set estancia = #{estancia},
+		nivel = #{nivel},nro_camas = #{nro_camas},
+		codigo = #{codigo},descripcion = #{descripcion},
+		porcentaje = #{porcentaje}
+		where 		estancia = #{estancia}
+		and nivel = #{nivel}
+		and nro_camas = #{nro_camas}
+		and codigo = #{codigo}
+	</update>
+
+	<select id="consultar" resultMap="estancias_soatMap" parameterType="estancias_soat">
+		select estancia,nivel,
+		nro_camas,codigo,descripcion,porcentaje
+		from public.estancias_soat where estancia = #{estancia}
+		and nivel = #{nivel} and nro_camas = #{nro_camas}
+		and codigo = #{codigo}
+	</select>
+	
+	<select id="consultarEstancia" resultMap="estancias_soatMap" parameterType="estancias_soat">
+		select estancia,nivel,
+		nro_camas,codigo,descripcion,porcentaje
+		from public.estancias_soat where estancia = #{estancia}
+		and (nivel = #{nivel} or nivel = 0) 
+		
+		<if test="nro_camas == 1 or nro_camas == 2 or nro_camas == 3">
+		and (nro_camas = #{nro_camas} or nro_camas = 0)
+		</if>
+		
+		<if test="nro_camas >= 4">
+		and (nro_camas >= 4)
+		</if>
+		
+		limit 1 offset 0
+	</select>
+
+	<delete id="eliminar" parameterType="estancias_soat">
+		delete from public.estancias_soat
+		where estancia = #{estancia}
+		and nivel = #{nivel} and nro_camas = #{nro_camas}
+		and codigo = #{codigo}
+	</delete>
+
+	<select id="listar" resultMap="estancias_soatMap" parameterType="java.util.Map">
+		select estancia,nivel,
+		nro_camas,codigo,descripcion,porcentaje
+		from public.estancias_soat 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="parameter != null">AND ${parameter} like '${value}'</if>
+			<if test="nivel_orden != null">
+				AND nivel = #{nivel_orden}
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean" parameterType="estancias_soat">
+		select count(1) != 0 AS exist 		from public.estancias_soat 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="parameter != null">AND ${parameter} like '${value}'</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.historia_odontologia4Model">
+    <select id="select" resultType="java.util.HashMap" parameterType="java.util.Map">
+    
+    select cta.identificacion,cta.fecha_inicial,cta.codigo_historia,
+
+	odont_grama_presenta_fluorosis,indice_dean_16.convencion as convencion_16,
+	indice_dean_15.convencion as convencion_15,indice_dean_13.convencion as convencion_13,
+	indice_dean_12.convencion as convencion_12,indice_dean_11.convencion as convencion_11,
+	indice_dean_46.convencion as convencion_46,indice_dean_21.convencion as convencion_21,
+	indice_dean_22.convencion as convencion_22,indice_dean_23.convencion as convencion_23,
+	indice_dean_25.convencion as convencion_25,indice_dean_26.convencion as convencion_26,
+	indice_dean_36.convencion as convencion_36,odont_grama_clasificacion_lesiones,
+	
+	prev_charla,prev_cepillado,prev_seda,prev_enjuague,prev_fluor,prev_sellante,
+	prev_frec_charla,prev_frec_cepillado,prev_frec_seda,prev_frec_enjuague,prev_frec_fluor,
+	prev_frec_sellante,prev_observacions,
+	
+	dx.cie_principal,cie_pp.nombre as cie_pp,dx.cie_relacionado1,cie_r1.nombre as cie_r1,
+	dx.cie_relacionado2,cie_r2.nombre as cie_r2,dx.cie_relacionado3,cie_r3.nombre as cie_r3,
+	
+	ele_imp1.descripcion imp_dxpp,ele_imp2.descripcion imp_dx1,ele_imp3.descripcion imp_dx2,
+	ele_imp4.descripcion imp_dx3,fin_cons.descripcion as finalidad_consulta,
+	ce.descripcion as causas_externas
+	
+	from odontologia cta
+	
+	left join elemento modo_odo on (modo_odo.codigo = modo_denticion
+	and modo_odo.tipo = 'modo_odontograma')
+	
+	LEFT JOIN indice_dean as indice_dean_16 on (indice_dean_16.codigo_empresa = cta.codigo_empresa
+	and indice_dean_16.codigo_sucursal = cta.codigo_sucursal
+	and indice_dean_16.nro_historia = cta.codigo_historia and indice_dean_16.nro_indice = '16')
+	
+	LEFT JOIN indice_dean as indice_dean_15 on (indice_dean_15.codigo_empresa = cta.codigo_empresa
+	and indice_dean_15.codigo_sucursal = cta.codigo_sucursal
+	and indice_dean_15.nro_historia = cta.codigo_historia and indice_dean_15.nro_indice = '15')
+	
+	LEFT JOIN indice_dean as indice_dean_13 on (indice_dean_13.codigo_empresa = cta.codigo_empresa
+	and indice_dean_13.codigo_sucursal = cta.codigo_sucursal
+	and indice_dean_13.nro_historia = cta.codigo_historia and indice_dean_13.nro_indice = '13')
+	
+	LEFT JOIN indice_dean as indice_dean_12 on (indice_dean_12.codigo_empresa = cta.codigo_empresa
+	and indice_dean_12.codigo_sucursal = cta.codigo_sucursal
+	and indice_dean_12.nro_historia = cta.codigo_historia and indice_dean_12.nro_indice = '12')
+	
+	LEFT JOIN indice_dean as indice_dean_11 on (indice_dean_11.codigo_empresa = cta.codigo_empresa
+	and indice_dean_11.codigo_sucursal = cta.codigo_sucursal
+	and indice_dean_11.nro_historia = cta.codigo_historia and indice_dean_11.nro_indice = '11')
+	
+	LEFT JOIN indice_dean as indice_dean_46 on (indice_dean_46.codigo_empresa = cta.codigo_empresa
+	and indice_dean_46.codigo_sucursal = cta.codigo_sucursal
+	and indice_dean_46.nro_historia = cta.codigo_historia and indice_dean_46.nro_indice = '46')
+	
+	LEFT JOIN indice_dean as indice_dean_21 on (indice_dean_21.codigo_empresa = cta.codigo_empresa
+	and indice_dean_21.codigo_sucursal = cta.codigo_sucursal
+	and indice_dean_21.nro_historia = cta.codigo_historia and indice_dean_21.nro_indice = '21')
+	
+	LEFT JOIN indice_dean as indice_dean_22 on (indice_dean_22.codigo_empresa = cta.codigo_empresa
+	and indice_dean_22.codigo_sucursal = cta.codigo_sucursal
+	and indice_dean_22.nro_historia = cta.codigo_historia and indice_dean_22.nro_indice = '22')
+	
+	LEFT JOIN indice_dean as indice_dean_23 on (indice_dean_23.codigo_empresa = cta.codigo_empresa
+	and indice_dean_23.codigo_sucursal = cta.codigo_sucursal
+	and indice_dean_23.nro_historia = cta.codigo_historia and indice_dean_23.nro_indice = '23')
+	
+	LEFT JOIN indice_dean as indice_dean_25 on (indice_dean_25.codigo_empresa = cta.codigo_empresa
+	and indice_dean_25.codigo_sucursal = cta.codigo_sucursal
+	and indice_dean_25.nro_historia = cta.codigo_historia and indice_dean_25.nro_indice = '25')
+	
+	LEFT JOIN indice_dean as indice_dean_26 on (indice_dean_26.codigo_empresa = cta.codigo_empresa
+	and indice_dean_26.codigo_sucursal = cta.codigo_sucursal
+	and indice_dean_26.nro_historia = cta.codigo_historia and indice_dean_26.nro_indice = '26')
+	
+	LEFT JOIN indice_dean as indice_dean_36 on (indice_dean_36.codigo_empresa = cta.codigo_empresa
+	and indice_dean_36.codigo_sucursal = cta.codigo_sucursal
+	and indice_dean_36.nro_historia = cta.codigo_historia and indice_dean_36.nro_indice = '36')
+	
+	left JOIN impresion_diagnostica dx on (dx.codigo_empresa = cta.codigo_empresa
+	and dx.codigo_sucursal = cta.codigo_sucursal and dx.codigo_historia = cta.codigo_historia)
+	
+	LEFT JOIN cie as cie_pp on (cie_pp.codigo = dx.cie_principal)
+	LEFT JOIN cie as cie_r1 on (cie_r1.codigo = dx.cie_relacionado1)
+	LEFT JOIN cie as cie_r2 on (cie_r2.codigo = dx.cie_relacionado2)
+	LEFT JOIN cie as cie_r3 on (cie_r3.codigo = dx.cie_relacionado3)
+	
+	LEFT JOIN elemento as ele_imp1 on (ele_imp1.codigo = dx.tipo_principal
+	and ele_imp1.tipo = 'tipo_diagnostico')
+	
+	LEFT JOIN elemento as ele_imp2 on (ele_imp2.codigo = dx.tipo_relacionado1
+	and ele_imp2.tipo = 'tipo_diagnostico')
+	
+	LEFT JOIN elemento as ele_imp3 on (ele_imp3.codigo = dx.tipo_relacionado2
+	and ele_imp3.tipo = 'tipo_diagnostico')
+	
+	LEFT JOIN elemento as ele_imp4 on (ele_imp4.codigo = dx.tipo_relacionado3
+	and ele_imp4.tipo = 'tipo_diagnostico')
+	
+	LEFT JOIN elemento as fin_cons on (fin_cons.codigo = dx.finalidad_consulta
+	and fin_cons.tipo = 'finalidad_cons')
+	
+	LEFT JOIN elemento as ce on (ce.codigo = dx.causas_externas
+	and ce.tipo = 'causa_externa')
+
+	where cta.codigo_empresa = #{codigo_empresa}
+	and cta.codigo_sucursal = #{codigo_sucursal}
+	and cta.codigo_historia = #{nro_historia}
+    
+    
+    </select>
+   
+</mapper>

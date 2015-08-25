@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Maestro_manualDao">
+
+	<resultMap id="maestro_manualMap" type="maestro_manual">
+		<result column="id_manual" property="id_manual" />
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="manual" property="manual" />
+		<result column="tipo_manual" property="tipo_manual" />
+		<result column="tipo_moneda" property="tipo_moneda" />
+		<result column="creacion_date" property="creacion_date" />
+		<result column="creacion_user" property="creacion_user" />
+	</resultMap>
+
+	<insert id="crear" parameterType="maestro_manual">
+		insert into public.maestro_manual (codigo_empresa,
+		codigo_sucursal,manual,tipo_manual,
+		tipo_moneda,creacion_date,creacion_user)
+
+		values (#{codigo_empresa},
+		#{codigo_sucursal},#{manual},#{tipo_manual},
+		#{tipo_moneda},#{creacion_date},#{creacion_user});
+		
+		<selectKey keyProperty="id_manual" resultType="java.lang.Long"  >
+			select last_value as id_manual from maestro_manual_id_manual_seq
+		</selectKey>
+		
+	</insert>
+
+	<update id="actualizar" parameterType="maestro_manual">
+		update public.maestro_manual set id_manual = #{id_manual},
+		codigo_empresa = #{codigo_empresa},codigo_sucursal = #{codigo_sucursal},
+		manual = #{manual},tipo_manual = #{tipo_manual},
+		tipo_moneda = #{tipo_moneda},creacion_date = #{creacion_date},
+		creacion_user = #{creacion_user}
+		where 		id_manual = #{id_manual}
+	</update>
+
+	<select id="consultar" parameterType="maestro_manual" resultMap="maestro_manualMap">
+		select mml.id_manual,mml.codigo_empresa,
+		mml.codigo_sucursal,mml.manual,mml.tipo_manual,mml.tipo_moneda,
+		mml.creacion_date,mml.creacion_user
+		from public.maestro_manual mml where  mml.id_manual = #{id_manual}
+	</select>
+
+	<delete id="eliminar" parameterType="maestro_manual">
+		delete from public.maestro_manual
+		where id_manual = #{id_manual}
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="maestro_manualMap">
+		select  mml.id_manual, mml.codigo_empresa,
+		 mml.codigo_sucursal, mml.manual, mml.tipo_manual, mml.tipo_moneda,
+		 mml.creacion_date, mml.creacion_user
+		from public.maestro_manual mml  
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND mml.codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND mml.codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="filtro_consulta != null">
+			${filtro_consulta}
+			</if>
+		</trim>
+		<if test="limite_paginado != null">
+		${limite_paginado}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from public.maestro_manual 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

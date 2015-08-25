@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.His_fases_tuberculosisDao">
+
+	<resultMap id="his_fases_tuberculosisMap" type="his_fases_tuberculosis">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="codigo_historia" property="codigo_historia" />
+		<result column="identificacion" property="identificacion" />
+		<result column="fecha" property="fecha" />
+		<result column="fase" property="fase" />
+		<result column="observacion" property="observacion" />
+		<result column="aplicacion" property="aplicacion" />
+		<result column="creacion_date" property="creacion_date" />
+		<result column="creacion_user" property="creacion_user" />
+	</resultMap>
+
+	<insert id="crear" parameterType="his_fases_tuberculosis">
+		insert into public.his_fases_tuberculosis (codigo_empresa,codigo_sucursal,
+		codigo_historia,identificacion,fecha,
+		fase,observacion,aplicacion,creacion_date,creacion_user)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{codigo_historia},#{identificacion},#{fecha},
+		#{fase},#{observacion},#{aplicacion},#{creacion_date},#{creacion_user})
+	</insert>
+
+	<update id="actualizar" parameterType="his_fases_tuberculosis">
+		update public.his_fases_tuberculosis set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},codigo_historia = #{codigo_historia},
+		identificacion = #{identificacion},fecha = #{fecha},
+		fase = #{fase},observacion = #{observacion}, aplicacion = #{aplicacion},
+		creacion_date = #{creacion_date},creacion_user = #{creacion_user}
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and codigo_historia = #{codigo_historia}
+		and fecha = #{fecha}
+		and fase = #{fase}
+	</update>
+
+	<select id="consultar" parameterType="his_fases_tuberculosis" resultMap="his_fases_tuberculosisMap">
+		select codigo_empresa,codigo_sucursal,
+		codigo_historia,identificacion,fecha,fase,
+		observacion,aplicacion,creacion_date,creacion_user
+		from public.his_fases_tuberculosis 
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and codigo_historia = #{codigo_historia}
+		and fecha = #{fecha}
+		and fase = #{fase}
+	</select>
+
+	<delete id="eliminar" parameterType="his_fases_tuberculosis">
+		delete from public.his_fases_tuberculosis
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_historia = #{codigo_historia}
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="his_fases_tuberculosisMap">
+		select codigo_empresa,codigo_sucursal,
+		codigo_historia,identificacion,fecha,fase,
+		observacion,aplicacion,creacion_date,creacion_user
+		from public.his_fases_tuberculosis 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="codigo_historia != null">
+			AND codigo_historia = #{codigo_historia}
+			</if>
+			<if test="fase != null">
+			AND fase = #{fase}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from public.his_fases_tuberculosis 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

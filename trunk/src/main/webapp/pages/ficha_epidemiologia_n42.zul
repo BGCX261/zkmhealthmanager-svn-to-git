@@ -1,0 +1,1719 @@
+<?page title="Ficha_epidemiologia_n42" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+<window id="formFicha_epidemiologia_n42" width="890px"  height="450px"
+ use="healthmanager.controller.Ficha_epidemiologia_n42Action">
+	<style>
+		body ,table{ margin:0; padding:0;
+		} .z-fieldset{ -moz-border-radius:5px; border-radius: 5px;
+		-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+		border: 1px solid silver; }
+		tr.z-row .z-cell{ background-image:none; }
+		tr.z-row td.z-row-hover{ background-image:none; }
+		.GridSinBorde tr.z-row td.z-row-inner, tr.z-row
+			.z-cell,div.z-grid { border: none; overflow: hidden;
+			zoom: 1; border-top: none; border-left: none;
+			border-right: none; border-bottom: none; }
+		</style>
+		<style>
+        div.minimize {
+            border: 1px solid #79858E;
+            background: #D3E1EC;
+            position: absolute;
+            opacity: 0.8;       
+        }
+        div.loginGrid { 
+            border: none;
+        }
+        td.loginCtl {
+            text-align: center;
+        }
+        td.loginCtl .z-label {
+            color: red;         
+            font-style: italic;
+        }
+        </style>
+
+<!-- **************** -->
+<!-- Zona de Consulta -->
+<!-- **************** -->
+<groupbox id="groupboxConsulta" visible="false" closable="false" mold="3d" height="90%">
+<caption label="Consultar" style="color: blue;font-weight: bold"/>
+
+<separator />
+
+<!-- ***************************** -->
+<!--  Resultado Consulta Maestros  -->
+<!-- ***************************** -->
+<grid id="gridResultado" height="90%" mold="paging" pageSize="20"  vflex="1">
+<auxhead>
+						<auxheader colspan="4">
+								<hbox align="center">
+										<label value="Criterios de B&#250;squeda :" />
+										<space />
+										<listbox id="lbxParameter" mold="select"
+												sclass="combobox" width="150px" />
+										<separator />
+										<textbox id="tbxValue" width="200px"
+												onOK="formFicha_epidemiologia_n42.buscarDatos();"
+												style="text-transform:uppercase" />
+										<separator />
+										<button mold="trendy"
+												image="/images/Magnifier.gif"
+												onClick="formFicha_epidemiologia_n42.buscarDatos();"
+												tooltiptext="Consultar Ficha epidemiologia n42" />
+										<separator />
+										<button mold="trendy"
+												image="/images/New16.gif"
+												onClick='formFicha_epidemiologia_n42.accionForm(true,"registrar");'
+												tooltiptext="Nuevo Ficha epidemiologia n42" />
+								</hbox>
+						</auxheader>
+				</auxhead>
+<columns sizable="true">
+	<column label="Codigo ficha"/>
+	<column label="Identificacion"/>
+	<column label="Fecha creacion"/>
+	<column label="Acciones" align="center" width="80px"/>
+</columns>
+<rows id="rowsResultado" width="100%" />
+</grid>
+</groupbox>
+
+<borderlayout width="100%" height="98%" id="groupboxEditar" visible="true">
+				<north border="none" visible="false">
+						<toolbar width="100%" align="start">
+								<textbox id="tbxAccion" value="registrar"
+										visible="false" />
+								<toolbarbutton image="/images/Save16.gif"
+										label="Guardar Ficha"
+										onClick="formFicha_epidemiologia_n42.guardarDatos();" id="btGuardar" />
+		 		                  <toolbarbutton image="/images/New16.gif"
+										label="Nueva"
+										onClick='formFicha_epidemiologia_n42.accionForm(true,"registrar");'
+										id="btNew" />
+								<space />
+		 		                  <toolbarbutton image="/images/trasladar.gif"
+										label="Consultar" onClick='formFicha_epidemiologia_n42.accionForm(false,tbxAccion.getText());'
+										id="btCancel" />
+								<toolbarbutton image="/images/print_ico.gif"
+										label="Imprimir Ficha epidemiologia n42"
+										onClick="formFicha_epidemiologia_n42.imprimir();"
+										id="btImprimir" visible="false"/>
+								<space />
+								<label value="Formato impresión: " visible="false"/>
+									<listbox id="lbxFormato" mold="select" width="150px" visible="false"
+										sclass="combobox">
+										<listitem value="pdf" label="PDF"
+												selected="true" />
+										<listitem value="rtf" label="WORD" />
+								</listbox>
+						</toolbar>
+				</north>
+				<center autoscroll="true" border="none" >
+				<div align="center">
+				
+				<groupbox mold="3d" closable="false">
+						<caption label="DATOS DE LA FICHA"
+							style="font-weight:bold" />
+						<grid>
+							<columns>
+								<column />
+							</columns>
+							<rows>
+								
+								<row>
+									<cell>
+										<hlayout>
+											<space width="130px" />
+											<label value="* "
+												style="color: red" tooltiptext="Campo obligatorio" />
+											<label id="lbFecha_inicial"
+												value="Fecha: " />
+											<datebox
+												id="dtbxFecha_creacion" onCreate="self.value = new Date();"
+												format="dd-MM-yyyy" width="170px" readonly="true" buttonVisible="false"/>
+											<space width="70px" />
+											<label value="* "
+												style="color: red" tooltiptext="Campo obligatorio" />
+											<label id="lbCodigo_ficha"
+												value="Codigo ficha: " />
+											<textbox readonly="true"
+												id="tbxCodigo_ficha" width="170px"
+												style="text-transform:uppercase" maxlength="20" />
+										</hlayout>
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+
+
+<!-- *************************** -->
+<!-- *** Insertar/Actualizar *** -->
+<!-- *************************** -->
+<groupbox  closable="false"  width="100%" mold="3d">
+<caption label="RELACIÓN CON DATOS BÁSICOS" />
+<grid>
+<columns visible="false">
+		<column width="100px" />
+		<column />
+		<column />
+		<column />
+		<column />
+		<column width="220px" />
+	</columns>
+	<rows>
+	
+		<row>
+			<cell>
+				<label value="* " style="color: red"
+					tooltiptext="Campo obligatorio" />
+				<label value="Paciente: " />
+			</cell>
+			<cell colspan="4">
+				<textbox id="tbxIdentificacion" width="27%" readonly="true" disabled="true"/>
+					<!--  -->
+				<space width="1%" />
+				<textbox id="tbxNombrePaciente" width="65%"
+					style="text-transform:uppercase" readonly="true" />
+			</cell>
+			<cell>
+				<space width="15px" />
+				<label value="Tipo: " />
+				<space width="23px" />
+				<textbox id="tbxTipo_identificacion" width="135px" style="text-transform:uppercase" readonly="true"/>
+			</cell>
+				
+		</row>
+		<row>
+			<cell>
+				<label value="* " style="color: red"
+					tooltiptext="Campo obligatorio" />
+				<label value="Aseguradora: " />
+			</cell>
+			<cell colspan="4">
+				<textbox id="tbxAseguradora" width="27%" readonly="true" disabled="true"/>
+					<!--  -->
+				<space width="1%" />
+				<textbox id="tbxNombre_aseguradora" width="65%"
+					style="text-transform:uppercase" readonly="true" />
+			</cell>
+			<cell></cell>
+				
+		</row>
+		
+		<!-- fila 5 -->
+		<row>
+		<cell colspan="6"><label id="lbCondicion" value="Condición: "/><space width="20px"/>
+		<radiogroup id="rdbCondicion">
+		<radio label="Mujer Cabeza de hogar" value="1"/><space width="25px"/>
+		<radio label="Desplazado" value="2"/><space width="25px"/>
+		<radio label="Indígena" value="3"/><space width="25px"/>
+		<radio label="Afro descendiente" value="2"/><space width="25px"/>
+		<radio label="Discapacitado" value="3"/><space width="25px"/>
+		<radio label="Ninguna" value="4" checked="true" />
+		</radiogroup></cell>
+		</row>
+		
+		<!-- fila 4 -->
+		<row>
+		<cell><label id="lbCodigo_diagnostico" value="Codigo diagnostico: " visible="false"/></cell>
+		<cell><textbox id="tbxCodigo_diagnostico" width="170px" style="text-transform:uppercase" maxlength="8" visible="false"/></cell>
+		<cell colspan="4"></cell>
+		</row>
+
+	</rows>
+
+</grid>
+</groupbox>
+
+<separator/>
+
+<groupbox mold="3d" width="100%" closable="false">
+<caption label="MOTIVO DE CONSULTA" />
+<grid sclass="GridSinBorde" hflex="1">
+	<columns>
+	<column/>
+	</columns>
+	<rows>
+		<row>
+		<cell><textbox id="tbxMotivo" width="98%" rows="4" style="text-transform:uppercase" maxlength="-1"/></cell>
+		</row>
+	</rows>
+</grid>	
+</groupbox>
+
+<separator/>
+
+
+<groupbox mold="3d" width="100%" closable="false">
+<caption label="ANTECEDENTES" />
+	
+	<grid>
+		<columns>
+			<column width="30%" />
+			<column width="20%" />
+			<column width="20%" />
+			<column width="30%" />
+		</columns>
+		<rows>
+			<row >
+				<cell><label id="lbAntecedentes_familiar" value="Antecedentes familiar de Consumo de SPA: "/></cell>
+				<cell ><radiogroup id="rdbAntecedentes_familiar">
+				<radio label="SÍ" value="S"/><space width="15px" />
+				<radio label="NO" value="N" checked="true" />
+				</radiogroup>
+				</cell>
+				<cell colspan="2"><label id="lbAtencion_medica" value="Atención medicina General durante el último año: "/>
+				<space/>
+				<radiogroup id="rdbAtencion_medica">
+				<radio label="SÍ" value="S"/><space width="15px" />
+				<radio label="NO" value="N" checked="true" />
+				</radiogroup>
+				</cell>
+			</row >
+			<row >
+				<cell><label id="lbAtencion_especialista" value="Atención por especialista en Salud Mental: "/></cell>
+				<cell ><radiogroup id="rdbAtencion_especialista" onCheck="formFicha_epidemiologia_n42.mostrar_conRadio(formFicha_epidemiologia_n42,self,new AbstractComponent[]{lbFecha_atencion_especialista, dtbxFecha_atencion_especialista})">
+				<radio label="SÍ" value="S"/><space width="15px" />
+				<radio label="NO" value="N" checked="true" />
+				</radiogroup>
+				</cell>
+				<cell><label id="lbFecha_atencion_especialista" value="Fecha: " visible="false"/></cell>
+				<cell ><datebox id="dtbxFecha_atencion_especialista" onCreate="" format="yyyy-MM-dd" width="50%" visible="false"/></cell>
+			</row >
+			<row >
+				<cell><label id="lbUso_psicofarmacos" value="Uso psicofármacos: "/></cell>
+				<cell ><radiogroup id="rdbUso_psicofarmacos" onCheck="formFicha_epidemiologia_n42.mostrar_conRadio(formFicha_epidemiologia_n42,self,new AbstractComponent[]{lbCual_psicofarmacos, tbxCual_psicofarmacos})">
+				<radio label="SÍ" value="S"/><space width="15px" />
+				<radio label="NO" value="N" checked="true" />
+				</radiogroup>
+				</cell>
+				<cell><label id="lbCual_psicofarmacos" value="¿Cual? " visible="false"/></cell>
+				<cell ><textbox id="tbxCual_psicofarmacos" width="98%" style="text-transform:uppercase" maxlength="-1" visible="false"/></cell>
+			</row >
+			<row >
+				<cell><label id="lbHospitalizacion" value="Hospitalización en Centro de Atención a la Drogadicción: "/></cell>
+				<cell ><radiogroup id="rdbHospitalizacion" onCheck="formFicha_epidemiologia_n42.mostrar_conRadio(formFicha_epidemiologia_n42,self,new AbstractComponent[]{lbSitio_hospitalizacion, tbxSitio_hospitalizacion, 
+				rowHospitalizacion, lbFecha_hospitalizacion, dtbxFecha_hospitalizacion})">
+				<radio label="SÍ" value="S"/><space width="15px" />
+				<radio label="NO" value="N" checked="true" />
+				</radiogroup>
+				</cell>
+				<cell><label id="lbFecha_hospitalizacion" value="Fecha inicio hospitalización: " visible="false"/></cell>
+				<cell><datebox id="dtbxFecha_hospitalizacion" format="yyyy-MM-dd" width="50%" visible="false"/></cell>
+			</row >
+			<row id="rowHospitalizacion" visible="false">
+				<cell><label id="lbSitio_hospitalizacion" value="Sitio: " visible="false"/></cell>
+				<cell colspan="3"><textbox id="tbxSitio_hospitalizacion" width="98%" style="text-transform:uppercase" maxlength="200" visible="false"/></cell>
+			</row >
+		</rows>
+	</grid>
+
+</groupbox>
+
+
+<separator/>
+
+<groupbox mold="3d" width="100%" closable="false">
+<caption label="INFORMACIÓN RELACIONADA CON EL DIAGNOSTICO" />
+		<grid>
+			<columns>
+				<column />
+				<column />
+				<column />
+				<column />
+			</columns>
+			<rows>
+			
+			
+			<row>
+			<cell colspan="4">
+			<groupbox width="100%" closable="false">
+			<caption label="Trastornos" />
+									
+				<grid>
+					<columns>
+						<column label="Categoría Diagnostica" width="30%" />
+						<column label="Trastornos" width="50%" />
+						<column label="Código CIE 10" width="20%" />
+					</columns>
+					<rows>
+
+		<row >
+			<cell rowspan="3"><label value="T. Mental debido a enfermedad medica "/></cell>
+			<cell><label id="lbDemencia" value="Demencia "/></cell>
+			<cell >
+			<bandbox id="bandboxDemencia" autodrop="true"
+				readonly="true" width="98%"
+				onOpen="formFicha_epidemiologia_n42.buscarDx(tbxValueDx_1.getValue(),lbxDx_1)">
+				<bandpopup>
+					<vbox>
+						<toolbar>
+							<label
+								value="Buscar: " />
+							<textbox
+								id="tbxValueDx_1"
+								onChanging='formFicha_epidemiologia_n42.buscarDx(event.getValue(),lbxDx_1)'
+								style="text-transform:uppercase;" />
+							<toolbarbutton
+								image="/images/borrar.gif" tooltiptext="Quitar" 
+								onClick='formFicha_epidemiologia_n42.selectedDx(new Listitem(), bandboxDemencia)' />
+						</toolbar>
+						<listbox
+							height="300px" width="600px" mold="paging"
+							pageSize="8" id="lbxDx_1"
+							onSelect='formFicha_epidemiologia_n42.selectedDx(self.getSelectedItem(), bandboxDemencia)'>
+							<listhead>
+								<listheader
+									label="Código" width="65px" />
+								<listheader
+									label="Nombre" />
+								<listheader
+									label="Sexo" width="65px" />
+								<listheader
+									label="Limite inf" width="75px" />
+								<listheader
+									label="Limite sup" width="75px" />
+							</listhead>
+						</listbox>
+					</vbox>
+				</bandpopup>
+			</bandbox>
+			</cell>
+		</row >
+		<row >
+			<cell><label id="lbDelirium" value="Delirium "/></cell>
+			<cell >
+			<bandbox id="bandboxDelirium" autodrop="true"
+				readonly="true" width="98%"
+				onOpen="formFicha_epidemiologia_n42.buscarDx(tbxValueDx_2.getValue(),lbxDx_2)">
+				<bandpopup>
+					<vbox>
+						<toolbar>
+							<label
+								value="Buscar: " />
+							<textbox
+								id="tbxValueDx_2"
+								onChanging='formFicha_epidemiologia_n42.buscarDx(event.getValue(),lbxDx_2)'
+								style="text-transform:uppercase;" />
+							<toolbarbutton
+								image="/images/borrar.gif" tooltiptext="Quitar" 
+								onClick='formFicha_epidemiologia_n42.selectedDx(new Listitem(), bandboxDelirium)' />
+						</toolbar>
+						<listbox
+							height="300px" width="600px" mold="paging"
+							pageSize="8" id="lbxDx_2"
+							onSelect='formFicha_epidemiologia_n42.selectedDx(self.getSelectedItem(), bandboxDelirium)'>
+							<listhead>
+								<listheader
+									label="Código" width="65px" />
+								<listheader
+									label="Nombre" />
+								<listheader
+									label="Sexo" width="65px" />
+								<listheader
+									label="Limite inf" width="75px" />
+								<listheader
+									label="Limite sup" width="75px" />
+							</listhead>
+						</listbox>
+					</vbox>
+				</bandpopup>
+			</bandbox>
+			</cell>
+		</row >
+		<row >
+			<cell><label id="lbLesion_cerebral" value="T. Mental debido a lesion cerebral enfermedad somática "/></cell>
+			<cell >
+			<bandbox id="bandboxLesion_cerebral" autodrop="true"
+				readonly="true" width="98%"
+				onOpen="formFicha_epidemiologia_n42.buscarDx(tbxValueDx_3.getValue(),lbxDx_3)">
+				<bandpopup>
+					<vbox>
+						<toolbar>
+							<label
+								value="Buscar: " />
+							<textbox
+								id="tbxValueDx_3"
+								onChanging='formFicha_epidemiologia_n42.buscarDx(event.getValue(),lbxDx_3)'
+								style="text-transform:uppercase;" />
+							<toolbarbutton
+								image="/images/borrar.gif" tooltiptext="Quitar" 
+								onClick='formFicha_epidemiologia_n42.selectedDx(new Listitem(), bandboxLesion_cerebral)' />
+						</toolbar>
+						<listbox
+							height="300px" width="600px" mold="paging"
+							pageSize="8" id="lbxDx_3"
+							onSelect='formFicha_epidemiologia_n42.selectedDx(self.getSelectedItem(), bandboxLesion_cerebral)'>
+							<listhead>
+								<listheader
+									label="Código" width="65px" />
+								<listheader
+									label="Nombre" />
+								<listheader
+									label="Sexo" width="65px" />
+								<listheader
+									label="Limite inf" width="75px" />
+								<listheader
+									label="Limite sup" width="75px" />
+							</listhead>
+						</listbox>
+					</vbox>
+				</bandpopup>
+			</bandbox>
+			</cell>
+		</row >
+		<row >
+			<cell><label value="Trastornos relacionados con sustancias psicoactivas "/></cell>
+			<cell><label id="lbConsumo" value="Diligenciar formato de notificación consuo de sustancias psicoactivas "/></cell>
+			<cell >
+			<bandbox id="bandboxConsumo" autodrop="true"
+				readonly="true" width="98%"
+				onOpen="formFicha_epidemiologia_n42.buscarDx(tbxValueDx_4.getValue(),lbxDx_4)">
+				<bandpopup>
+					<vbox>
+						<toolbar>
+							<label
+								value="Buscar: " />
+							<textbox
+								id="tbxValueDx_4"
+								onChanging='formFicha_epidemiologia_n42.buscarDx(event.getValue(),lbxDx_4)'
+								style="text-transform:uppercase;" />
+							<toolbarbutton
+								image="/images/borrar.gif" tooltiptext="Quitar" 
+								onClick='formFicha_epidemiologia_n42.selectedDx(new Listitem(), bandboxConsumo)' />
+						</toolbar>
+						<listbox
+							height="300px" width="600px" mold="paging"
+							pageSize="8" id="lbxDx_4"
+							onSelect='formFicha_epidemiologia_n42.selectedDx(self.getSelectedItem(), bandboxConsumo)'>
+							<listhead>
+								<listheader
+									label="Código" width="65px" />
+								<listheader
+									label="Nombre" />
+								<listheader
+									label="Sexo" width="65px" />
+								<listheader
+									label="Limite inf" width="75px" />
+								<listheader
+									label="Limite sup" width="75px" />
+							</listhead>
+						</listbox>
+					</vbox>
+				</bandpopup>
+			</bandbox>
+			</cell>
+		</row >
+		<row >
+			<cell rowspan="4"><label value="Trastornos Psicoactivos"/></cell>
+			<cell><label id="lbEsquizofrenia" value="Esquizofrenia "/></cell>
+			<cell >
+			<bandbox id="bandboxEsquizofrenia" autodrop="true"
+				readonly="true" width="98%"
+				onOpen="formFicha_epidemiologia_n42.buscarDx(tbxValueDx_5.getValue(),lbxDx_5)">
+				<bandpopup>
+					<vbox>
+						<toolbar>
+							<label
+								value="Buscar: " />
+							<textbox
+								id="tbxValueDx_5"
+								onChanging='formFicha_epidemiologia_n42.buscarDx(event.getValue(),lbxDx_5)'
+								style="text-transform:uppercase;" />
+							<toolbarbutton
+								image="/images/borrar.gif" tooltiptext="Quitar" 
+								onClick='formFicha_epidemiologia_n42.selectedDx(new Listitem(), bandboxEsquizofrenia)' />
+						</toolbar>
+						<listbox
+							height="300px" width="600px" mold="paging"
+							pageSize="8" id="lbxDx_5"
+							onSelect='formFicha_epidemiologia_n42.selectedDx(self.getSelectedItem(), bandboxEsquizofrenia)'>
+							<listhead>
+								<listheader
+									label="Código" width="65px" />
+								<listheader
+									label="Nombre" />
+								<listheader
+									label="Sexo" width="65px" />
+								<listheader
+									label="Limite inf" width="75px" />
+								<listheader
+									label="Limite sup" width="75px" />
+							</listhead>
+						</listbox>
+					</vbox>
+				</bandpopup>
+			</bandbox>
+			</cell>
+			</row >
+		<row >
+			<cell><label id="lbEsquizofreniforme" value="T. Esquizofreniforme "/></cell>
+			<cell >
+			<bandbox id="bandboxEsquizofreniforme" autodrop="true"
+				readonly="true" width="98%"
+				onOpen="formFicha_epidemiologia_n42.buscarDx(tbxValueDx_6.getValue(),lbxDx_6)">
+				<bandpopup>
+					<vbox>
+						<toolbar>
+							<label
+								value="Buscar: " />
+							<textbox
+								id="tbxValueDx_6"
+								onChanging='formFicha_epidemiologia_n42.buscarDx(event.getValue(),lbxDx_6)'
+								style="text-transform:uppercase;" />
+							<toolbarbutton
+								image="/images/borrar.gif" tooltiptext="Quitar" 
+								onClick='formFicha_epidemiologia_n42.selectedDx(new Listitem(), bandboxEsquizofreniforme)' />
+						</toolbar>
+						<listbox
+							height="300px" width="600px" mold="paging"
+							pageSize="8" id="lbxDx_6"
+							onSelect='formFicha_epidemiologia_n42.selectedDx(self.getSelectedItem(), bandboxEsquizofreniforme)'>
+							<listhead>
+								<listheader
+									label="Código" width="65px" />
+								<listheader
+									label="Nombre" />
+								<listheader
+									label="Sexo" width="65px" />
+								<listheader
+									label="Limite inf" width="75px" />
+								<listheader
+									label="Limite sup" width="75px" />
+							</listhead>
+						</listbox>
+					</vbox>
+				</bandpopup>
+			</bandbox>
+			</cell>
+		</row >
+		<row >
+			<cell><label id="lbEsquizoafectivo" value="T. Esquizoafectivo: "/></cell>
+			<cell >
+			<bandbox id="bandboxEsquizoafectivo" autodrop="true"
+				readonly="true" width="98%"
+				onOpen="formFicha_epidemiologia_n42.buscarDx(tbxValueDx_7.getValue(),lbxDx_7)">
+				<bandpopup>
+					<vbox>
+						<toolbar>
+							<label
+								value="Buscar: " />
+							<textbox
+								id="tbxValueDx_7"
+								onChanging='formFicha_epidemiologia_n42.buscarDx(event.getValue(),lbxDx_7)'
+								style="text-transform:uppercase;" />
+							<toolbarbutton
+								image="/images/borrar.gif" tooltiptext="Quitar" 
+								onClick='formFicha_epidemiologia_n42.selectedDx(new Listitem(), bandboxEsquizoafectivo)' />
+						</toolbar>
+						<listbox
+							height="300px" width="600px" mold="paging"
+							pageSize="8" id="lbxDx_7"
+							onSelect='formFicha_epidemiologia_n42.selectedDx(self.getSelectedItem(), bandboxEsquizoafectivo)'>
+							<listhead>
+								<listheader
+									label="Código" width="65px" />
+								<listheader
+									label="Nombre" />
+								<listheader
+									label="Sexo" width="65px" />
+								<listheader
+									label="Limite inf" width="75px" />
+								<listheader
+									label="Limite sup" width="75px" />
+							</listhead>
+						</listbox>
+					</vbox>
+				</bandpopup>
+			</bandbox>
+			</cell>
+			</row >
+		<row >
+			<cell><label id="lbPsicotico" value="Psicótico "/></cell>
+			<cell >
+			<bandbox id="bandboxPsicotico" autodrop="true"
+				readonly="true" width="98%"
+				onOpen="formFicha_epidemiologia_n42.buscarDx(tbxValueDx_8.getValue(),lbxDx_8)">
+				<bandpopup>
+					<vbox>
+						<toolbar>
+							<label
+								value="Buscar: " />
+							<textbox
+								id="tbxValueDx_8"
+								onChanging='formFicha_epidemiologia_n42.buscarDx(event.getValue(),lbxDx_1)'
+								style="text-transform:uppercase;" />
+							<toolbarbutton
+								image="/images/borrar.gif" tooltiptext="Quitar" 
+								onClick='formFicha_epidemiologia_n42.selectedDx(new Listitem(), bandboxPsicotico)' />
+						</toolbar>
+						<listbox
+							height="300px" width="600px" mold="paging"
+							pageSize="8" id="lbxDx_8"
+							onSelect='formFicha_epidemiologia_n42.selectedDx(self.getSelectedItem(), bandboxPsicotico)'>
+							<listhead>
+								<listheader
+									label="Código" width="65px" />
+								<listheader
+									label="Nombre" />
+								<listheader
+									label="Sexo" width="65px" />
+								<listheader
+									label="Limite inf" width="75px" />
+								<listheader
+									label="Limite sup" width="75px" />
+							</listhead>
+						</listbox>
+					</vbox>
+				</bandpopup>
+			</bandbox>
+			</cell>
+		</row >
+		<row >
+			<cell rowspan="4"><label value="Trastornos del estado de Animo"/></cell>
+			<cell><label id="lbDepresivo" value="Trastornos Depresivos "/></cell>
+			<cell >
+			<bandbox id="bandboxDepresivo" autodrop="true"
+				readonly="true" width="98%"
+				onOpen="formFicha_epidemiologia_n42.buscarDx(tbxValueDx_9.getValue(),lbxDx_9)">
+				<bandpopup>
+					<vbox>
+						<toolbar>
+							<label
+								value="Buscar: " />
+							<textbox
+								id="tbxValueDx_9"
+								onChanging='formFicha_epidemiologia_n42.buscarDx(event.getValue(),lbxDx_9)'
+								style="text-transform:uppercase;" />
+							<toolbarbutton
+								image="/images/borrar.gif" tooltiptext="Quitar" 
+								onClick='formFicha_epidemiologia_n42.selectedDx(new Listitem(), bandboxDepresivo)' />
+						</toolbar>
+						<listbox
+							height="300px" width="600px" mold="paging"
+							pageSize="8" id="lbxDx_9"
+							onSelect='formFicha_epidemiologia_n42.selectedDx(self.getSelectedItem(), bandboxDepresivo)'>
+							<listhead>
+								<listheader
+									label="Código" width="65px" />
+								<listheader
+									label="Nombre" />
+								<listheader
+									label="Sexo" width="65px" />
+								<listheader
+									label="Limite inf" width="75px" />
+								<listheader
+									label="Limite sup" width="75px" />
+							</listhead>
+						</listbox>
+					</vbox>
+				</bandpopup>
+			</bandbox>
+			</cell>
+			</row >
+		<row >
+			<cell><label id="lbEpisodio_depresivo" value="Episodio Depresivo "/></cell>
+			<cell >
+			<bandbox id="bandboxEpisodio_depresivo" autodrop="true"
+				readonly="true" width="98%"
+				onOpen="formFicha_epidemiologia_n42.buscarDx(tbxValueDx_10.getValue(),lbxDx_10)">
+				<bandpopup>
+					<vbox>
+						<toolbar>
+							<label
+								value="Buscar: " />
+							<textbox
+								id="tbxValueDx_10"
+								onChanging='formFicha_epidemiologia_n42.buscarDx(event.getValue(),lbxDx_10)'
+								style="text-transform:uppercase;" />
+							<toolbarbutton
+								image="/images/borrar.gif" tooltiptext="Quitar" 
+								onClick='formFicha_epidemiologia_n42.selectedDx(new Listitem(), bandboxEpisodio_depresivo)' />
+						</toolbar>
+						<listbox
+							height="300px" width="600px" mold="paging"
+							pageSize="8" id="lbxDx_10"
+							onSelect='formFicha_epidemiologia_n42.selectedDx(self.getSelectedItem(), bandboxEpisodio_depresivo)'>
+							<listhead>
+								<listheader
+									label="Código" width="65px" />
+								<listheader
+									label="Nombre" />
+								<listheader
+									label="Sexo" width="65px" />
+								<listheader
+									label="Limite inf" width="75px" />
+								<listheader
+									label="Limite sup" width="75px" />
+							</listhead>
+						</listbox>
+					</vbox>
+				</bandpopup>
+			</bandbox>
+			</cell>
+		</row >
+		<row >
+			<cell><label id="lbBipolares" value="Trastornos Bipolares "/></cell>
+			<cell >
+			<bandbox id="bandboxBipolares" autodrop="true"
+				readonly="true" width="98%"
+				onOpen="formFicha_epidemiologia_n42.buscarDx(tbxValueDx_11.getValue(),lbxDx_11)">
+				<bandpopup>
+					<vbox>
+						<toolbar>
+							<label
+								value="Buscar: " />
+							<textbox
+								id="tbxValueDx_11"
+								onChanging='formFicha_epidemiologia_n42.buscarDx(event.getValue(),lbxDx_11)'
+								style="text-transform:uppercase;" />
+							<toolbarbutton
+								image="/images/borrar.gif" tooltiptext="Quitar" 
+								onClick='formFicha_epidemiologia_n42.selectedDx(new Listitem(), bandboxBipolares)' />
+						</toolbar>
+						<listbox
+							height="300px" width="600px" mold="paging"
+							pageSize="8" id="lbxDx_11"
+							onSelect='formFicha_epidemiologia_n42.selectedDx(self.getSelectedItem(), bandboxBipolares)'>
+							<listhead>
+								<listheader
+									label="Código" width="65px" />
+								<listheader
+									label="Nombre" />
+								<listheader
+									label="Sexo" width="65px" />
+								<listheader
+									label="Limite inf" width="75px" />
+								<listheader
+									label="Limite sup" width="75px" />
+							</listhead>
+						</listbox>
+					</vbox>
+				</bandpopup>
+			</bandbox>
+			</cell>
+			</row >
+		<row >
+			<cell><label id="lbManiaco" value="Episodio Maniaco "/></cell>
+			<cell>
+			<bandbox id="bandboxManiaco" autodrop="true"
+				readonly="true" width="98%"
+				onOpen="formFicha_epidemiologia_n42.buscarDx(tbxValueDx_12.getValue(),lbxDx_12)">
+				<bandpopup>
+					<vbox>
+						<toolbar>
+							<label
+								value="Buscar: " />
+							<textbox
+								id="tbxValueDx_12"
+								onChanging='formFicha_epidemiologia_n42.buscarDx(event.getValue(),lbxDx_12)'
+								style="text-transform:uppercase;" />
+							<toolbarbutton
+								image="/images/borrar.gif" tooltiptext="Quitar" 
+								onClick='formFicha_epidemiologia_n42.selectedDx(new Listitem(), bandboxManiaco)' />
+						</toolbar>
+						<listbox
+							height="300px" width="600px" mold="paging"
+							pageSize="8" id="lbxDx_12"
+							onSelect='formFicha_epidemiologia_n42.selectedDx(self.getSelectedItem(), bandboxManiaco)'>
+							<listhead>
+								<listheader
+									label="Código" width="65px" />
+								<listheader
+									label="Nombre" />
+								<listheader
+									label="Sexo" width="65px" />
+								<listheader
+									label="Limite inf" width="75px" />
+								<listheader
+									label="Limite sup" width="75px" />
+							</listhead>
+						</listbox>
+					</vbox>
+				</bandpopup>
+			</bandbox>
+			</cell>
+		</row >
+		<row >
+			<cell rowspan="2"><label value="Trastornos Secundarios"/></cell>
+			<cell><label id="lbAdaptacion" value="Trastornos de Adaptación "/></cell>
+			<cell >
+			<bandbox id="bandboxAdaptacion" autodrop="true"
+				readonly="true" width="98%"
+				onOpen="formFicha_epidemiologia_n42.buscarDx(tbxValueDx_13.getValue(),lbxDx_13)">
+				<bandpopup>
+					<vbox>
+						<toolbar>
+							<label
+								value="Buscar: " />
+							<textbox
+								id="tbxValueDx_13"
+								onChanging='formFicha_epidemiologia_n42.buscarDx(event.getValue(),lbxDx_13)'
+								style="text-transform:uppercase;" />
+							<toolbarbutton
+								image="/images/borrar.gif" tooltiptext="Quitar" 
+								onClick='formFicha_epidemiologia_n42.selectedDx(new Listitem(), bandboxAdaptacion)' />
+						</toolbar>
+						<listbox
+							height="300px" width="600px" mold="paging"
+							pageSize="8" id="lbxDx_13"
+							onSelect='formFicha_epidemiologia_n42.selectedDx(self.getSelectedItem(), bandboxAdaptacion)'>
+							<listhead>
+								<listheader
+									label="Código" width="65px" />
+								<listheader
+									label="Nombre" />
+								<listheader
+									label="Sexo" width="65px" />
+								<listheader
+									label="Limite inf" width="75px" />
+								<listheader
+									label="Limite sup" width="75px" />
+							</listhead>
+						</listbox>
+					</vbox>
+				</bandpopup>
+			</bandbox>
+			</cell>
+			</row >
+		<row >
+			<cell><label id="lbSomatoformos" value="Trastornos Somatoformos "/></cell>
+			<cell >
+			<bandbox id="bandboxSomatoformos" autodrop="true"
+				readonly="true" width="98%"
+				onOpen="formFicha_epidemiologia_n42.buscarDx(tbxValueDx_14.getValue(),lbxDx_14)">
+				<bandpopup>
+					<vbox>
+						<toolbar>
+							<label
+								value="Buscar: " />
+							<textbox
+								id="tbxValueDx_14"
+								onChanging='formFicha_epidemiologia_n42.buscarDx(event.getValue(),lbxDx_14)'
+								style="text-transform:uppercase;" />
+							<toolbarbutton
+								image="/images/borrar.gif" tooltiptext="Quitar" 
+								onClick='formFicha_epidemiologia_n42.selectedDx(new Listitem(), bandboxSomatoformos)' />
+						</toolbar>
+						<listbox
+							height="300px" width="600px" mold="paging"
+							pageSize="8" id="lbxDx_14"
+							onSelect='formFicha_epidemiologia_n42.selectedDx(self.getSelectedItem(), bandboxSomatoformos)'>
+							<listhead>
+								<listheader
+									label="Código" width="65px" />
+								<listheader
+									label="Nombre" />
+								<listheader
+									label="Sexo" width="65px" />
+								<listheader
+									label="Limite inf" width="75px" />
+								<listheader
+									label="Limite sup" width="75px" />
+							</listhead>
+						</listbox>
+					</vbox>
+				</bandpopup>
+			</bandbox>
+			</cell>
+		</row >
+		<row >
+			<cell><label value="Personalidad"/></cell>
+			<cell><label id="lbPersonalidad" value="Trastornos de Personalidad "/></cell>
+			<cell >
+			<bandbox id="bandboxPersonalidad" autodrop="true"
+				readonly="true" width="98%"
+				onOpen="formFicha_epidemiologia_n42.buscarDx(tbxValueDx_15.getValue(),lbxDx_15)">
+				<bandpopup>
+					<vbox>
+						<toolbar>
+							<label
+								value="Buscar: " />
+							<textbox
+								id="tbxValueDx_15"
+								onChanging='formFicha_epidemiologia_n42.buscarDx(event.getValue(),lbxDx_15)'
+								style="text-transform:uppercase;" />
+							<toolbarbutton
+								image="/images/borrar.gif" tooltiptext="Quitar" 
+								onClick='formFicha_epidemiologia_n42.selectedDx(new Listitem(), bandboxPersonalidad)' />
+						</toolbar>
+						<listbox
+							height="300px" width="600px" mold="paging"
+							pageSize="8" id="lbxDx_15"
+							onSelect='formFicha_epidemiologia_n42.selectedDx(self.getSelectedItem(), bandboxPersonalidad)'>
+							<listhead>
+								<listheader
+									label="Código" width="65px" />
+								<listheader
+									label="Nombre" />
+								<listheader
+									label="Sexo" width="65px" />
+								<listheader
+									label="Limite inf" width="75px" />
+								<listheader
+									label="Limite sup" width="75px" />
+							</listhead>
+						</listbox>
+					</vbox>
+				</bandpopup>
+			</bandbox>
+			</cell>
+			</row >
+		<row >
+			<cell rowspan="4"><label value="Trastornos de Ansiedad"/></cell>
+			<cell><label id="lbAnsiedad_generalizada" value="Trastornos de Ansiedad Generalizada "/></cell>
+			<cell >
+			<bandbox id="bandboxAnsiedad_generalizada" autodrop="true"
+				readonly="true" width="98%"
+				onOpen="formFicha_epidemiologia_n42.buscarDx(tbxValueDx_16.getValue(),lbxDx_16)">
+				<bandpopup>
+					<vbox>
+						<toolbar>
+							<label
+								value="Buscar: " />
+							<textbox
+								id="tbxValueDx_16"
+								onChanging='formFicha_epidemiologia_n42.buscarDx(event.getValue(),lbxDx_16)'
+								style="text-transform:uppercase;" />
+							<toolbarbutton
+								image="/images/borrar.gif" tooltiptext="Quitar" 
+								onClick='formFicha_epidemiologia_n42.selectedDx(new Listitem(), bandboxAnsiedad_generalizada)' />
+						</toolbar>
+						<listbox
+							height="300px" width="600px" mold="paging"
+							pageSize="8" id="lbxDx_16"
+							onSelect='formFicha_epidemiologia_n42.selectedDx(self.getSelectedItem(), bandboxAnsiedad_generalizada)'>
+							<listhead>
+								<listheader
+									label="Código" width="65px" />
+								<listheader
+									label="Nombre" />
+								<listheader
+									label="Sexo" width="65px" />
+								<listheader
+									label="Limite inf" width="75px" />
+								<listheader
+									label="Limite sup" width="75px" />
+							</listhead>
+						</listbox>
+					</vbox>
+				</bandpopup>
+			</bandbox>
+			</cell>
+		</row >
+		<row >
+			<cell><label id="lbEstres_postraumatico" value="T. de estrés postraumático "/></cell>
+			<cell >
+			<bandbox id="bandboxEstres_postraumatico" autodrop="true"
+				readonly="true" width="98%"
+				onOpen="formFicha_epidemiologia_n42.buscarDx(tbxValueDx_17.getValue(),lbxDx_17)">
+				<bandpopup>
+					<vbox>
+						<toolbar>
+							<label
+								value="Buscar: " />
+							<textbox
+								id="tbxValueDx_17"
+								onChanging='formFicha_epidemiologia_n42.buscarDx(event.getValue(),lbxDx_17)'
+								style="text-transform:uppercase;" />
+							<toolbarbutton
+								image="/images/borrar.gif" tooltiptext="Quitar" 
+								onClick='formFicha_epidemiologia_n42.selectedDx(new Listitem(), bandboxEstres_postraumatico)' />
+						</toolbar>
+						<listbox
+							height="300px" width="600px" mold="paging"
+							pageSize="8" id="lbxDx_17"
+							onSelect='formFicha_epidemiologia_n42.selectedDx(self.getSelectedItem(), bandboxEstres_postraumatico)'>
+							<listhead>
+								<listheader
+									label="Código" width="65px" />
+								<listheader
+									label="Nombre" />
+								<listheader
+									label="Sexo" width="65px" />
+								<listheader
+									label="Limite inf" width="75px" />
+								<listheader
+									label="Limite sup" width="75px" />
+							</listhead>
+						</listbox>
+					</vbox>
+				</bandpopup>
+			</bandbox>
+			</cell>
+			</row >
+		<row >
+			<cell><label id="lbEstres_agudo" value="T. de estrés agudo "/></cell>
+			<cell >
+			<bandbox id="bandboxEstres_agudo" autodrop="true"
+				readonly="true" width="98%"
+				onOpen="formFicha_epidemiologia_n42.buscarDx(tbxValueDx_18.getValue(),lbxDx_18)">
+				<bandpopup>
+					<vbox>
+						<toolbar>
+							<label
+								value="Buscar: " />
+							<textbox
+								id="tbxValueDx_18"
+								onChanging='formFicha_epidemiologia_n42.buscarDx(event.getValue(),lbxDx_18)'
+								style="text-transform:uppercase;" />
+							<toolbarbutton
+								image="/images/borrar.gif" tooltiptext="Quitar" 
+								onClick='formFicha_epidemiologia_n42.selectedDx(new Listitem(), bandboxEstres_agudo)' />
+						</toolbar>
+						<listbox
+							height="300px" width="600px" mold="paging"
+							pageSize="8" id="lbxDx_18"
+							onSelect='formFicha_epidemiologia_n42.selectedDx(self.getSelectedItem(), bandboxEstres_agudo)'>
+							<listhead>
+								<listheader
+									label="Código" width="65px" />
+								<listheader
+									label="Nombre" />
+								<listheader
+									label="Sexo" width="65px" />
+								<listheader
+									label="Limite inf" width="75px" />
+								<listheader
+									label="Limite sup" width="75px" />
+							</listhead>
+						</listbox>
+					</vbox>
+				</bandpopup>
+			</bandbox>
+			</cell>
+		</row >
+		<row >
+			<cell><label id="lbObsesivo" value="T. Obsesivo - compulsivos "/></cell>
+			<cell >
+			<bandbox id="bandboxObsesivo" autodrop="true"
+				readonly="true" width="98%"
+				onOpen="formFicha_epidemiologia_n42.buscarDx(tbxValueDx_19.getValue(),lbxDx_19)">
+				<bandpopup>
+					<vbox>
+						<toolbar>
+							<label
+								value="Buscar: " />
+							<textbox
+								id="tbxValueDx_19"
+								onChanging='formFicha_epidemiologia_n42.buscarDx(event.getValue(),lbxDx_19)'
+								style="text-transform:uppercase;" />
+							<toolbarbutton
+								image="/images/borrar.gif" tooltiptext="Quitar" 
+								onClick='formFicha_epidemiologia_n42.selectedDx(new Listitem(), bandboxObsesivo)' />
+						</toolbar>
+						<listbox
+							height="300px" width="600px" mold="paging"
+							pageSize="8" id="lbxDx_19"
+							onSelect='formFicha_epidemiologia_n42.selectedDx(self.getSelectedItem(), bandboxObsesivo)'>
+							<listhead>
+								<listheader
+									label="Código" width="65px" />
+								<listheader
+									label="Nombre" />
+								<listheader
+									label="Sexo" width="65px" />
+								<listheader
+									label="Limite inf" width="75px" />
+								<listheader
+									label="Limite sup" width="75px" />
+							</listhead>
+						</listbox>
+					</vbox>
+				</bandpopup>
+			</bandbox>
+			</cell>
+		</row >
+		<row >
+			<cell rowspan="3"><label value="Trastornos Asociados a Disfunciones fisiológicas"/></cell>
+			<cell><label id="lbSuenio" value="Trastornos del sueño "/></cell>
+			<cell >
+			<bandbox id="bandboxSuenio" autodrop="true"
+				readonly="true" width="98%"
+				onOpen="formFicha_epidemiologia_n42.buscarDx(tbxValueDx_20.getValue(),lbxDx_20)">
+				<bandpopup>
+					<vbox>
+						<toolbar>
+							<label
+								value="Buscar: " />
+							<textbox
+								id="tbxValueDx_20"
+								onChanging='formFicha_epidemiologia_n42.buscarDx(event.getValue(),lbxDx_20)'
+								style="text-transform:uppercase;" />
+							<toolbarbutton
+								image="/images/borrar.gif" tooltiptext="Quitar" 
+								onClick='formFicha_epidemiologia_n42.selectedDx(new Listitem(), bandboxSuenio)' />
+						</toolbar>
+						<listbox
+							height="300px" width="600px" mold="paging"
+							pageSize="8" id="lbxDx_20"
+							onSelect='formFicha_epidemiologia_n42.selectedDx(self.getSelectedItem(), bandboxSuenio)'>
+							<listhead>
+								<listheader
+									label="Código" width="65px" />
+								<listheader
+									label="Nombre" />
+								<listheader
+									label="Sexo" width="65px" />
+								<listheader
+									label="Limite inf" width="75px" />
+								<listheader
+									label="Limite sup" width="75px" />
+							</listhead>
+						</listbox>
+					</vbox>
+				</bandpopup>
+			</bandbox>
+			</cell>
+		</row >
+		<row >
+			<cell><label id="lbConducta_alimentaria" value="Trastornos de la Conducta alimentaria "/></cell>
+			<cell >
+			<bandbox id="bandboxConducta_alimentaria" autodrop="true"
+				readonly="true" width="98%"
+				onOpen="formFicha_epidemiologia_n42.buscarDx(tbxValueDx_21.getValue(),lbxDx_21)">
+				<bandpopup>
+					<vbox>
+						<toolbar>
+							<label
+								value="Buscar: " />
+							<textbox
+								id="tbxValueDx_21"
+								onChanging='formFicha_epidemiologia_n42.buscarDx(event.getValue(),lbxDx_21)'
+								style="text-transform:uppercase;" />
+							<toolbarbutton
+								image="/images/borrar.gif" tooltiptext="Quitar" 
+								onClick='formFicha_epidemiologia_n42.selectedDx(new Listitem(), bandboxConducta_alimentaria)' />
+						</toolbar>
+						<listbox
+							height="300px" width="600px" mold="paging"
+							pageSize="8" id="lbxDx_21"
+							onSelect='formFicha_epidemiologia_n42.selectedDx(self.getSelectedItem(), bandboxConducta_alimentaria)'>
+							<listhead>
+								<listheader
+									label="Código" width="65px" />
+								<listheader
+									label="Nombre" />
+								<listheader
+									label="Sexo" width="65px" />
+								<listheader
+									label="Limite inf" width="75px" />
+								<listheader
+									label="Limite sup" width="75px" />
+							</listhead>
+						</listbox>
+					</vbox>
+				</bandpopup>
+			</bandbox>
+			</cell>
+		</row >
+		<row >
+			<cell><label id="lbDisfunciones_alimentaria" value="Disfunciones sexuales "/></cell>
+			<cell >
+			<bandbox id="bandboxDisfunciones_alimentaria" autodrop="true"
+				readonly="true" width="98%"
+				onOpen="formFicha_epidemiologia_n42.buscarDx(tbxValueDx_22.getValue(),lbxDx_22)">
+				<bandpopup>
+					<vbox>
+						<toolbar>
+							<label
+								value="Buscar: " />
+							<textbox
+								id="tbxValueDx_22"
+								onChanging='formFicha_epidemiologia_n42.buscarDx(event.getValue(),lbxDx_22)'
+								style="text-transform:uppercase;" />
+							<toolbarbutton
+								image="/images/borrar.gif" tooltiptext="Quitar" 
+								onClick='formFicha_epidemiologia_n42.selectedDx(new Listitem(), bandboxDisfunciones_alimentaria)' />
+						</toolbar>
+						<listbox
+							height="300px" width="600px" mold="paging"
+							pageSize="8" id="lbxDx_22"
+							onSelect='formFicha_epidemiologia_n42.selectedDx(self.getSelectedItem(), bandboxDisfunciones_alimentaria)'>
+							<listhead>
+								<listheader
+									label="Código" width="65px" />
+								<listheader
+									label="Nombre" />
+								<listheader
+									label="Sexo" width="65px" />
+								<listheader
+									label="Limite inf" width="75px" />
+								<listheader
+									label="Limite sup" width="75px" />
+							</listhead>
+						</listbox>
+					</vbox>
+				</bandpopup>
+			</bandbox>
+			</cell>
+		</row >
+		<row >
+			<cell rowspan="6"><label value="Trastornos del inicio en la infancia, niñez o adolescencia"/></cell>
+			<cell><label id="lbRetraso_mental" value="Retraso mental "/></cell>
+			<cell >
+			<bandbox id="bandboxRetraso_mental" autodrop="true"
+				readonly="true" width="98%"
+				onOpen="formFicha_epidemiologia_n42.buscarDx(tbxValueDx_23.getValue(),lbxDx_23)">
+				<bandpopup>
+					<vbox>
+						<toolbar>
+							<label
+								value="Buscar: " />
+							<textbox
+								id="tbxValueDx_23"
+								onChanging='formFicha_epidemiologia_n42.buscarDx(event.getValue(),lbxDx_23)'
+								style="text-transform:uppercase;" />
+							<toolbarbutton
+								image="/images/borrar.gif" tooltiptext="Quitar" 
+								onClick='formFicha_epidemiologia_n42.selectedDx(new Listitem(), bandboxRetraso_mental)' />
+						</toolbar>
+						<listbox
+							height="300px" width="600px" mold="paging"
+							pageSize="8" id="lbxDx_23"
+							onSelect='formFicha_epidemiologia_n42.selectedDx(self.getSelectedItem(), bandboxRetraso_mental)'>
+							<listhead>
+								<listheader
+									label="Código" width="65px" />
+								<listheader
+									label="Nombre" />
+								<listheader
+									label="Sexo" width="65px" />
+								<listheader
+									label="Limite inf" width="75px" />
+								<listheader
+									label="Limite sup" width="75px" />
+							</listhead>
+						</listbox>
+					</vbox>
+				</bandpopup>
+			</bandbox>
+			</cell>
+		</row >
+		<row >
+			<cell><label id="lbAprendizaje" value="Trastornos del Aprendizaje "/></cell>
+			<cell >
+			<bandbox id="bandboxAprendizaje" autodrop="true"
+				readonly="true" width="98%"
+				onOpen="formFicha_epidemiologia_n42.buscarDx(tbxValueDx_24.getValue(),lbxDx_24)">
+				<bandpopup>
+					<vbox>
+						<toolbar>
+							<label
+								value="Buscar: " />
+							<textbox
+								id="tbxValueDx_24"
+								onChanging='formFicha_epidemiologia_n42.buscarDx(event.getValue(),lbxDx_24)'
+								style="text-transform:uppercase;" />
+							<toolbarbutton
+								image="/images/borrar.gif" tooltiptext="Quitar" 
+								onClick='formFicha_epidemiologia_n42.selectedDx(new Listitem(), bandboxAprendizaje)' />
+						</toolbar>
+						<listbox
+							height="300px" width="600px" mold="paging"
+							pageSize="8" id="lbxDx_24"
+							onSelect='formFicha_epidemiologia_n42.selectedDx(self.getSelectedItem(), bandboxAprendizaje)'>
+							<listhead>
+								<listheader
+									label="Código" width="65px" />
+								<listheader
+									label="Nombre" />
+								<listheader
+									label="Sexo" width="65px" />
+								<listheader
+									label="Limite inf" width="75px" />
+								<listheader
+									label="Limite sup" width="75px" />
+							</listhead>
+						</listbox>
+					</vbox>
+				</bandpopup>
+			</bandbox>
+			</cell>
+		</row >
+		<row >
+			<cell><label id="lbComunicacion" value="Trastornos de la Comunicación "/></cell>
+			<cell >
+			<bandbox id="bandboxComunicacion" autodrop="true"
+				readonly="true" width="98%"
+				onOpen="formFicha_epidemiologia_n42.buscarDx(tbxValueDx_25.getValue(),lbxDx_25)">
+				<bandpopup>
+					<vbox>
+						<toolbar>
+							<label
+								value="Buscar: " />
+							<textbox
+								id="tbxValueDx_25"
+								onChanging='formFicha_epidemiologia_n42.buscarDx(event.getValue(),lbxDx_25)'
+								style="text-transform:uppercase;" />
+							<toolbarbutton
+								image="/images/borrar.gif" tooltiptext="Quitar" 
+								onClick='formFicha_epidemiologia_n42.selectedDx(new Listitem(), bandboxComunicacion)' />
+						</toolbar>
+						<listbox
+							height="300px" width="600px" mold="paging"
+							pageSize="8" id="lbxDx_25"
+							onSelect='formFicha_epidemiologia_n42.selectedDx(self.getSelectedItem(), bandboxComunicacion)'>
+							<listhead>
+								<listheader
+									label="Código" width="65px" />
+								<listheader
+									label="Nombre" />
+								<listheader
+									label="Sexo" width="65px" />
+								<listheader
+									label="Limite inf" width="75px" />
+								<listheader
+									label="Limite sup" width="75px" />
+							</listhead>
+						</listbox>
+					</vbox>
+				</bandpopup>
+			</bandbox>
+			</cell>
+		</row >
+		<row >
+			<cell><label id="lbDesarrollo" value="Trastornos Generalizados del Desarrollo: "/></cell>
+			<cell >
+			<bandbox id="bandboxDesarrollo" autodrop="true"
+				readonly="true" width="98%"
+				onOpen="formFicha_epidemiologia_n42.buscarDx(tbxValueDx_26.getValue(),lbxDx_26)">
+				<bandpopup>
+					<vbox>
+						<toolbar>
+							<label
+								value="Buscar: " />
+							<textbox
+								id="tbxValueDx_26"
+								onChanging='formFicha_epidemiologia_n42.buscarDx(event.getValue(),lbxDx_26)'
+								style="text-transform:uppercase;" />
+							<toolbarbutton
+								image="/images/borrar.gif" tooltiptext="Quitar" 
+								onClick='formFicha_epidemiologia_n42.selectedDx(new Listitem(), bandboxDesarrollo)' />
+						</toolbar>
+						<listbox
+							height="300px" width="600px" mold="paging"
+							pageSize="8" id="lbxDx_26"
+							onSelect='formFicha_epidemiologia_n42.selectedDx(self.getSelectedItem(), bandboxDesarrollo)'>
+							<listhead>
+								<listheader
+									label="Código" width="65px" />
+								<listheader
+									label="Nombre" />
+								<listheader
+									label="Sexo" width="65px" />
+								<listheader
+									label="Limite inf" width="75px" />
+								<listheader
+									label="Limite sup" width="75px" />
+							</listhead>
+						</listbox>
+					</vbox>
+				</bandpopup>
+			</bandbox>
+			</cell>
+		</row >
+		<row >
+			<cell><label id="lbEliminacion" value="Trastornos de Eliminacion: "/></cell>
+			<cell >
+			<bandbox id="bandboxEliminacion" autodrop="true"
+				readonly="true" width="98%"
+				onOpen="formFicha_epidemiologia_n42.buscarDx(tbxValueDx_27.getValue(),lbxDx_27)">
+				<bandpopup>
+					<vbox>
+						<toolbar>
+							<label
+								value="Buscar: " />
+							<textbox
+								id="tbxValueDx_27"
+								onChanging='formFicha_epidemiologia_n42.buscarDx(event.getValue(),lbxDx_27)'
+								style="text-transform:uppercase;" />
+							<toolbarbutton
+								image="/images/borrar.gif" tooltiptext="Quitar" 
+								onClick='formFicha_epidemiologia_n42.selectedDx(new Listitem(), bandboxEliminacion)' />
+						</toolbar>
+						<listbox
+							height="300px" width="600px" mold="paging"
+							pageSize="8" id="lbxDx_27"
+							onSelect='formFicha_epidemiologia_n42.selectedDx(self.getSelectedItem(), bandboxEliminacion)'>
+							<listhead>
+								<listheader
+									label="Código" width="65px" />
+								<listheader
+									label="Nombre" />
+								<listheader
+									label="Sexo" width="65px" />
+								<listheader
+									label="Limite inf" width="75px" />
+								<listheader
+									label="Limite sup" width="75px" />
+							</listhead>
+						</listbox>
+					</vbox>
+				</bandpopup>
+			</bandbox>
+			</cell>
+		</row >
+		<row >
+			<cell><label id="lbHipercinetico" value="Trastornos Hipercinetico "/></cell>
+			<cell >
+			<bandbox id="bandboxHipercinetico" autodrop="true"
+				readonly="true" width="98%"
+				onOpen="formFicha_epidemiologia_n42.buscarDx(tbxValueDx_28.getValue(),lbxDx_28)">
+				<bandpopup>
+					<vbox>
+						<toolbar>
+							<label
+								value="Buscar: " />
+							<textbox
+								id="tbxValueDx_28"
+								onChanging='formFicha_epidemiologia_n42.buscarDx(event.getValue(),lbxDx_28)'
+								style="text-transform:uppercase;" />
+							<toolbarbutton
+								image="/images/borrar.gif" tooltiptext="Quitar" 
+								onClick='formFicha_epidemiologia_n42.selectedDx(new Listitem(), bandboxHipercinetico)' />
+						</toolbar>
+						<listbox
+							height="300px" width="600px" mold="paging"
+							pageSize="8" id="lbxDx_28"
+							onSelect='formFicha_epidemiologia_n42.selectedDx(self.getSelectedItem(), bandboxHipercinetico)'>
+							<listhead>
+								<listheader
+									label="Código" width="65px" />
+								<listheader
+									label="Nombre" />
+								<listheader
+									label="Sexo" width="65px" />
+								<listheader
+									label="Limite inf" width="75px" />
+								<listheader
+									label="Limite sup" width="75px" />
+							</listhead>
+						</listbox>
+					</vbox>
+				</bandpopup>
+			</bandbox>
+			</cell>
+		</row >
+		<row >
+			<cell rowspan="2"><label value="Conducta Autodestructiva"/></cell>
+			<cell><label id="lbSuicidio" value="Intento de Suicidio "/></cell>
+			<cell >
+			<bandbox id="bandboxSuicidio" autodrop="true"
+				readonly="true" width="98%"
+				onOpen="formFicha_epidemiologia_n42.buscarDx(tbxValueDx_29.getValue(),lbxDx_29)">
+				<bandpopup>
+					<vbox>
+						<toolbar>
+							<label
+								value="Buscar: " />
+							<textbox
+								id="tbxValueDx_29"
+								onChanging='formFicha_epidemiologia_n42.buscarDx(event.getValue(),lbxDx_29)'
+								style="text-transform:uppercase;" />
+							<toolbarbutton
+								image="/images/borrar.gif" tooltiptext="Quitar" 
+								onClick='formFicha_epidemiologia_n42.selectedDx(new Listitem(), bandboxSuicidio)' />
+						</toolbar>
+						<listbox
+							height="300px" width="600px" mold="paging"
+							pageSize="8" id="lbxDx_29"
+							onSelect='formFicha_epidemiologia_n42.selectedDx(self.getSelectedItem(), bandboxSuicidio)'>
+							<listhead>
+								<listheader
+									label="Código" width="65px" />
+								<listheader
+									label="Nombre" />
+								<listheader
+									label="Sexo" width="65px" />
+								<listheader
+									label="Limite inf" width="75px" />
+								<listheader
+									label="Limite sup" width="75px" />
+							</listhead>
+						</listbox>
+					</vbox>
+				</bandpopup>
+			</bandbox>
+			</cell>
+		</row >
+		<row >
+			<cell><label id="lbLogrado" value="Suicidio Logrado "/></cell>
+			<cell >
+			<bandbox id="bandboxLogrado" autodrop="true"
+				readonly="true" width="98%"
+				onOpen="formFicha_epidemiologia_n42.buscarDx(tbxValueDx_30.getValue(),lbxDx_30)">
+				<bandpopup>
+					<vbox>
+						<toolbar>
+							<label
+								value="Buscar: " />
+							<textbox
+								id="tbxValueDx_30"
+								onChanging='formFicha_epidemiologia_n42.buscarDx(event.getValue(),lbxDx_30)'
+								style="text-transform:uppercase;" />
+							<toolbarbutton
+								image="/images/borrar.gif" tooltiptext="Quitar" 
+								onClick='formFicha_epidemiologia_n42.selectedDx(new Listitem(), bandboxLogrado)' />
+						</toolbar>
+						<listbox
+							height="300px" width="600px" mold="paging"
+							pageSize="8" id="lbxDx_30"
+							onSelect='formFicha_epidemiologia_n42.selectedDx(self.getSelectedItem(), bandboxLogrado)'>
+							<listhead>
+								<listheader
+									label="Código" width="65px" />
+								<listheader
+									label="Nombre" />
+								<listheader
+									label="Sexo" width="65px" />
+								<listheader
+									label="Limite inf" width="75px" />
+								<listheader
+									label="Limite sup" width="75px" />
+							</listhead>
+						</listbox>
+					</vbox>
+				</bandpopup>
+			</bandbox>
+			</cell>
+		</row >
+		<row >
+			<cell><label value="Abuso o Negligencia"/></cell>
+			<cell><label id="lbFunvif" value="Diligenciar formato FUNVIF "/></cell>
+			<cell >
+			<bandbox id="bandboxFunvif" autodrop="true"
+				readonly="true" width="98%"
+				onOpen="formFicha_epidemiologia_n42.buscarDx(tbxValueDx_31.getValue(),lbxDx_31)">
+				<bandpopup>
+					<vbox>
+						<toolbar>
+							<label
+								value="Buscar: " />
+							<textbox
+								id="tbxValueDx_31"
+								onChanging='formFicha_epidemiologia_n42.buscarDx(event.getValue(),lbxDx_31)'
+								style="text-transform:uppercase;" />
+							<toolbarbutton
+								image="/images/borrar.gif" tooltiptext="Quitar" 
+								onClick='formFicha_epidemiologia_n42.selectedDx(new Listitem(), bandboxFunvif)' />
+						</toolbar>
+						<listbox
+							height="300px" width="600px" mold="paging"
+							pageSize="8" id="lbxDx_31"
+							onSelect='formFicha_epidemiologia_n42.selectedDx(self.getSelectedItem(), bandboxFunvif)'>
+							<listhead>
+								<listheader
+									label="Código" width="65px" />
+								<listheader
+									label="Nombre" />
+								<listheader
+									label="Sexo" width="65px" />
+								<listheader
+									label="Limite inf" width="75px" />
+								<listheader
+									label="Limite sup" width="75px" />
+							</listhead>
+						</listbox>
+					</vbox>
+				</bandpopup>
+			</bandbox>
+			</cell>
+		</row >
+		<row >
+			<cell><label value="Otros"/></cell>
+			<cell><label id="lbOtro" value="Problemas que pueden ser objeto de atención clínica "/></cell>
+			<cell >
+			<bandbox id="bandboxOtro" autodrop="true"
+				readonly="true" width="98%"
+				onOpen="formFicha_epidemiologia_n42.buscarDx(tbxValueDx_32.getValue(),lbxDx_32)">
+				<bandpopup>
+					<vbox>
+						<toolbar>
+							<label
+								value="Buscar: " />
+							<textbox
+								id="tbxValueDx_32"
+								onChanging='formFicha_epidemiologia_n42.buscarDx(event.getValue(),lbxDx_32)'
+								style="text-transform:uppercase;" />
+							<toolbarbutton
+								image="/images/borrar.gif" tooltiptext="Quitar" 
+								onClick='formFicha_epidemiologia_n42.selectedDx(new Listitem(), bandboxOtro)' />
+						</toolbar>
+						<listbox
+							height="300px" width="600px" mold="paging"
+							pageSize="8" id="lbxDx_32"
+							onSelect='formFicha_epidemiologia_n42.selectedDx(self.getSelectedItem(), bandboxOtro)'>
+							<listhead>
+								<listheader
+									label="Código" width="65px" />
+								<listheader
+									label="Nombre" />
+								<listheader
+									label="Sexo" width="65px" />
+								<listheader
+									label="Limite inf" width="75px" />
+								<listheader
+									label="Limite sup" width="75px" />
+							</listhead>
+						</listbox>
+					</vbox>
+				</bandpopup>
+			</bandbox>
+			</cell>
+		</row >					
+					
+					</rows>
+				</grid>
+			</groupbox>
+			</cell>
+			</row>
+			</rows>
+		</grid>
+
+</groupbox>
+			
+<separator/>
+
+<groupbox mold="3d" width="100%" closable="false">
+<caption label="CONDUCTA CON EL PACIENTE" />
+
+	<grid>
+		<columns>
+			<column/>
+			<column width="85%"/>
+		</columns>
+		<rows>
+		<!-- fila 7 -->
+		<row>
+		<cell colspan="2"><radiogroup id="rdbConducta" onCheck="formFicha_epidemiologia_n42.mostrar_conRadio(formFicha_epidemiologia_n42,self,new AbstractComponent[]{lbOtra_conducta, rowConducta, tbxOtra_conducta})">
+		<radio label="Medicina General" value="AM" checked="true" /><space width="15px" />
+		<radio label="Prescripción Farmacológica" value="PF"/><space width="15px" />
+		<radio label="Hospitalización" value="H"/><space width="15px" />
+		<radio label="Manejo Psicoterapéutico" value="MP"/><space width="15px" />
+		<radio label="Remisión a otros Especialistas" value="S"/>
+		</radiogroup>
+		</cell>
+		</row>
+		
+		<!-- fila 9 -->
+		<row id="rowConducta" visible="false">
+		<cell><label id="lbOtra_conducta" value="¿Cuáles? "/></cell>
+		<cell>
+		<textbox id="tbxCodigo_medico" width="30px" style="text-transform:uppercase" maxlength="20" visible="false"/>
+		<textbox id="tbxOtra_conducta" width="98%" style="text-transform:uppercase" maxlength="200"/></cell>
+		</row>
+	
+		</rows>
+	</grid>
+</groupbox>
+
+
+
+	</div>
+	</center>
+	</borderlayout>
+</window>
+</zk>

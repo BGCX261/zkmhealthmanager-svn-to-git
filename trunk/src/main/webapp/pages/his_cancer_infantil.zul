@@ -1,0 +1,758 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+<style src="estilo.css" />
+<style>
+body ,table{
+	margin:0;
+	padding:0;
+	
+}
+.z-fieldset{
+	-moz-border-radius:5px;
+	border-radius: 5px;
+	-webkit-border-radius: 5px;
+}
+.combobox{
+	font-size:12px;
+	border: 1px solid silver;
+}
+
+tr.z-row .z-cell{
+	background-image:none;
+}
+
+tr.z-row td.z-row-inner{
+	background-image:none;
+}
+</style>
+<borderlayout id="formHis_cancer_infantil" width="100%" height="100%" use="healthmanager.controller.His_cancer_infantilAction"  onCreate="formHis_cancer_infantil.initHis_cancer_infantil();">
+<center autoscroll="true" border="none">
+
+<!-- *********************** -->
+<!--        Principal        -->
+<!-- *********************** -->
+<groupbox id="groupboxPrincipal" style="border:0;padding:2px">
+
+<!-- **************** -->
+<!-- Zona de Consulta -->
+<!-- **************** -->
+<groupbox id="groupboxConsulta" visible="true" closable="false" style="border:0;padding:0">
+
+<toolbar sclass="vista">
+<label value="Criterios de B&#250;squeda :" />
+<listbox id="lbxParameter" mold="select" sclass="combobox" width="150px"/>
+<textbox id="tbxValue" width="200px" onOK="formHis_cancer_infantil.buscarDatos();" style="text-transform:uppercase"/>
+<toolbarbutton image="/images/Magnifier.gif" label="Consultar"  onClick="formHis_cancer_infantil.buscarDatos();" tooltiptext="Consultar His_cancer_infantil" id="btConsultar"/>
+<toolbarbutton image="/images/New16.gif" label="Nuevo" onClick='formHis_cancer_infantil.accionForm(true,"registrar");' tooltiptext="Nuevo His_cancer_infantil" id="btNew"/>
+</toolbar>
+
+<space/>
+
+<!-- ***************************** -->
+<!--  Resultado Consulta Maestros  -->
+<!-- ***************************** -->
+<grid id="gridResultado" height="300px" mold="paging" pageSize="20">
+<columns sizable="true">
+	<column label="Codigo_historia" align="center"/>
+	<column label="Identificacion" align="center"/>
+	<column label="Acciones" align="center" width="80px"/>
+</columns>
+<rows id="rowsResultado" width="100%" />
+</grid>
+</groupbox>
+
+<!-- *************************** -->
+<!-- *** Insertar/Actualizar *** -->
+<!-- *************************** -->
+<groupbox visible="false" id="groupboxEditar" closable="false" style="border:0;padding:0">
+
+<!-- *************************** -->
+<!-- **** Barra de Botones ***** -->
+<!-- *************************** -->
+
+<toolbar width="100%" align="start">
+<textbox id="tbxAccion" value="registrar" visible="false"/>
+<toolbarbutton image="/images/Save16.gif" label="Guardar" tooltiptext="Guardar Datos" onClick="formHis_cancer_infantil.guardarDatos();" id="btGuardar"/>
+<toolbarbutton image="/images/New16.gif" label="Nuevo" onClick='formHis_cancer_infantil.accionForm(true,"registrar");' tooltiptext="Nuevo His_cancer_infantil" id="btNuevo"/>
+<toolbarbutton image="/images/cancel.jpg" label="Regresar a Consulta" tooltiptext="Regresar a Consulta" onClick='formHis_cancer_infantil.accionForm(false,tbxAccion.getText());' id="btCancelar"/>
+</toolbar>
+
+<space/>
+<grid sclass="GridSinBorde">
+<columns>
+<column label="" width="13%"/>
+<column label="" width="18%"/>
+<column label="" width="13%"/>
+<column label="" width="18%"/>
+<column label="" width="13%"/>
+<column label="" width="15%"/>
+</columns>
+<rows>
+
+<!-- fila 1 -->
+<row>
+<cell></cell>
+<cell></cell>
+<cell><textbox id="tbxCodigo_historia" width="170px" style="text-transform:uppercase" visible="false"/></cell>
+<cell></cell>
+<cell></cell>
+<cell></cell>
+</row>
+
+<!-- fila 2 -->
+<row>
+<cell><label id="lbFecha_inicial" value="Fecha inicial: "/></cell>
+<cell><datebox id="dtbxFecha_inicial" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="170px"/></cell>
+
+<cell colspan="4">
+<groupbox width="70%" closable="false">
+<caption label="Consulta"/>
+<radiogroup id="rdbSeleccion" orient="horizontal">
+<radio id="Seleccion1" label="Consulta Externa" checked="true" value="1"/>
+<radio id="Seleccion2" label="Consulta Inicial" value="2"/>
+<radio id="Seleccion3" label="Urgencias" value="3"/>
+<radio id="Seleccion4" label="Control" value="4"/>
+
+</radiogroup>
+</groupbox>
+</cell>
+</row>
+
+
+<!-- fila 4 -->
+
+
+<row>
+<cell><label value="* " style="color: red" tooltiptext="Campo obligatorio"/><label id="lbIdentificacion" value="Identificacion: "/></cell>
+<cell>
+<bandbox id="tbxIdentificacion" autodrop="true" readonly="true" width="170px" onOpen='formHis_cancer_infantil.buscarPaciente(tbxIdentificacion.getValue(),lbxPaciente)'>
+<bandpopup>
+	<vbox>
+		<toolbar>
+			<label value="Buscar: "/>
+		    <textbox id="tbxValuePaciente" onChanging='formHis_cancer_infantil.buscarPaciente(event.getValue(),lbxPaciente)' style="text-transform:uppercase;"/>
+		    <toolbarbutton image="/images/borrar.gif" tooltiptext="Quitar" onClick='formHis_cancer_infantil.selectedPaciente(new Listitem())'/>
+		</toolbar>
+		<listbox height="300px" width="600px" mold="paging" pageSize="8" id="lbxPaciente"
+		    onSelect='formHis_cancer_infantil.selectedPaciente(self.getSelectedItem())' >
+		    <listhead>
+		    <listheader label="Tipo Ident." width="65px"/>
+		    <listheader label="Identificación"/>
+		    <listheader label="Nombres"/>
+		    <listheader label="Apellidos"/>
+		    </listhead>
+		</listbox>
+	</vbox>
+  </bandpopup>
+</bandbox>
+</cell>
+<cell colspan="4">
+<hlayout>
+<label id="lbTipoIdentificacion" value="Tipo: "/><space></space>
+<textbox id="tbxTipoIdentificacion" width="40px" style="text-transform:uppercase" readonly="true"/><space></space>
+<label id="lbNomPaciente" value="Nombre: "/><space></space>
+<textbox id="tbxNomPaciente" width="350px" style="text-transform:uppercase" readonly="true"/>
+</hlayout>
+</cell>
+</row>
+
+<!-- fila 5 -->
+<row>
+<cell colspan="2">
+<hlayout>
+<label id="lbNacimiento" value="Fecha de Nacimiento: "/><space></space>
+<datebox id="dbxNacimiento" width="120px" style="text-transform:uppercase" disabled="disabled" format="yyyy-MM-dd" readonly="true"/><space></space>
+</hlayout>
+</cell>
+<cell colspan="4">
+<hlayout>
+<label id="lbEdad" value="Edad: "/>
+<textbox id="tbxEdad" width="30px" style="text-transform:uppercase" readonly="true"/><space></space>
+<label id="lbSexo" value="Sexo: "/>
+<textbox id="tbxSexo" width="80px" style="text-transform:uppercase" readonly="true"/><space></space>
+<label id="lbDireccion" value="Direccion: "/>
+<textbox id="tbxDireccion" width="240px" style="text-transform:uppercase" readonly="true"/>
+</hlayout>
+</cell>
+</row>
+
+
+<!-- fila 3 -->
+<row>
+<cell><label id="lbCodigo_eps" value="Codigo EPS: "/></cell>
+<cell colspan="5">
+<hlayout>
+<bandbox id="tbxCodigo_eps" autodrop="true" readonly="true" width="70px" onOpen='formHis_cancer_infantil.buscarEps(tbxCodigo_eps.getValue(),lbxCodigo_eps);'>
+<bandpopup>
+	<vbox>
+		<toolbar>
+			<label value="Buscar: "/>
+		    <textbox id="tbxValueEps" onChanging='formHis_cancer_infantil.buscarEps(event.getValue(),lbxCodigo_eps)' style="text-transform:uppercase;"/>
+		    <toolbarbutton image="/images/borrar.gif" tooltiptext="Quitar" onClick='formHis_cancer_infantil.selectedEps(new Listitem());'/>
+		</toolbar>
+		<listbox height="300px" width="600px" mold="paging" pageSize="8" id="lbxCodigo_eps"
+		    onSelect='formHis_cancer_infantil.selectedEps(self.getSelectedItem());' >
+		    <listhead>
+		    <listheader label="Codigo" width="150px"/>
+		    <listheader label="Nombre" width="450px"/>
+		    </listhead>
+		</listbox>
+	</vbox>
+  </bandpopup>
+</bandbox><space></space>
+<textbox id="tbxNombre_eps" width="220px" style="text-transform:uppercase" visible="true" /><space></space>
+<label id="lbCodigo_dpto" value="* Dpto: "/>
+<listbox id="lbxCodigo_dpto" mold="select" width="120px" sclass="combobox" onSelect="formHis_cancer_infantil.listarMunicipios(lbxCodigo_municipio,lbxCodigo_dpto);" onOK="lbxCodigo_municipio.focus();"/><space></space>
+<label id="lbCodigo_municipio" value="* Municipio: "/>
+<listbox id="lbxCodigo_municipio" name="Codigo_municipio" mold="select" width="120px" sclass="combobox" onOK="tbxAcompanante.focus();"/><space/>
+
+</hlayout>
+</cell>
+
+</row>
+
+<!-- fila 6 -->
+<row>
+<cell><label id="lbAcompanante" value="Acompanante: "/></cell>
+<cell><textbox id="tbxAcompanante" width="180px" style="text-transform:uppercase"/></cell>
+<cell colspan="4">
+<hlayout>
+<label id="lbParentesco" value="Parentesco: "/><space></space>
+<listbox id="lbxParentesco" name="parentesco" mold="select" width="170px" sclass="combobox" onOK="lbParentesco.focus();"/><space></space>
+<label id="lbTelefono" value="Telefono: "/><space></space>
+<textbox id="tbxTelefono" width="170px" style="text-transform:uppercase"/>
+</hlayout>
+</cell>
+</row>
+
+<!-- fila 7 -->
+<row>
+<cell><label id="lbOcupacion_padre" value="Ocupación Padre: "/></cell>
+<cell colspan="5">
+<hlayout>
+<bandbox id="tbxOcupacion_padre" autodrop="true" readonly="true" width="70px" onOpen='formHis_cancer_infantil.buscarOcupaciones(tbxOcupacion_padre.getValue(),lbxCodigo_ocupacion_padre);'>
+<bandpopup>
+	<vbox>
+		<toolbar>
+			<label value="Buscar: "/>
+		    <textbox id="tbxValueOcupaciones_Padre" onChanging='formHis_cancer_infantil.buscarOcupaciones(event.getValue(),lbxCodigo_ocupacion_padre)' style="text-transform:uppercase;"/>
+		    <toolbarbutton image="/images/borrar.gif" tooltiptext="Quitar" onClick='formHis_cancer_infantil.selectedOcupaciones(new Listitem());'/>
+		</toolbar>
+		<listbox height="300px" width="600px" mold="paging" pageSize="8" id="lbxCodigo_ocupacion_padre"
+		    onSelect='formHis_cancer_infantil.selectedOcupaciones(self.getSelectedItem());' >
+		    <listhead>
+		    <listheader label="Codigo" width="150px"/>
+		    <listheader label="Nombre" width="450px"/>
+		    </listhead>
+		</listbox>
+	</vbox>
+  </bandpopup>
+</bandbox><space></space>
+<textbox id="tbxNombre_padre" width="200px" style="text-transform:uppercase" visible="true" /><space></space>
+
+<label id="lbOcupacion_madre" value="Ocupación Madre: "/><space></space>
+<bandbox id="tbxOcupacion_madre" autodrop="true" readonly="true" width="70px" onOpen='formHis_cancer_infantil.buscarOcupaciones(tbxOcupacion_madre.getValue(),lbxCodigo_ocupacion_madre);'>
+<bandpopup>
+	<vbox>
+		<toolbar>
+			<label value="Buscar: "/>
+		    <textbox id="tbxValueOcupaciones_Madre" onChanging='formHis_cancer_infantil.buscarOcupaciones(event.getValue(),lbxCodigo_ocupacion_madre)' style="text-transform:uppercase;"/>
+		    <toolbarbutton image="/images/borrar.gif" tooltiptext="Quitar" onClick='formHis_cancer_infantil.selectedOcupacion_madre(new Listitem());'/>
+		</toolbar>
+		<listbox height="300px" width="600px" mold="paging" pageSize="8" id="lbxCodigo_ocupacion_madre"
+		    onSelect='formHis_cancer_infantil.selectedOcupacion_madre(self.getSelectedItem());' >
+		    <listhead>
+		    <listheader label="Codigo" width="150px"/>
+		    <listheader label="Nombre" width="450px"/>
+		    </listhead>
+		</listbox>
+	</vbox>
+  </bandpopup>
+</bandbox><space></space>
+<textbox id="tbxNombre_madre" width="200px" style="text-transform:uppercase" visible="true" />
+</hlayout>
+</cell>
+
+</row>
+
+
+<!-- fila 8 -->
+<row>
+<cell><label id="lbMotivo" value="Motivo de Consulta y Enfermedad Actual: "/></cell>
+<cell colspan="5"><textbox id="tbxMotivo" width="80%" rows="3" style="text-transform:uppercase"/></cell>
+</row>
+
+<!-- fila 9 -->
+<row>
+<cell colspan="6">
+<groupbox mold="3d" width="100%" closable="false">
+<caption label="Antecedentes Patologicos"/>
+			<grid sclass="GridSinBorde" style="border:none">
+				<columns>
+				<column label="" width="137px"/>
+				<column label="" width=""/>
+				<column label="" width=""/>
+				<column label="" width=""/>
+				</columns>
+				<rows>
+				
+				<!-- fila 9.1 -->
+				
+				<row>
+				<cell><label id="lbEmbarazo" value="Como fue el Embarazo? "/></cell>
+				<cell><textbox id="tbxEmbarazo" width="220px" style="text-transform:uppercase"/></cell>
+				<cell colspan="2">
+				<hlayout>
+				<label id="lbDuracion_meses" value="Duracion: "/>
+				<textbox id="tbxDuracion_meses" width="50px" style="text-transform:uppercase"/>
+				<label value="Meses "/><space></space>
+				<textbox id="tbxDuracion_dias" width="50px" style="text-transform:uppercase" value="0"/>
+				<label id="lbDuracion_dias" value="Dias: "/>
+				</hlayout>
+				</cell>
+				</row>
+				
+				<!-- fila 9.2 -->
+				
+				<row>
+				<cell><label id="lbParto" value="Como fue el Parto? "/></cell>
+				<cell><textbox id="tbxParto" width="220px" style="text-transform:uppercase"/></cell>
+				<cell colspan="2">
+				<hlayout>
+				<label id="lbDuracion_nacer" value="Cuanto paso al Nacer? "/>
+				<textbox id="tbxDuracion_nacer" width="50px" style="text-transform:uppercase"/>
+				<label value="Minutos "/><space></space><space></space>
+				<label id="lbMedida" value="Cuanto Mide? "/>
+				<textbox id="tbxMedida" width="50px" style="text-transform:uppercase"/>
+				<label value="Cms "/><space></space>
+				</hlayout>
+				</cell>
+				</row>
+				
+				<!-- fila 9.3 -->
+				
+				<row>
+				<cell colspan="2">
+				<hlayout>
+				<label id="lbDesc_problema" value="Presento algun problema antes de Nacer? "/>
+				<textbox id="tbxProblema" width="10px" style="text-transform:uppercase" visible="false"/>
+				</hlayout>
+				</cell>
+				<cell colspan="2"><label id="lbEnfermedades" value="Que enfermedades ha tenido? "/></cell>
+				</row>
+				<row>
+				<cell colspan="2"><textbox id="tbxDesc_problema" width="220px" rows="3" style="text-transform:uppercase"/></cell>
+				<cell colspan="2"><textbox id="tbxEnfermedades" width="220px" rows="3" style="text-transform:uppercase"/></cell>
+				</row>
+				
+				</rows>
+			</grid>
+</groupbox>
+</cell>
+</row>
+
+
+<!-- fila 10 -->
+
+<row>
+<cell colspan="6">
+<groupbox mold="3d" width="100%" closable="false">
+<caption label="Preguntas"/>
+			<grid sclass="GridSinBorde" style="border:none">
+				<columns>
+				<column label="" width="137px"/>
+				<column label="" width=""/>
+				<column label="" width=""/>
+				<column label="" width=""/>
+				</columns>
+				<rows>
+				
+				<!-- fila 10.1 -->
+				
+				<row>
+				<cell colspan="2"><label id="lbFiebre" value="Ha tenido fiebre por mas de 7 dias y/o sudoracion importante? "/></cell>
+				<cell colspan="2"><listbox id="lbxFiebre" name="seleccion" mold="select" width="70px" sclass="combobox" onOK="lbFiebre.focus();"/></cell>
+				</row>
+				
+				<!-- fila 10.2 -->
+				
+				<row>
+				<cell colspan="2"><label id="lbDolor_cabeza" value="Presenta recientemente dolor de cabeza que ha ido en aumento? "/></cell>
+				<cell colspan="2">
+				<hlayout>
+				<listbox id="lbxDolor_cabeza" name="seleccion" mold="select" width="70px" sclass="combobox" onOK="lbDolor_cabeza.focus();"/><space></space>
+				<label id="lbDuracion_dolor" value="Desde Cuando? "/><space></space>
+				<textbox id="tbxDuracion_dolor" width="50px" style="text-transform:uppercase"/>
+				<label value="Dias"/>
+				</hlayout>
+				</cell>
+				</row>
+				
+				<!-- fila 10.3 -->
+				
+				<row>
+				<cell colspan="2"><label id="lbDolor_cabeza_noche" value="Despierta el dolor de cabeza al niño en la noche? "/></cell>
+				<cell colspan="2"><listbox id="lbxDolor_cabeza_noche" name="seleccion" mold="select" width="70px" sclass="combobox" onOK="lbDolor_cabeza_noche.focus();"/></cell>
+				</row>
+				
+				<!-- fila 10.4 -->
+				
+				<row>
+				<cell colspan="2"><label id="lbVomito" value="Se acompaña de otro sintoma como Vomito? "/></cell>
+				<cell colspan="2"><listbox id="lbxVomito" name="seleccion" mold="select" width="70px" sclass="combobox" onOK="lbVomito.focus();"/></cell>
+				</row>
+				
+				<!-- fila 10.5 -->
+				
+				<row>
+				<cell colspan="2"><label id="lbDolor_huesos" value="Presenta dolor de huesos en el ultimo mes? "/></cell>
+				<cell colspan="2"><listbox id="lbxDolor_huesos" name="seleccion" mold="select" width="70px" sclass="combobox" onOK="lbDolor_huesos.focus();"/></cell>
+				</row>
+				
+				<!-- fila 10.6 -->
+				
+				<row>
+				<cell colspan="2"><label id="lbActividades" value="Que interrumpe sus Actividades? "/></cell>
+				<cell colspan="2"><listbox id="lbxActividades" name="seleccion" mold="select" width="70px" sclass="combobox" onOK="lbActividades.focus();"/></cell>
+				</row>
+				
+				<!-- fila 10.7 -->
+				
+				<row>
+				<cell colspan="2"><label id="lbAumento" value="Que ha ido en Aumento? "/></cell>
+				<cell colspan="2"><listbox id="lbxAumento" name="seleccion" mold="select" width="70px" sclass="combobox" onOK="lbAumento.focus();"/></cell>
+				</row>
+				
+				<!-- fila 10.8 -->
+				
+				<row>
+				<cell colspan="2"><label id="lbCambios" value="ha presentado cambios como perdida de apetito, perdida de peso o fatigo en los ultimos 3 meses? "/></cell>
+				<cell colspan="2">
+				<hlayout>
+				<listbox id="lbxCambios" name="seleccion" mold="select" width="70px" sclass="combobox" onOK="lbCambios.focus();"/><space></space>
+				<label id="lbCambios_cuales" value="Cuales? "/>
+				<textbox id="tbxCambios_cuales" width="50px" style="text-transform:uppercase"/>
+				<label id="lbCambios_cuando" value="Desde Cuando? "/>
+				<textbox id="tbxCambios_cuando" width="50px" style="text-transform:uppercase"/>
+				</hlayout>
+				</cell>
+				</row>
+				<row>
+				<cell colspan="4"><label id="lbObservaciones" value="Observaciones: "/></cell>
+				</row>
+				<row>
+				<cell colspan="4"><textbox id="tbxObservaciones" width="420px" rows="2" style="text-transform:uppercase"/></cell>
+				<cell></cell>
+				</row>
+				
+				</rows>
+			</grid>
+</groupbox>
+</cell>
+</row>
+
+<!-- fila 11 -->
+
+<row>
+<cell colspan="6">
+<groupbox mold="3d" width="100%" closable="false">
+<caption label="Observaciones y Determinaciones"/>
+			<grid sclass="GridSinBorde" style="border:none">
+				<columns>
+				<column label="" width="40%"/>
+				<column label="" width="10%"/>
+				<column label="" width="40%"/>
+				<column label="" width="10%"/>
+				</columns>
+				<rows>
+				
+				<!-- fila 11.1 -->
+				
+				<row>
+				<cell><label id="lbPalidez" value="Palidez palmar y/o conjuntival: "/></cell>
+				<cell><listbox id="lbxPalidez" name="palidez" mold="select" width="80px" sclass="combobox"/></cell>
+				<cell><label id="lbDebilidad" value="Debilidad: "/></cell>
+				<cell><listbox id="lbxDebilidad" name="debilidad" mold="select" width="80px" sclass="combobox"/></cell>
+				</row>
+				
+				<!-- fila 11.2 -->
+				
+				<row>
+				<cell><label id="lbPetequias" value="Petequias: "/></cell>
+				<cell><checkbox id="chbPetequias"/></cell>
+				<cell><label id="lbEquimosis" value="Equimosis: "/></cell>
+				<cell><checkbox id="chbEquimosis"/></cell></row>
+				
+				<!-- fila 11.3 -->
+				
+				<row>
+				<cell><label id="lbSangrado" value="Sangrado: "/></cell>
+				<cell><checkbox id="chbSangrado"/></cell>
+				<cell><label id="lbOjo_blanco" value="Ojo blanco - Falta Iris: "/></cell>
+				<cell><checkbox id="chbOjo_blanco"/></cell>
+				</row>
+				
+				<!-- fila 11.4 -->
+				
+				<row>
+				<cell><label id="lbEstrabismo" value="Estrabismo Adquirido: "/></cell>
+				<cell><checkbox id="chbEstrabismo"/></cell>
+				<cell><label id="lbOjo_dif" value="Ojos diferente color: "/></cell>
+				<cell><checkbox id="chbOjo_dif"/></cell>
+				</row>
+				
+				<!-- fila 11.4 -->
+				
+				<row>
+				<cell><label id="lbSangre_ojo" value="Sangre dentro de ojo: "/></cell>
+				<cell><checkbox id="chbSangre_ojo"/></cell>
+				<cell><label id="lbSalido" value="Salido o Ganglios - Tamaño>2,5 cm: "/></cell>
+				<cell><checkbox id="chbSalido"/></cell>
+				</row>
+				
+				<!-- fila 11.5 -->
+				
+				<row>
+				<cell><label id="lbDolor" value="Sin dolor ni inflacion: "/></cell>
+				<cell><checkbox id="chbDolor"/></cell>
+				<cell><label id="lbConsistencia" value="Consistencia dura y firme: "/></cell>
+				<cell><checkbox id="chbConsistencia"/></cell>
+				</row>
+				
+				<!-- fila 11.6 -->
+				
+				<row>
+				<cell><label id="lbEvolucion" value="4 semanas de volucion: "/></cell>
+				<cell><checkbox id="chbEvolucion"/></cell>
+				<cell><label id="lbSintomas_neurologicos" value="Signos y Sintomas neurologicos focales: "/></cell>
+				<cell><checkbox id="chbSintomas_neurologicos"/></cell>
+				</row>
+				
+				<!-- fila 11.7 -->
+				
+				<row>
+				<cell><label id="lbAsimetria" value="Asimetria fisica (facial): "/></cell>
+				<cell><checkbox id="chbAsimetria"/></cell>
+				<cell><label id="lbEstado_conciencia" value="Cambio en el estado de conciencia o mental: "/></cell>
+				<cell><checkbox id="chbEstado_conciencia"/></cell>
+				</row>
+				
+				<!-- fila 11.8 -->
+				
+				<row>
+				<cell><label id="lbPerdida_equilibrio" value="Perdida del equilibrio al camina: "/></cell>
+				<cell><checkbox id="chbPerdida_equilibrio"/></cell>
+				<cell><label id="lbCojea" value="Cojea de dolor - Dificultad para hablar: "/></cell>
+				<cell><checkbox id="chbCojea"/></cell>
+				</row>
+				
+				<!-- fila 11.9 -->
+				
+				<row>
+				<cell><label id="lbAlteracion_vision" value="Alteracion en la vision: "/></cell>
+				<cell><checkbox id="chbAlteracion_vision"/></cell>
+				<cell><label id="lbMasa_abdominal" value="Presencia de masa palpable abdominal: "/></cell>
+				<cell><checkbox id="chbMasa_abdominal"/></cell>
+				</row>
+								
+				<!-- fila 11.10 -->
+				
+				<row>
+				<cell><label id="lbHepatografia" value="Hepatomegalia y/o esplenomegalia: "/></cell>
+				<cell><checkbox id="chbHepatografia"/></cell>
+				<cell><label id="lbVolumen" value="Aumento de Volumen en alguna region del cuerpo: "/></cell>
+				<cell><checkbox id="chbVolumen"/></cell>
+				</row>
+				
+				<!-- fila 11.22 -->
+				
+				<row>
+				<cell colspan="4">
+				<groupbox width="90%" closable="false">
+				<caption label="Clasificacion"/>
+				<radiogroup id="rdbClasificacion" orient="horizontal">
+				<radio id="Clasificacion1" label="Posible Cancer o Enfermedad muy Grave" value="1"/>
+				<radio id="Clasificacion2" label="Algun Riesgo de Cancer" value="2"/>
+				<radio id="Clasificacion3" label="Poca probabilidad de Cancer" value="3"/>
+				
+				</radiogroup>
+				</groupbox>
+				</cell>
+				</row>
+				
+				</rows>
+			</grid>
+</groupbox>
+</cell>
+</row>
+
+<!-- fila 12 -->
+
+<row>
+<cell colspan="6">
+<groupbox mold="3d" width="100%" closable="false">
+<caption label="Evolucion"/>
+			<grid sclass="GridSinBorde" style="border:none">
+				<columns>
+				<column label="" width="25%"/>
+				<column label="" width="25%"/>
+				<column label="" width="25%"/>
+				<column label="" width="25%"/>
+				</columns>
+				<rows>
+				
+				
+				<!-- fila 12.1 -->
+				
+				<row>
+				<cell colspan="4">
+				<groupbox width="95%" closable="false">
+				<caption label="Datos"/>
+							<grid sclass="GridSinBorde" style="border:none">
+								<columns>
+								<column label="" width="40%"/>
+								<column label="" width="10%"/>
+								<column label="" width="40%"/>
+								<column label="" width="10%"/>
+								</columns>
+								<rows>
+								
+								<row>
+								<cell colspan="4">
+								<hlayout>
+								<label id="lbTemperatura" value="Temp: "/>
+								<textbox id="tbxTemperatura" width="50px" style="text-transform:uppercase"/>
+								<label value=" °C"/><space></space>
+								<label id="lbFc" value="FC: "/>
+								<textbox id="tbxFc" width="50px" style="text-transform:uppercase"/>
+								<label value="/min"/><space></space>
+								<label id="lbFr" value="FR: "/>
+								<textbox id="tbxFr" width="50px" style="text-transform:uppercase"/>
+								<label value="/min"/><space></space>
+								<label id="lbTalla" value="Talla: "/>
+								<textbox id="tbxTalla" width="50px" style="text-transform:uppercase"/>
+								<label value="cms"/><space></space>
+								<label id="lbPeso" value="Peso: "/>
+								<textbox id="tbxPeso" width="50px" style="text-transform:uppercase"/>
+								<label value="kg"/><space></space>
+								<label id="lbPc" value="Pc: "/>
+								<textbox id="tbxPc" width="50px" style="text-transform:uppercase"/>
+								<label value="cms"/><space></space>
+								<label id="lbImc" value="Imc: "/>
+								<textbox id="tbxImc" width="50px" style="text-transform:uppercase"/>
+								
+								</hlayout>
+								</cell>
+								</row>
+								
+								
+								</rows>
+							</grid>
+				</groupbox>
+				</cell>
+				</row>
+				
+				
+				<!-- fila 12.2 -->
+				
+				<row>
+				<cell colspan="4">
+				<groupbox width="95%" closable="false">
+				<caption label="Recomendaciones"/>
+							<grid sclass="GridSinBorde" style="border:none">
+								<columns>
+								<column label="" width="25%"/>
+								<column label="" width="25%"/>
+								<column label="" width="25%"/>
+								<column label="" width="25%"/>
+								</columns>
+								<rows>
+								<row>
+								<cell colspan="2"><label id="lbAlarma" value="Cuando volver de inmediato al servicio (signo de Alarma): "/></cell>
+								<cell colspan="2"><label id="lbConsulta_control" value="Cuando volver a consulta de control: "/></cell>
+								</row>
+								<row>
+								<cell colspan="2"><textbox id="tbxAlarma" width="420px" rows="3" style="text-transform:uppercase"/></cell>
+								<cell colspan="2"><textbox id="tbxConsulta_control" width="420px" rows="3" style="text-transform:uppercase"/></cell>
+								</row>
+								<row>
+								<cell colspan="2"><label id="lbMedidas_preventiva" value="Medidas preventivas especificas: "/></cell>
+								<cell colspan="2"><label id="lbRecomendaciones" value="Recomendaciones de buen trato: "/></cell>
+								</row>
+								<row>
+								<cell colspan="2"><textbox id="tbxMedidas_preventiva" width="420px" rows="4" style="text-transform:uppercase"/></cell>
+			o					<cell colspan="2"><textbox id="tbxRecomendaciones" width="420px" rows="4" style="text-transform:uppercase"/></cell>
+								</row>
+								
+								</rows>
+							</grid>
+				</groupbox>
+				</cell>
+				</row>
+							
+				
+				<!-- fila 12.3 -->
+				
+				<row>
+				<cell colspan="4">
+				<groupbox width="95%" closable="false">
+				<caption label="Diagnosticos"/>
+							<grid sclass="GridSinBorde" style="border:none">
+								<columns>
+								<column label="" width="25%"/>
+								<column label="" width="25%"/>
+								<column label="" width="25%"/>
+								<column label="" width="25%"/>
+								</columns>
+								<rows>
+								
+								<row>
+								<cell colspan="2"><label id="lbCodigo_diagnostico" value="Codigo: "/></cell>
+								<cell colspan="2"><label id="lbDiagnostico" value="Diagnostico: "/></cell>
+								</row>
+								
+								<row>
+								<cell colspan="2"><textbox id="tbxCodigo_diagnostico" width="170px" style="text-transform:uppercase"/></cell>
+								<cell colspan="2"><textbox id="tbxDiagnostico" width="420px" rows="3" style="text-transform:uppercase"/></cell>
+								</row>
+								
+								
+								<row>
+								<cell colspan="2"><label id="lbTratamiento" value="Tratamiento: "/></cell>
+								<cell colspan="2"><label id="lbRecomendacion_alimentacion" value="Recomendacion sobre la alimentacion: "/></cell>
+								</row>
+								
+								<row>
+								<cell colspan="2"><textbox id="tbxTratamiento" width="420px" rows="3" style="text-transform:uppercase"/></cell>
+								<cell colspan="2"><textbox id="tbxRecomendacion_alimentacion" width="420px" rows="3" style="text-transform:uppercase"/></cell>
+								</row>
+								
+								<row>
+								<cell colspan="4"><label id="lbEvolucion_servicio" value="Evolucion en el servicio: "/></cell>
+								</row>
+								
+								<row>
+								<cell colspan="4"><textbox id="tbxEvolucion_servicio" width="420px" rows="3" style="text-transform:uppercase"/></cell>
+								</row>	
+								</rows>
+							</grid>
+				</groupbox>
+				</cell>
+				</row>
+				
+						
+				</rows>
+			</grid>
+</groupbox>
+</cell>
+</row>
+
+
+
+</rows>
+</grid>
+</groupbox>
+</groupbox>
+</center>
+</borderlayout>
+</zk>

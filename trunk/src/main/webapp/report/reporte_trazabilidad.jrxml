@@ -1,0 +1,424 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="reporte_trazabilidad" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="8788b18c-3ca8-49e3-b1c5-0c4231d3b157">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="codigo_empresa" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="codigo_sucursal" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="empresa" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="id" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="direccion" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="telefono" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="imagen" class="java.io.InputStream">
+		<defaultValueExpression><![CDATA[null]]></defaultValueExpression>
+	</parameter>
+	<parameter name="impreso_por" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+traz_pac.tipo_evento,
+traz_pac.fecha_evento,
+traz_pac.campo_actualizar,
+traz_pac.valor_anterior,
+traz_pac.valor_nuevo,
+traz_pac.codigo_usuario,
+CASE WHEN elm_campo_actualizar.descripcion IS NULL THEN '' ELSE elm_campo_actualizar.descripcion END AS descipcion_campo_actualizar,
+pac.tipo_identificacion,
+(pac.apellido1 || ' ' || pac.apellido2 || ' ' ||  pac.nombre1 || ' ' || pac.nombre2) AS nombre_paciente,
+pac.documento,
+eps.codigo AS codigo_eps,
+eps.nombre AS nombre_eps,
+elm_tipo_evento.descripcion AS descripcion_tipo_evento,
+(usuario.apellidos || ' ' ||  usuario.nombres) AS nombre_usuario
+FROM
+"public".trazabilidad_paciente AS traz_pac
+LEFT JOIN "public".elemento AS elm_campo_actualizar ON elm_campo_actualizar.codigo = traz_pac.campo_actualizar AND elm_campo_actualizar.tipo = 'campos_trazabilidad'
+INNER JOIN "public".paciente AS pac ON pac.codigo_empresa = traz_pac.codigo_empresa AND pac.codigo_sucursal = traz_pac.codigo_sucursal AND pac.nro_identificacion = traz_pac.identificacion
+INNER JOIN "public".administradora AS eps ON eps.codigo_empresa = pac.codigo_empresa AND eps.codigo_sucursal = pac.codigo_sucursal AND eps.codigo = pac.codigo_administradora
+INNER JOIN "public".elemento AS elm_tipo_evento ON elm_tipo_evento.codigo = traz_pac.tipo_evento AND elm_tipo_evento.tipo = 'tipo_trazabilidad'
+LEFT JOIN "public".usuarios AS usuario ON usuario.codigo_empresa = traz_pac.codigo_empresa AND usuario.codigo_sucursal = traz_pac.codigo_sucursal AND usuario.codigo = traz_pac.codigo_usuario
+ORDER BY
+traz_pac.identificacion ASC,
+traz_pac.tipo_evento ASC,
+traz_pac.fecha_evento ASC,
+traz_pac.campo_actualizar ASC]]>
+	</queryString>
+	<field name="tipo_evento" class="java.lang.String">
+		<fieldDescription><![CDATA[01 - CREACION
+02 - ACTUALIZACION]]></fieldDescription>
+	</field>
+	<field name="fecha_evento" class="java.sql.Timestamp"/>
+	<field name="campo_actualizar" class="java.lang.String">
+		<fieldDescription><![CDATA[Campo de la tabla paciente que actualizan]]></fieldDescription>
+	</field>
+	<field name="valor_anterior" class="java.lang.String">
+		<fieldDescription><![CDATA[Se especifica el valor a actualizar]]></fieldDescription>
+	</field>
+	<field name="valor_nuevo" class="java.lang.String">
+		<fieldDescription><![CDATA[El valor nuevo por el cual se hace el cambio]]></fieldDescription>
+	</field>
+	<field name="codigo_usuario" class="java.lang.String"/>
+	<field name="descipcion_campo_actualizar" class="java.lang.String"/>
+	<field name="tipo_identificacion" class="java.lang.String">
+		<fieldDescription><![CDATA[tipo identificacion del aportante]]></fieldDescription>
+	</field>
+	<field name="nombre_paciente" class="java.lang.String"/>
+	<field name="documento" class="java.lang.String">
+		<fieldDescription><![CDATA[Este documento es el que va a aparecer en el rips,4505 e informes que necesite esta información puesto que el nro_identificacion original se unio con el tipo de documento]]></fieldDescription>
+	</field>
+	<field name="codigo_eps" class="java.lang.String"/>
+	<field name="nombre_eps" class="java.lang.String"/>
+	<field name="descripcion_tipo_evento" class="java.lang.String"/>
+	<field name="nombre_usuario" class="java.lang.String"/>
+	<group name="PACIENTE">
+		<groupExpression><![CDATA[$F{tipo_identificacion} + $F{documento}]]></groupExpression>
+		<groupHeader>
+			<band height="40">
+				<rectangle>
+					<reportElement x="0" y="0" width="555" height="40" backcolor="#EBE7E7" uuid="731f01e5-995d-4d8b-b4db-1bc1916a66fe"/>
+					<graphicElement>
+						<pen lineWidth="0.75"/>
+					</graphicElement>
+				</rectangle>
+				<textField>
+					<reportElement x="73" y="0" width="472" height="20" uuid="725363c8-5f78-4d6d-9725-a7af355760ff"/>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{documento} + " " + $F{nombre_paciente}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="0" width="53" height="20" uuid="39e10324-13dd-4028-96a8-12210f7ee76b"/>
+					<box leftPadding="4"/>
+					<textElement verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Paciente:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="0" y="20" width="72" height="20" uuid="1ce0331a-59f5-4e12-b1d2-6ddefadd3d83"/>
+					<box leftPadding="4"/>
+					<textElement verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Aseguradora:]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="72" y="20" width="473" height="20" uuid="79fec00b-552d-4462-a900-2872aff50084"/>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{codigo_eps} + " " + $F{nombre_eps}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="24">
+				<textField>
+					<reportElement mode="Opaque" x="400" y="0" width="155" height="20" backcolor="#EBE7E7" uuid="c70d496d-8c0f-4f91-9153-f541c4be9df7"/>
+					<box leftPadding="3">
+						<pen lineWidth="0.75"/>
+						<topPen lineWidth="0.75"/>
+						<leftPen lineWidth="0.75"/>
+						<bottomPen lineWidth="0.75"/>
+						<rightPen lineWidth="0.75"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Total: " + $V{PACIENTE_COUNT}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="tipo_evento">
+		<groupExpression><![CDATA[$F{tipo_evento}]]></groupExpression>
+		<groupHeader>
+			<band height="40">
+				<textField>
+					<reportElement x="0" y="0" width="555" height="20" uuid="6c6dd1eb-0706-4516-b979-1c8b7340c241"/>
+					<box leftPadding="4">
+						<pen lineWidth="0.75"/>
+						<topPen lineWidth="0.75"/>
+						<leftPen lineWidth="0.75"/>
+						<bottomPen lineWidth="0.75"/>
+						<rightPen lineWidth="0.75"/>
+					</box>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA["* " + $F{descripcion_tipo_evento}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement mode="Opaque" x="0" y="20" width="100" height="20" backcolor="#EBE7E7" uuid="d28880ff-4e62-4a78-a97a-1dea36410a8b"/>
+					<box leftPadding="3">
+						<pen lineWidth="0.75"/>
+						<topPen lineWidth="0.75"/>
+						<leftPen lineWidth="0.75"/>
+						<bottomPen lineWidth="0.75"/>
+						<rightPen lineWidth="0.75"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Fecha]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="100" y="20" width="455" height="20" backcolor="#EBE7E7" uuid="5f0d5d45-3a96-4e6c-bb67-6b4974f094f6">
+						<printWhenExpression><![CDATA[$F{tipo_evento}.equals("01")]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="3">
+						<pen lineWidth="0.75"/>
+						<topPen lineWidth="0.75"/>
+						<leftPen lineWidth="0.75"/>
+						<bottomPen lineWidth="0.75"/>
+						<rightPen lineWidth="0.75"/>
+					</box>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[Usuario]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="100" y="20" width="100" height="20" backcolor="#EBE7E7" uuid="eefe10d5-e355-4dee-9a5e-dc5fd64a02df">
+						<printWhenExpression><![CDATA[$F{tipo_evento}.equals("02")]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="3">
+						<pen lineWidth="0.75"/>
+						<topPen lineWidth="0.75"/>
+						<leftPen lineWidth="0.75"/>
+						<bottomPen lineWidth="0.75"/>
+						<rightPen lineWidth="0.75"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Campo actualizado]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="200" y="20" width="100" height="20" backcolor="#EBE7E7" uuid="2b86aa88-cb14-46c3-ad92-e8383a498926">
+						<printWhenExpression><![CDATA[$F{tipo_evento}.equals("02")]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="3">
+						<pen lineWidth="0.75"/>
+						<topPen lineWidth="0.75"/>
+						<leftPen lineWidth="0.75"/>
+						<bottomPen lineWidth="0.75"/>
+						<rightPen lineWidth="0.75"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Valor anterior]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="300" y="20" width="100" height="20" backcolor="#EBE7E7" uuid="9c8339c7-f825-45fa-84cd-0e57266753e2">
+						<printWhenExpression><![CDATA[$F{tipo_evento}.equals("02")]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="3">
+						<pen lineWidth="0.75"/>
+						<topPen lineWidth="0.75"/>
+						<leftPen lineWidth="0.75"/>
+						<bottomPen lineWidth="0.75"/>
+						<rightPen lineWidth="0.75"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Nuevo valor]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="400" y="20" width="155" height="20" backcolor="#EBE7E7" uuid="7d1fccf8-efb0-48bd-8af6-cecd97859a50">
+						<printWhenExpression><![CDATA[$F{tipo_evento}.equals("02")]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="3">
+						<pen lineWidth="0.75"/>
+						<topPen lineWidth="0.75"/>
+						<leftPen lineWidth="0.75"/>
+						<bottomPen lineWidth="0.75"/>
+						<rightPen lineWidth="0.75"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Usuario]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="64" splitType="Stretch">
+			<textField>
+				<reportElement x="113" y="50" width="364" height="14" uuid="dd427c48-700a-4806-a234-b19360a04394"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Telefono: "+$P{telefono}]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame" isUsingCache="true" onErrorType="Icon">
+				<reportElement x="12" y="2" width="101" height="62" uuid="e825d0a2-261e-4ecd-9089-035784406a2c"/>
+				<imageExpression><![CDATA[$P{imagen}]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="113" y="36" width="364" height="14" uuid="eb5521d0-a07c-49d3-877e-efbc5a20004a"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Dirección: "+$P{direccion}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="113" y="22" width="364" height="14" uuid="4fd8fc96-fdf6-4cb9-841b-33a0da347d84"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{id}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="113" y="2" width="364" height="20" uuid="a3a90c9e-46b0-4df6-a43e-6e1ab8b396d1"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{empresa}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="16" splitType="Stretch">
+			<staticText>
+				<reportElement x="113" y="0" width="364" height="16" uuid="9b15585a-6b53-4e1c-a6bf-6380ff1a6f33"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[REPORTE DE TRAZABILIDAD]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="475" y="0" width="56" height="16" uuid="69732c67-969e-4142-b8c1-3d7798995625"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Pag. "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="531" y="0" width="40" height="16" uuid="06cc9fc1-2959-4592-bf68-a371c6e91dec"/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="0" y="0" width="113" height="16" uuid="d862e882-113a-46e5-b865-bb51aeaedd2f"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField isStretchWithOverflow="true" pattern="yyyy-MM-dd hh:mm a " isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="100" height="20" uuid="83616080-0229-496c-b533-8a696606fcf8"/>
+				<box leftPadding="2">
+					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fecha_evento}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="100" y="0" width="455" height="20" uuid="fae4f28a-0443-44c5-b013-2c360aa9a929">
+					<printWhenExpression><![CDATA[$F{tipo_evento}.equals("01")]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="3">
+					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{codigo_usuario} + " " + ($F{nombre_usuario} != null ? $F{nombre_usuario} : "")]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="100" y="0" width="100" height="20" uuid="8c58a7b5-c10e-4b70-a62b-e22d24d05e9f">
+					<printWhenExpression><![CDATA[$F{tipo_evento}.equals("02")]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="3">
+					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{descipcion_campo_actualizar}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="200" y="0" width="100" height="20" uuid="320e79fd-3045-4582-a076-ab24ea0e53d8">
+					<printWhenExpression><![CDATA[$F{tipo_evento}.equals("02")]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="3">
+					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_anterior}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="300" y="0" width="100" height="20" uuid="286dce8c-93df-47af-a599-752551366496">
+					<printWhenExpression><![CDATA[$F{tipo_evento}.equals("02")]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="3">
+					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_nuevo}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="400" y="0" width="155" height="20" uuid="a8dc490e-c210-4829-85cb-f1dd58806792">
+					<printWhenExpression><![CDATA[$F{tipo_evento}.equals("02")]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="3">
+					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{codigo_usuario} + " " + ($F{nombre_usuario} != null ? $F{nombre_usuario} : "")]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="42" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="73" y="0" width="482" height="20" uuid="901068a1-96f6-41c0-9f94-ee1ae06fde03"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$P{impreso_por}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="0" width="72" height="20" uuid="53f45fcf-f28a-4635-a14c-af13a65ff991"/>
+				<box leftPadding="4"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Impreso por: ]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

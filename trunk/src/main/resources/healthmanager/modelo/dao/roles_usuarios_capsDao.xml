@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Roles_usuarios_capsDao">
+
+	<resultMap id="roles_usuarios_capsMap" type="roles_usuarios_caps">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="codigo_usuario" property="codigo_usuario" />
+		<result column="rol" property="rol" />
+		<result column="codigo_centro" property="codigo_centro" />
+	</resultMap>
+
+	<insert id="crear" parameterType="roles_usuarios_caps">
+		insert into public.roles_usuarios_caps (codigo_empresa,codigo_sucursal,
+		codigo_usuario,rol,codigo_centro)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{codigo_usuario},#{rol},#{codigo_centro})
+	</insert>
+
+	<update id="actualizar" parameterType="roles_usuarios_caps">
+		update public.roles_usuarios_caps set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},codigo_usuario = #{codigo_usuario},
+		rol = #{rol},codigo_centro = #{codigo_centro}
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and codigo_usuario = #{codigo_usuario}
+		and rol = #{rol}
+		and codigo_centro = #{codigo_centro}
+	</update>
+
+	<select id="consultar" parameterType="roles_usuarios_caps" resultMap="roles_usuarios_capsMap">
+		select codigo_empresa,codigo_sucursal,
+		codigo_usuario,rol,codigo_centro
+		from public.roles_usuarios_caps where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_usuario = #{codigo_usuario}
+		and rol = #{rol} and codigo_centro = #{codigo_centro}
+	</select>
+
+	<delete id="eliminar" parameterType="roles_usuarios_caps">
+		delete from public.roles_usuarios_caps
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_usuario = #{codigo_usuario}
+		and rol = #{rol} and codigo_centro = #{codigo_centro}
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="roles_usuarios_capsMap">
+		select codigo_empresa,codigo_sucursal,
+		codigo_usuario,rol,codigo_centro
+		from public.roles_usuarios_caps 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="codigo_usuario != null">
+			AND codigo_usuario = #{codigo_usuario}
+			</if>
+			<if test="rol != null">
+			AND rol = #{rol}
+			</if>
+			<if test="codigo_centro != null">
+			AND codigo_centro = #{codigo_centro}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limite_paginado != null">
+		${limite_paginado}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from public.roles_usuarios_caps 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="rol != null">
+			AND rol = #{rol}
+			</if>
+			<if test="codigo_usuario != null">
+			AND codigo_usuario = #{codigo_usuario}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

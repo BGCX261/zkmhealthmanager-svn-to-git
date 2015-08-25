@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.Restriccion_pcdDao">
+
+	
+
+	<resultMap id="restriccion_pcdMap" type="restriccion_pcd">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="codigo_administradora" property="codigo_administradora" />
+		<result column="id_plan" property="id_plan" />
+		<result column="consecutivo" property="consecutivo" />
+		<result column="codigo_pcd" property="codigo_pcd" />
+		<result column="codigo_cups" property="codigo_cups" />
+		<result column="manual" property="manual" />
+		<result column="requiere_aut" property="requiere_aut" />
+	</resultMap>
+
+	<insert id="crear" parameterType="restriccion_pcd">
+		insert into public.restriccion_pcd (codigo_empresa,codigo_sucursal,
+		codigo_administradora,id_plan,consecutivo,
+		codigo_pcd,codigo_cups,manual,
+		requiere_aut)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{codigo_administradora},#{id_plan},#{consecutivo},
+		#{codigo_pcd},#{codigo_cups},#{manual},
+		#{requiere_aut})
+	</insert>
+
+	<update id="actualizar" parameterType="restriccion_pcd">
+		update public.restriccion_pcd set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},codigo_administradora = #{codigo_administradora},
+		id_plan = #{id_plan},consecutivo = #{consecutivo},
+		codigo_pcd = #{codigo_pcd},codigo_cups = #{codigo_cups},
+		manual = #{manual},requiere_aut = #{requiere_aut}
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and codigo_administradora = #{codigo_administradora}
+		and id_plan = #{id_plan}
+		and consecutivo = #{consecutivo}
+	</update>
+
+	<select id="consultar" resultMap="restriccion_pcdMap" parameterType="restriccion_pcd">
+		select codigo_empresa,codigo_sucursal,
+		codigo_administradora,id_plan,consecutivo,codigo_pcd,
+		codigo_cups,manual,requiere_aut
+		from public.restriccion_pcd where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_administradora = #{codigo_administradora}
+		and id_plan = #{id_plan} and consecutivo = #{consecutivo}
+	</select>
+
+	<delete id="eliminar" parameterType="restriccion_pcd">
+		delete from public.restriccion_pcd
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_administradora = #{codigo_administradora}
+		and id_plan = #{id_plan}
+		<if test="consecutivo != null">AND consecutivo = #{consecutivo}</if>
+	</delete>
+
+	<select id="listar" resultMap="restriccion_pcdMap" parameterType="java.util.Map">
+		select codigo_empresa,codigo_sucursal,
+		codigo_administradora,id_plan,consecutivo,codigo_pcd,
+		codigo_cups,manual,requiere_aut
+		from public.restriccion_pcd 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">AND codigo_empresa = #{codigo_empresa}</if>
+			<if test="codigo_sucursal != null">AND codigo_sucursal = #{codigo_sucursal}</if>
+			<if test="id_plan != null">AND id_plan = #{id_plan}</if>
+			<if test="codigo_administradora != null">AND codigo_administradora = #{codigo_administradora}</if>
+			<if test="parameter != null">AND ${parameter} like '${value}'</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

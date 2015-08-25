@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="AgendaCitas" pageWidth="612" pageHeight="792" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="9d9fc782-19fd-4182-ae5f-44cddcc59c26">
+	<property name="ireport.zoom" value="1.4641000000000017"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="codigo_empresa" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="codigo_sucursal" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="empresa" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="id" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="direccion" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="telefono" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="imagen" class="java.io.InputStream">
+		<defaultValueExpression><![CDATA[null]]></defaultValueExpression>
+	</parameter>
+	<parameter name="resolucion" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="fecha_cita" class="java.util.Date">
+		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="nombre_tipo_consulta" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="prestador" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select citas.codigo_empresa,citas.codigo_sucursal,
+codigo_cita,citas.nro_identificacion,codigo_prestador,fecha_cita,
+hora,estado,tipo_consulta,el1.descripcion as motivo_consulta_hc,
+el2.descripcion as estado_cita,pct.apellido1,pct.apellido2,pct.nombre1
+from public.citas
+left join paciente pct on (pct.codigo_empresa = citas.codigo_empresa
+and pct.codigo_sucursal = citas.codigo_sucursal
+and pct.nro_identificacion = citas.nro_identificacion)
+left join elemento el1 on (el1.codigo = citas.tipo_consulta
+and el1.tipo = 'motivo_consulta_hc')
+left join elemento el2 on (el2.codigo = citas.estado
+and el2.tipo = 'estado_cita')]]>
+	</queryString>
+	<field name="codigo_empresa" class="java.lang.String"/>
+	<field name="codigo_sucursal" class="java.lang.String"/>
+	<field name="codigo_cita" class="java.lang.String"/>
+	<field name="nro_identificacion" class="java.lang.String"/>
+	<field name="codigo_prestador" class="java.lang.String"/>
+	<field name="fecha_cita" class="java.sql.Timestamp"/>
+	<field name="hora" class="java.lang.String"/>
+	<field name="estado" class="java.lang.String"/>
+	<field name="tipo_consulta" class="java.lang.String"/>
+	<field name="motivo_consulta_hc" class="java.lang.String"/>
+	<field name="estado_cita" class="java.lang.String"/>
+	<field name="apellido1" class="java.lang.String"/>
+	<field name="apellido2" class="java.lang.String"/>
+	<field name="nombre1" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="66" splitType="Stretch">
+			<image scaleImage="FillFrame" isUsingCache="true" onErrorType="Icon">
+				<reportElement x="0" y="0" width="101" height="62" uuid="d49cf736-19f8-403b-b9a3-097389efe8c8"/>
+				<imageExpression><![CDATA[$P{imagen}]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="101" y="0" width="372" height="20" uuid="588fd9fa-b7ef-4a11-b507-13ea31e28907"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{empresa}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="101" y="20" width="372" height="14" uuid="05e837e7-4123-434d-bbb1-8b234441b17a"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{id}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="101" y="34" width="372" height="14" uuid="10f0ba7b-3996-4219-9b13-886fbbac8444"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Dirección: "+$P{direccion}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="101" y="48" width="372" height="14" uuid="6cee8c3f-9431-4ef1-952e-b4437465dd6c"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Telefono: "+$P{telefono}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="38" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="572" height="15" uuid="1bc15747-e7f3-4e74-b629-5de2eb544f3c"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["AGENDA DE CITAS"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="15" width="40" height="15" uuid="1d8f7730-d67c-4eaf-88f4-d75080e16797"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Fecha: "]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="40" y="15" width="66" height="15" uuid="79c9f5d8-f843-4b35-97ad-a739f7225d14"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{fecha_cita}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="139" y="15" width="53" height="15" uuid="a9043628-a81f-4848-8b52-51e9df99f9b9"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Medico: "]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="192" y="15" width="380" height="15" uuid="5df13641-2265-41e4-95db-198e435176e4"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{prestador}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="70" height="20" uuid="2b1907e8-2a06-4ad3-894e-41d81ee25d3e"/>
+				<box leftPadding="2">
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Estado]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="70" y="0" width="93" height="20" uuid="5f11d1fc-a267-4a76-8a00-b032edb5d869"/>
+				<box leftPadding="2">
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Identificación]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="163" y="0" width="167" height="20" uuid="fda181fb-8ad8-473b-a2bc-56e7efe84be4"/>
+				<box leftPadding="2">
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Paciente]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="330" y="0" width="130" height="20" uuid="2f5293df-311d-4b65-9a78-857c3f7a100f"/>
+				<box leftPadding="2">
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tipo consulta]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="460" y="0" width="67" height="20" uuid="c57a5988-4b05-48bb-a37a-f25a47e22470"/>
+				<box leftPadding="2">
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha cita]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="527" y="0" width="45" height="20" uuid="e288e568-d530-482c-8044-be14e09900e1"/>
+				<box leftPadding="2">
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Hora]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="16" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="0" width="572" height="12" backcolor="#FFFF00" uuid="429903ca-3def-4cce-a7b9-1c75b739cf76">
+					<printWhenExpression><![CDATA[new Boolean($F{estado}.equals("1")?true:false)]]></printWhenExpression>
+				</reportElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="0" y="0" width="572" height="12" backcolor="#04B404" uuid="456de003-d08c-43e6-875d-ea2a93784076">
+					<printWhenExpression><![CDATA[new Boolean($F{estado}.equals("2")?true:false)]]></printWhenExpression>
+				</reportElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="0" y="0" width="572" height="12" backcolor="#FA5858" uuid="e130585c-01bd-498f-a5ca-ba285be576e2">
+					<printWhenExpression><![CDATA[new Boolean($F{estado}.equals("3")?true:false)]]></printWhenExpression>
+				</reportElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="0" y="0" width="572" height="12" backcolor="#FFFF00" uuid="e1709007-4d91-4e70-baf9-af234f93c52c">
+					<printWhenExpression><![CDATA[new Boolean($F{estado}.equals("4")?true:false)]]></printWhenExpression>
+				</reportElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="0" y="0" width="572" height="12" backcolor="#819FF7" uuid="6f4a2f9d-ba6b-4093-bfa9-4d6930c3685a">
+					<printWhenExpression><![CDATA[new Boolean($F{estado}.equals("5")?true:false)]]></printWhenExpression>
+				</reportElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="0" y="0" width="572" height="16" backcolor="#81F7F3" uuid="d029a45a-622e-41f1-9569-532f9772d541">
+					<printWhenExpression><![CDATA[new Boolean($F{estado}.equals("6")?true:false)]]></printWhenExpression>
+				</reportElement>
+			</rectangle>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="70" y="0" width="93" height="16" uuid="762edba3-8001-4874-8fe3-44b79012def7"/>
+				<box leftPadding="2">
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nro_identificacion}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="163" y="0" width="167" height="16" uuid="a8a8c376-fef2-4737-8c82-cf7d34029ac5"/>
+				<box leftPadding="2">
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{apellido1}!=null?$F{apellido1}+" "+$F{apellido2}+" "+$F{nombre1}:"")]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="330" y="0" width="130" height="16" uuid="e62602d4-3fe7-4e1b-866b-1ca095fe10ae"/>
+				<box leftPadding="2">
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{motivo_consulta_hc}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="460" y="0" width="67" height="16" uuid="7eb2b604-d7d7-44d2-8718-10c688cea4e8"/>
+				<box leftPadding="2">
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fecha_cita}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="527" y="0" width="45" height="16" uuid="d426a115-5b17-47ef-bf2e-672539a1fd04"/>
+				<box leftPadding="2">
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{hora}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="70" height="16" uuid="709c362f-bc80-4fee-98f3-3110aa77eefb"/>
+				<box leftPadding="2">
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{estado_cita}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="22" splitType="Stretch">
+			<textField evaluationTime="Report">
+				<reportElement x="527" y="6" width="40" height="16" uuid="6a1b6cad-14ee-4ab8-acc0-79d697e701ee"/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="yyyy-MM-dd hh:mm:ss aa">
+				<reportElement x="0" y="6" width="114" height="16" uuid="d6e1cdc8-d6cb-4173-b76f-73fb1f76a926"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="447" y="6" width="80" height="16" uuid="ea7449b1-e2b6-480b-b58c-1a8040e18117"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="17" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="0" width="572" height="1" uuid="ac320809-15af-4907-9c99-81be86c79e66"/>
+			</line>
+		</band>
+	</summary>
+</jasperReport>

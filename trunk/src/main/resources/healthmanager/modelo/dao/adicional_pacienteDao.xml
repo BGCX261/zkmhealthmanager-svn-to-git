@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Adicional_pacienteDao">
+
+	<resultMap id="adicional_pacienteMap" type="adicional_paciente">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="nro_identificacion" property="nro_identificacion" />
+		<result column="carnet" property="carnet" />
+		<result column="fecha_afiliacion" property="fecha_afiliacion" />
+		<result column="tipo_poblacion" property="tipo_poblacion" />
+		<result column="ficha_sisben" property="ficha_sisben" />
+		<result column="modalidad_subsidio" property="modalidad_subsidio" />
+		<result column="codigo_barrio" property="codigo_barrio" />
+	</resultMap>
+
+	<insert id="crear" parameterType="adicional_paciente">
+		insert into
+		public.adicional_paciente (codigo_empresa,codigo_sucursal,
+		nro_identificacion,carnet,fecha_afiliacion,
+		tipo_poblacion,ficha_sisben,
+		modalidad_subsidio,codigo_barrio)
+
+		values
+		(#{codigo_empresa},#{codigo_sucursal},
+		#{nro_identificacion},#{carnet},#{fecha_afiliacion},
+		#{tipo_poblacion},#{ficha_sisben},
+		#{modalidad_subsidio},#{codigo_barrio})
+	</insert>
+
+	<update id="actualizar" parameterType="adicional_paciente">
+		update
+		public.adicional_paciente set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},nro_identificacion =
+		#{nro_identificacion},
+		carnet = #{carnet},fecha_afiliacion =
+		#{fecha_afiliacion},
+		tipo_poblacion = #{tipo_poblacion},
+		ficha_sisben =
+		#{ficha_sisben},modalidad_subsidio = #{modalidad_subsidio},
+		codigo_barrio = #{codigo_barrio}
+		where codigo_empresa =
+		#{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and
+		nro_identificacion = #{nro_identificacion}
+	</update>
+
+	<select id="consultar" parameterType="adicional_paciente"
+		resultMap="adicional_pacienteMap">
+		select codigo_empresa,codigo_sucursal,
+		nro_identificacion,carnet,fecha_afiliacion,tipo_poblacion,
+		ficha_sisben,modalidad_subsidio,codigo_barrio
+		from
+		public.adicional_paciente where codigo_empresa = #{codigo_empresa}
+		and
+		codigo_sucursal = #{codigo_sucursal} and nro_identificacion =
+		#{nro_identificacion}
+	</select>
+
+	<delete id="eliminar" parameterType="adicional_paciente">
+		delete from
+		public.adicional_paciente
+		where codigo_empresa = #{codigo_empresa}
+		and
+		codigo_sucursal = #{codigo_sucursal} and nro_identificacion =
+		#{nro_identificacion}
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="adicional_pacienteMap">
+		select codigo_empresa,codigo_sucursal,
+		nro_identificacion,carnet,fecha_afiliacion,tipo_poblacion,
+		ficha_sisben,modalidad_subsidio,codigo_barrio
+		from
+		public.adicional_paciente
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+				AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+				AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+				AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limite_paginado != null">
+			${limite_paginado}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist from public.adicional_paciente
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+				AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+				AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+				AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+			${limit}
+		</if>
+	</select>
+
+	
+</mapper>

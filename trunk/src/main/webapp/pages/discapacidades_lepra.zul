@@ -1,0 +1,434 @@
+<?page title="Discapacidades_lepra" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<?component name="gridGradoDiscapacidad" macroURI="/WEB-INF/macros/gridGradoDiscapacidad.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+<window id="formDiscapacidades_lepra" width="100%" height="100%" use="healthmanager.controller.Discapacidades_lepraAction">
+	<style>
+		body ,table{ margin:0; padding:0;
+		} .z-fieldset{ -moz-border-radius:5px; border-radius: 5px;
+		-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+		border: 1px solid silver; }
+		tr.z-row .z-cell{ background-image:none; }
+		tr.z-row td.z-row-hover{ background-image:none; }
+		.GridSinBorde tr.z-row td.z-row-inner, tr.z-row
+			.z-cell,div.z-grid { border: none; overflow: hidden;
+			zoom: 1; border-top: none; border-left: none;
+			border-right: none; border-bottom: none; }
+		</style>
+
+
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="false" closable="false"
+		 mold="3d" height="90%">
+		
+		<separator />
+		
+		<!-- ***************************** -->
+		<!--  Resultado Consulta Maestros  -->
+		<!-- ***************************** -->
+		<grid id="gridResultado" height="100%" mold="paging" 
+		pageSize="20"  vflex="1">
+		<auxhead>
+				<auxheader colspan="5">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+									sclass="combobox" width="150px" />
+							<separator />
+							<textbox id="tbxValue" width="200px"
+									onOK="formDiscapacidades_lepra.buscarDatos();"
+									style="text-transform:uppercase" />
+							<separator />
+							<button mold="trendy"
+									image="/images/Magnifier.gif"
+									onClick="formDiscapacidades_lepra.buscarDatos();"
+									tooltiptext="Consultar" visible="false" />
+							<separator />
+							<button mold="trendy"
+									image="/images/New16.gif"
+									onClick='formDiscapacidades_lepra.accionForm(true,"registrar");'
+									tooltiptext="Nuevo" />
+						</hbox>
+				</auxheader>
+		</auxhead>
+				<columns sizable="true">
+					<column label="Codigo ficha" />
+					<column label="Nro identificacion" />
+					<column label="Apellidos" />
+					<column label="Nombres" />
+					<column label="Acciones" align="center"
+						width="80px" />
+				</columns>
+		<rows id="rowsResultado" width="100%" />
+		</grid>
+		</groupbox>
+		
+		<borderlayout width="100%" height="100%" id="groupboxEditar" visible="true">
+				<north border="none">
+						<toolbar width="100%" align="start">
+								<textbox id="tbxAccion" value="registrar"
+										visible="false" />
+								<toolbarbutton image="/images/Save16.gif"
+										label="Guardar"
+										onClick="formDiscapacidades_lepra.guardarDatos();" id="btGuardar" />
+		 		                  <toolbarbutton image="/images/New16.gif"
+										label="Nuevo"
+										onClick='formDiscapacidades_lepra.accionForm(true,"registrar");'
+										id="btNew" visible="false" />
+								<space />
+		 		                  <toolbarbutton image="/images/trasladar.gif"
+										label="Consultar" onClick='formDiscapacidades_lepra.accionForm(false,tbxAccion.getText());'
+										id="btCancel" visible="false"/>
+								<toolbarbutton image="/images/print_ico.gif"
+										label="Imprimir Discapacidades lepra"
+										onClick="formDiscapacidades_lepra.imprimir();"
+										id="btImprimir" visible="false"/>
+								<space />
+								<label value="Formato impresión: " visible="false"/>
+									<listbox id="lbxFormato" mold="select" width="150px" visible="false"
+										sclass="combobox">
+										<listitem value="pdf" label="PDF"
+												selected="true" />
+										<listitem value="rtf" label="WORD" />
+								</listbox>
+						</toolbar>
+				</north>
+				<center autoscroll="true" border="none" >
+				<div align="center">
+
+<!-- *************************** -->
+<!-- *** Insertar/Actualizar *** -->
+<!-- *************************** -->
+				<groupbox  closable="false"  width="910px" mold="3d">
+					<grid>
+							<auxhead>
+								<auxheader colspan="6" align="center"
+									label="SEGUIMIENTO Y CONTROL DEL PACIENTE POR PERIODO DE 10 AÑOS" />
+							</auxhead>
+							<columns visible="false">
+								<column width="145px" />
+								<column width="170px" />
+								<column width="128px" />
+								<column width="180px" />
+								<column width="120px" />
+								<column />
+							</columns>
+							<rows>
+
+								<!-- fila 1 -->
+								<row>
+								
+									<cell><label value="* " style="color: red" tooltiptext="Campo obligatorio"/><label value="Fecha diligenciamiento:" /></cell>
+									<cell><datebox id="dtbxFecha_diligenciamiento" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="150px" /></cell>
+									
+									<cell><label value="Nro Ingreso:"/></cell>
+									<cell><textbox id="tbxNro_ingreso" width="150px" readonly="true"/></cell>
+									
+									<cell><label value="Código Historia:"/></cell>
+									<cell><textbox id="tbxCodigo_historia" width="167px" readonly="true"/></cell>
+									
+									
+									
+								</row>
+							</rows>
+						</grid>
+
+						<groupbox mold="3d" closable="false"
+							visible="true" id="gbxIdentificacion">
+							<caption label="IDENTIFICACIÓN DEL PACIENTE"
+								style="font-weight:bold" />
+							<!--  <informacionPacientes id="infoPacientes" />-->
+							
+							<grid>
+							
+								<columns visible="false">
+									<column width="140px" />
+									<column width="160px" />
+									<column width="138px" />
+									<column width="180px" />
+									<column width="120px" />
+									<column />
+								</columns>
+								<rows>
+
+									<!-- fila 1 -->
+									<row>
+									
+										<cell><label value="Paciente:" /></cell>
+										<cell><bandbox
+									    		id="tbxNro_identificacion" width="150px" disabled="false" readonly="true"/></cell>
+										
+										<cell colspan="2">
+										<textbox id="tbxNomPaciente"
+											width="270px"
+											readonly="true" />
+										<toolbarbutton
+											id="btnLimpiarPaciente" image="/images/borrar.gif" />
+										</cell>
+										
+										<cell><label value="Tipo Identificación:"/></cell>
+										<cell><textbox id="tbxTipo_id" width="98%" readonly="true"/></cell>
+									
+									</row>
+									
+									<row>
+										<cell><label value="Edad (Años cumplidos):"/></cell>
+										<cell><textbox id="tbxEdad" width="143px" readonly="true"/></cell>
+										
+										<cell><label value="Ocupación:"/></cell>
+										<cell><textbox id="tbxOcupacion" width="163px" readonly="true"/></cell>
+										
+										<cell><label value="Sexo:"/></cell>
+										<cell><textbox id="tbxSexo" width="98%" readonly="true"/></cell>
+									</row>
+									
+									<row>
+										<cell><label value="País:"/></cell>
+										<cell><textbox id="tbxPais" width="143px" readonly="true"/></cell>
+										
+										<cell><label value="Departamento:"/></cell>
+										<cell><textbox id="tbxDpto" width="163px" readonly="true"/></cell>
+										
+										<cell><label value="Municipio:"/></cell>
+										<cell><textbox id="tbxMun" width="98%" readonly="true"/></cell>
+									</row>
+									
+									<row>
+										<cell><label value="Administradora:"/></cell>
+										<cell colspan="3"><textbox id="tbxAdmin" hflex="1" readonly="true"/></cell>
+										
+										
+										<cell><label value="Regimen:"/></cell>
+										<cell><textbox id="tbxTipo_usuario" width="98%" readonly="true"/></cell>
+									</row>
+									
+									<row>
+										<cell><label value="Dirección"/></cell>
+										<cell colspan="3"><textbox id="tbxDireccion" hflex="1" readonly="true"/></cell>
+										
+										
+										<cell><label value="Barrio:"/></cell>
+										<cell><textbox id="tbxBarrio" width="98%" readonly="true"/></cell>
+									</row>
+									
+									<row>
+										<cell><label value="Área:"/></cell>
+										<cell><textbox id="tbxArea_paciente" width="143px" readonly="true"/></cell>
+										
+										<cell><label value="Pertenencia étnica:"/></cell>
+										<cell><textbox id="tbxPertenencia_etnica" width="163px" readonly="true"/></cell>
+										
+										<cell><label value="Grupo poblacional:"/></cell>
+										<cell><textbox id="tbxGrupo_poblacional" width="98%" readonly="true"/></cell>
+									</row>
+								</rows>
+						</grid>
+
+
+						</groupbox>
+						
+						<separator/>
+						
+						<groupbox mold="3d" closable="false"
+							visible="true" id="gbxValoracion">
+							<caption label="VALORACIÓN DE DISCAPACIDADES"
+								style="font-weight:bold" />
+							<grid>
+								<columns visible="false">
+									<column />
+									<column />
+									<column />
+									<column />
+									<column />
+									<column />
+								</columns>
+								
+								<rows>
+									<row>
+										<cell colspan="3" width="50%">
+										
+										   <groupbox closable="false">
+												<caption
+													label="AÑO 1" style="font-size:11px" />
+													
+												<gridGradoDiscapacidad id="gridGradoDiscapacidadMacro1"/>
+										  </groupbox>
+											
+                                        </cell>
+										<cell colspan="3" width="50%">
+											 <groupbox closable="false">
+												<caption
+													label="AÑO 2" style="font-size:11px" />
+													
+												<gridGradoDiscapacidad id="gridGradoDiscapacidadMacro2"/>
+										  </groupbox>
+                                        </cell>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+
+						<separator/>
+						
+						<groupbox mold="3d" closable="false"
+							visible="true" id="gbx2">
+							<grid>
+								<columns visible="false">
+									<column />
+									<column />
+									<column />
+									<column />
+									<column />
+									<column />
+								</columns>
+								
+								<rows>
+									<row>
+										<cell colspan="3" width="50%">
+										
+										   <groupbox closable="false">
+												<caption
+													label="AÑO 3" style="font-size:11px" />
+													
+												<gridGradoDiscapacidad id="gridGradoDiscapacidadMacro3"/>
+										  </groupbox>
+											
+                                        </cell>
+										<cell colspan="3" width="50%">
+											 <groupbox closable="false">
+												<caption
+													label="AÑO 4" style="font-size:11px" />
+													
+												<gridGradoDiscapacidad id="gridGradoDiscapacidadMacro4"/>
+										  </groupbox>
+                                        </cell>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+
+						<separator/>
+						
+						<groupbox mold="3d" closable="false"
+							visible="true" id="gbx3">
+							<grid>
+								<columns visible="false">
+									<column />
+									<column />
+									<column />
+									<column />
+									<column />
+									<column />
+								</columns>
+								
+								<rows>
+									<row>
+										<cell colspan="3" width="50%">
+										
+										   <groupbox closable="false">
+												<caption
+													label="AÑO 5" style="font-size:11px" />
+													
+												<gridGradoDiscapacidad id="gridGradoDiscapacidadMacro5"/>
+										  </groupbox>
+											
+                                        </cell>
+										<cell colspan="3" width="50%">
+											 <groupbox closable="false">
+												<caption
+													label="AÑO 6" style="font-size:11px" />
+													
+												<gridGradoDiscapacidad id="gridGradoDiscapacidadMacro6"/>
+										  </groupbox>
+                                        </cell>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+						
+						<separator/>
+						
+						<groupbox mold="3d" closable="false"
+							visible="true" id="gbx4">
+							<grid>
+								<columns visible="false">
+									<column />
+									<column />
+									<column />
+									<column />
+									<column />
+									<column />
+								</columns>
+								
+								<rows>
+									<row>
+										<cell colspan="3" width="50%">
+										
+										   <groupbox closable="false">
+												<caption
+													label="AÑO 7" style="font-size:11px" />
+													
+												<gridGradoDiscapacidad id="gridGradoDiscapacidadMacro7"/>
+										  </groupbox>
+											
+                                        </cell>
+										<cell colspan="3" width="50%">
+											 <groupbox closable="false">
+												<caption
+													label="AÑO 8" style="font-size:11px" />
+													
+												<gridGradoDiscapacidad id="gridGradoDiscapacidadMacro8"/>
+										  </groupbox>
+                                        </cell>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+						
+						<separator/>
+						
+						<groupbox mold="3d" closable="false"
+							visible="true" id="gbx5">
+							<grid>
+								<columns visible="false">
+									<column />
+									<column />
+									<column />
+									<column />
+									<column />
+									<column />
+								</columns>
+								
+								<rows>
+									<row>
+										<cell colspan="3" width="50%">
+										
+										   <groupbox closable="false">
+												<caption
+													label="AÑO 9" style="font-size:11px" />
+													
+												<gridGradoDiscapacidad id="gridGradoDiscapacidadMacro9"/>
+										  </groupbox>
+											
+                                        </cell>
+										<cell colspan="3" width="50%">
+											 <groupbox closable="false">
+												<caption
+													label="AÑO 10" style="font-size:11px" />
+													
+												<gridGradoDiscapacidad id="gridGradoDiscapacidadMacro10"/>
+										  </groupbox>
+                                        </cell>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+</groupbox>
+	</div>
+	</center>
+	</borderlayout>
+</window>
+</zk>

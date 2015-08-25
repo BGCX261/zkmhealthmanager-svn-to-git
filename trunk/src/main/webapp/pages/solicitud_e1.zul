@@ -1,0 +1,572 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formSolicitud_e1" width="100%" height="97%"
+		border="none" use="healthmanager.controller.Solicitud_e1Action">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+		<groupbox id="groupboxConsulta" visible="true" closable="false"
+			height="98%" mold="3d">
+			<caption label="Consultar"
+				style="color: black;font-weight: bold" />
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" mold="paging" pageSize="20"
+				vflex="1">
+				<auxhead>
+					<auxheader colspan="8">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<separator />
+							<textbox id="tbxValue" width="200px"
+								onOK="formSolicitud_e1.buscarDatos();"
+								style="text-transform:uppercase" />
+							<separator />
+							<toolbarbutton image="/images/Magnifier.gif"
+								onClick="formSolicitud_e1.buscarDatos();"
+								tooltiptext="Consultar Solicitud" label="Consultar Solicitud" />
+							<separator />
+							<toolbarbutton image="/images/New16.gif"
+								onClick='formSolicitud_e1.accionForm(true,"registrar");'
+								tooltiptext="Nuevo Solicitud" label="Nuevo Solicitud" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="" width="30px" />
+					<column label="Fecha" width="100px"/>
+					<column label="Nro Id" width="170px"/>
+					<column label="1er Apellido" />
+					<column label="2do Apellido" />
+					<column label="1er Nombre" />
+					<column label="2do Nombre" />
+					<column label="Acciones" width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<borderlayout width="100%" height="98%" id="groupboxEditar"
+			visible="false">
+			<north border="none">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<toolbarbutton image="/images/Save16.gif"
+						label="Guardar Solicitud"
+						onClick="formSolicitud_e1.guardarDatos();" id="btGuardar" />
+					<toolbarbutton image="/images/New16.gif"
+						label="Nueva Solicitud"
+						onClick='formSolicitud_e1.accionForm(true,"registrar");'
+						id="btNew" />
+					<space />
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Cancelar"
+						onClick='formSolicitud_e1.accionForm(false,tbxAccion.getText());'
+						id="btCancel" />
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center">
+					<space />
+					<intbox
+						constraint="no negative:Este valor no puede ser negativo"
+						visible="false" id="ibxId" hflex="1"
+						style="text-transform:uppercase" />
+					<groupbox closable="false" mold="3d"
+						width="770px">
+						<caption label="SOLICITUD DE TRANSLADO"
+							style="color: black;font-weight: bold">
+							<hbox>
+								<label value="Aseguradora: " />
+								<bandboxRegistros
+									id="tbxCodigo_administradora" widthBandbox="100px"
+									widthListbox="700px" heightListbox="300px"
+									columnas="Codigo#65px|Nit#100px|Nombres|Tipo#100px" />
+								<textbox readonly="true"
+									id="tbxNomAdministradora" width="270px" />
+							</hbox>
+						</caption>
+
+						<hbox>
+							<groupbox mold="3d" closable="false">
+								<caption label="DATOS BDUA" />
+								<grid sclass="GridSinBorde" vflex="1">
+									<columns>
+										<column label="" width="10px" />
+										<column label="" width="140px" />
+										<column label="" width="200px" />
+										<column label="" width="10px" />
+									</columns>
+									<rows>
+										<row>
+											<cell />
+											<cell height="30px">
+												<label value="* "
+													style="color: red" tooltiptext="Campo obligatorio" />
+												<label
+													id="lbTipo_identificacion_bdua"
+													value="Tipo identificación: " />
+											</cell>
+											<cell>
+												<listbox
+													id="lbxTipo_identificacion_bdua" mold="select"
+													sclass="combobox" hflex="1" />
+											</cell>
+											<cell />
+										</row>
+										<row>
+											<cell />
+											<cell height="30px">
+												<label value="* "
+													style="color: red" tooltiptext="Campo obligatorio" />
+												<label
+													id="lbNro_identificacion_bdua"
+													value="Nro identificación: " />
+											</cell>
+											<cell>
+												<textbox
+													id="tbxNro_identificacion_bdua" hflex="1"
+													style="text-transform:uppercase" />
+											</cell>
+											<cell />
+										</row>
+										<row>
+											<cell />
+											<cell height="30px">
+												<label value="* "
+													style="color: red" tooltiptext="Campo obligatorio" />
+												<label
+													id="lbApellido1_bdua" value="1er Apellido: " />
+											</cell>
+											<cell>
+												<textbox
+													id="tbxApellido1_bdua" hflex="1"
+													style="text-transform:uppercase" />
+											</cell>
+											<cell />
+										</row>
+										<row>
+											<cell />
+											<cell height="30px">
+												<label value="* "
+													style="color: red" tooltiptext="Campo obligatorio" />
+												<label
+													id="lbApellido2_bdua" value="2do Apellido: " />
+											</cell>
+											<cell>
+												<textbox
+													id="tbxApellido2_bdua" hflex="1"
+													style="text-transform:uppercase" />
+											</cell>
+											<cell />
+										</row>
+										<row>
+											<cell />
+											<cell height="30px">
+												<label value="* "
+													style="color: red" tooltiptext="Campo obligatorio" />
+												<label
+													id="lbNombre1_bdua" value="1er Nombre: " />
+											</cell>
+											<cell>
+												<textbox
+													id="tbxNombre1_bdua" hflex="1"
+													style="text-transform:uppercase" />
+											</cell>
+											<cell />
+										</row>
+										<row>
+											<cell />
+											<cell height="30px">
+												<label value="* "
+													style="color: red" tooltiptext="Campo obligatorio" />
+												<label
+													id="lbNombre2_bdua" value="2do Nombre: " />
+											</cell>
+											<cell>
+												<textbox
+													id="tbxNombre2_bdua" hflex="1"
+													style="text-transform:uppercase" />
+											</cell>
+											<cell />
+										</row>
+										<row>
+											<cell />
+											<cell height="30px">
+												<label value="* "
+													style="color: red" tooltiptext="Campo obligatorio" />
+												<label
+													id="lbFecha_nacimiento_bdua" value="Fecha nacimiento: " />
+											</cell>
+											<cell>
+												<datebox
+													id="dtbxFecha_nacimiento_bdua" format="yyyy-MM-dd"
+													hflex="1" />
+											</cell>
+											<cell />
+										</row>
+										<row>
+											<cell />
+											<cell height="30px">
+												<label value="* "
+													style="color: red" tooltiptext="Campo obligatorio" />
+												<label id="lbSexo_bdua"
+													value="Sexo: " />
+											</cell>
+											<cell>
+												<listbox
+													id="lbxSexo_bdua" mold="select" sclass="combobox"
+													name="sexo" hflex="1" />
+
+											</cell>
+											<cell />
+										</row>
+									</rows>
+								</grid>
+							</groupbox>
+
+							<groupbox mold="3d" closable="false">
+								<caption label="DATOS ACTUALIZACION" />
+								<grid sclass="GridSinBorde" vflex="1">
+									<columns>
+										<column label="" width="10px" />
+										<column label="" width="140px" />
+										<column label="" width="200px" />
+										<column label="" width="10px" />
+									</columns>
+									<rows>
+										<row>
+											<cell />
+											<cell height="30px">
+												<label value="* "
+													style="color: red" tooltiptext="Campo obligatorio" />
+												<label
+													id="lbTipo_identificacion" value="Tipo identificación: " />
+											</cell>
+											<cell>
+												<listbox
+													id="lbxTipo_identificacion" mold="select" sclass="combobox"
+													hflex="1" />
+											</cell>
+											<cell />
+										</row>
+										<row>
+											<cell />
+											<cell height="30px">
+												<label value="* "
+													style="color: red" tooltiptext="Campo obligatorio" />
+												<label
+													id="lbNro_identificacion" value="Nro identificación: " />
+											</cell>
+											<cell>
+												<textbox
+													id="tbxNro_identificacion" hflex="1"
+													style="text-transform:uppercase" />
+											</cell>
+											<cell />
+										</row>
+										<row>
+											<cell />
+											<cell height="30px">
+												<label value="* "
+													style="color: red" tooltiptext="Campo obligatorio" />
+												<label id="lbApellido1"
+													value="1er Apellido: " />
+											</cell>
+											<cell>
+												<textbox
+													id="tbxApellido1" hflex="1"
+													style="text-transform:uppercase" />
+											</cell>
+											<cell />
+										</row>
+										<row>
+											<cell />
+											<cell height="30px">
+												<label value="* "
+													style="color: red" tooltiptext="Campo obligatorio" />
+												<label id="lbApellido2"
+													value="2do Apellido: " />
+											</cell>
+											<cell>
+												<textbox
+													id="tbxApellido2" hflex="1"
+													style="text-transform:uppercase" />
+											</cell>
+											<cell />
+										</row>
+										<row>
+											<cell />
+											<cell height="30px">
+												<label value="* "
+													style="color: red" tooltiptext="Campo obligatorio" />
+												<label id="lbNombre1"
+													value="1er Nombre: " />
+											</cell>
+											<cell>
+												<textbox id="tbxNombre1"
+													hflex="1" style="text-transform:uppercase" />
+											</cell>
+											<cell />
+										</row>
+										<row>
+											<cell />
+											<cell height="30px">
+												<label value="* "
+													style="color: red" tooltiptext="Campo obligatorio" />
+												<label id="lbNombre2"
+													value="2do Nombre: " />
+											</cell>
+											<cell>
+												<textbox id="tbxNombre2"
+													hflex="1" style="text-transform:uppercase" />
+											</cell>
+											<cell />
+										</row>
+										<row>
+											<cell />
+											<cell height="30px">
+												<label value="* "
+													style="color: red" tooltiptext="Campo obligatorio" />
+												<label
+													id="lbFecha_nacimiento" value="Fecha nacimiento:  " />
+											</cell>
+											<cell>
+												<datebox
+													id="dtbxFecha_nacimiento" format="yyyy-MM-dd" hflex="1" />
+											</cell>
+											<cell />
+										</row>
+										<row>
+											<cell />
+											<cell height="30px">
+												<label value="* "
+													style="color: red" tooltiptext="Campo obligatorio" />
+												<label id="lbSexo"
+													value="Sexo: " />
+											</cell>
+											<cell>
+												<listbox id="lbxSexo"
+													mold="select" sclass="combobox" hflex="1" name="sexo" />
+											</cell>
+											<cell />
+										</row>
+									</rows>
+								</grid>
+							</groupbox>
+						</hbox>
+						<space height="3px" />
+						<hbox>
+							<groupbox mold="3d" closable="false"
+								height="264px">
+								<caption label="DATOS AFILIACIÓN" />
+								<grid sclass="GridSinBorde" vflex="1">
+									<columns>
+										<column label="" width="10px" />
+										<column label="" width="140px" />
+										<column label="" width="200px" />
+										<column label="" width="10px" />
+									</columns>
+									<rows>
+										<row>
+											<cell></cell>
+											<cell height="30px">
+												<label value="* "
+													style="color: red" tooltiptext="Campo obligatorio" />
+												<label
+													id="lbCodigo_dpto" value="Depto: " />
+											</cell>
+											<cell>
+												<listbox
+													id="lbxCodigo_dpto" mold="select" sclass="combobox"
+													hflex="1"
+													onSelect="formSolicitud_e1.listarMunicipios(lbxCodigo_municipio,self);" />
+											</cell>
+											<cell></cell>
+										</row>
+
+										<!-- fila 18 -->
+										<row>
+											<cell></cell>
+											<cell height="30px">
+												<label value="* "
+													style="color: red" tooltiptext="Campo obligatorio" />
+												<label
+													id="lbCodigo_municipio" value="Municipio: " />
+											</cell>
+											<cell>
+												<listbox
+													id="lbxCodigo_municipio" mold="select" sclass="combobox"
+													hflex="1" />
+											</cell>
+											<cell></cell>
+										</row>
+
+										<!-- fila 19 -->
+										<row>
+											<cell></cell>
+											<cell height="30px">
+												<label value="* "
+													style="color: red" tooltiptext="Campo obligatorio" />
+												<label id="lbZona"
+													value="Zona: " />
+											</cell>
+											<cell>
+												<listbox id="lbxZona"
+													mold="select" sclass="combobox" hflex="1" name="zona" />
+											</cell>
+											<cell></cell>
+										</row>
+
+										<!-- fila 20 -->
+										<row>
+											<cell></cell>
+											<cell height="30px">
+												<label value="* "
+													style="color: red" tooltiptext="Campo obligatorio" />
+												<label
+													id="lbFecha_afiliacion" value="Fech afiliación: " />
+											</cell>
+											<cell>
+												<datebox
+													id="dtbxFecha_afiliacion" format="yyyy-MM-dd" hflex="1" />
+											</cell>
+											<cell></cell>
+										</row>
+
+										<!-- fila 22 -->
+										<row>
+											<cell></cell>
+											<cell height="30px">
+												<label value="* "
+													style="color: red" tooltiptext="Campo obligatorio" />
+												<label
+													id="lbNro_identificacion_aportante"
+													value="Nro 	Id Aportante: " />
+												<toolbarbutton
+													id="tbxAportanteBorrar" image="/images/borrar.gif" visible="false"/>
+											</cell>
+											<cell>
+												<bandboxRegistros
+													id="tbxNro_identificacion_aportante" widthBandbox="190px"
+													widthListbox="800px" heightListbox="300px"
+													columnas="Tipo identificación#120px|Identificación#120px|Nombre" />
+											</cell>
+											<cell></cell>
+										</row>
+										<row>
+											<cell></cell>
+											<cell height="30px">
+											<space width="7px"/>
+												<label
+													value="Nombre Aportante: " />
+											</cell>
+											<cell>
+												<textbox
+													id="tbxNombreAportante" hflex="1"
+													style="text-transform:uppercase" />
+											</cell>
+											<cell></cell>
+										</row>
+									</rows>
+								</grid>
+							</groupbox>
+							<groupbox mold="3d" closable="false"
+								height="264px">
+								<caption label="DATOS DEL COTIZANTE" />
+								<grid sclass="GridSinBorde">
+									<columns>
+										<column label="" width="10px" />
+										<column label="" width="140px" />
+										<column label="" width="200px" />
+										<column label="" width="10px" />
+									</columns>
+									<rows>
+
+										<!-- fila 1 -->
+										<row>
+											<cell></cell>
+											<cell height="30px">
+												<label
+													id="lbTipo_id_cotizante" value="Tipo identificación: " />
+											</cell>
+											<cell>
+												<listbox
+													id="lbxTipo_id_cotizante" name="Tipo_id_cotizante"
+													mold="select" hflex="1" sclass="combobox" disabled="true" />
+											</cell>
+											<cell></cell>
+										</row>
+
+										<!-- fila 2 -->
+										<row>
+											<cell></cell>
+											<cell height="30px">
+												<label
+													id="lbNro_id_cotizante" value="Nro identificación: " />
+												<toolbarbutton
+													id="btnlimpiarCotizante" image="/images/borrar.gif"
+													visible="false" />
+											</cell>
+											<cell>
+												<bandboxRegistros
+													id="tbxNro_id_cotizante" widthBandbox="190px"
+													widthListbox="700px" heightListbox="200px"
+													columnas="Tipo identificación#120px|Identificación#120px|Nombre" />
+											</cell>
+											<cell></cell>
+										</row>
+
+										<row>
+											<cell></cell>
+											<cell height="30px">
+												<label
+													value="Nombres: " />
+											</cell>
+											<cell>
+												<textbox
+													id="tbxNombreCotizante" hflex="1" disabled="true" />
+											</cell>
+											<cell></cell>
+										</row>
+
+										<row>
+											<cell></cell>
+											<cell height="30px">
+												<label
+													value="Apellidos: " />
+											</cell>
+											<cell>
+												<textbox
+													id="tbxApellidosCotizante" hflex="1" disabled="true" />
+											</cell>
+											<cell></cell>
+										</row>
+
+									</rows>
+								</grid>
+							</groupbox>
+						</hbox>
+					</groupbox>
+					<space height="100px" />
+				</div>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.pacientes_actividad_odontologoModel">
+	<select id="select" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+		<if test="modo_orden == 1 or modo_orden == 2">
+			SELECT codigo_medico, cantidad, tipo, fecha, medico,
+			creacion_date, codigo_empresa, codigo_sucursal, tipo_actividad,
+			nro_id_paciente FROM
+			view_actividades_paciente_atendidos AS act
+		</if>
+
+		<if test="modo_orden == 3">
+			(SELECT DISTINCT ON (act.codigo_medico, fecha,
+			act.nro_id_paciente,
+			act.tipo_actividad) act.codigo_medico,
+			(SELECT
+			"count"(*) FROM
+			activ_pacient_atendidos AS actaux
+			WHERE
+			actaux.codigo_empresa = act.codigo_empresa AND
+			actaux.codigo_sucursal
+			= act.codigo_sucursal
+			AND actaux.codigo_medico = act.codigo_medico AND
+			actaux.tipo_actividad =
+			act.tipo_actividad) AS
+			cantidadActividadRealizada
+			, 'ACT' AS
+			tipo,(SELECT "count"(DISTINCT
+			actaux.nro_id_paciente) FROM
+			activ_pacient_atendidos AS actaux
+			WHERE
+			actaux.codigo_empresa = act.codigo_empresa AND
+			actaux.codigo_sucursal
+			= act.codigo_sucursal
+			AND actaux.codigo_medico = act.codigo_medico) AS
+			cantidadPacientes
+			,to_char(act.creacion_date, 'yyyy-MM') fecha,
+			(u.apellidos || ' ' ||
+			u.nombres) As medico, act.creacion_date,
+			act.codigo_empresa,
+			act.codigo_sucursal,
+			act.tipo_actividad,
+			act.nro_id_paciente
+			FROM
+			public.activ_pacient_atendidos AS act
+			INNER
+			JOIN public.usuarios AS u
+			ON (u.codigo_empresa = act.codigo_empresa
+			AND u.codigo_sucursal =
+			act.codigo_sucursal AND u.codigo =
+			act.codigo_medico)
+		</if>
+
+		<!-- where -->
+		where act.codigo_empresa =
+		#{codigo_empresa}
+		and act.codigo_sucursal =
+		#{codigo_sucursal}
+
+		<!-- despues del where -->
+		<foreach open="and act.codigo_medico IN (" separator=","
+			close=")" collection="medicos" item="m">
+			#{m.value.codigo}
+		</foreach>
+		<if test="modo_orden == 1 or modo_orden == 2">
+			<foreach open="and act.fecha IN (" separator="," close=")"
+				item="mes" collection="meses">
+				#{mes}
+		</foreach>
+		</if>
+		<if test="modo_orden == 3">
+			<foreach open="and to_char(act.creacion_date, 'yyyy-MM') IN ("
+				separator="," close=")" item="mes" collection="meses">
+				#{mes}
+		</foreach>
+		</if>
+
+		<!-- order by -->
+		<if test="modo_orden == 1">
+			ORDER BY tipo ASC, fecha ASC
+		</if>
+		<if test="modo_orden == 2">
+			ORDER BY codigo_medico, tipo DESC
+		</if>
+		<if test="modo_orden == 3">
+			ORDER BY act.codigo_medico, fecha ASC,
+			act.nro_id_paciente,
+			act.tipo_actividad)
+		</if>
+	</select>
+</mapper>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Pexamenes_paraclinicosDao">
+
+	<!--<typeAlias alias="pexamenes_paraclinicos" type="healthmanager.modelo.bean.Pexamenes_paraclinicos" />-->
+
+	<!--<mapper resource="healthmanager/modelo/dao/xml/pexamenes_paraclinicosSQL.xml" />-->
+
+	<resultMap id="pexamenes_paraclinicosMap" type="pexamenes_paraclinicos">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="codigo" property="codigo" />
+		<result column="nombre" property="nombre" />
+		<result column="descripcion" property="descripcion" />
+		<result column="tipo_examen" property="tipo_examen" />
+		<result column="normal_anormal" property="normal_anormal" />
+	</resultMap>
+
+	<insert id="crear" parameterType="pexamenes_paraclinicos">
+		insert into public.pexamenes_paraclinicos (codigo_empresa,codigo_sucursal,
+		codigo,nombre,descripcion,tipo_examen,normal_anormal)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{codigo},#{nombre},#{descripcion},#{tipo_examen},#{normal_anormal})
+	</insert>
+
+	<update id="actualizar" parameterType="pexamenes_paraclinicos">
+		update public.pexamenes_paraclinicos set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},codigo = #{codigo},
+		nombre = #{nombre},descripcion = #{descripcion}, tipo_examen = #{tipo_examen},
+		normal_anormal = #{normal_anormal} 
+		where codigo_empresa = #{codigo_empresa} 
+		and codigo_sucursal = #{codigo_sucursal} 
+		and codigo = #{codigo} 
+	</update>
+
+	<select id="consultar" parameterType="pexamenes_paraclinicos" resultMap="pexamenes_paraclinicosMap">
+		select codigo_empresa,codigo_sucursal,
+		codigo,nombre,descripcion,tipo_examen,normal_anormal  
+		from public.pexamenes_paraclinicos where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo = #{codigo}
+	</select>
+
+	<delete id="eliminar" parameterType="pexamenes_paraclinicos">
+		delete from public.pexamenes_paraclinicos
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo = #{codigo}
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="pexamenes_paraclinicosMap">
+		select codigo_empresa,codigo_sucursal,
+		codigo,nombre,descripcion,tipo_examen,normal_anormal  
+		from public.pexamenes_paraclinicos 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="tipo_examen != null">
+			AND tipo_examen = #{tipo_examen} 
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+			<if test="paramTodo != null">AND (lower(codigo) like '${value}' or lower(nombre) like '${value}')</if>
+		</trim>
+		<if test="limite_paginado != null">
+			${limite_paginado}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from public.pexamenes_paraclinicos 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+			
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

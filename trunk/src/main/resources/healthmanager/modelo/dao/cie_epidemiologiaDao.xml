@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Cie_epidemiologiaDao">
+
+	<resultMap id="cie_epidemiologiaMap" type="cie_epidemiologia">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="codigo_ficha" property="codigo_ficha" />
+		<result column="codigo_cie" property="codigo_cie" />
+		<result column="codigo_empresa1" property="ficha_epidemiologia.codigo_empresa"  />
+		<result column="codigo_sucursal1" property="ficha_epidemiologia.codigo_sucursal"  />
+		<result column="codigo_ficha1" property="ficha_epidemiologia.codigo"  />
+		<result column="titulo" property="ficha_epidemiologia.titulo"  />
+		<result column="descripcion" property="ficha_epidemiologia.descripcion"  />
+		<result column="url_pagina" property="ficha_epidemiologia.url_pagina"  />
+		
+	</resultMap>
+
+	<insert id="crear" parameterType="cie_epidemiologia">
+		insert into public.cie_epidemiologia (codigo_empresa,codigo_sucursal,
+		codigo_ficha,codigo_cie)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{codigo_ficha},#{codigo_cie})
+	</insert>
+
+	<update id="actualizar" parameterType="cie_epidemiologia">
+		update public.cie_epidemiologia set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},codigo_ficha = #{codigo_ficha},
+		codigo_cie = #{codigo_cie}
+		where 		codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and codigo_ficha = #{codigo_ficha}
+		and codigo_cie = #{codigo_cie}
+	</update>
+
+	<select id="consultar" parameterType="cie_epidemiologia" resultMap="cie_epidemiologiaMap">
+		select 
+			ce.codigo_empresa,
+			ce.codigo_sucursal,
+			ce.codigo_ficha,
+			ce.codigo_cie,
+			fe.codigo_empresa as codigo_empresa1,
+			fe.codigo_sucursal as codigo_sucursal1,
+			fe.codigo as codigo_ficha1,
+			fe.descripcion,
+			fe.titulo,
+			fe.url_pagina     
+		from public.cie_epidemiologia ce 
+		left join public.ficha_epidemiologia fe 
+		on (ce.codigo_empresa = fe.codigo_empresa and 
+		ce.codigo_sucursal = fe.codigo_sucursal and 
+		ce.codigo_ficha = fe.codigo)
+		where ce.codigo_empresa = #{codigo_empresa}
+		and ce.codigo_sucursal = #{codigo_sucursal}
+		and ce.codigo_cie = #{codigo_cie} 
+		<if test="codigo_ficha != null">
+			and ce.codigo_ficha = #{codigo_ficha}
+		</if>
+	</select>
+
+	<delete id="eliminar" parameterType="cie_epidemiologia">
+		delete from public.cie_epidemiologia
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_ficha = #{codigo_ficha}
+		and codigo_cie = #{codigo_cie}
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="cie_epidemiologiaMap">
+		select 
+			ce.codigo_empresa,
+			ce.codigo_sucursal,
+			ce.codigo_ficha,
+			ce.codigo_cie,
+			fe.codigo_empresa as codigo_empresa1,
+			fe.codigo_sucursal as codigo_sucursal1,
+			fe.codigo as codigo_ficha1,
+			fe.descripcion,
+			fe.titulo,
+			fe.url_pagina     
+		from public.cie_epidemiologia ce 
+		left join public.ficha_epidemiologia fe 
+		on (ce.codigo_empresa = fe.codigo_empresa and 
+		ce.codigo_sucursal = fe.codigo_sucursal and 
+		ce.codigo_ficha = fe.codigo)
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND ce.codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND ce.codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limite_paginado != null">
+			${limite_paginado}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from public.cie_epidemiologia 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

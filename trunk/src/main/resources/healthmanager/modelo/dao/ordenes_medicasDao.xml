@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Ordenes_medicasDao">
+
+	<resultMap id="ordenes_medicasMap" type="ordenes_medicas">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="codigo_orden" property="codigo_orden" />
+		<result column="nro_ingreso" property="nro_ingreso" />
+		<result column="via_ingreso" property="via_ingreso" />
+		<result column="nro_documento" property="nro_documento" />
+		<result column="codigo_medico" property="codigo_medico" />
+		<result column="fecha_orden" property="fecha_orden" />
+		<result column="observaciones_medico" property="observaciones_medico" />
+		<result column="codigo_orden_servicio" property="codigo_orden_servicio" />
+		<result column="codigo_receta" property="codigo_receta" />
+		<result column="observaciones" property="observaciones" />
+		<result column="codigo_enfermera" property="codigo_enfermera" />
+		<result column="estado" property="estado" />
+		<result column="tipo" property="tipo" />
+	</resultMap>
+
+	<insert id="crear" parameterType="ordenes_medicas">
+		insert into public.ordenes_medicas (codigo_empresa,codigo_sucursal,
+		codigo_orden,nro_ingreso,via_ingreso,
+		nro_documento,codigo_medico,fecha_orden,
+		observaciones_medico,codigo_orden_servicio,codigo_receta,
+		observaciones,codigo_enfermera,estado,tipo)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{codigo_orden},#{nro_ingreso},#{via_ingreso},
+		#{nro_documento},#{codigo_medico},#{fecha_orden},
+		#{observaciones_medico},#{codigo_orden_servicio},#{codigo_receta},
+		#{observaciones},#{codigo_enfermera},#{estado},#{tipo})
+	</insert>
+
+	<update id="actualizar" parameterType="ordenes_medicas">
+		update public.ordenes_medicas set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},codigo_orden = #{codigo_orden},
+		nro_ingreso = #{nro_ingreso},via_ingreso = #{via_ingreso},
+		nro_documento = #{nro_documento},codigo_medico = #{codigo_medico},
+		fecha_orden = #{fecha_orden},observaciones_medico = #{observaciones_medico},
+		codigo_orden_servicio = #{codigo_orden_servicio},codigo_receta = #{codigo_receta},
+		observaciones = #{observaciones},codigo_enfermera = #{codigo_enfermera},
+		estado = #{estado}, tipo = #{tipo}
+		where 		codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and codigo_orden = #{codigo_orden}
+	</update>
+
+	<select id="consultar" parameterType="ordenes_medicas" resultMap="ordenes_medicasMap">
+		select codigo_empresa,codigo_sucursal,
+		codigo_orden,nro_ingreso,via_ingreso,nro_documento,
+		codigo_medico,fecha_orden,observaciones_medico,codigo_orden_servicio,
+		codigo_receta,observaciones,codigo_enfermera,estado,tipo
+		from public.ordenes_medicas where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_orden = #{codigo_orden}
+	</select>
+
+	<delete id="eliminar" parameterType="ordenes_medicas">
+		delete from public.ordenes_medicas
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_orden = #{codigo_orden}
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="ordenes_medicasMap">
+		select om.codigo_empresa,om.codigo_sucursal,
+		om.codigo_orden,om.nro_ingreso,om.via_ingreso,om.nro_documento,
+		om.codigo_medico,om.fecha_orden,om.observaciones_medico,om.codigo_orden_servicio,
+		om.codigo_receta,om.observaciones,om.codigo_enfermera,om.estado,om.tipo
+		from public.ordenes_medicas om
+		left join admision ad on 
+		(om.codigo_empresa = ad.codigo_empresa and 
+		 om.codigo_sucursal = ad.codigo_sucursal and 
+		 om.nro_ingreso = ad.nro_ingreso and 
+		 om.nro_documento = ad.nro_identificacion)
+		left join paciente pa on 
+		(om.codigo_empresa = pa.codigo_empresa and 
+		 om.codigo_sucursal = pa.codigo_sucursal and 
+		 om.nro_documento = pa.nro_identificacion)
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+				AND om.codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+				AND om.codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="nro_ingreso != null">
+				AND om.nro_ingreso = #{nro_ingreso}
+			</if>
+			<if test="nro_documento != null">
+				AND om.nro_documento = #{nro_documento}
+			</if>
+			<if test="tipo != null">
+				AND om.tipo = #{tipo}
+			</if>
+			<if test="fecha_orden != null">
+				<![CDATA[
+					AND cast (om.fecha_orden as DATE) = #{fecha_orden} 
+				]]>
+			</if>
+			
+			<if test="codigo_centro != null">
+				AND ad.codigo_centro = #{codigo_centro} 
+			</if>
+			
+			<if test="tipos_ordenes != null">
+				AND om.tipo IN 
+				<foreach collection="tipos_ordenes" item="i" open="("
+					separator="," close=")">
+					#{i}
+				</foreach>
+			</if>
+			
+			<if test="parametro_todo != null">
+			AND (pa.nro_identificacion like '%${parametro_todo}%' OR 
+				(pa.nombre1||' '||pa.nombre2) like '%${parametro_todo}%' 
+				or (pa.apellido1||' '||pa.apellido2) like '%${parametro_todo}%')
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from public.ordenes_medicas 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

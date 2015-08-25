@@ -1,0 +1,534 @@
+<?page title="Administradora" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formAdministradora" width="100%" height="100%"
+		use="healthmanager.controller.AdministradoraAction">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="true" closable="false"
+			mold="3d" height="100%">
+			<caption label="Consultar"
+				style="color: blue;font-weight: bold" />
+
+			<separator />
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" height="100%" mold="paging"
+				pageSize="20" vflex="1">
+				<auxhead>
+					<auxheader colspan="4">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<separator />
+							<textbox id="tbxValue" width="200px"
+								onOK="formAdministradora.buscarDatos();"
+								style="text-transform:uppercase" />
+							<separator />
+							<button mold="trendy"
+								image="/images/Magnifier.gif"
+								onClick="formAdministradora.buscarDatos();"
+								tooltiptext="Consultar Administradora" />
+							<separator />
+							<button mold="trendy"
+								image="/images/New16.gif"
+								onClick='formAdministradora.accionForm(true,"registrar");'
+								tooltiptext="Nuevo Administradora" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Codigo" width="20%" />
+					<column label="Nit" width="20%" />
+					<column label="Nombre" />
+					<column label="Acciones" align="center"
+						width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<borderlayout width="100%" height="95%" id="groupboxEditar"
+			visible="false">
+			<north border="none">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<toolbarbutton image="/images/Save16.gif"
+						label="Guardar Administradora"
+						onClick="formAdministradora.guardarDatos();" id="btGuardar" />
+					<toolbarbutton image="/images/New16.gif"
+						label="Nueva"
+						onClick='formAdministradora.accionForm(true,"registrar");'
+						id="btNew" />
+					<space />
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Cancelar" onClick='formAdministradora.cancelar()'
+						id="btCancel" />
+					<toolbarbutton image="/images/print_ico.gif"
+						label="Imprimir Administradora"
+						onClick="formAdministradora.imprimir();" id="btImprimir"
+						visible="false" />
+					<space />
+					<label value="Formato impresión: " visible="false" />
+					<listbox id="lbxFormato" mold="select" width="150px"
+						visible="false" sclass="combobox">
+						<listitem value="pdf" label="PDF"
+							selected="true" />
+						<listitem value="rtf" label="WORD" />
+					</listbox>
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center">
+					<space />
+					<!-- *************************** -->
+					<!-- *** Insertar/Actualizar *** -->
+					<!-- *************************** -->
+					<groupbox closable="false" width="690px"
+						mold="3d">
+						<caption label="ADMINISTRADORA"
+							style="color: black;font-weight: bold" />
+						<grid sclass="GridSinBorde" hflex="1"
+							height="80%">
+							<columns>
+								<column label="" width="20px" />
+								<column label="" width="130px"
+									align="left" />
+								<column label="" width="182px"
+									align="left" />
+								<column label="" width="130px"
+									align="left" />
+								<column label="" width="182px"
+									align="left" />
+								<column label="" width="20px"
+									align="left" />
+							</columns>
+							<rows>
+
+								<!-- fila 1 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbCodigo"
+											value="Codigo: " />
+									</cell>
+									<cell>
+										<textbox id="tbxCodigo"
+											width="170px" style="text-transform:uppercase"
+											maxlength="12" />
+									</cell>
+
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbNit" value="Nit: " />
+									</cell>
+									<cell>
+										<textbox id="tbxNit"
+											width="170px" style="text-transform:uppercase"
+											maxlength="20" />
+									</cell>
+									<cell colspan="2" />
+								</row>
+
+								<!-- fila 3 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbNombre"
+											value="Nombre: " />
+									</cell>
+									<cell colspan="3">
+										<textbox id="tbxNombre"
+											width="482px" style="text-transform:uppercase"
+											maxlength="80" />
+									</cell>
+									<cell colspan="2" />
+								</row>
+
+								<!-- fila 4 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<space width="8px" />
+										<label id="lbRepresentante"
+											value="Representante: " />
+									</cell>
+									<cell colspan="3">
+										<textbox id="tbxRepresentante"
+											width="482px" style="text-transform:uppercase"
+											maxlength="60" />
+									</cell>
+									<cell colspan="2" />
+								</row>
+
+								<!-- fila 5 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbCodigo_dpto"
+											value="Departamento: " />
+									</cell>
+									<cell>
+										<listbox id="lbxCodigo_dpto"
+											name="codigo_dpto" mold="select" width="175px"
+											sclass="combobox"
+											onSelect="com.framework.util.Utilidades.listarMunicipios(lbxCodigo_municipio,lbxCodigo_dpto, formAdministradora.getServiceLocator());" />
+									</cell>
+
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbCodigo_municipio"
+											value="Municipio: " />
+									</cell>
+									<cell>
+										<listbox
+											id="lbxCodigo_municipio" name="codigo_municipio"
+											mold="select" width="175px" sclass="combobox" />
+									</cell>
+									<cell colspan="2" />
+								</row>
+
+								<!-- fila 7 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<space width="8px" />
+										<label id="lbDireccion"
+											value="Direccion: " />
+									</cell>
+									<cell colspan="3">
+										<textbox id="tbxDireccion"
+											width="482px" style="text-transform:uppercase" />
+									</cell>
+									<cell colspan="2" />
+								</row>
+
+								<!-- fila 8 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<space width="8px" />
+										<label id="lbTelefono"
+											value="Telefono: " />
+									</cell>
+									<cell>
+										<textbox id="tbxTelefono"
+											width="170px" style="text-transform:uppercase"
+											maxlength="30" />
+									</cell>
+
+									<cell height="30px">
+										<space width="8px" />
+										<label id="lbTipo"
+											value="Tipo: " />
+									</cell>
+									<cell>
+										<listbox id="lbxTipo"
+											name="tipo" mold="select" width="175px" sclass="combobox" />
+									</cell>
+									<cell colspan="2" />
+								</row>
+
+								<!-- fila 10 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<space width="8px" />
+										<label id="lbCuenta_cobrar"
+											value="Cuenta cobrar subsidiado: " />
+									</cell>
+									<cell>
+										<bandboxRegistros
+											id="tbxCuenta_cobrar" widthBandbox="170px"
+											widthListbox="800px" heightListbox="300px"
+											columnas="Codigo#65px|Nombre|Sub Cta#65px|Tipo Cuenta#100px|Grupo Cuenta#100px|Oculto#65px|Inact#65px|MT#65px" />
+									</cell>
+									<cell colspan="3">
+										<textbox id="tbxNomCuentaCobrar"
+											width="277px" style="text-transform:uppercase"
+											readonly="true" />
+										<space width="2px" />
+										<toolbarbutton
+											id="btnLimpiarCuentaCobrar" image="/images/borrar.gif" />
+									</cell>
+									<cell></cell>
+								</row>
+								
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<space width="8px" />
+										<label id="lbCuenta_cobrar2"
+											value="Cuenta cobrar contributivo: " />
+									</cell>
+									<cell>
+										<bandboxRegistros
+											id="tbxCuenta_cobrar2" widthBandbox="170px"
+											widthListbox="800px" heightListbox="300px"
+											columnas="Codigo#65px|Nombre|Sub Cta#65px|Tipo Cuenta#100px|Grupo Cuenta#100px|Oculto#65px|Inact#65px|MT#65px" />
+									</cell>
+									<cell colspan="3">
+										<textbox id="tbxNomCuentaCobrar2"
+											width="277px" style="text-transform:uppercase"
+											readonly="true" />
+										<space width="2px" />
+										<toolbarbutton
+											id="btnLimpiarCuentaCobrar2" image="/images/borrar.gif" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 11 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<space width="8px" />
+										<label value="Cuenta pagar: " />
+									</cell>
+									<cell>
+										<bandboxRegistros
+											id="tbxCuenta_pagar" widthBandbox="170px"
+											widthListbox="800px" heightListbox="300px"
+											columnas="Codigo#65px|Nombre|Sub Cta#65px|Tipo Cuenta#100px|Grupo Cuenta#100px|Oculto#65px|Inact#65px|MT#65px" />
+									</cell>
+									<cell colspan="3">
+										<textbox id="tbxNomCuentaPagar"
+											width="277px" style="text-transform:uppercase"
+											readonly="true" />
+										<space width="2px" />
+										<toolbarbutton
+											id="btnLimpiarCuentaPagar" image="/images/borrar.gif" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<space width="8px" />
+										<label id="lbCuenta_retencion"
+											value="Cuenta retencion: " />
+									</cell>
+									<cell>
+										<bandboxRegistros
+											id="tbxCuenta_retencion" widthBandbox="170px"
+											widthListbox="800px" heightListbox="300px"
+											columnas="Codigo#65px|Nombre|Sub Cta#65px|Tipo Cuenta#100px|Grupo Cuenta#100px|Oculto#65px|Inact#65px|MT#65px" />
+									</cell>
+									<cell colspan="3">
+										<textbox
+											id="tbxNomCuentaRetencion" width="277px"
+											style="text-transform:uppercase" readonly="true" />
+										<space width="2px" />
+										<toolbarbutton
+											id="btnLimpiarCuentaRetencion" image="/images/borrar.gif" />
+									</cell>
+									<cell></cell>
+								</row>
+								
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<space width="8px" />
+										<label id="lbCuenta_reteica"
+											value="Cuenta reteica: " />
+									</cell>
+									<cell>
+										<bandboxRegistros
+											id="tbxCuenta_reteica" widthBandbox="170px"
+											widthListbox="800px" heightListbox="300px"
+											columnas="Codigo#65px|Nombre|Sub Cta#65px|Tipo Cuenta#100px|Grupo Cuenta#100px|Oculto#65px|Inact#65px|MT#65px" />
+									</cell>
+									<cell colspan="3">
+										<textbox
+											id="tbxNomCuenta_reteica" width="277px"
+											style="text-transform:uppercase" readonly="true" />
+										<space width="2px" />
+										<toolbarbutton
+											id="btnLimpiarCuenta_reteica" image="/images/borrar.gif" />
+									</cell>
+									<cell></cell>
+								</row>
+								
+								<row>
+									<cell></cell>
+									<cell height="30px" colspan="3">
+										<space width="8px" />
+										<checkbox label="Autoretención" id="chbAutoretencion"/>
+									</cell>
+									
+									<cell></cell>
+								</row>
+								
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<space width="8px" />
+										<label id="lbCuenta_autorete1"
+											value="Cuenta autorete 1: " />
+									</cell>
+									<cell>
+										<bandboxRegistros
+											id="tbxCuenta_autorete1" widthBandbox="170px"
+											widthListbox="800px" heightListbox="300px"
+											columnas="Codigo#65px|Nombre|Sub Cta#65px|Tipo Cuenta#100px|Grupo Cuenta#100px|Oculto#65px|Inact#65px|MT#65px" />
+									</cell>
+									<cell colspan="3">
+										<textbox id="tbxNomCuenta_autorete1"
+											width="277px" style="text-transform:uppercase"
+											readonly="true" />
+										<space width="2px" />
+										<toolbarbutton
+											id="btnLimpiarCuenta_autorete1" image="/images/borrar.gif" />
+									</cell>
+									<cell></cell>
+								</row>
+								
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<space width="8px" />
+										<label id="lbCuenta_autorete2"
+											value="Cuenta autorete 2: " />
+									</cell>
+									<cell>
+										<bandboxRegistros
+											id="tbxCuenta_autorete2" widthBandbox="170px"
+											widthListbox="800px" heightListbox="300px"
+											columnas="Codigo#65px|Nombre|Sub Cta#65px|Tipo Cuenta#100px|Grupo Cuenta#100px|Oculto#65px|Inact#65px|MT#65px" />
+									</cell>
+									<cell colspan="3">
+										<textbox id="tbxNomCuenta_autorete2"
+											width="277px" style="text-transform:uppercase"
+											readonly="true" />
+										<space width="2px" />
+										<toolbarbutton
+											id="btnLimpiarCuenta_autorete2" image="/images/borrar.gif" />
+									</cell>
+									<cell></cell>
+								</row>
+								
+
+								<!-- fila 9 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<space width="8px" />
+										<label id="lbObservaciones"
+											value="Observaciones: " />
+									</cell>
+									<cell colspan="3">
+										<textbox id="tbxObservaciones"
+											width="482px" rows="4" style="text-transform:uppercase"
+											maxlength="-1" />
+									</cell>
+									<cell colspan="2" />
+								</row>
+
+
+
+								<!-- fila 12 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<space width="8px" />
+										<label id="lbTipo_aseguradora"
+											value="Tipo aseguradora: " />
+									</cell>
+									<cell>
+										<listbox
+											id="lbxTipo_aseguradora" name="tipo_aseguradora"
+											mold="select" width="175px" sclass="combobox" />
+									</cell>
+
+									<cell height="30px">
+										<space width="8px" />
+										<label id="lbTipo_contribuyente"
+											value="Tipo Contribuyente:" />
+									</cell>
+									<cell>
+										<listbox
+											id="lbxTipo_contribuyente" name="tipo_contribuyente"
+											mold="select" width="175px" sclass="combobox" />
+									</cell>
+									<cell colspan="2" />
+								</row>
+
+								<!-- fila 14 -->
+
+
+								<!-- fila 15 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<space width="8px" />
+										<label id="lbFormato_rips"
+											value="Formato rips: " />
+									</cell>
+									<cell>
+										<listbox id="lbxFormato_rips"
+											name="formato_rips" mold="select" width="175px"
+											sclass="combobox" />
+									</cell>
+									<cell height="30px">
+										<space width="8px" />
+										<label id="lbFormato_fecha_rips"
+											value="Formato fecha rips: " />
+									</cell>
+									<cell>
+										<listbox
+											id="lbxFormato_fecha_rips" name="formato_fecha_rips"
+											mold="select" width="175px" sclass="combobox" />
+									</cell>
+									<cell colspan="2" />
+								</row>
+
+								<row>
+									<cell></cell>
+									<cell>
+										<space width="8px" />
+										<label id="lbTercerizado"
+											value="Tercerizada: " />
+									</cell>
+									<cell>
+										<checkbox id="chkTercerizada" />
+									</cell>
+									<cell colspan="4" />
+								</row>
+
+
+							</rows>
+						</grid>
+
+					</groupbox>
+				</div>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

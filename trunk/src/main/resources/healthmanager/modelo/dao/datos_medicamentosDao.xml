@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.Datos_medicamentosDao">
+
+	
+
+	<resultMap id="datos_medicamentosMap" type="datos_medicamentos">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="nro_factura" property="nro_factura" />
+		<result column="consecutivo" property="consecutivo" />
+		<result column="codigo_bodega" property="codigo_bodega" />
+		<result column="codigo_medicamento" property="codigo_medicamento" />
+		<result column="codigo_lote" property="codigo_lote" />
+		<result column="unidades" property="unidades" />
+		<result column="valor_unitario" property="valor_unitario" />
+		<result column="valor_total" property="valor_total" />
+		<result column="cancelo_copago" property="cancelo_copago" />
+		<result column="creacion_date" property="creacion_date" />
+		<result column="ultimo_update" property="ultimo_update" />
+		<result column="delete_date" property="delete_date" />
+		<result column="creacion_user" property="creacion_user" />
+		<result column="ultimo_user" property="ultimo_user" />
+		<result column="delete_user" property="delete_user" />
+		<result column="valor_real" property="valor_real" />
+		<result column="descuento" property="descuento" />
+		<result column="incremento" property="incremento" />
+		<result column="cantidad_entregada" property="cantidad_entregada" />
+		<result column="referencia_pyp" property="referencia_pyp" />
+		<result column="tipo_medicamento" property="tipo_medicamento" />
+		<result column="nombre_generico" property="nombre_generico" />
+		<result column="forma_farmaceutica" property="forma_farmaceutica" />
+		<result column="concentracion_medicamento" property="concentracion_medicamento" />
+		<result column="unidad_medida" property="unidad_medida" />
+		
+		<association column="{codigo_empresa=codigo_empresa,codigo_sucursal=codigo_sucursal,nro_factura=nro_factura}" property="facturacion_medicamento" select="healthmanager.modelo.dao.Facturacion_medicamentoDao.consultar" />
+		<association column="{codigo_empresa=codigo_empresa,codigo_sucursal=codigo_sucursal,codigo_articulo=codigo_medicamento}" property="articulo" select="contaweb.modelo.dao.ArticuloDao.consultar" />
+		
+	</resultMap>
+
+	<insert id="crear" parameterType="datos_medicamentos">
+		insert into public.datos_medicamentos (codigo_empresa,codigo_sucursal,
+		nro_factura,consecutivo,codigo_bodega,
+		codigo_medicamento,codigo_lote,unidades,
+		valor_unitario,valor_total,cancelo_copago,
+		creacion_date,ultimo_update,delete_date,
+		creacion_user,ultimo_user,delete_user,
+		valor_real,descuento,incremento,
+		cantidad_entregada,referencia_pyp,tipo_medicamento,
+		nombre_generico,forma_farmaceutica,concentracion_medicamento,
+		unidad_medida)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{nro_factura},#{consecutivo},#{codigo_bodega},
+		#{codigo_medicamento},#{codigo_lote},#{unidades},
+		#{valor_unitario},#{valor_total},#{cancelo_copago},
+		#{creacion_date},#{ultimo_update},#{delete_date},
+		#{creacion_user},#{ultimo_user},#{delete_user},
+		#{valor_real},#{descuento},#{incremento},
+		#{cantidad_entregada},#{referencia_pyp},#{tipo_medicamento},
+		#{nombre_generico},#{forma_farmaceutica},#{concentracion_medicamento},
+		#{unidad_medida})
+	</insert>
+
+	<update id="actualizar" parameterType="datos_medicamentos">
+		update public.datos_medicamentos set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},nro_factura = #{nro_factura},
+		consecutivo = #{consecutivo},codigo_bodega = #{codigo_bodega},
+		codigo_medicamento = #{codigo_medicamento},codigo_lote = #{codigo_lote},
+		unidades = #{unidades},valor_unitario = #{valor_unitario},
+		valor_total = #{valor_total},cancelo_copago = #{cancelo_copago},
+		creacion_date = #{creacion_date},ultimo_update = #{ultimo_update},
+		delete_date = #{delete_date},creacion_user = #{creacion_user},
+		ultimo_user = #{ultimo_user},delete_user = #{delete_user},
+		valor_real = #{valor_real},descuento = #{descuento},
+		incremento = #{incremento},cantidad_entregada = #{cantidad_entregada},
+		referencia_pyp = #{referencia_pyp},tipo_medicamento = #{tipo_medicamento},
+		nombre_generico = #{nombre_generico},forma_farmaceutica = #{forma_farmaceutica},
+		concentracion_medicamento = #{concentracion_medicamento},unidad_medida = #{unidad_medida}
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal =
+		#{codigo_sucursal}
+		and nro_factura = #{nro_factura}
+		and consecutivo =
+		#{consecutivo}
+	</update>
+
+	<select id="consultar" resultMap="datos_medicamentosMap" parameterType="datos_medicamentos">
+		select codigo_empresa,codigo_sucursal,
+		nro_factura,consecutivo,codigo_bodega,codigo_medicamento,
+		codigo_lote,unidades,valor_unitario,valor_total,
+		cancelo_copago,creacion_date,ultimo_update,delete_date,
+		creacion_user,ultimo_user,delete_user,valor_real,
+		descuento,incremento,cantidad_entregada,referencia_pyp,
+                 tipo_medicamento,nombre_generico,forma_farmaceutica,concentracion_medicamento,
+		unidad_medida
+		from public.datos_medicamentos
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">AND codigo_empresa = #{codigo_empresa}</if>
+			<if test="codigo_sucursal != null">AND codigo_sucursal = #{codigo_sucursal}</if>
+			<if test="nro_factura != null">AND nro_factura = #{nro_factura}</if>
+			<if test="consecutivo != null">AND consecutivo = #{consecutivo}</if>
+			<if test="codigo_medicamento != null">AND codigo_medicamento = #{codigo_medicamento}</if>
+			<if test="codigo_bodega != null">AND codigo_bodega = #{codigo_bodega}</if>
+		</trim>
+	</select>
+
+	<delete id="eliminar" parameterType="datos_medicamentos">
+		delete from public.datos_medicamentos
+		WHERE codigo_empresa = #{codigo_empresa}
+		AND codigo_sucursal = #{codigo_sucursal}
+		AND nro_factura = #{nro_factura}
+		<if test="consecutivo != null">AND consecutivo = #{consecutivo}</if>
+		<if test="codigo_medicamento != null">AND codigo_medicamento = #{codigo_medicamento}</if>
+		<if test="codigo_bodega != null">AND codigo_bodega = #{codigo_bodega}</if>
+	</delete>
+
+	<select id="listar" resultMap="datos_medicamentosMap" parameterType="java.util.Map">
+		select dm.codigo_empresa,dm.codigo_sucursal,
+		dm.nro_factura,dm.consecutivo,dm.codigo_bodega,dm.codigo_medicamento,
+		dm.codigo_lote,dm.unidades,dm.valor_unitario,dm.valor_total,
+		dm.cancelo_copago,dm.creacion_date,dm.ultimo_update,dm.delete_date,
+		dm.creacion_user,dm.ultimo_user,dm.delete_user,dm.valor_real,
+		dm.descuento,dm.incremento,dm.cantidad_entregada,dm.referencia_pyp,
+                dm.tipo_medicamento,dm.nombre_generico,dm.forma_farmaceutica,dm.concentracion_medicamento,
+		dm.unidad_medida
+		from public.datos_medicamentos dm
+		inner join facturacion_medicamento fm on (
+		fm.codigo_empresa = dm.codigo_empresa
+        and fm.codigo_sucursal = dm.codigo_sucursal
+        and fm.nro_factura = dm.nro_factura)
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">AND dm.codigo_empresa = #{codigo_empresa}</if>
+			<if test="codigo_sucursal != null">AND dm.codigo_sucursal = #{codigo_sucursal}</if>
+			<if test="nro_factura != null">AND dm.nro_factura = #{nro_factura}</if>
+			<if test="nro_identificacion != null"> and fm.nro_identificacion = #{nro_identificacion}</if>
+			<if test="nro_ingreso != null"> and fm.nro_ingreso = #{nro_ingreso}</if>
+			<if test="tipo != null"> and fm.tipo = #{tipo}</if>
+			<if test="codigo_medicamento != null">AND dm.codigo_medicamento = #{codigo_medicamento}</if>
+			<if test="parameter != null">AND ${parameter} like '${value}'</if>
+		</trim>
+		<if test="limit != null">
+			${limit}
+		</if>
+	</select>
+	
+	<select id="listar_factura" resultMap="datos_medicamentosMap" parameterType="java.util.Map">
+		select dm.codigo_empresa,dm.codigo_sucursal,
+		dm.nro_factura,dm.consecutivo,dm.codigo_bodega,dm.codigo_medicamento,
+		dm.codigo_lote,dm.unidades,dm.valor_unitario,dm.valor_total,
+		dm.cancelo_copago,dm.creacion_date,dm.ultimo_update,dm.delete_date,
+		dm.creacion_user,dm.ultimo_user,dm.delete_user,dm.valor_real,
+		dm.descuento,dm.incremento,dm.cantidad_entregada,dm.referencia_pyp,
+                dm.tipo_medicamento,dm.nombre_generico,dm.forma_farmaceutica,dm.concentracion_medicamento,
+		dm.unidad_medida
+		from public.datos_medicamentos dm 
+		inner join public.facturacion_medicamento fm 
+		ON (dm.codigo_empresa = fm.codigo_empresa AND 
+		dm.codigo_sucursal = fm.codigo_sucursal AND 
+		dm.nro_factura = fm.nro_factura)
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">AND dm.codigo_empresa = #{codigo_empresa}</if>
+			<if test="codigo_sucursal != null">AND dm.codigo_sucursal = #{codigo_sucursal}</if>
+			<if test="nro_factura != null">AND dm.nro_factura = #{nro_factura}</if>
+			<if test="parameter != null">AND ${parameter} like '${value}'</if>
+			<if test="tipo_reg != null">AND fm.tipo = #{tipo_reg}</if>
+			<if test="nro_identificacion != null">AND fm.nro_identificacion = #{nro_identificacion}</if>
+			<if test="codigo_administradora != null">AND fm.codigo_administradora = #{codigo_administradora}</if>
+			<if test="id_plan != null">AND fm.id_plan = #{id_plan}</if>
+			<if test="facturacion != null">AND fm.facturacion = #{facturacion}</if>
+			<if test="nro_ingreso != null"> and fm.nro_ingreso = #{nro_ingreso}</if>
+		</trim>
+		<if test="limit != null">
+			${limit}
+		</if>
+	</select>
+	
+	
+	<select id="medicamentos_hoja_gastos" parameterType="java.util.Map" resultType="java.util.Map" >
+		SELECT
+			fm.codigo_empresa,
+			fm.codigo_sucursal,
+			fm.nro_ingreso,
+			fm.nro_identificacion,
+			fm.codigo_administradora,
+			dm.codigo_medicamento,
+			cast(SUM(dm.unidades) as varchar) AS unidades,
+			'MEDICAMENTO' AS tipo,
+			pa.nombre1 AS nombre1_pct,
+			pa.nombre2 AS nombre2_pct,
+			pa.apellido1 AS apellido1_pct,
+			pa.apellido2 AS apellido2_pct,
+			ad.fecha_atencion AS fecha_atencion,
+			ad.fecha_ingreso as fecha_ingreso,
+			ad.diagnostico_ingreso as diagnostico_ingreso,
+			dx.nombre AS nombre_diagnostico,
+			ad.codigo_medico as codigo_medico,
+			pr.nombres AS nombres_medico,
+			pr.apellidos AS apellidos_medico,
+			ad.urgencias AS urgencias,
+			ad.hospitalizacion as hospitalizacion,
+			ad.admision_parto  as admision_parto,
+			am.codigo AS codigo_administradora,
+			am.nombre AS nombre_administradora,
+			cap.nombre_centro  as nombre_centro,
+			pa.documento as codigo_historia
+		FROM
+			datos_medicamentos dm
+		LEFT JOIN facturacion_medicamento fm ON(
+		fm.codigo_empresa = dm.codigo_empresa
+		AND fm.codigo_sucursal = dm.codigo_sucursal
+		AND fm.nro_factura = dm.nro_factura
+	)
+	LEFT JOIN admision ad ON(
+		ad.codigo_empresa = fm.codigo_empresa
+		AND ad.codigo_sucursal = fm.codigo_sucursal
+		AND ad.nro_ingreso = fm.nro_ingreso
+		AND ad.nro_identificacion = fm.nro_identificacion
+	)
+	LEFT JOIN cie dx ON(dx.codigo = ad.diagnostico_ingreso)	
+	LEFT JOIN prestadores pr ON(
+		ad.codigo_empresa = pr.codigo_empresa
+		AND ad.codigo_sucursal = pr.codigo_sucursal
+		AND ad.codigo_medico = pr.nro_identificacion
+	)
+	LEFT JOIN paciente pa ON(
+		pa.codigo_empresa = fm.codigo_empresa
+		AND pa.codigo_sucursal = fm.codigo_sucursal
+		AND pa.nro_identificacion = fm.nro_identificacion
+	)
+	LEFT JOIN administradora am ON(
+		am.codigo_empresa = fm.codigo_empresa
+		AND am.codigo_sucursal = fm.codigo_sucursal
+		AND am.codigo = fm.codigo_administradora
+	)
+	LEFT JOIN centro_atencion cap ON(
+		ad.codigo_empresa = cap.codigo_empresa
+		AND ad.codigo_sucursal = cap.codigo_sucursal
+		AND ad.codigo_centro = cap.codigo_centro
+	)
+	LEFT JOIN historia_clinica hc ON(
+		ad.codigo_empresa = hc.codigo_empresa
+		AND ad.codigo_sucursal = hc.codigo_sucursal
+		AND ad.nro_ingreso = hc.nro_ingreso
+		AND ad.nro_identificacion = hc.nro_identificacion
+		AND ad.via_ingreso = hc.via_ingreso
+	)
+	WHERE
+		fm.codigo_empresa = #{codigo_empresa}
+	AND fm.codigo_sucursal = #{codigo_sucursal} 
+	AND fm.nro_ingreso = #{nro_ingreso} 
+	AND fm.nro_identificacion = #{nro_identificacion}
+	AND fm.codigo_administradora = #{codigo_administradora}
+	GROUP BY
+		fm.codigo_empresa,
+		fm.codigo_sucursal,
+		fm.nro_ingreso,
+		fm.nro_identificacion,
+		fm.codigo_administradora,
+		dm.codigo_medicamento,
+		pa.nombre1,
+		pa.nombre2,
+		pa.apellido1,
+		pa.apellido2,
+		ad.fecha_atencion,
+		ad.fecha_ingreso,
+		ad.diagnostico_ingreso,
+		dx.nombre,
+		ad.codigo_medico,
+		pr.nombres,
+		pr.apellidos,
+		ad.urgencias,
+		ad.hospitalizacion,
+		ad.admision_parto,
+		am.codigo,
+		am.nombre,
+		cap.nombre_centro,
+		pa.documento
+	</select>
+	
+      <select id="getFechaRealizacion" resultType="java.util.HashMap" parameterType="java.util.Map">
+		select fm.fecha_medicamento  AS fecha, fm.numero_autorizacion from public.datos_medicamentos dm 
+		inner join public.facturacion_medicamento fm 
+		ON (dm.codigo_empresa = fm.codigo_empresa AND 
+		dm.codigo_sucursal = fm.codigo_sucursal AND 
+		dm.nro_factura = fm.nro_factura)
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">AND fm.codigo_empresa = #{codigo_empresa}</if>
+			<if test="codigo_sucursal != null">AND fm.codigo_sucursal = #{codigo_sucursal}</if>
+			<if test="nro_factura != null">AND fm.nro_factura = #{nro_factura}</if>
+			<if test="nro_identificacion != null">AND fm.nro_identificacion = #{nro_identificacion}</if>
+			<if test="nro_ingreso != null">AND fm.nro_ingreso = #{nro_ingreso}</if>
+			<if test="codigo_servicio != null">AND dm.codigo_medicamento = #{codigo_servicio}</if>
+		</trim>
+		limit 1 offset 0
+	</select>
+	
+      
+      <select id="existe" resultType="java.lang.Boolean">
+			select count(1) != 0 AS exist from public.datos_medicamentos
+			WHERE codigo_empresa = #{codigo_empresa}
+			AND codigo_sucursal = #{codigo_sucursal}
+			<if test="nro_factura != null">AND nro_factura = #{nro_factura}</if>
+			<if test="consecutivo != null">AND consecutivo = #{consecutivo}</if>
+			<if test="codigo_medicamento != null">AND codigo_medicamento = #{codigo_medicamento}</if>
+			<if test="codigo_bodega != null">AND codigo_bodega = #{codigo_bodega}</if>
+	</select>
+</mapper>

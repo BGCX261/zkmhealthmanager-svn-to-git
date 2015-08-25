@@ -1,0 +1,1745 @@
+<?page title="Ficha_epidemiologia_n17" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+<window id="formFicha_epidemiologia_n17" width="890px"  height="450px"
+		border="normal" use="healthmanager.controller.Ficha_epidemiologia_n17Action">
+<style>
+		body ,table{ margin:0; padding:0;
+		} .z-fieldset{ -moz-border-radius:5px; border-radius: 5px;
+		-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+		border: 1px solid silver; }
+		tr.z-row .z-cell{ background-image:none; }
+		tr.z-row td.z-row-hover{ background-image:none; }
+		.GridSinBorde tr.z-row td.z-row-inner, tr.z-row
+			.z-cell,div.z-grid { border: none; overflow: hidden;
+			zoom: 1; border-top: none; border-left: none;
+			border-right: none; border-bottom: none; }
+		</style>
+		<style>
+        div.minimize {
+            border: 1px solid #79858E;
+            background: #D3E1EC;
+            position: absolute;
+            opacity: 0.8;       
+        }
+        div.loginGrid { 
+            border: none;
+        }
+        td.loginCtl {
+            text-align: center;
+        }
+        td.loginCtl .z-label {
+            color: red;         
+            font-style: italic;
+        }
+        </style>
+
+
+<!-- **************** -->
+<!-- Zona de Consulta -->
+<!-- **************** -->
+<groupbox id="groupboxConsulta" visible="false" closable="false" mold="3d" height="90%">
+<caption label="Consultar" style="color: blue;font-weight: bold"/>
+
+<separator />
+
+<!-- ***************************** -->
+<!--  Resultado Consulta Maestros  -->
+<!-- ***************************** -->
+<grid id="gridResultado" height="100%" mold="paging" pageSize="20"  vflex="1">
+<auxhead>
+						<auxheader colspan="1">
+								<hbox align="center">
+										<label value="Criterios de B&#250;squeda :" />
+										<space />
+										<listbox id="lbxParameter" mold="select"
+												sclass="combobox" width="150px" />
+										<separator />
+										<textbox id="tbxValue" width="200px"
+												onOK="formFicha_epidemiologia_n17.buscarDatos();"
+												style="text-transform:uppercase" />
+										<separator />
+										<button mold="trendy"
+												image="/images/Magnifier.gif"
+												onClick="formFicha_epidemiologia_n17.buscarDatos();"
+												tooltiptext="Consultar Ficha epidemiologia n17" />
+										<separator />
+										<button mold="trendy"
+												image="/images/New16.gif"
+												onClick='formFicha_epidemiologia_n17.accionForm(true,"registrar");'
+												tooltiptext="Nuevo Ficha epidemiologia n17" />
+								</hbox>
+						</auxheader>
+				</auxhead>
+<columns sizable="true">
+	<column label="Código ficha"/>
+	<column label="Identificación"/>
+	<column label="Fecha creación"/>
+	<column label="Acciones" align="center" width="80px"/>
+</columns>
+<rows id="rowsResultado" width="100%" />
+</grid>
+</groupbox>
+
+<borderlayout width="100%" height="100%" id="groupboxEditar" visible="true">
+				<north border="none" visible="false">
+						<toolbar width="100%" align="start">
+								<textbox id="tbxAccion" value="registrar"
+										visible="false" />
+								<toolbarbutton image="/images/Save16.gif"
+										label="Guardar Ficha"
+										onClick="formFicha_epidemiologia_n17.guardarDatos();" id="btGuardar" />
+		 		                  <toolbarbutton image="/images/New16.gif"
+										label="Nueva"
+										onClick='formFicha_epidemiologia_n17.accionForm(true,"registrar");'
+										id="btNew" />
+								<space />
+		 		                  <toolbarbutton image="/images/trasladar.gif"
+										label="Consultar" onClick='formFicha_epidemiologia_n17.accionForm(false,tbxAccion.getText());'
+										id="btCancel" />
+								<toolbarbutton image="/images/print_ico.gif"
+										label="Imprimir Ficha epidemiologia n17"
+										onClick="formFicha_epidemiologia_n17.imprimir();"
+										id="btImprimir" visible="false"/>
+								<space />
+								<label value="Formato impresión: " visible="false"/>
+									<listbox id="lbxFormato" mold="select" width="150px" visible="false"
+										sclass="combobox">
+										<listitem value="pdf" label="PDF"
+												selected="true" />
+										<listitem value="rtf" label="WORD" />
+								</listbox>
+						</toolbar>
+				</north>
+				<center autoscroll="true" border="none" >
+				<div align="center">
+				
+				<groupbox mold="3d" closable="false">
+						<caption label="DATOS DE LA FICHA"
+							style="font-weight:bold" />
+						<grid>
+							<columns>
+								<column />
+							</columns>
+							<rows>
+								<row>
+									<cell>
+										<hlayout>
+											<space width="130px" />
+											<label value="* "
+												style="color: red" tooltiptext="Campo obligatorio" />
+											<label id="lbFecha_inicial"
+												value="Fecha: " />
+											<datebox
+												id="dtbxFecha_creacion" onCreate="self.value = new Date();"
+												format="dd-MM-yyyy" width="170px" readonly="true" buttonVisible="false"/>
+											<space width="70px" />
+											<label value="* "
+												style="color: red" tooltiptext="Campo obligatorio" />
+											<label id="lbCodigo_ficha"
+												value="Codigo ficha: " />
+											<textbox readonly="true"
+												id="tbxCodigo_ficha" width="170px"
+												style="text-transform:uppercase" maxlength="20" />
+										</hlayout>
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+
+<!-- *************************** -->
+<!-- *** Insertar/Actualizar *** -->
+<!-- *************************** -->
+<groupbox mold="3d" width="100%" closable="false">
+<caption label="RELACIÓN CON DATOS BÁSICOS" />
+<grid>
+<columns visible="false">
+		<column width="100px" />
+		<column />
+		<column />
+		<column />
+		<column />
+		<column width="220px" />
+	</columns>
+	<rows>
+	
+		<row>
+			<cell>
+				<label value="* " style="color: red"
+					tooltiptext="Campo obligatorio" />
+				<label value="Paciente: " />
+			</cell>
+			<cell colspan="4">
+				<textbox id="tbxIdentificacion" width="27%" readonly="true" disabled="true"/>
+					<!--  -->
+				<space width="1%" />
+				<textbox id="tbxNombrePaciente" width="65%"
+					style="text-transform:uppercase" readonly="true" />
+			</cell>
+			<cell>
+				<space width="15px" />
+				<label value="Tipo: " />
+				<space width="23px" />
+				<textbox id="tbxTipo_identificacion" width="135px" style="text-transform:uppercase" readonly="true"/>
+			</cell>
+				
+		</row>
+		<row>
+			<cell>
+				<label value="* " style="color: red"
+					tooltiptext="Campo obligatorio" />
+				<label value="Aseguradora: " />
+			</cell>
+			<cell colspan="4">
+				<textbox id="tbxAseguradora" width="27%" readonly="true" disabled="true"/>
+					<!--  -->
+				<space width="1%" />
+				<textbox id="tbxNombre_aseguradora" width="65%"
+					style="text-transform:uppercase" readonly="true" />
+			</cell>
+			<cell></cell>
+				
+		</row>
+		
+		<!-- fila 4 -->
+		<row>
+		<cell><label id="lbCodigo_diagnostico" value="Codigo diagnostico: " visible="false"/></cell>
+		<cell><textbox id="tbxCodigo_diagnostico" width="170px" style="text-transform:uppercase" maxlength="8" visible="false"/></cell>
+		<cell colspan="4"></cell>
+		</row>
+
+	</rows>
+
+</grid>
+</groupbox>
+
+<groupbox mold="3d" width="100%" closable="false">
+<caption label="INFORMACIÓN GENERAL Y ANTECEDENTES VACUNALES" />
+<grid>
+<columns visible="false">
+		<column />
+		<column width="150" />
+		<column />
+		<column width="150"/>
+	</columns>
+	<rows>
+	
+<!-- fila 5 -->
+<row>
+<cell><label id="lbNombre_madre" value="Nombre de la madre del paciente: "/></cell>
+<cell colspan="3"><textbox id="tbxNombre_madre" width="90%" style="text-transform:uppercase" maxlength="200"/></cell>
+</row>
+
+<!-- fila 6 -->
+<row>
+<cell><label id="lbNombre_padre" value="Nombre del padre del paciente: "/></cell>
+<cell colspan="3"><textbox id="tbxNombre_padre" width="90%" style="text-transform:uppercase" maxlength="200"/></cell>
+</row>
+
+<!-- fila 7 -->
+<row>
+<cell><label id="lbFecha_investigacion" value="Fecha de la investigación: "/></cell>
+<cell><datebox id="dtbxFecha_investigacion" onCreate="" format="yyyy-MM-dd" width="70%"/></cell>
+<cell><label id="lbDosis_recibida" value="Número de dosis recibidas (VOP): "/></cell>
+<cell><intbox constraint="no negative:Este valor no puede ser negativo" id="ibxDosis_recibida" width="70%%" style="text-transform:uppercase"/></cell>
+</row>
+
+<!-- fila 9 -->
+<row>
+<cell><label id="lbFecha_ultima_dosis" value="Última dósis: "/></cell>
+<cell><datebox id="dtbxFecha_ultima_dosis" onCreate="" format="yyyy-MM-dd" width="70%"/></cell>
+<cell><label id="lbCarne" value="¿Tiene carné? "/></cell>
+<cell>
+<radiogroup id="rdbCarne">
+<radio label="SÍ" value="S"/><space/>
+<radio label="NO" value="N"/><space/>
+<radio label="Desconocido" value="D" checked="true" />
+</radiogroup></cell>
+</row>
+		
+
+	</rows>
+
+</grid>
+</groupbox>
+
+
+<groupbox mold="3d" width="100%" closable="false">
+<caption label="CUADRO CLINICO" />
+<grid>
+<columns visible="false">
+		<column width="90px" />
+		<column />
+		<column />
+		<column />
+		<column />
+		<column width="220px" />
+	</columns>
+	<rows>
+	
+		<row>
+		<cell colspan="6">
+		<groupbox width="100%" closable="false">
+			<grid>
+				<columns>
+					<column />
+					<column label="" width="30px" />
+					<column label="" width="30px" />
+					<column label="" width="160px" />
+					<column />
+					<column label="" width="30px" />
+					<column label="" width="30px" />
+					<column label="" width="160px" />
+				</columns>
+				<rows>
+					<row >
+			
+						<cell><label id="lbFiebre" value="Fiebre: "/></cell>
+						<cell colspan="3" >
+						<radiogroup id="rdbFiebre">
+						<radio label="SÍ" value="S"/><space/>
+						<radio label="NO" value="N"/><space/>
+						<radio label="Desconocido" value="D" checked="true" />
+						</radiogroup></cell>
+			
+						<cell><label id="lbRespiratorios" value="Respiratorios: "/></cell>
+						<cell colspan="3" >
+						<radiogroup id="rdbRespiratorios">
+						<radio label="SÍ" value="S"/><space/>
+						<radio label="NO" value="N"/><space/>
+						<radio label="Desconocido" value="D" checked="true" />
+						</radiogroup></cell>
+			
+						
+					</row >
+					<row >
+			
+						<cell><label id="lbDigestivos" value="Digestivos: "/></cell>
+						<cell colspan="3" >
+						<radiogroup id="rdbDigestivos">
+						<radio label="SÍ" value="S"/><space/>
+						<radio label="NO" value="N"/><space/>
+						<radio label="Desconocido" value="D" checked="true" />
+						</radiogroup></cell>
+						
+						<cell><label id="lbDolor_muscular" value="Dolor muscular: "/></cell>
+						<cell colspan="3" >
+						<radiogroup id="rdbDolor_muscular">
+						<radio label="SÍ" value="S"/><space/>
+						<radio label="NO" value="N"/><space/>
+						<radio label="Desconocido" value="D" checked="true" />
+						</radiogroup></cell>
+						
+					</row >
+					<row >
+						
+						<cell><label id="lbSignos_meningeos" value="Signos meníngeos: "/></cell>
+						<cell colspan="3" >
+						<radiogroup id="rdbSignos_meningeos">
+						<radio label="SÍ" value="S"/><space/>
+						<radio label="NO" value="N"/><space/>
+						<radio label="Desconocido" value="D" checked="true" />
+						</radiogroup></cell>
+			
+						<cell><label id="lbFiebre_inicio_paralisis" value="Fiebre inicio parálisis: "/></cell>
+						<cell colspan="3" >
+						<radiogroup id="rdbFiebre_inicio_paralisis">
+						<radio label="SÍ" value="S"/><space/>
+						<radio label="NO" value="N"/><space/>
+						<radio label="Desconocido" value="D" checked="true" />
+						</radiogroup></cell>
+					</row >
+				</rows>
+			</grid>
+			</groupbox>
+			</cell>
+			</row>
+			
+			<row>
+			<cell colspan="6">
+			<groupbox width="100%" closable="false">
+				<grid>
+					<columns>
+						<column />
+						<column />
+						<column />
+						<column />
+						<column />
+						<column />
+					</columns>
+					<rows>
+				
+					<!-- fila 11 -->
+					<row>
+					<cell><label id="lbInstalacion" value="Instalación: "/></cell>
+					<cell><intbox constraint="no negative:Este valor no puede ser negativo" id="ibxInstalacion" width="90%" style="text-transform:uppercase"/></cell>
+					<cell colspan="4"><label value="(días comprendidos desde el inicio de la parálisis hasta la máxima intensidad de la misma)" style="color: blue"/></cell>
+					</row>
+					
+					</rows>
+				</grid>
+			</groupbox>
+			</cell>
+			</row>
+			
+			<row>
+			<cell colspan="6">
+			<groupbox width="100%" closable="false">
+				<grid>
+					<columns>
+						<column />
+						<column label="" width="350px" />
+						<column />
+						<column />
+					</columns>
+					<rows>
+
+					<!-- fila 12 -->
+					<row>
+					<cell><label id="lbProgresion" value="Progresion: "/></cell>
+					<cell>
+					<radiogroup id="rdbProgresion">
+					<radio label="Ascendente" value="A"/><space/>
+					<radio label="Descendente" value="D"/><space/>
+					<radio label="Indeterminada" value="I" checked="true" />
+					</radiogroup></cell>
+					<cell><label id="lbFecha_inicio_paralisis" value="Fecha inicio paralisis: "/></cell>
+					<cell><datebox id="dtbxFecha_inicio_paralisis" onCreate="" format="yyyy-MM-dd" width="90%"/></cell>
+					</row>				
+					
+					</rows>
+				</grid>
+			</groupbox>
+			</cell>
+			</row>
+			
+			
+		</rows>
+
+</grid>
+</groupbox>			
+
+
+<groupbox mold="3d" width="100%" closable="false">
+<caption label="EXTREMIDAD" />
+<grid>
+	<columns>
+		<column label="" width="10px"/>
+		<column label="" />
+		<column label="" />
+		<column label="" />
+		<column label="" />
+		<column label="" width="10px"/>
+	</columns>
+	<rows>
+		
+		<row>
+		<cell></cell>
+		<cell colspan="4">
+		<groupbox width="100%" closable="false">
+		<grid>
+			<columns>
+				<column label="Miembros" width="16%"/>
+				<column label="Superior derecho" width="21%" />
+				<column label="Superior izquierdo" width="21%" />
+				<column label="Inferior derecho" width="21%" />
+				<column label="Inferior izquierdo" width="21%" />
+			</columns>
+			<rows>
+				
+				
+				<row>			
+				<cell colspan="5">
+				<grid>
+						<columns>
+							<column label="" width="16%"/>
+							<column label="" width="21%" />
+							<column label="" width="21%" />
+							<column label="" width="21%" />
+							<column label="" width="21%" />
+						</columns>
+						<rows>
+						
+						<row>
+						<cell>
+						<label value="Paresia"/>
+						</cell>
+						<cell>
+						<radiogroup id="rdbParesia_sup_der">
+						<space width="25px" />
+						<radio label="SÍ" value="S" /><space width="15px" />
+						<radio label="NO" value="N" checked="true" />
+						</radiogroup>
+						</cell>
+						<cell>
+						<radiogroup id="rdbParesia_sup_izq">
+						<space width="25px" />
+						<radio label="SÍ" value="S" /><space width="15px" />
+						<radio label="NO" value="N"  checked="true" />
+						</radiogroup>
+						</cell>
+						<cell>
+						<radiogroup id="rdbParesia_inf_der">
+						<space width="25px" />
+						<radio label="SÍ" value="S" /><space width="15px" />
+						<radio label="NO" value="N"  checked="true" />
+						</radiogroup></cell>
+						<cell>
+						<radiogroup id="rdbParesia_inf_izq">
+						<space width="25px" />
+						<radio label="SÍ" value="S" /><space width="15px" />
+						<radio label="NO" value="N"  checked="true" />
+						</radiogroup></cell>
+									
+			
+						</row>
+						</rows>
+				</grid>
+				
+				</cell>
+				
+				</row>
+				
+				<row>			
+				<cell colspan="5">
+				<grid>
+						<columns>
+							<column label="" width="16%"/>
+							<column label="" width="21%" />
+							<column label="" width="21%" />
+							<column label="" width="21%" />
+							<column label="" width="21%" />
+						</columns>
+						<rows>
+						
+						<row>
+						<cell>
+						<label value="Parálisis"/>
+						</cell>
+						<cell>
+						<radiogroup id="rdbParalisis_sup_der">
+						<space width="25px" />
+						<radio label="SÍ" value="S" /><space width="15px" />
+						<radio label="NO" value="N"  checked="true" />
+						</radiogroup>
+						</cell>
+
+						<cell>
+						<radiogroup id="rdbParalisis_sup_izq">
+						<space width="25px" />
+						<radio label="SÍ" value="S" /><space width="15px" />
+						<radio label="NO" value="N"  checked="true" />
+						</radiogroup></cell>
+						<cell>
+						<radiogroup id="rdbParalisis_inf_der">
+						<space width="25px" />
+						<radio label="SÍ" value="S" /><space width="15px" />
+						<radio label="NO" value="N"  checked="true" />
+						</radiogroup></cell>
+						<cell>
+						<radiogroup id="rdbParalisis_inf_izq">
+						<space width="25px" />
+						<radio label="SÍ" value="S" /><space width="15px" />
+						<radio label="NO" value="N"  checked="true" />
+						</radiogroup></cell>
+						
+							
+						</row>
+						</rows>
+				</grid>
+				
+				</cell>
+				
+				</row>
+				
+				<row>			
+				<cell colspan="5">
+				<grid>
+						<columns>
+							<column label="" width="16%"/>
+							<column label="" width="21%" />
+							<column label="" width="21%" />
+							<column label="" width="21%" />
+							<column label="" width="21%" />
+						</columns>
+						<rows>
+						
+						<row>
+						<cell>
+						<label value="Flácida"/>
+						</cell>
+						<cell>
+						<radiogroup id="rdbFlacida_sup_der">
+						<space width="25px" />
+						<radio label="SÍ" value="S" /><space width="15px" />
+						<radio label="NO" value="N"  checked="true" />
+						</radiogroup>
+						</cell>
+						<cell>
+						<radiogroup id="rdbFlacida_sup_izq">
+						<space width="25px" />
+						<radio label="SÍ" value="S" /><space width="15px" />
+						<radio label="NO" value="N"  checked="true" />
+						</radiogroup></cell>
+						<cell>
+						<radiogroup id="rdbFlacida_inf_der">
+						<space width="25px" />
+						<radio label="SÍ" value="S" /><space width="15px" />
+						<radio label="NO" value="N"  checked="true" />
+						</radiogroup></cell>
+						<cell>
+						<radiogroup id="rdbFlacida_inf_izq">
+						<space width="25px" />
+						<radio label="SÍ" value="S" /><space width="15px" />
+						<radio label="NO" value="N"  checked="true" />
+						</radiogroup></cell>
+						
+			
+						</row>
+						</rows>
+				</grid>
+				
+				</cell>
+				
+				</row>
+				
+				<row>			
+				<cell colspan="5">
+				<grid>
+						<columns>
+							<column label="" width="16%"/>
+							<column label="" width="21%" />
+							<column label="" width="21%" />
+							<column label="" width="21%" />
+							<column label="" width="21%" />
+						</columns>
+						<rows>
+						
+						<row>
+						<cell>
+						<label value="Localización"/>
+						</cell>
+						<cell>
+						<radiogroup id="rdbLocalizacion_sup_der">
+						<space width="10px" />
+						<radio label="Proximal" value="P" /><space width="15px" />
+						<radio label="Distal" value="D" checked="true" />
+						</radiogroup></cell>
+						<cell>
+						<radiogroup id="rdbLocalizacion_sup_izq">
+						<space width="10px" />
+						<radio label="Proximal" value="P" /><space width="15px" />
+						<radio label="Distal" value="D" checked="true" />
+						</radiogroup></cell>
+						<cell>
+						<radiogroup id="rdbLocalizacion_inf_der">
+						<space width="10px" />
+						<radio label="Proximal" value="P" /><space width="15px" />
+						<radio label="Distal" value="D" checked="true" />
+						</radiogroup></cell>
+						<cell>
+						<radiogroup id="rdbLocalizacion_inf_izq">
+						<space width="10px" />
+						<radio label="Proximal" value="P" /><space width="15px" />
+						<radio label="Distal" value="D" checked="true" />
+						</radiogroup></cell>
+									
+						</row>
+						</rows>
+				</grid>
+				
+				</cell>
+				
+				</row>
+				
+				
+				<row>			
+				<cell colspan="5">
+				<grid>
+						<columns>
+							<column label="" width="16%"/>
+							<column label="" width="21%" />
+							<column label="" width="21%" />
+							<column label="" width="21%" />
+							<column label="" width="21%" />
+						</columns>
+						<rows>
+						<row>
+						<cell>
+						<label value="Sensibilidad"/><space width="8px" /><label value="(1)" style="color: blue" />
+						</cell>
+						<cell>
+						<radiogroup id="rdbSencibilidad_sup_der">
+						<space width="10px" />
+						<radio label="N" value="N"/><space width="12px" />
+						<radio label="A" value="A"/><space width="12px" />
+						<radio label="D" value="D" checked="true" />
+						</radiogroup></cell>
+						<cell>
+						<radiogroup id="rdbSencibilidad_sup_izq">
+						<space width="10px" />
+						<radio label="N" value="N"/><space width="12px" />
+						<radio label="A" value="A"/><space width="12px" />
+						<radio label="D" value="D" checked="true" />
+						</radiogroup></cell>
+						<cell>
+						<radiogroup id="rdbSencibilidad_inf_der">
+						<space width="10px" />
+						<radio label="N" value="N"/><space width="12px" />
+						<radio label="A" value="A"/><space width="12px" />
+						<radio label="D" value="D" checked="true" />
+						</radiogroup></cell>
+						<cell>
+						<radiogroup id="rdbSencibilidad_inf_izq">
+						<space width="10px" />
+						<radio label="N" value="N"/><space width="12px" />
+						<radio label="A" value="A"/><space width="12px" />
+						<radio label="D" value="D" checked="true" />
+						</radiogroup></cell>
+																		
+						</row>
+						</rows>
+				</grid>
+				
+				</cell>
+				
+				</row>
+				
+				<row>			
+				<cell colspan="5">
+				<grid>
+						<columns>
+							<column label="" width="16%"/>
+							<column label="" width="21%" />
+							<column label="" width="21%" />
+							<column label="" width="21%" />
+							<column label="" width="21%" />
+						</columns>
+						<rows>
+						<row>
+						<cell>
+						<label value="ROT"/><space width="8px" /><label value="(2) " style="color: blue" />
+						</cell>
+						<cell>
+						<radiogroup id="rdbRot_sup_der">
+						<space width="10px" />
+						<radio label="N" value="N"/><space width="12px" />
+						<radio label="A" value="A"/><space width="12px" />
+						<radio label="D" value="D" checked="true" />
+						</radiogroup></cell>
+						<cell>
+						<radiogroup id="rdbRot_sup_izq">
+						<space width="10px" />
+						<radio label="N" value="N"/><space width="12px" />
+						<radio label="A" value="A"/><space width="12px" />
+						<radio label="D" value="D" checked="true" />
+						</radiogroup></cell>
+						<cell>
+						<radiogroup id="rdbRot_inf_der">
+						<space width="10px" />
+						<radio label="N" value="N"/><space width="12px" />
+						<radio label="A" value="A"/><space width="12px" />
+						<radio label="D" value="D" checked="true" />
+						</radiogroup></cell>
+						<cell>
+						<radiogroup id="rdbRot_inf_izq">
+						<space width="10px" />
+						<radio label="N" value="N"/><space width="12px" />
+						<radio label="A" value="A"/><space width="12px" />
+						<radio label="D" value="D" checked="true" />
+						</radiogroup></cell>
+								
+						</row>
+						</rows>
+				</grid>
+				
+				</cell>
+				
+				</row>
+				
+			
+			</rows>
+			</grid>
+			</groupbox>
+		</cell>
+		<cell></cell>
+		</row>
+		
+		<row>
+		<cell colspan="6">
+		<space width="15px" />
+		<label value="(1)  N = Normal A= Aumentado D = Disminuido " style="color: blue" />
+		<space width="50px" />
+		<label value="(2) ROT: Reflejos osteotendinosos. " style="color: blue" />
+		</cell>
+		</row>
+		
+		
+		
+			
+			
+	</rows>
+
+</grid>
+</groupbox>		
+
+
+<groupbox mold="3d" width="100%" closable="false">
+<caption label="OTROS COMPROMISOS" />
+<grid>
+<columns visible="false">
+		<column width="90px" />
+		<column />
+		<column />
+		<column />
+		<column />
+		<column width="220px" />
+	</columns>
+	<rows>
+	
+		<row>
+		<cell colspan="6">
+		<groupbox width="100%" closable="false">
+			<grid>
+				<columns>
+					<column />
+					<column label="" width="30px" />
+					<column label="" width="30px" />
+					<column label="" width="160px" />
+					<column />
+					<column label="" width="30px" />
+					<column label="" width="30px" />
+					<column label="" width="160px" />
+				</columns>
+				<rows>
+					<row >
+			
+						<cell><label id="lbMusculos_respiratorios" value="Musculos Respiratorios: "/></cell>
+						<cell colspan="3" >
+						<radiogroup id="rdbMusculos_respiratorios">
+						<radio label="SÍ" value="S"/><space/>
+						<radio label="NO" value="N"/><space/>
+						<radio label="Desconocido" value="D" checked="true" />
+						</radiogroup></cell>
+			
+						<cell><label id="lbOtros_signos_meningeos" value="Signos Meníngeos: "/></cell>
+						<cell colspan="3" >
+						<radiogroup id="rdbOtros_signos_meningeos">
+						<radio label="SÍ" value="S"/><space/>
+						<radio label="NO" value="N"/><space/>
+						<radio label="Desconocido" value="D" checked="true" />
+						</radiogroup></cell>
+			
+						
+					</row >
+					<row >
+			
+						<cell><label id="lbBabinsky" value="Babinsky: "/></cell>
+						<cell colspan="3" >
+						<radiogroup id="rdbBabinsky">
+						<radio label="SÍ" value="S"/><space/>
+						<radio label="NO" value="N"/><space/>
+						<radio label="Desconocido" value="D" checked="true" />
+						</radiogroup></cell>
+						
+						<cell><label id="lbBrudzinsky" value="Brudzinsky: "/></cell>
+						<cell colspan="3" >
+						<radiogroup id="rdbBrudzinsky">
+						<radio label="SÍ" value="S"/><space/>
+						<radio label="NO" value="N"/><space/>
+						<radio label="Desconocido" value="D" checked="true" />
+						</radiogroup></cell>
+						
+					</row >
+					<row >
+						
+						<cell><label id="lbPares_craneanos" value="Pares Craneanos: "/></cell>
+						<cell colspan="7" >
+						<radiogroup id="rdbPares_craneanos">
+						<radio label="SÍ" value="S"/><space/>
+						<radio label="NO" value="N"/><space/>
+						<radio label="Desconocido" value="D" checked="true" />
+						</radiogroup></cell>
+			
+						
+					</row >
+				</rows>
+			</grid>
+			</groupbox>
+			</cell>
+			</row>
+			
+						
+			
+		</rows>
+
+</grid>
+</groupbox>
+
+
+<groupbox mold="3d" width="100%" closable="false">
+<caption label="LABORATORIO" />
+<grid>
+<columns visible="false">
+		<column width="90px" />
+		<column />
+		<column />
+		<column />
+		<column />
+		<column width="220px" />
+	</columns>
+	<rows>
+	
+		<row>
+		<cell colspan="6">
+		<groupbox width="100%" closable="false">
+		<caption label="Estudios Realizados" />
+			<grid>
+				<columns>
+					<column />
+					<column label="" width="30px" />
+					<column label="" width="30px" />
+					<column label="" width="160px" />
+					<column />
+					<column label="" width="30px" />
+					<column label="" width="30px" />
+					<column label="" width="160px" />
+				</columns>
+				<rows>
+				
+				<row >
+			
+						<cell><label id="lbLiquido_cefalorraquideo" value="Liquido cefalorraquideo: "/></cell>
+						<cell colspan="3" >
+						<radiogroup id="rdbLiquido_cefalorraquideo">
+						<radio label="SÍ" value="S"/><space/>
+						<radio label="NO" value="N"/><space/>
+						<radio label="Desconocido" value="D" checked="true" />
+						</radiogroup></cell>
+						
+						<cell><label id="lbElectromiogragia" value="Electromiogragia: "/></cell>
+						<cell colspan="3" >
+						<radiogroup id="rdbElectromiogragia">
+						<radio label="SÍ" value="S"/><space/>
+						<radio label="NO" value="N"/><space/>
+						<radio label="Desconocido" value="D" checked="true" />
+						</radiogroup></cell>
+						
+					</row >
+					<row >
+						
+						<cell><label id="lbVelocidad_conduccion" value="Velocidad conduccion: "/></cell>
+						<cell colspan="7" >
+						<radiogroup id="rdbVelocidad_conduccion">
+						<radio label="SÍ" value="S"/><space/>
+						<radio label="NO" value="N"/><space/>
+						<radio label="Desconocido" value="D" checked="true" />
+						</radiogroup></cell>
+			
+						
+					</row >	
+					<row>
+					<cell><label id="lbImpresion_diagnostica" value="Impresion diagnostica inicial: "/></cell>
+					<cell colspan="3" >
+					<bandbox
+							id="tbxImpresion_inicial" autodrop="true"
+							readonly="true" width="170px"
+							onOpen="formFicha_epidemiologia_n17.buscarDx(tbxValueDxRelacionado_1.getValue(),lbxDxRelacionado_1)">
+							<bandpopup>
+								<vbox>
+									<toolbar>
+										<label
+											value="Buscar: " />
+										<textbox
+											id="tbxValueDxRelacionado_1"
+											onChanging='formFicha_epidemiologia_n17.buscarDx(event.getValue(),lbxDxRelacionado_1)'
+											style="text-transform:uppercase;" />
+										<toolbarbutton
+											image="/images/borrar.gif" tooltiptext="Quitar" 
+											onClick='formFicha_epidemiologia_n17.selectedDx(new Listitem(), tbxImpresion_inicial, tbxImpresion_diagnostica)' />
+									</toolbar>
+									<listbox
+										height="300px" width="600px" mold="paging"
+										pageSize="8" id="lbxDxRelacionado_1"
+										onSelect='formFicha_epidemiologia_n17.selectedDx(self.getSelectedItem(), tbxImpresion_inicial, tbxImpresion_diagnostica)'>
+										<listhead>
+											<listheader
+												label="Código" width="65px" />
+											<listheader
+												label="Nombre" />
+											<listheader
+												label="Sexo" width="65px" />
+											<listheader
+												label="Limite inf" width="75px" />
+											<listheader
+												label="Limite sup" width="75px" />
+										</listhead>
+									</listbox>
+								</vbox>
+							</bandpopup>
+						</bandbox>
+						</cell>
+						<cell
+							colspan="4">
+							<textbox
+								id="tbxImpresion_diagnostica" width="230px"
+								style="text-transform:uppercase" readonly="true" />
+						</cell>
+					</row>
+				</rows>
+			</grid>
+			</groupbox>
+			</cell>
+			</row>
+			
+			<row>
+		<cell colspan="6">
+		<groupbox width="100%" closable="false">
+		<caption label="Muestra de Materia Fecal" />
+		
+			<grid>
+				<columns>
+					<column label="" width="120px"  />
+					<column label="" width="30px" />
+					<column label="" width="30px" />
+					<column label="" width="187px" />
+					<column label="" width="247px"/>
+					<column label="" width="30px" />
+					<column label="" width="30px" />
+					<column />
+				</columns>
+				<rows>
+				
+				<row>
+				<cell colspan="8">
+				<label value="(se cuenta con 14 días a partir del inicio de la parálisis para la toma de la muestra)" style="color: blue" />
+				</cell>
+				</row>
+				
+				<row >
+						<cell><label id="lbToma_muestra" value="Toma muestra: "/></cell>
+						<cell colspan="7" >
+						<radiogroup id="rdbToma_muestra">
+						<radio label="SÍ" value="S"/><space/>
+						<radio label="NO" value="N"/><space/>
+						<radio label="Desconocido" value="D" checked="true" />
+						</radiogroup></cell>
+			
+						
+				</row >	
+				<row >
+			
+						<cell><label id="lbFecha_toma" value="Fecha toma: "/></cell>
+						<cell colspan="3" >
+						<datebox id="dtbxFecha_toma" onCreate="" format="yyyy-MM-dd" width="170px"/>
+						</cell>
+						
+						<cell><label id="lbFecha_envio" value="Fecha envio: "/></cell>
+						<cell colspan="3" >
+						<datebox id="dtbxFecha_envio" onCreate="" format="yyyy-MM-dd" width="170px"/>
+						</cell>
+						
+				</row >	
+				
+				<row >
+			
+						<cell><label id="lbFecha_recepcion" value="Fecha recepcion: "/></cell>
+						<cell colspan="3" >
+						<datebox id="dtbxFecha_recepcion" onCreate="" format="yyyy-MM-dd" width="170px"/>
+						</cell>
+						
+						<cell><label id="lbFecha_resultado" value="Fecha resultado: "/></cell>
+						<cell colspan="3" >
+						<datebox id="dtbxFecha_resultado" onCreate="" format="yyyy-MM-dd" width="170px"/>
+						</cell>
+						
+				</row >	
+				
+				<row >
+						<cell><label id="lbResultado" value="Resultado: "/></cell>
+						<cell colspan="3" >
+						<radiogroup id="rdbResultado"/>
+						<radio label="1. Negativo" value="1" radiogroup="rdbResultado"  checked="true" />
+						</cell>
+						<cell>
+						<radio label="2. enterovirus no polio" value="2" radiogroup="rdbResultado"/>
+						</cell>
+						<cell colspan="3">
+						<radio label="3. Poliovirus salvaje tipo 1" value="3" radiogroup="rdbResultado"/>
+						</cell>
+			
+						
+				</row >	
+				<row >
+						<cell></cell>
+						<cell colspan="3" >
+						<radio label="4. Poliovirus salvaje tipo 2" value="4" radiogroup="rdbResultado"/>
+						</cell>
+						<cell>
+						<radio label="5. Poliovirus salvaje tipo 3" value="5" radiogroup="rdbResultado"/>
+						</cell>
+						<cell colspan="3">
+						<radio label="6. Poliovirus vacunal tipo 1" value="6" radiogroup="rdbResultado"/>
+						</cell>
+			
+						
+				</row >	
+				<row >
+						<cell></cell>
+						<cell colspan="3" >
+						<radio label="7. Poliovoris vacunal tipo 2" value="7" radiogroup="rdbResultado"/>
+						</cell>
+						<cell>
+						<radio label="8. Poliovirus vacunal tipo 3" value="8" radiogroup="rdbResultado"/>
+						</cell>
+						<cell colspan="3">
+						<radio label="9. Poliovirus derivado de vacuna tipo 1" value="9" radiogroup="rdbResultado"/>
+						</cell>
+			
+						
+				</row >	
+				<row >
+						<cell></cell>
+						<cell colspan="3" >
+						<radio label="10. Poliovirus derivado de vacuna tipo 2" value="10" radiogroup="rdbResultado"/>
+						</cell>
+						<cell>
+						<radio label="11. Poliovirus derivado de vacuna tipo 3" value="11" radiogroup="rdbResultado"/>
+						</cell>
+						<cell colspan="3">
+						<radio label="12. Muestra contaminada" value="12" radiogroup="rdbResultado"/>
+						</cell>
+			
+						
+				</row >
+				<row >
+						<cell></cell>
+						<cell colspan="7" >
+						<radio label="13. Muestra no procesada" value="13" radiogroup="rdbResultado" />
+						</cell>
+						
+				</row >	
+				
+				</rows>
+			</grid>
+			</groupbox>
+			</cell>
+			</row>
+						
+			
+		</rows>
+
+</grid>
+</groupbox>
+
+
+<groupbox mold="3d" width="100%" closable="false">
+<caption label="VACUNACIÓN DE BLOQUEO" />
+<grid>
+	<columns>
+		<column label="" width="10px"/>
+		<column label="" />
+		<column label="" />
+		<column label="" />
+		<column label="" />
+		<column label="" width="10px"/>
+	</columns>
+	<rows>
+		
+		<row>
+		<cell></cell>
+		<cell colspan="2">
+		<groupbox width="100%" closable="false">
+		<grid>
+			<columns>
+				<column label="Grupo de edad" width="30%"/>
+				<column label="Total población" width="35%" />
+				<column label="BAC Casos de PFA" width="35%" />
+			</columns>
+			<rows>
+				
+			<row>
+			<cell><label id="lbTotal_poblacion_menor" value="&lt; 1 año: "/>
+			</cell>
+			<cell>
+			<intbox constraint="no negative:Este valor no puede ser negativo" 
+			id="ibxTotal_poblacion_menor" width="98%" style="text-transform:uppercase"
+			onChange="formFicha_epidemiologia_n17.sumarPoblacion(ibxTotal_poblacion_menor, ibxTotal_poblacion_1_4, ibxTotal_poblacion_5_9, ibxTotal_poblacion_10_14, ibxTotal_poblacion)" 
+			onBlur="formFicha_epidemiologia_n17.sumarPoblacion(ibxTotal_poblacion_menor, ibxTotal_poblacion_1_4, ibxTotal_poblacion_5_9, ibxTotal_poblacion_10_14, ibxTotal_poblacion)"/>
+			</cell>
+			<cell>
+			<intbox constraint="no negative:Este valor no puede ser negativo"
+			 id="ibxBac_menor" width="98%" style="text-transform:uppercase"
+			onChange="formFicha_epidemiologia_n17.sumarPoblacion(ibxBac_menor, ibxBac_1_4, ibxBac_5_9, ibxBac_10_14, ibxTotal_bac)" 
+			onBlur="formFicha_epidemiologia_n17.sumarPoblacion(ibxBac_menor, ibxBac_1_4, ibxBac_5_9, ibxBac_10_14, ibxTotal_bac)"/>
+			</cell>
+			</row>	
+			
+			<row>
+			<cell><label id="lbTotal_poblacion_1_4" value="De 1 a 4 años: "/>
+			</cell>
+			<cell>
+			<intbox constraint="no negative:Este valor no puede ser negativo"
+			 id="ibxTotal_poblacion_1_4" width="98%" style="text-transform:uppercase"
+			onChange="formFicha_epidemiologia_n17.sumarPoblacion(ibxTotal_poblacion_menor, ibxTotal_poblacion_1_4, ibxTotal_poblacion_5_9, ibxTotal_poblacion_10_14, ibxTotal_poblacion)" 
+			onBlur="formFicha_epidemiologia_n17.sumarPoblacion(ibxTotal_poblacion_menor, ibxTotal_poblacion_1_4, ibxTotal_poblacion_5_9, ibxTotal_poblacion_10_14, ibxTotal_poblacion)"/>
+			</cell>
+			<cell>
+			<intbox constraint="no negative:Este valor no puede ser negativo" 
+			id="ibxBac_1_4" width="98%" style="text-transform:uppercase"
+			onChange="formFicha_epidemiologia_n17.sumarPoblacion(ibxBac_menor, ibxBac_1_4, ibxBac_5_9, ibxBac_10_14, ibxTotal_bac)" 
+			onBlur="formFicha_epidemiologia_n17.sumarPoblacion(ibxBac_menor, ibxBac_1_4, ibxBac_5_9, ibxBac_10_14, ibxTotal_bac)"/>
+			</cell>
+			</row>	
+			
+			<row>
+			<cell><label id="lbTotal_poblacion_5_9" value="De 5 a 9 años: "/>
+			</cell>
+			<cell>
+			<intbox constraint="no negative:Este valor no puede ser negativo"
+			 id="ibxTotal_poblacion_5_9" width="98%" style="text-transform:uppercase"
+			onChange="formFicha_epidemiologia_n17.sumarPoblacion(ibxTotal_poblacion_menor, ibxTotal_poblacion_1_4, ibxTotal_poblacion_5_9, ibxTotal_poblacion_10_14, ibxTotal_poblacion)" 
+			onBlur="formFicha_epidemiologia_n17.sumarPoblacion(ibxTotal_poblacion_menor, ibxTotal_poblacion_1_4, ibxTotal_poblacion_5_9, ibxTotal_poblacion_10_14, ibxTotal_poblacion)"/>
+			</cell>
+			<cell>
+			<intbox constraint="no negative:Este valor no puede ser negativo" 
+			id="ibxBac_5_9" width="98%" style="text-transform:uppercase"
+			onChange="formFicha_epidemiologia_n17.sumarPoblacion(ibxBac_menor, ibxBac_1_4, ibxBac_5_9, ibxBac_10_14, ibxTotal_bac)" 
+			onBlur="formFicha_epidemiologia_n17.sumarPoblacion(ibxBac_menor, ibxBac_1_4, ibxBac_5_9, ibxBac_10_14, ibxTotal_bac)"/>
+			</cell>
+			</row>	
+			
+			<row>
+			<cell><label id="lbTotal_poblacion_10_14" value="De 10 a 14 años: "/>
+			</cell>
+			<cell>
+			<intbox constraint="no negative:Este valor no puede ser negativo"
+			 id="ibxTotal_poblacion_10_14" width="98%" style="text-transform:uppercase"
+			onChange="formFicha_epidemiologia_n17.sumarPoblacion(ibxTotal_poblacion_menor, ibxTotal_poblacion_1_4, ibxTotal_poblacion_5_9, ibxTotal_poblacion_10_14, ibxTotal_poblacion)" 
+			onBlur="formFicha_epidemiologia_n17.sumarPoblacion(ibxTotal_poblacion_menor, ibxTotal_poblacion_1_4, ibxTotal_poblacion_5_9, ibxTotal_poblacion_10_14, ibxTotal_poblacion)"/>
+			</cell>
+			<cell>
+			<intbox constraint="no negative:Este valor no puede ser negativo" 
+			id="ibxBac_10_14" width="98%" style="text-transform:uppercase"
+			onChange="formFicha_epidemiologia_n17.sumarPoblacion(ibxBac_menor, ibxBac_1_4, ibxBac_5_9, ibxBac_10_14, ibxTotal_bac)" 
+			onBlur="formFicha_epidemiologia_n17.sumarPoblacion(ibxBac_menor, ibxBac_1_4, ibxBac_5_9, ibxBac_10_14, ibxTotal_bac)"/>
+			</cell>
+			</row>	
+			
+			<row>
+			<cell><label id="lbTotal_poblacion" value="Total: "/>
+			</cell>
+			<cell>
+			<intbox constraint="no negative:Este valor no puede ser negativo" id="ibxTotal_poblacion" width="98%" style="text-transform:uppercase" readonly="true"/>
+			</cell>
+			<cell>
+			<intbox constraint="no negative:Este valor no puede ser negativo" id="ibxTotal_bac" width="98%" style="text-transform:uppercase" readonly="true"/>
+			</cell>
+			</row>	
+				
+			
+			</rows>
+			</grid>
+			</groupbox>
+		</cell>
+		<cell colspan="2" >
+		<groupbox width="100%" closable="false">
+		<grid>
+			<columns>
+				<column label="" width="50%"/>
+				<column label="" width="50%" />
+			</columns>
+			<rows>
+			
+			<row>
+			<cell colspan="2"></cell>
+			</row>
+				
+			<!-- fila 30 -->
+			<row>
+			<cell><label id="lbFecha_vacunacion_bloqueo" value="Fecha vacunacion bloqueo: "/></cell>
+			<cell><datebox id="dtbxFecha_vacunacion_bloqueo" onCreate="" format="yyyy-MM-dd" width="98%"/></cell>
+			</row>
+			
+			<!-- fila 31 -->
+			<row>
+			<cell><label id="lbFecha_culminacion_bloqueo" value="Fecha culminacion bloqueo: "/></cell>
+			<cell><datebox id="dtbxFecha_culminacion_bloqueo" onCreate="" format="yyyy-MM-dd" width="98%"/></cell>
+			</row>
+			
+			<!-- fila 32 -->
+			<row>
+			<cell><label id="lbViviendas_zona" value="Núm. Viviendas de la zona: "/></cell>
+			<cell><intbox constraint="no negative:Este valor no puede ser negativo" id="ibxViviendas_zona" width="50%" style="text-transform:uppercase"/></cell>
+			</row>
+			
+			<!-- fila 33 -->
+			<row>
+			<cell><label id="lbViviendas_visitadas" value="Núm. Viviendas visitadas: "/></cell>
+			<cell><intbox constraint="no negative:Este valor no puede ser negativo" id="ibxViviendas_visitadas" width="50%" style="text-transform:uppercase"/></cell>
+			</row>				
+			
+			</rows>
+			</grid>
+			</groupbox>
+
+	
+		</cell>
+		<cell></cell>
+		</row>
+		
+		<row>
+		<cell></cell>
+		<cell colspan="5">
+		<groupbox width="100%" closable="false">
+		<grid>
+			<columns>
+				<column label="Grupo de edad" width="15%"/>
+				<column label="Recién" width="17%" />
+				<column label="VOP1" width="17%" />
+				<column label="VOP2" width="17%" />
+				<column label="VOP3" width="17%" />
+				<column label="Adicional" width="17%" />
+			</columns>
+			<rows>
+				
+			<row>
+			<cell><label id="lbTotal_poblacion_menor_dosis" value="&lt; 1 año: "/>
+			</cell>
+			<cell>
+			<intbox constraint="no negative:Este valor no puede ser negativo" 
+			id="ibxRecien" width="98%" style="text-transform:uppercase"/>
+			</cell>
+			<cell>
+			<intbox constraint="no negative:Este valor no puede ser negativo"
+			 id="ibxVop1_menor" width="98%" style="text-transform:uppercase"
+			onChange="formFicha_epidemiologia_n17.sumarDosis(ibxVop1_menor, ibxVop1_1_4, ibxVop1_5_9, ibxTotal_vop1)" 
+			onBlur="formFicha_epidemiologia_n17.sumarDosis(ibxVop1_menor, ibxVop1_1_4, ibxVop1_5_9, ibxTotal_vop1)"/>
+			</cell>
+			<cell>
+			<intbox constraint="no negative:Este valor no puede ser negativo" 
+			id="ibxVop2_menor" width="98%" style="text-transform:uppercase"
+			onChange="formFicha_epidemiologia_n17.sumarDosis(ibxVop2_menor, ibxVop2_1_4, ibxVop2_5_9, ibxTotal_vop2)" 
+			onBlur="formFicha_epidemiologia_n17.sumarDosis(ibxVop2_menor, ibxVop2_1_4, ibxVop2_5_9, ibxTotal_vop2)"/>
+			</cell>
+			<cell>
+			<intbox constraint="no negative:Este valor no puede ser negativo" 
+			id="ibxVop3_menor" width="98%" style="text-transform:uppercase"
+			onChange="formFicha_epidemiologia_n17.sumarDosis(ibxVop3_menor, ibxVop3_1_4, ibxVop3_5_9, ibxTotal_vop3)" 
+			onBlur="formFicha_epidemiologia_n17.sumarDosis(ibxVop3_menor, ibxVop3_1_4, ibxVop3_5_9, ibxTotal_vop3)"/>
+			</cell>
+			<cell>
+			<intbox constraint="no negative:Este valor no puede ser negativo" 
+			id="ibxAdicional_menor" width="98%" style="text-transform:uppercase"
+			onChange="formFicha_epidemiologia_n17.sumarDosis(ibxAdicional_menor, ibxAdicional_1_4, ibxAdicional_5_9, ibxTotal_adicional)" 
+			onBlur="formFicha_epidemiologia_n17.sumarDosis(ibxAdicional_menor, ibxAdicional_1_4, ibxAdicional_5_9, ibxTotal_adicional)"/>
+			</cell>
+			</row>	
+			
+			<row>
+			<cell><label id="lbTotal_poblacion_1_4_dosis" value="De 1 a 4 años: "/>
+			</cell>
+			<cell></cell>
+			<cell>
+			<intbox constraint="no negative:Este valor no puede ser negativo" 
+			id="ibxVop1_1_4" width="98%" style="text-transform:uppercase"
+			onChange="formFicha_epidemiologia_n17.sumarDosis(ibxVop1_menor, ibxVop1_1_4, ibxVop1_5_9, ibxTotal_vop1)" 
+			onBlur="formFicha_epidemiologia_n17.sumarDosis(ibxVop1_menor, ibxVop1_1_4, ibxVop1_5_9, ibxTotal_vop1)"/>
+			</cell>
+			<cell>
+			<intbox constraint="no negative:Este valor no puede ser negativo" 
+			id="ibxVop2_1_4" width="98%" style="text-transform:uppercase"
+			onChange="formFicha_epidemiologia_n17.sumarDosis(ibxVop2_menor, ibxVop2_1_4, ibxVop2_5_9, ibxTotal_vop2)" 
+			onBlur="formFicha_epidemiologia_n17.sumarDosis(ibxVop2_menor, ibxVop2_1_4, ibxVop2_5_9, ibxTotal_vop2)"/>
+			</cell>
+			<cell>
+			<intbox constraint="no negative:Este valor no puede ser negativo" 
+			id="ibxVop3_1_4" width="98%" style="text-transform:uppercase"
+			onChange="formFicha_epidemiologia_n17.sumarDosis(ibxVop3_menor, ibxVop3_1_4, ibxVop3_5_9, ibxTotal_vop3)" 
+			onBlur="formFicha_epidemiologia_n17.sumarDosis(ibxVop3_menor, ibxVop3_1_4, ibxVop3_5_9, ibxTotal_vop3)"/>
+			</cell>
+			<cell>
+			<intbox constraint="no negative:Este valor no puede ser negativo" 
+			id="ibxAdicional_1_4" width="98%" style="text-transform:uppercase"
+			onChange="formFicha_epidemiologia_n17.sumarDosis(ibxAdicional_menor, ibxAdicional_1_4, ibxAdicional_5_9, ibxTotal_adicional)" 
+			onBlur="formFicha_epidemiologia_n17.sumarDosis(ibxAdicional_menor, ibxAdicional_1_4, ibxAdicional_5_9, ibxTotal_adicional)"/>
+			</cell>
+			</row>	
+			
+			<row>
+			<cell><label id="lbTotal_poblacion_5_9_dosis" value="De 5 a 9 años: "/>
+			</cell>
+			<cell></cell>
+			<cell>
+			<intbox constraint="no negative:Este valor no puede ser negativo" 
+			id="ibxVop1_5_9" width="98%" style="text-transform:uppercase"
+			onChange="formFicha_epidemiologia_n17.sumarDosis(ibxVop1_menor, ibxVop1_1_4, ibxVop1_5_9, ibxTotal_vop1)" 
+			onBlur="formFicha_epidemiologia_n17.sumarDosis(ibxVop1_menor, ibxVop1_1_4, ibxVop1_5_9, ibxTotal_vop1)"/>
+			</cell>
+			<cell>
+			<intbox constraint="no negative:Este valor no puede ser negativo" 
+			id="ibxVop2_5_9" width="98%" style="text-transform:uppercase"
+			onChange="formFicha_epidemiologia_n17.sumarDosis(ibxVop2_menor, ibxVop2_1_4, ibxVop2_5_9, ibxTotal_vop2)" 
+			onBlur="formFicha_epidemiologia_n17.sumarDosis(ibxVop2_menor, ibxVop2_1_4, ibxVop2_5_9, ibxTotal_vop2)"/>
+			</cell>
+			<cell>
+			<intbox constraint="no negative:Este valor no puede ser negativo" 
+			id="ibxVop3_5_9" width="98%" style="text-transform:uppercase"
+			onChange="formFicha_epidemiologia_n17.sumarDosis(ibxVop3_menor, ibxVop3_1_4, ibxVop3_5_9, ibxTotal_vop3)" 
+			onBlur="formFicha_epidemiologia_n17.sumarDosis(ibxVop3_menor, ibxVop3_1_4, ibxVop3_5_9, ibxTotal_vop3)"/>
+			</cell>
+			<cell>
+			<intbox constraint="no negative:Este valor no puede ser negativo" 
+			id="ibxAdicional_5_9" width="98%" style="text-transform:uppercase"
+			onChange="formFicha_epidemiologia_n17.sumarDosis(ibxAdicional_menor, ibxAdicional_1_4, ibxAdicional_5_9, ibxTotal_adicional)" 
+			onBlur="formFicha_epidemiologia_n17.sumarDosis(ibxAdicional_menor, ibxAdicional_1_4, ibxAdicional_5_9, ibxTotal_adicional)"/>
+			</cell>
+			</row>	
+			
+			
+			
+			<row>
+			<cell><label id="lbTotal_poblacion_dosis" value="Total: "/>
+			</cell>
+			<cell></cell>
+			<cell>
+			<intbox constraint="no negative:Este valor no puede ser negativo" id="ibxTotal_vop1" width="98%" style="text-transform:uppercase" readonly="true"/>
+			</cell>
+			<cell>
+			<intbox constraint="no negative:Este valor no puede ser negativo" id="ibxTotal_vop2" width="98%" style="text-transform:uppercase" readonly="true"/>
+			</cell>
+			<cell>
+			<intbox constraint="no negative:Este valor no puede ser negativo" id="ibxTotal_vop3" width="98%" style="text-transform:uppercase" readonly="true"/>
+			</cell>
+			<cell>
+			<intbox constraint="no negative:Este valor no puede ser negativo" id="ibxTotal_adicional" width="98%" style="text-transform:uppercase" readonly="true"/>
+			</cell>
+			</row>	
+				
+			
+			</rows>
+			</grid>
+			</groupbox>
+		</cell>
+		</row>
+		
+		
+		
+			
+			
+	</rows>
+
+</grid>
+</groupbox>		
+
+<groupbox mold="3d" width="100%" closable="false">
+<caption label="SEGUIMIENTO Y CLASIFICACIÓN FINAL" />
+<grid>
+<columns visible="false">
+		<column width="90px" />
+		<column />
+		<column />
+		<column />
+		<column />
+		<column width="220px" />
+	</columns>
+	<rows>
+	
+		<row>
+		<cell colspan="6">
+		<groupbox width="100%" closable="false">
+		<caption label="Caso detectado por" />
+			<grid>
+				<columns>
+					<column />
+					<column />
+					<column />
+					<column />
+				</columns>
+				<rows>
+					
+				<!-- fila 34 -->
+				<row>
+				<cell>
+				<radiogroup id="rdbCaso_detectado"/>
+				<radio label="1. Consulta" value="1" checked="true" radiogroup="rdbCaso_detectado"/>
+				</cell>
+				<cell><radio label="2. Laboratorio" value="2" radiogroup="rdbCaso_detectado"/>
+				</cell>
+				<cell><radio label="3. Búsquedad activa institucional" value="3" radiogroup="rdbCaso_detectado"/>
+				</cell>
+				<cell><radio label="4. Búsqueda activa comunitaria" value="4" radiogroup="rdbCaso_detectado"/>
+				</cell>
+				</row>
+				<row>
+				<cell><radio label="5. Investigacion de contactos" value="5" radiogroup="rdbCaso_detectado"/>
+				</cell>
+				<cell><radio label="6. Comunidad" value="6" radiogroup="rdbCaso_detectado"/>
+				</cell>
+				<cell><radio label="7. Otros" value="7" radiogroup="rdbCaso_detectado"/>
+				</cell>
+				<cell><radio label="8. Desconocido" value="8" radiogroup="rdbCaso_detectado" />
+				</cell>
+				</row>					
+					
+				</rows>
+			</grid>
+		</groupbox>
+		</cell>
+		</row>
+		
+		<row>
+		<cell colspan="6">
+		<groupbox width="100%" closable="false">
+		<caption label="Seguimiento a 60 días" />
+			<grid>
+				<columns>
+					<column />
+					<column />
+					<column />
+					<column />
+				</columns>
+				<rows>
+
+				<!-- fila 35 -->
+				<row>
+				<cell><label id="lbFecha_seguimiento" value="Fecha de seguimiento: "/></cell>
+				<cell><datebox id="dtbxFecha_seguimiento" onCreate="" format="yyyy-MM-dd" width="170px"/></cell>
+				<cell><label id="lbParalisis_residual" value="Paralisis residual: "/></cell>
+				<cell><radiogroup id="rdbParalisis_residual">
+				<radio label="SÍ" value="S"/><space/>
+				<radio label="NO" value="N"/><space/>
+				<radio label="Desconocido" value="D" checked="true" />
+				</radiogroup></cell>
+				</row>
+				
+				<!-- fila 37 -->
+				<row>
+				<cell><label id="lbAtrofia" value="Atrofia: "/></cell>
+				<cell colspan="3">
+				<radiogroup id="rdbAtrofia">
+				<radio label="SÍ" value="S"/><space/>
+				<radio label="NO" value="N"/><space/>
+				<radio label="Desconocido" value="D" checked="true" />
+				</radiogroup></cell>
+				</row>					
+					
+					
+				</rows>
+			</grid>
+		</groupbox>
+		</cell>
+		</row>			
+		
+		<row>
+		<cell colspan="6">
+		<groupbox width="100%" closable="false">
+		<caption label="Clasificación" />
+			<grid>
+				<columns>
+					<column />
+					<column />
+					<column />
+					<column />
+				</columns>
+				<rows>
+				
+				<row>
+				<cell colspan="4">
+				<groupbox width="100%" closable="false">
+				<caption label="Clasificación final" />
+					<grid>
+						<columns>
+							<column />
+							<column />
+							<column />
+							<column />
+						</columns>
+						<rows>
+						
+						<!-- fila 38 -->
+						<row>
+						<cell colspan="4">
+						<radiogroup id="rdbClasificacion_final">
+						<radio label="Polio salvaje" value="1"/><space/>
+						<radio label="Polio derivado" value="2"/><space/>
+						<radio label="Polio asociado" value="3"/><space/>
+						<radio label="Polio compatible" value="4"/><space/>
+						<radio label="Descartado" value="5" checked="true" />
+						</radiogroup></cell>
+						</row>	
+											
+						</rows>
+					</grid>
+				</groupbox>
+				</cell>
+				</row>
+				
+				<row>
+				<cell colspan="4">
+				<groupbox width="100%" closable="false">
+					<grid>
+						<columns>
+							<column />
+							<column />
+							<column />
+							<column />
+						</columns>
+						<rows>
+						
+							<!-- fila 39 -->
+							<row>
+							<cell><label id="lbFecha_clasificacion" value="Fecha de clasificación: "/></cell>
+							<cell colspan="3"><datebox id="dtbxFecha_clasificacion" onCreate="" format="yyyy-MM-dd" width="170px"/></cell>
+							</row>
+
+											
+						</rows>
+					</grid>
+				</groupbox>
+				</cell>
+				</row>
+				
+				<row>
+				<cell colspan="4">
+				<groupbox width="100%" closable="false">
+				<caption label="Criterio para la clasificación" />
+					<grid>
+						<columns>
+							<column />
+							<column />
+							<column />
+						</columns>
+						<rows>
+						
+						<!-- fila 40 -->
+						<row>
+						<cell>
+						<radiogroup id="rdbCriterios_clasificacion"/>
+						<radio label="1. Laboratorio" value="1" checked="true" radiogroup="rdbCriterios_clasificacion"/><space/>
+						</cell>
+						<cell>
+						<radio label="2. Perdido para seguimiento" value="2" radiogroup="rdbCriterios_clasificacion" />
+						</cell>
+						<cell>
+						<radio label="3. Defunción" value="3" radiogroup="rdbCriterios_clasificacion" />
+						</cell>
+						</row>
+						
+						<!-- fila 40 -->
+						<row>
+						<cell>
+						<radio label="4. Con parálisis residual" value="4" radiogroup="rdbCriterios_clasificacion"/><space/>
+						</cell>
+						<cell>
+						<radio label="5. Sin parálisis residual" value="5" radiogroup="rdbCriterios_clasificacion" />
+						</cell>
+						<cell>
+						<radio label="6. Otro diagnóstico clínico" value="6" radiogroup="rdbCriterios_clasificacion" />
+						</cell>
+						</row>
+
+											
+						</rows>
+					</grid>
+				</groupbox>
+				</cell>
+				</row>
+
+		
+				</rows>
+			</grid>
+		</groupbox>
+		</cell>
+		</row>			
+		
+		<row>
+		<cell colspan="6">
+		<groupbox width="100%" closable="false">
+		<caption label="Diagnóstico final" />
+			<grid>
+				<columns>
+					<column />
+					<column label="" width="30px" />
+					<column label="" width="30px" />
+					<column label="" width="160px" />
+					<column />
+					<column label="" width="30px" />
+					<column label="" width="30px" />
+					<column label="" width="160px" />
+				</columns>
+				<rows>
+				<row>
+					<cell><label id="lbImpresion_diagnostica2" value="Impresion diagnostica final: "/></cell>
+					<cell colspan="3" >
+					<bandbox
+							id="tbxImpresion_final" autodrop="true"
+							readonly="true" width="170px"
+							onOpen="formFicha_epidemiologia_n17.buscarDx(tbxValueDxRelacionado_2.getValue(),lbxDxRelacionado_2)">
+							<bandpopup>
+								<vbox>
+									<toolbar>
+										<label
+											value="Buscar: " />
+										<textbox
+											id="tbxValueDxRelacionado_2"
+											onChanging='formFicha_epidemiologia_n17.buscarDx(event.getValue(),lbxDxRelacionado_2)'
+											style="text-transform:uppercase;" />
+										<toolbarbutton
+											image="/images/borrar.gif" tooltiptext="Quitar" 
+											onClick='formFicha_epidemiologia_n17.selectedDx(new Listitem(), tbxImpresion_final, tbxImpresion_diagnostica2)' />
+									</toolbar>
+									<listbox
+										height="300px" width="600px" mold="paging"
+										pageSize="8" id="lbxDxRelacionado_2"
+										onSelect='formFicha_epidemiologia_n17.selectedDx(self.getSelectedItem(), tbxImpresion_final, tbxImpresion_diagnostica2)'>
+										<listhead>
+											<listheader
+												label="Código" width="65px" />
+											<listheader
+												label="Nombre" />
+											<listheader
+												label="Sexo" width="65px" />
+											<listheader
+												label="Limite inf" width="75px" />
+											<listheader
+												label="Limite sup" width="75px" />
+										</listhead>
+									</listbox>
+								</vbox>
+							</bandpopup>
+						</bandbox>
+						</cell>
+						<cell
+							colspan="4">
+							<textbox
+								id="tbxImpresion_diagnostica2" width="230px"
+								style="text-transform:uppercase" readonly="true" />
+						</cell>
+					</row>
+					
+					<!-- fila 43 -->
+					<row>
+					<cell><label id="lbCodigo_medico" value="Codigo medico: " visible="false"/></cell>
+					<cell><textbox id="tbxCodigo_medico" width="170px" style="text-transform:uppercase" maxlength="20" visible="false"/></cell>
+					<cell colspan="6"></cell>
+					</row>
+				
+					
+					
+				</rows>
+			</grid>
+		</groupbox>
+		</cell>
+		</row>				
+		</rows>
+
+</grid>
+</groupbox>
+
+
+	</div>
+	</center>
+	</borderlayout>
+</window>
+</zk>

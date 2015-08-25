@@ -1,0 +1,943 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Historia_uci1" pageWidth="612" pageHeight="792" whenNoDataType="AllSectionsNoDetail" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="49"/>
+	<parameter name="codigo_empresa" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="codigo_sucursal" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="empresa" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="id" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="direccion" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="telefono" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="imagen" class="java.io.InputStream" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="nro_historia" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select h.nro_historia,h.nro_identificacion as id_pct,pct.nombre1 as nom1_pct,pct.nombre2 as nom2_pct,
+pct.apellido1 as ape1_pct,pct.apellido2 as ape2_pct,tipo_id.descripcion as tipo_id_pct,
+get_edad(pct.fecha_nacimiento,CURRENT_DATE, '1') as edad,sexo.descripcion as sexo_pct,
+pct.fecha_nacimiento as nac_pct,ad.nombre as nom_admin,h.fecha_ingreso,pct.profesion as ocupacion_pct,
+ec.descripcion as estado_civil_pct,pct.direccion as dir_pct,pct.tel_res as tel_pct,h.acompaniante,
+acom.descripcion as relacion_acom,h.tel_acompaniante,h.antecedentes_personales,h.enfermedades,
+h.hospitalizaciones,h.quirurgicos,h.transfusiones,h.medicamentos,h.toxicos,h.alergicos,h.grupo_rh,
+h.menarquia,h.ciclos,h.embarzao_controlado,h.nro_consultas,h.fum,h.fpp,h.peso_nacer,h.edad_gestacional,
+h.apgar,h.problemas_embarazo,h.embarazos_anteriores,h.padre_vivo,h.enfermedad_padre,
+h.madre_vivo,h.enfermedad_madre,h.hermanos,h.cuantos_hermanos,h.hermanos_vivos,h.enfermedad_hermanos,
+h.esquema_vacunacion,h.motivo_consulta,h.enfermedad_actual
+from historia_clinica_uci h
+left join paciente pct on (pct.codigo_empresa = h.codigo_empresa
+and pct.codigo_sucursal = h.codigo_sucursal and pct.nro_identificacion = h.nro_identificacion)
+left join elemento tipo_id on (tipo_id.tipo = 'tipo_id'
+and tipo_id.codigo = pct.tipo_identificacion)
+left join elemento sexo on (sexo.tipo = 'sexo'
+and sexo.codigo = pct.sexo)
+left join elemento ec on (ec.tipo = 'estado_civil'
+and ec.codigo = pct.estado_civil)
+left join admision am on (am.codigo_empresa = h.codigo_empresa
+and am.codigo_sucursal = h.codigo_sucursal and am.nro_identificacion = h.nro_identificacion
+and am.nro_ingreso = h.nro_ingreso)
+inner join administradora ad on (ad.codigo = am.codigo_administradora)
+left join elemento acom on (acom.tipo = 'relacion_acomp'
+and acom.codigo = h.relacion)
+where h.codigo_empresa = $P{codigo_empresa}
+and h.codigo_sucursal = $P{codigo_sucursal}
+and h.nro_historia = $P{nro_historia}]]>
+	</queryString>
+	<field name="nro_historia" class="java.lang.String"/>
+	<field name="id_pct" class="java.lang.String"/>
+	<field name="nom1_pct" class="java.lang.String"/>
+	<field name="nom2_pct" class="java.lang.String"/>
+	<field name="ape1_pct" class="java.lang.String"/>
+	<field name="ape2_pct" class="java.lang.String"/>
+	<field name="tipo_id_pct" class="java.lang.String"/>
+	<field name="edad" class="java.lang.String"/>
+	<field name="sexo_pct" class="java.lang.String"/>
+	<field name="nac_pct" class="java.sql.Timestamp"/>
+	<field name="nom_admin" class="java.lang.String"/>
+	<field name="fecha_ingreso" class="java.sql.Timestamp"/>
+	<field name="ocupacion_pct" class="java.lang.String"/>
+	<field name="estado_civil_pct" class="java.lang.String"/>
+	<field name="dir_pct" class="java.lang.String"/>
+	<field name="tel_pct" class="java.lang.String"/>
+	<field name="acompaniante" class="java.lang.String"/>
+	<field name="relacion_acom" class="java.lang.String"/>
+	<field name="tel_acompaniante" class="java.lang.String"/>
+	<field name="antecedentes_personales" class="java.lang.String"/>
+	<field name="enfermedades" class="java.lang.String"/>
+	<field name="hospitalizaciones" class="java.lang.String"/>
+	<field name="quirurgicos" class="java.lang.String"/>
+	<field name="transfusiones" class="java.lang.String"/>
+	<field name="medicamentos" class="java.lang.String"/>
+	<field name="toxicos" class="java.lang.String"/>
+	<field name="alergicos" class="java.lang.String"/>
+	<field name="grupo_rh" class="java.lang.String"/>
+	<field name="menarquia" class="java.lang.String"/>
+	<field name="ciclos" class="java.lang.String"/>
+	<field name="embarzao_controlado" class="java.lang.String"/>
+	<field name="nro_consultas" class="java.lang.String"/>
+	<field name="fum" class="java.lang.String"/>
+	<field name="fpp" class="java.lang.String"/>
+	<field name="peso_nacer" class="java.lang.String"/>
+	<field name="edad_gestacional" class="java.lang.String"/>
+	<field name="apgar" class="java.lang.String"/>
+	<field name="problemas_embarazo" class="java.lang.String"/>
+	<field name="embarazos_anteriores" class="java.lang.String"/>
+	<field name="padre_vivo" class="java.lang.String"/>
+	<field name="enfermedad_padre" class="java.lang.String"/>
+	<field name="madre_vivo" class="java.lang.String"/>
+	<field name="enfermedad_madre" class="java.lang.String"/>
+	<field name="hermanos" class="java.lang.String"/>
+	<field name="cuantos_hermanos" class="java.lang.String"/>
+	<field name="hermanos_vivos" class="java.lang.String"/>
+	<field name="enfermedad_hermanos" class="java.lang.String"/>
+	<field name="esquema_vacunacion" class="java.lang.String"/>
+	<field name="motivo_consulta" class="java.lang.String"/>
+	<field name="enfermedad_actual" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="87" splitType="Stretch">
+			<image scaleImage="FillFrame" isUsingCache="true" onErrorType="Icon">
+				<reportElement x="0" y="0" width="101" height="62"/>
+				<imageExpression class="java.io.InputStream"><![CDATA[$P{imagen}]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="101" y="20" width="358" height="14"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{id}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="101" y="0" width="358" height="20"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{empresa}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="101" y="34" width="358" height="14"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Dirección: "+$P{direccion}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="101" y="48" width="358" height="14"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Telefono: "+$P{telefono}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="101" y="72" width="358" height="15"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["HISTORIA CLINICA UCI"]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<detail>
+		<band height="603" splitType="Stretch">
+			<rectangle>
+				<reportElement x="1" y="17" width="571" height="101"/>
+			</rectangle>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="101" y="0" width="105" height="12"/>
+				<box leftPadding="1">
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{nro_historia}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="101" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Historia Clinica No.:"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="19" y="13" width="77" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[" Datos de filiación"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="3" y="28" width="90" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Nombres:"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="3" y="40" width="90" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Edad:"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="3" y="52" width="90" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Fecha de nacimiento:"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="3" y="64" width="90" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Fecha de Ingreso:"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="3" y="76" width="90" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Ocupación:"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="3" y="88" width="90" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Dirección:"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="3" y="100" width="90" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Acompañante:"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="93" y="28" width="191" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{nom1_pct}!=null?$F{nom1_pct}+" "+$F{nom2_pct}+" "+$F{ape1_pct}+" "+$F{ape2_pct}:"")]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="93" y="40" width="191" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{edad}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="93" y="52" width="191" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.sql.Timestamp"><![CDATA[$F{nac_pct}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="93" y="64" width="191" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.sql.Timestamp"><![CDATA[$F{fecha_ingreso}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="93" y="76" width="191" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{ocupacion_pct}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="93" y="88" width="191" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{dir_pct}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="93" y="100" width="191" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{acompaniante}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="287" y="28" width="55" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Tipo doc:"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="287" y="40" width="55" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Sexo:"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="287" y="52" width="55" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["EPS:"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="287" y="64" width="55" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Hora:"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="287" y="76" width="55" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Estado civil:"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="287" y="88" width="55" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Teléfono:"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="342" y="28" width="98" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{tipo_id_pct}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="441" y="28" width="40" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Número: "]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="481" y="28" width="90" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{id_pct}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="342" y="40" width="98" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo_pct}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="342" y="52" width="229" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{nom_admin}]]></textFieldExpression>
+			</textField>
+			<textField pattern="hh:mm aa" isBlankWhenNull="true">
+				<reportElement x="342" y="64" width="98" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.sql.Timestamp"><![CDATA[$F{fecha_ingreso}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="342" y="76" width="98" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{estado_civil_pct}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="342" y="88" width="98" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{tel_pct}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="288" y="100" width="55" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Relación:"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="342" y="100" width="98" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{relacion_acom}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="441" y="100" width="40" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Tel:"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="481" y="100" width="90" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{tel_acompaniante}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="1" y="125" width="571" height="105"/>
+			</rectangle>
+			<textField>
+				<reportElement mode="Opaque" x="16" y="120" width="65" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[" Antecedentes"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="3" y="156" width="111" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Hospitalizaciones:"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="3" y="180" width="111" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Trasfusiones:"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="3" y="132" width="111" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Antecedentes personales:"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="3" y="144" width="111" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Enfermedades:"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="3" y="204" width="111" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Tóxicos:"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="3" y="192" width="111" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Medicamentos:"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="3" y="168" width="111" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Quirúrgicos:"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="3" y="214" width="111" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Alérgicos:"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="114" y="132" width="457" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{antecedentes_personales}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="114" y="144" width="457" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{enfermedades}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="114" y="156" width="457" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{hospitalizaciones}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="114" y="168" width="457" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{quirurgicos}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="114" y="180" width="457" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{transfusiones}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="114" y="192" width="457" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{medicamentos}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="114" y="202" width="457" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{toxicos}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="114" y="214" width="457" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{alergicos}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="0" y="237" width="571" height="72"/>
+			</rectangle>
+			<textField>
+				<reportElement mode="Opaque" x="16" y="234" width="131" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[" Antecedentes Ginecobstétricos"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="3" y="246" width="124" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["G             P             A             C"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="3" y="258" width="124" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Embarazo controlado:"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="3" y="270" width="124" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Peso de  al nacer:"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="3" y="282" width="124" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Problemas durante embarazo:"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="3" y="294" width="124" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Embarazo anteriores:"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="182" y="246" width="81" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Grupo y Rh:"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="182" y="258" width="81" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Numero consultas:"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="182" y="270" width="81" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["E. gestacional:"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="263" y="246" width="55" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{grupo_rh}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="263" y="258" width="55" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{nro_consultas}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="263" y="270" width="55" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{edad_gestacional}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="127" y="258" width="54" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{embarzao_controlado}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="127" y="270" width="54" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{peso_nacer}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="319" y="246" width="51" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Menarquia:"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="319" y="258" width="51" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["FUM:"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="319" y="270" width="51" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["APGAR:"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="370" y="246" width="55" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{menarquia}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="370" y="258" width="55" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{fum}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="370" y="270" width="55" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{apgar}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="427" y="246" width="32" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Ciclos:"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="427" y="258" width="32" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["FPP:"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="459" y="246" width="64" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{ciclos}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="459" y="258" width="64" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{fpp}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="127" y="282" width="191" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{problemas_embarazo}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="127" y="294" width="191" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{embarazos_anteriores}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="0" y="315" width="571" height="130"/>
+			</rectangle>
+			<textField>
+				<reportElement mode="Opaque" x="19" y="310" width="108" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[" Antecedentes Familiares"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="3" y="322" width="90" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Padre vivo:"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="3" y="334" width="90" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Enfermedad padece:"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="93" y="322" width="69" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{padre_vivo}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="3" y="334" width="568" height="24"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["                                         "+$F{enfermedad_padre}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="3" y="362" width="90" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Madre viva:"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="3" y="374" width="90" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Enfermedad padece:"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="93" y="362" width="69" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{madre_vivo}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="3" y="374" width="568" height="24"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["                                         "+$F{enfermedad_madre}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="3" y="404" width="90" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Hermanos:"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="93" y="404" width="69" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{hermanos}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="164" y="404" width="42" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Cuantos:"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="206" y="404" width="69" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{cuantos_hermanos}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="280" y="404" width="42" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Vivos:"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="319" y="404" width="69" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{hermanos_vivos}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="4" y="416" width="90" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Enfermedad padece:"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="4" y="416" width="568" height="24"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["                                         "+$F{enfermedad_hermanos}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="0" y="454" width="571" height="149"/>
+			</rectangle>
+			<textField>
+				<reportElement mode="Opaque" x="16" y="449" width="88" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[" Datos de la consulta"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="4" y="461" width="110" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Esquema de vacunación:"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="112" y="461" width="276" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{esquema_vacunacion}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="4" y="473" width="110" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Motivo de la consulta:"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="3" y="485" width="558" height="45"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{motivo_consulta}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="3" y="545" width="558" height="45"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{enfermedad_actual}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="4" y="533" width="110" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Enfermedad Actual:"]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Servicios_disponiblesDao">
+
+	<resultMap id="servicios_disponiblesMap" type="servicios_disponibles">
+		<result column="id_servicio" property="id_servicio" />
+		<result column="nombre" property="nombre" />
+		<result column="codigo_procedimiento" property="codigo_procedimiento" />
+		<result column="creacion_date" property="creacion_date" />
+		<result column="creacion_user" property="creacion_user" />
+		<result column="id_padre" property="id_padre" />
+		<result column="tipo" property="tipo"  />
+		<result column="codigo" property="codigo" />
+		<result column="via_ingreso" property="via_ingreso" />
+	</resultMap>
+
+	<insert id="crear" parameterType="servicios_disponibles">
+		insert into public.servicios_disponibles (
+		nombre,codigo_procedimiento,creacion_date,
+		creacion_user,id_padre,tipo,
+		codigo,via_ingreso)
+		values (
+		#{nombre},#{codigo_procedimiento},#{creacion_date},
+		#{creacion_user},#{id_padre},#{tipo},
+		#{codigo},#{via_ingreso});
+		<selectKey keyProperty="id_servicio" resultType="java.lang.Long" >
+			select last_value as id_servicio from servicios_disponibles_id_servicio_seq
+		</selectKey>
+	</insert>
+
+	<update id="actualizar" parameterType="servicios_disponibles">
+		update public.servicios_disponibles set id_servicio = #{id_servicio},
+		nombre = #{nombre},
+		codigo_procedimiento = #{codigo_procedimiento}, 
+		creacion_date = #{creacion_date},
+		creacion_user = #{creacion_user},id_padre = #{id_padre},
+		tipo = #{tipo}, codigo = #{codigo},
+		via_ingreso = #{via_ingreso}   
+		where id_servicio = #{id_servicio}
+	</update>
+
+	<select id="consultar" parameterType="servicios_disponibles" resultMap="servicios_disponiblesMap">
+		select id_servicio,
+		nombre,
+		codigo_procedimiento,
+		creacion_date,creacion_user,
+		id_padre,tipo,codigo,via_ingreso     
+		from public.servicios_disponibles
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="id_servicio != null">
+				AND id_servicio = #{id_servicio}
+			</if>
+			<if test="codigo != null">
+				AND codigo = #{codigo}
+			</if>
+		</trim> 
+		
+	</select>
+
+	<delete id="eliminar" parameterType="servicios_disponibles">
+		delete from public.servicios_disponibles
+		where id_servicio = #{id_servicio}
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="servicios_disponiblesMap">
+		select id_servicio,
+		nombre,
+		codigo_procedimiento,
+		creacion_date,creacion_user,
+		id_padre,tipo,codigo,via_ingreso     
+		from public.servicios_disponibles 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="raiz  != null">
+				AND id_servicio = 0
+			</if>
+			<if test="solo_padres != null">
+				AND id_padre = 0
+			</if>
+			<if test="id_padre != null">
+				AND id_padre = #{id_padre}
+			</if>
+			<if test="paramTodo != null">
+			AND (
+				upper(nombre) like '%${value}%'
+				or upper(codigo_procedimiento) like '%${value}%' 
+				or upper(codigo) like '%${value}%')
+			</if>
+			
+			<if test="codigo_bus != null">
+				AND codigo like '${codigo_bus}%'
+			</if>
+			
+			<if test="tipo != null">
+				AND tipo = #{tipo}
+			</if>
+			
+			<if test="not_null_procedimiento != null">
+				AND codigo_procedimiento is not null
+			</if>
+			
+			<if test="via_ingreso != null">
+				AND via_ingreso = #{via_ingreso}
+			</if>
+						
+			<if test="filtro_consulta != null">
+			${filtro_consulta}
+			</if>
+		</trim>
+		ORDER BY id_padre, id_servicio
+	</select>
+	
+	<select id="listar_codigos" parameterType="java.util.Map" resultType="java.lang.String">
+		select 
+		codigo_procedimiento   
+		from public.servicios_disponibles 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="solo_padres != null">
+				AND id_padre = 0
+			</if>
+			<if test="id_padre != null">
+				AND id_padre = #{id_padre}
+			</if>
+			<if test="paramTodo != null">
+			AND (
+				upper(nombre) like '${value}'
+				or upper(codigo_procedimiento) like '${value}' 
+				or upper(codigo) like '${value}')
+			</if>
+			
+			<if test="codigo_bus != null">
+				AND codigo like '${codigo_bus}%'
+			</if>
+			
+			<if test="tipo != null">
+				AND tipo = #{tipo}
+			</if>
+			
+			<if test="not_null_procedimiento != null">
+				AND codigo_procedimiento is not null
+			</if>
+			
+			<if test="via_ingreso != null">
+				AND via_ingreso = #{via_ingreso}
+			</if>
+						
+			<if test="filtro_consulta != null">
+			${filtro_consulta}
+			</if>
+		</trim>
+		ORDER BY codigo_procedimiento
+	</select>
+	
+	<select id="cantidad_hijos" parameterType="servicios_disponibles" resultType="java.lang.Long">
+		select count(1) 
+		from public.servicios_disponibles 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="id_padre">
+				AND id_padre = #{id_padre}
+			</if>
+		</trim>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from public.servicios_disponibles 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_padre != null">
+				codigo like '${codigo_padre}%'			
+			</if>
+			<if test="codigo_procedimiento != null">
+				AND codigo_procedimiento like '%${codigo_procedimiento}%'
+			</if>
+			<if test="tipo != null">
+				AND tipo = #{tipo}
+			</if>
+			<if test="via_ingreso != null">
+				AND via_ingreso = #{via_ingreso}
+			</if>
+			
+		</trim>
+		<if test="limite_paginado != null">
+			${limite_paginado}
+		</if>
+	</select>
+
+</mapper>

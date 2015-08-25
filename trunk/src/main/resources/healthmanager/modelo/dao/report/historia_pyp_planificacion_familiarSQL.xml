@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.historia_pyp_planificacion_familiarModel">
+	<select id="select" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+SELECT
+		get_edad(paciente.fecha_nacimiento,CURRENT_DATE,'1') AS edad,
+		planificacion_familiar.codigo_empresa,planificacion_familiar.codigo_sucursal,
+		planificacion_familiar.codigo_historia,planificacion_familiar.identificacion,
+		planificacion_familiar.fecha_inicial,planificacion_familiar.nro_ingreso,
+		planificacion_familiar.nro_inscripcion,planificacion_familiar.lee,
+		planificacion_familiar.enfermedad_actual,planificacion_familiar.motivo_consulta,
+		planificacion_familiar.cardio_mas,planificacion_familiar.cardio_fem,
+		elemento2.descripcion as elemento2,
+		elemento3.descripcion as elemento3,elemento4.descripcion as elemento4,
+		elemento5.descripcion as elemento5,elemento6.descripcion as elemento6,
+		elemento7.descripcion as elemento7,elemento8.descripcion as elemento8,
+		planificacion_familiar.grisofolvina,
+		planificacion_familiar.anticonvulsivante,planificacion_familiar.rifamplilina,
+		planificacion_familiar.antirenovirales,
+		paciente."tipo_identificacion" AS paciente_tipo_identificacion,
+		paciente."nro_identificacion" AS paciente_nro_identificacion,
+		paciente."codigo_administradora" AS paciente_codigo_administradora,
+		paciente."tipo_usuario" AS paciente_tipo_usuario,
+		paciente."apellido1" AS paciente_apellido1,
+		paciente."apellido2" AS paciente_apellido2,
+		paciente."nombre1" AS paciente_nombre1,
+		paciente."nombre2" AS paciente_nombre2,
+		paciente."unidad_medidad" AS paciente_unidad_medidad,
+		paciente."sexo" AS paciente_sexo,
+		paciente."profesion" AS paciente_profesion,
+		paciente."tel_oficina" AS paciente_tel_oficina,
+		paciente."tel_res" AS paciente_tel_res,
+		paciente."direccion" AS paciente_direccion,
+		paciente."nivel_sisben" AS paciente_nivel_sisben,
+		paciente."edad" AS paciente_edad,
+		pertenencia_etnica."nombre" AS pert_etnica,
+		departamentos."nombre" AS departamento,
+		municipios."nombre" AS municipios,
+		administradora."codigo" AS administradora,
+		ocupaciones."nombre" AS ocupacion,
+		barrio."barrio" AS barrio,
+		elemento."descripcion" AS estado_civil,
+		elemento1."descripcion" AS regimen,
+		nivel_educativo."nombre" AS nivel_educativo,
+		localidad."localidad" AS localidad,
+		paciente."login" AS paciente_login,
+		paciente."fecha_nacimiento" AS paciente_fecha_nacimiento,
+		paciente."codigo_dpto" AS paciente_codigo_dpto,
+		paciente."codigo_municipio" AS paciente_codigo_municipio,
+		u.nombres || ' ' || u.apellidos as medico,
+		planificacion_familiar.creacion_user
+
+		FROM
+		"public"."planificacion_familiar"
+		planificacion_familiar INNER JOIN "public"."admision" admision ON
+		planificacion_familiar."codigo_empresa" = planificacion_familiar."codigo_empresa" AND
+		planificacion_familiar."identificacion" = admision."nro_identificacion" AND
+		planificacion_familiar."codigo_sucursal" = admision."codigo_sucursal" AND 
+		planificacion_familiar."nro_ingreso" = admision."nro_ingreso"
+
+		INNER
+		JOIN "public"."paciente" paciente ON 
+		paciente."codigo_empresa" = admision."codigo_empresa"
+		AND paciente."nro_identificacion" = admision."nro_identificacion"
+		AND paciente.codigo_sucursal = admision.codigo_sucursal
+		AND paciente."codigo_sucursal" = admision."codigo_sucursal"
+
+		INNER JOIN 
+		"public"."impresion_diagnostica" impresion_diagnostica ON 
+		planificacion_familiar."codigo_empresa" = impresion_diagnostica."codigo_empresa" AND
+		planificacion_familiar."codigo_sucursal"=impresion_diagnostica."codigo_sucursal" AND 
+		planificacion_familiar."codigo_historia" = impresion_diagnostica."codigo_historia"
+
+		LEFT JOIN
+		"public".pertenencia_etnica pertenencia_etnica on
+		pertenencia_etnica."id" = paciente."pertenencia_etnica"
+
+		LEFT JOIN
+		"public".municipios municipios on
+		municipios.codigo = paciente.codigo_municipio
+
+		INNER JOIN 
+		"public".departamentos departamentos on 
+		departamentos.codigo = paciente.codigo_dpto AND
+		municipios.coddep = paciente."codigo_dpto"
+
+		LEFT JOIN
+		"public".administradora administradora on 
+		administradora.codigo = paciente.codigo_administradora
+		
+		LEFT JOIN 
+		"public".ocupaciones ocupaciones on 
+		ocupaciones."id" = paciente.codigo_ocupacion
+
+		LEFT JOIN
+		"public".adicional_paciente adicional_paciente on
+		adicional_paciente.codigo_empresa = paciente.codigo_empresa AND
+		adicional_paciente.codigo_sucursal = paciente.codigo_sucursal AND
+		adicional_paciente.nro_identificacion = paciente.nro_identificacion
+
+		LEFT JOIN 
+		"public".barrio barrio on 
+		barrio.codigo_barrio = adicional_paciente.codigo_barrio
+
+		LEFT JOIN 
+		"public".elemento elemento on 
+		elemento.codigo = paciente.estado_civil AND
+		elemento.tipo ='estado_civil'
+
+		LEFT JOIN 
+		"public".elemento elemento2 on 
+		elemento2.codigo = planificacion_familiar.diabetes_mellitus AND
+		elemento2.tipo ='ante_familiares'
+
+		LEFT JOIN 
+		"public".elemento elemento3 on 
+		elemento3.codigo = planificacion_familiar.hipertension_arterial AND
+		elemento3.tipo ='ante_familiares'
+
+		LEFT JOIN 
+		"public".elemento elemento4 on 
+		elemento4.codigo = planificacion_familiar.ca_mama2 AND
+		elemento4.tipo ='ante_familiares'
+
+		LEFT JOIN 
+		"public".elemento elemento5 on 
+		elemento5.codigo = planificacion_familiar.ca_cuello_uterino AND
+		elemento5.tipo ='ante_familiares'
+
+		LEFT JOIN 
+		"public".elemento elemento6 on 
+		elemento6.codigo = planificacion_familiar.ca_prostata AND
+		elemento6.tipo ='ante_familiares'
+
+		LEFT JOIN 
+		"public".elemento elemento7 on 
+		elemento7.codigo = planificacion_familiar.ca_gastrico AND
+		elemento7.tipo ='ante_familiares'
+
+		LEFT JOIN 
+		"public".elemento elemento8 on 
+		elemento8.codigo = planificacion_familiar.ca_colorrectal AND
+		elemento8.tipo ='ante_familiares'
+
+		LEFT JOIN 
+		"public".usuarios u on
+		u.codigo_empresa = planificacion_familiar.codigo_empresa
+		and u.codigo_sucursal = planificacion_familiar.codigo_sucursal
+		and u.codigo = planificacion_familiar.creacion_user
+		
+		LEFT JOIN 
+		"public".elemento elemento1 on 
+		elemento1.codigo = paciente.tipo_usuario 
+		and elemento1.tipo = 'tipo_usuario'
+		
+		LEFT JOIN
+		"public".nivel_educativo nivel_educativo on 
+		nivel_educativo."id" = paciente.codigo_educativo
+		
+		LEFT JOIN 
+		"public".localidad localidad on
+		localidad.codigo_localidad = barrio.codigo_localidad
+		
+		where
+		planificacion_familiar.codigo_empresa = #{codigo_empresa}
+		and
+		planificacion_familiar.codigo_sucursal = #{codigo_sucursal}
+		and
+		planificacion_familiar.codigo_historia = #{nro_historia}
+
+
+	</select>
+
+</mapper>

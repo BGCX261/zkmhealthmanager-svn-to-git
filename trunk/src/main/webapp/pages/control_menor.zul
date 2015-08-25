@@ -1,0 +1,771 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+<style src="estilo.css" />
+<style>
+body ,table{
+	margin:0;
+	padding:0;
+	
+}
+.z-fieldset{
+	-moz-border-radius:5px;
+	border-radius: 5px;
+	-webkit-border-radius: 5px;
+}
+.combobox{
+	font-size:12px;
+	border: 1px solid silver;
+}
+
+tr.z-row .z-cell{
+	background-image:none;
+}
+
+tr.z-row td.z-row-inner{
+	background-image:none;
+}
+</style>
+<borderlayout id="formControl_menor" width="100%" height="100%" use="healthmanager.controller.Control_menorAction"  onCreate="formControl_menor.initControl_menor();">
+<center autoscroll="true" border="none">
+
+<!-- *********************** -->
+<!--        Principal        -->
+<!-- *********************** -->
+<groupbox id="groupboxPrincipal" style="border:0;padding:2px">
+
+<!-- **************** -->
+<!-- Zona de Consulta -->
+<!-- **************** -->
+<groupbox id="groupboxConsulta" visible="false" closable="false" style="border:0;padding:0">
+
+<toolbar sclass="vista">
+<label value="Criterios de B&#250;squeda :" />
+<listbox id="lbxParameter" mold="select" sclass="combobox" width="150px"/>
+<textbox id="tbxValue" width="200px" onOK="formControl_menor.buscarDatos();" style="text-transform:uppercase"/>
+<toolbarbutton image="/images/Magnifier.gif" label="Consultar"  onClick="formControl_menor.buscarDatos();" tooltiptext="Consultar" id="btConsultar"/>
+<toolbarbutton image="/images/New16.gif" label="Nuevo" onClick='formControl_menor.accionForm(true,"registrar");' tooltiptext="Nuevo" id="btNew"/>
+</toolbar>
+
+<space/>
+
+<!-- ***************************** -->
+<!--  Resultado Consulta Maestros  -->
+<!-- ***************************** -->
+<grid id="gridResultado" height="300px" mold="paging" pageSize="20">
+<columns sizable="true">
+	<column label="Codigo_historia" align="center"/>
+	<column label="Identificacion" align="center"/>
+	<column label="Fecha_inicial" align="center"/>
+	<column label="Acciones" align="center" width="80px"/>
+</columns>
+<rows id="rowsResultado" width="100%" />
+</grid>
+</groupbox>
+
+<!-- *************************** -->
+<!-- *** Insertar/Actualizar *** -->
+<!-- *************************** -->
+<groupbox visible="true" id="groupboxEditar" closable="false" style="border:0;padding:0">
+
+<!-- *************************** -->
+<!-- **** Barra de Botones ***** -->
+<!-- *************************** -->
+
+<toolbar width="100%" align="start">
+<textbox id="tbxAccion" value="registrar" visible="false"/>
+<toolbarbutton image="/images/Save16.gif" label="Guardar" tooltiptext="Guardar Datos" onClick="formControl_menor.guardarDatos();" id="btGuardar"/>
+<toolbarbutton image="/images/New16.gif" label="Nuevo" onClick='formControl_menor.accionForm(true,"registrar");' tooltiptext="Nuevo" id="btNuevo"/>
+<toolbarbutton image="/images/cancel.jpg" label="Consultar" tooltiptext="Regresar a Consulta" onClick='formControl_menor.accionForm(false,tbxAccion.getText());' id="btCancelar"/>
+</toolbar>
+
+
+<space/>
+<grid sclass="GridSinBorde">
+<columns>
+<column label="" width="13%"/>
+<column label="" width="18%"/>
+<column label="" width="13%"/>
+<column label="" width="18%"/>
+<column label="" width="13%"/>
+<column label="" width="15%"/>
+</columns>
+<rows>
+
+<!-- fila 1 -->
+<row>
+<cell></cell>
+<cell></cell>
+<cell><textbox id="tbxCodigo_historia" width="170px" style="text-transform:uppercase" visible="false"/></cell>
+<cell></cell>
+<cell></cell>
+<cell></cell>
+</row>
+
+<!-- fila 2 -->
+<row>
+<cell><label id="lbFecha_inicial" value="Fecha inicial: "/></cell>
+<cell colspan="5"><datebox id="dtbxFecha_inicial" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="170px"/></cell>
+</row>
+
+
+<!-- fila 3 -->
+
+
+<row>
+<cell><label value="* " style="color: red" tooltiptext="Campo obligatorio"/><label id="lbIdentificacion" value="Identificacion: "/></cell>
+<cell>
+<bandbox id="tbxIdentificacion" autodrop="true" readonly="true" width="170px" onOpen='formControl_menor.buscarPaciente(tbxIdentificacion.getValue(),lbxPaciente)'>
+<bandpopup>
+	<vbox>
+		<toolbar>
+			<label value="Buscar: "/>
+		    <textbox id="tbxValuePaciente" onChanging='formControl_menor.buscarPaciente(event.getValue(),lbxPaciente)' style="text-transform:uppercase;"/>
+		    <toolbarbutton image="/images/borrar.gif" tooltiptext="Quitar" onClick='formControl_menor.selectedPaciente(new Listitem())'/>
+		</toolbar>
+		<listbox height="300px" width="600px" mold="paging" pageSize="8" id="lbxPaciente"
+		    onSelect='formControl_menor.selectedPaciente(self.getSelectedItem())' >
+		    <listhead>
+		    <listheader label="Tipo Ident." width="65px"/>
+		    <listheader label="Identificación"/>
+		    <listheader label="Nombres"/>
+		    <listheader label="Apellidos"/>
+		    </listhead>
+		</listbox>
+	</vbox>
+  </bandpopup>
+</bandbox>
+</cell>
+<cell colspan="4">
+<hlayout>
+<label id="lbTipoIdentificacion" value="Tipo: "/><space></space>
+<textbox id="tbxTipoIdentificacion" width="40px" style="text-transform:uppercase" readonly="true"/><space></space>
+<label id="lbNomPaciente" value="Nombre: "/><space></space>
+<textbox id="tbxNomPaciente" width="350px" style="text-transform:uppercase" readonly="true"/>
+</hlayout>
+</cell>
+</row>
+
+<!-- fila 4 -->
+<row>
+<cell colspan="2">
+<hlayout>
+<label id="lbNacimiento" value="Fecha de Nacimiento: "/><space></space>
+<datebox id="dbxNacimiento" width="120px" style="text-transform:uppercase" disabled="disabled" format="yyyy-MM-dd" readonly="true"/><space></space>
+</hlayout>
+</cell>
+<cell colspan="4">
+<hlayout>
+<label id="lbEdad" value="Edad: "/>
+<textbox id="tbxEdad" width="30px" style="text-transform:uppercase" readonly="true"/><space></space>
+<label id="lbSexo" value="Sexo: "/>
+<textbox id="tbxSexo" width="80px" style="text-transform:uppercase" readonly="true"/><space></space>
+<label id="lbDireccion" value="Direccion: "/>
+<textbox id="tbxDireccion" width="240px" style="text-transform:uppercase" readonly="true"/>
+</hlayout>
+</cell>
+</row>
+
+
+<!-- fila 5 -->
+<row>
+<cell><label id="lbCodigo_eps" value="Codigo EPS: "/></cell>
+<cell colspan="5">
+<hlayout>
+<textbox id="tbxCodigo_eps" width="70px" style="text-transform:uppercase" readonly="true"/><space></space>
+<textbox id="tbxNombre_eps" width="220px" style="text-transform:uppercase" readonly="true"/><space></space>
+<label id="lbCodigo_dpto" value="* Dpto: "/>
+<listbox id="lbxCodigo_dpto" mold="select" width="120px" sclass="combobox" onSelect="formControl_menor.listarMunicipios(lbxCodigo_municipio,lbxCodigo_dpto);" onOK="lbxCodigo_municipio.focus();"/><space></space>
+<label id="lbCodigo_municipio" value="* Municipio: "/>
+<listbox id="lbxCodigo_municipio" name="Codigo_municipio" mold="select" width="120px" sclass="combobox" onOK="lbxCodigo_dpto.focus();"/><space/>
+
+</hlayout>
+</cell>
+
+</row>
+
+<!-- fila 6 -->
+<row>
+<cell><label id="lbControto" value="Contrato: "/></cell>
+<cell><textbox id="tbxCodigo_contrato" width="70px" style="text-transform:uppercase" readonly="true"/></cell>
+<cell colspan="4">
+<textbox id="tbxContrato" width="220px" style="text-transform:uppercase" readonly="true"/>
+</cell>
+</row>
+
+
+<!-- fila 7 -->
+<row>
+<cell colspan="6">
+	<hlayout>
+	<groupbox width="95%" closable="false">
+	<caption label="Control Menor de un Mes"/>
+
+		<grid sclass="GridSinBorde" style="border:none">
+			<columns>
+			<column label="" width="20%"/>
+			<column label="" width="20%"/>
+			<column label="" width="30%"/>
+			<column label="" width="30%"/>
+			</columns>
+			<rows>
+
+			<row>
+			<cell><label id="lbFecha_inicial1" value="Fecha: "/></cell>
+			<cell colspan="3"><datebox id="dtbxFecha_inicial1" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="170px"/></cell>
+			</row>
+			
+			
+			<row>
+			<cell><label value="* " style="color: red" tooltiptext="Campo obligatorio"/><label id="lbCodigo_prestador" value="Prestador: "/></cell>
+			<cell>
+			<bandbox id="tbxIdentificacion1" autodrop="true" readonly="true" width="170px" onOpen='formControl_menor.buscarPrestador(tbxValuePrestador.getValue(),lbxPrestador)'>
+			<bandpopup>
+				<vbox>
+					<toolbar>
+						<label value="Buscar: "/>
+					    <textbox id="tbxValuePrestador" onChanging='formControl_menor.buscarPrestador(event.getValue(),lbxPrestador)' style="text-transform:uppercase;"/>
+					    <toolbarbutton image="/images/borrar.gif" tooltiptext="Quitar" onClick='formControl_menor.selectedPrestador(new Listitem(), tbxIdentificacion1, tbxNomIdentificacion1)'/>
+					</toolbar>
+					<listbox height="300px" width="600px" mold="paging" pageSize="8" id="lbxPrestador"
+					    onSelect='formControl_menor.selectedPrestador(self.getSelectedItem(), tbxIdentificacion1, tbxNomIdentificacion1)' >
+					    <listhead>
+					    <listheader label="Tipo Ident." width="65px"/>
+					    <listheader label="Identificación"/>
+					    <listheader label="Nombres"/>
+					    <listheader label="Apellidos"/>
+					    <listheader label="Especialidad"/>
+					    </listhead>
+					</listbox>
+				</vbox>
+			  </bandpopup>
+			</bandbox>
+			</cell>
+			<cell colspan="2"><textbox id="tbxNomIdentificacion1" width="320px" style="text-transform:uppercase" readonly="true"/></cell>
+			</row>
+			
+			<row>
+			<cell><label id="lbEdad1" value="Edad: "/><space></space>
+			<textbox id="tbxEdad1" width="70px" style="text-transform:uppercase"/></cell>
+			
+			<cell><label id="lbPeso1" value="Peso: "/><space></space>
+			<textbox id="tbxPeso1" width="70px" style="text-transform:uppercase"/></cell>
+			
+			<cell><label id="lbTalla1" value="Talla: "/><space></space>
+			<textbox id="tbxTalla1" width="70px" style="text-transform:uppercase"/></cell>
+			
+			<cell><label id="lbPerimietro1" value="Perimetro: "/><space></space>
+			<textbox id="tbxPerimietro1" width="70px" style="text-transform:uppercase"/></cell>
+			</row>			
+			
+			</rows>
+			</grid>
+</groupbox>
+</hlayout>
+</cell>
+</row>	
+
+<!-- fila 8 -->
+<row>
+<cell colspan="6">
+	<hlayout>
+	<groupbox width="95%" closable="false">
+	<caption label="Control 1 a 3 Meses"/>
+
+		<grid sclass="GridSinBorde" style="border:none">
+			<columns>
+			<column label="" width="20%"/>
+			<column label="" width="20%"/>
+			<column label="" width="30%"/>
+			<column label="" width="30%"/>
+			</columns>
+			<rows>
+
+			<row>
+			<cell><label id="lbFecha_inicial2" value="Fecha: "/></cell>
+			<cell colspan="3"><datebox id="dtbxFecha_inicial2" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="170px"/></cell>
+			</row>
+			
+			
+			<row>
+			<cell><label value="* " style="color: red" tooltiptext="Campo obligatorio"/><label id="lbCodigo_prestador2" value="Prestador: "/></cell>
+			<cell>
+			<bandbox id="tbxIdentificacion2" autodrop="true" readonly="true" width="170px" onOpen='formControl_menor.buscarPrestador(tbxValuePrestador2.getValue(),lbxPrestador2)'>
+			<bandpopup>
+				<vbox>
+					<toolbar>
+						<label value="Buscar: "/>
+					    <textbox id="tbxValuePrestador2" onChanging='formControl_menor.buscarPrestador(event.getValue(),lbxPrestador2)' style="text-transform:uppercase;"/>
+					    <toolbarbutton image="/images/borrar.gif" tooltiptext="Quitar" onClick='formControl_menor.selectedPrestador(new Listitem(), tbxIdentificacion2, tbxNomIdentificacion2)'/>
+					</toolbar>
+					<listbox height="300px" width="600px" mold="paging" pageSize="8" id="lbxPrestador2"
+					    onSelect='formControl_menor.selectedPrestador(self.getSelectedItem(), tbxIdentificacion2, tbxNomIdentificacion2)' >
+					    <listhead>
+					    <listheader label="Tipo Ident." width="65px"/>
+					    <listheader label="Identificación"/>
+					    <listheader label="Nombres"/>
+					    <listheader label="Apellidos"/>
+					    <listheader label="Especialidad"/>
+					    </listhead>
+					</listbox>
+				</vbox>
+			  </bandpopup>
+			</bandbox>
+			</cell>
+			<cell colspan="2"><textbox id="tbxNomIdentificacion2" width="320px" style="text-transform:uppercase" readonly="true"/></cell>
+			</row>
+			
+			<row>
+			<cell><label id="lbEdad2" value="Edad: "/><space></space>
+			<textbox id="tbxEdad2" width="70px" style="text-transform:uppercase"/></cell>
+			
+			<cell><label id="lbPeso2" value="Peso: "/><space></space>
+			<textbox id="tbxPeso2" width="70px" style="text-transform:uppercase"/></cell>
+			
+			<cell><label id="lbTalla2" value="Talla: "/><space></space>
+			<textbox id="tbxTalla2" width="70px" style="text-transform:uppercase"/></cell>
+			
+			<cell><label id="lbPerimietro2" value="Perimetro: "/><space></space>
+			<textbox id="tbxPerimietro2" width="70px" style="text-transform:uppercase"/></cell>
+			</row>			
+			
+			</rows>
+			</grid>
+</groupbox>
+</hlayout>
+</cell>
+</row>	
+
+<!-- fila 9 -->
+<row>
+<cell colspan="6">
+	<hlayout>
+	<groupbox width="95%" closable="false">
+	<caption label="Control 4 a 6 Meses"/>
+
+		<grid sclass="GridSinBorde" style="border:none">
+			<columns>
+			<column label="" width="20%"/>
+			<column label="" width="20%"/>
+			<column label="" width="30%"/>
+			<column label="" width="30%"/>
+			</columns>
+			<rows>
+
+			<row>
+			<cell><label id="lbFecha_inicial3" value="Fecha: "/></cell>
+			<cell colspan="3"><datebox id="dtbxFecha_inicial3" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="170px"/></cell>
+			</row>
+			
+			
+			<row>
+			<cell><label value="* " style="color: red" tooltiptext="Campo obligatorio"/><label id="lbCodigo_prestador3" value="Prestador: "/></cell>
+			<cell>
+			<bandbox id="tbxIdentificacion3" autodrop="true" readonly="true" width="170px" onOpen='formControl_menor.buscarPrestador(tbxValuePrestador3.getValue(),lbxPrestador3)'>
+			<bandpopup>
+				<vbox>
+					<toolbar>
+						<label value="Buscar: "/>
+					    <textbox id="tbxValuePrestador3" onChanging='formControl_menor.buscarPrestador(event.getValue(),lbxPrestador3)' style="text-transform:uppercase;"/>
+					    <toolbarbutton image="/images/borrar.gif" tooltiptext="Quitar" onClick='formControl_menor.selectedPrestador(new Listitem(), tbxIdentificacion3, tbxNomIdentificacion3)'/>
+					</toolbar>
+					<listbox height="300px" width="600px" mold="paging" pageSize="8" id="lbxPrestador3"
+					    onSelect='formControl_menor.selectedPrestador(self.getSelectedItem(), tbxIdentificacion3, tbxNomIdentificacion3)' >
+					    <listhead>
+					    <listheader label="Tipo Ident." width="65px"/>
+					    <listheader label="Identificación"/>
+					    <listheader label="Nombres"/>
+					    <listheader label="Apellidos"/>
+					    <listheader label="Especialidad"/>
+					    </listhead>
+					</listbox>
+				</vbox>
+			  </bandpopup>
+			</bandbox>
+			</cell>
+			<cell colspan="2"><textbox id="tbxNomIdentificacion3" width="320px" style="text-transform:uppercase" readonly="true"/></cell>
+			</row>
+			
+			<row>
+			<cell><label id="lbEdad3" value="Edad: "/><space></space>
+			<textbox id="tbxEdad3" width="70px" style="text-transform:uppercase"/></cell>
+			
+			<cell><label id="lbPeso3" value="Peso: "/><space></space>
+			<textbox id="tbxPeso3" width="70px" style="text-transform:uppercase"/></cell>
+			
+			<cell><label id="lbTalla3" value="Talla: "/><space></space>
+			<textbox id="tbxTalla3" width="70px" style="text-transform:uppercase"/></cell>
+			
+			<cell><label id="lbPerimietro3" value="Perimetro: "/><space></space>
+			<textbox id="tbxPerimietro3" width="70px" style="text-transform:uppercase"/></cell>
+			</row>			
+			
+			</rows>
+			</grid>
+</groupbox>
+</hlayout>
+</cell>
+</row>
+
+<!-- fila 10 -->
+<row>
+<cell colspan="6">
+	<hlayout>
+	<groupbox width="95%" closable="false">
+	<caption label="Control 7 a 9 Meses"/>
+
+		<grid sclass="GridSinBorde" style="border:none">
+			<columns>
+			<column label="" width="20%"/>
+			<column label="" width="20%"/>
+			<column label="" width="30%"/>
+			<column label="" width="30%"/>
+			</columns>
+			<rows>
+
+			<row>
+			<cell><label id="lbFecha_inicial4" value="Fecha: "/></cell>
+			<cell colspan="3"><datebox id="dtbxFecha_inicial4" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="170px"/></cell>
+			</row>
+			
+			
+			<row>
+			<cell><label value="* " style="color: red" tooltiptext="Campo obligatorio"/><label id="lbCodigo_prestador4" value="Prestador: "/></cell>
+			<cell>
+			<bandbox id="tbxIdentificacion4" autodrop="true" readonly="true" width="170px" onOpen='formControl_menor.buscarPrestador(tbxValuePrestador4.getValue(),lbxPrestador4)'>
+			<bandpopup>
+				<vbox>
+					<toolbar>
+						<label value="Buscar: "/>
+					    <textbox id="tbxValuePrestador4" onChanging='formControl_menor.buscarPrestador(event.getValue(),lbxPrestador4)' style="text-transform:uppercase;"/>
+					    <toolbarbutton image="/images/borrar.gif" tooltiptext="Quitar" onClick='formControl_menor.selectedPrestador(new Listitem(), tbxIdentificacion4, tbxNomIdentificacion4)'/>
+					</toolbar>
+					<listbox height="300px" width="600px" mold="paging" pageSize="8" id="lbxPrestador4"
+					    onSelect='formControl_menor.selectedPrestador(self.getSelectedItem(), tbxIdentificacion4, tbxNomIdentificacion4)' >
+					    <listhead>
+					    <listheader label="Tipo Ident." width="65px"/>
+					    <listheader label="Identificación"/>
+					    <listheader label="Nombres"/>
+					    <listheader label="Apellidos"/>
+					    <listheader label="Especialidad"/>
+					    </listhead>
+					</listbox>
+				</vbox>
+			  </bandpopup>
+			</bandbox>
+			</cell>
+			<cell colspan="2"><textbox id="tbxNomIdentificacion4" width="320px" style="text-transform:uppercase" readonly="true"/></cell>
+			</row>
+			
+			<row>
+			<cell><label id="lbEdad4" value="Edad: "/><space></space>
+			<textbox id="tbxEdad4" width="70px" style="text-transform:uppercase"/></cell>
+			
+			<cell><label id="lbPeso4" value="Peso: "/><space></space>
+			<textbox id="tbxPeso4" width="70px" style="text-transform:uppercase"/></cell>
+			
+			<cell><label id="lbTalla4" value="Talla: "/><space></space>
+			<textbox id="tbxTalla4" width="70px" style="text-transform:uppercase"/></cell>
+			
+			<cell><label id="lbPerimietro4" value="Perimetro: "/><space></space>
+			<textbox id="tbxPerimietro4" width="70px" style="text-transform:uppercase"/></cell>
+			</row>			
+			
+			</rows>
+			</grid>
+</groupbox>
+</hlayout>
+</cell>
+</row>
+
+<!-- fila 11 -->
+<row>
+<cell colspan="6">
+	<hlayout>
+	<groupbox width="95%" closable="false">
+	<caption label="Control 10 a 12 Meses"/>
+
+		<grid sclass="GridSinBorde" style="border:none">
+			<columns>
+			<column label="" width="20%"/>
+			<column label="" width="20%"/>
+			<column label="" width="30%"/>
+			<column label="" width="30%"/>
+			</columns>
+			<rows>
+
+			<row>
+			<cell><label id="lbFecha_inicial5" value="Fecha: "/></cell>
+			<cell colspan="3"><datebox id="dtbxFecha_inicial5" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="170px"/></cell>
+			</row>
+			
+			
+			<row>
+			<cell><label value="* " style="color: red" tooltiptext="Campo obligatorio"/><label id="lbCodigo_prestador5" value="Prestador: "/></cell>
+			<cell>
+			<bandbox id="tbxIdentificacion5" autodrop="true" readonly="true" width="170px" onOpen='formControl_menor.buscarPrestador(tbxValuePrestador5.getValue(),lbxPrestador5)'>
+			<bandpopup>
+				<vbox>
+					<toolbar>
+						<label value="Buscar: "/>
+					    <textbox id="tbxValuePrestador5" onChanging='formControl_menor.buscarPrestador(event.getValue(),lbxPrestador5)' style="text-transform:uppercase;"/>
+					    <toolbarbutton image="/images/borrar.gif" tooltiptext="Quitar" onClick='formControl_menor.selectedPrestador(new Listitem(), tbxIdentificacion5, tbxNomIdentificacion5)'/>
+					</toolbar>
+					<listbox height="300px" width="600px" mold="paging" pageSize="8" id="lbxPrestador5"
+					    onSelect='formControl_menor.selectedPrestador(self.getSelectedItem(), tbxIdentificacion5, tbxNomIdentificacion5)' >
+					    <listhead>
+					    <listheader label="Tipo Ident." width="65px"/>
+					    <listheader label="Identificación"/>
+					    <listheader label="Nombres"/>
+					    <listheader label="Apellidos"/>
+					    <listheader label="Especialidad"/>
+					    </listhead>
+					</listbox>
+				</vbox>
+			  </bandpopup>
+			</bandbox>
+			</cell>
+			<cell colspan="2"><textbox id="tbxNomIdentificacion5" width="320px" style="text-transform:uppercase" readonly="true"/></cell>
+			</row>
+			
+			<row>
+			<cell><label id="lbEdad5" value="Edad: "/><space></space>
+			<textbox id="tbxEdad5" width="70px" style="text-transform:uppercase"/></cell>
+			
+			<cell><label id="lbPeso5" value="Peso: "/><space></space>
+			<textbox id="tbxPeso5" width="70px" style="text-transform:uppercase"/></cell>
+			
+			<cell><label id="lbTalla5" value="Talla: "/><space></space>
+			<textbox id="tbxTalla5" width="70px" style="text-transform:uppercase"/></cell>
+			
+			<cell><label id="lbPerimietro5" value="Perimetro: "/><space></space>
+			<textbox id="tbxPerimietro5" width="70px" style="text-transform:uppercase"/></cell>
+			</row>			
+			
+			</rows>
+			</grid>
+</groupbox>
+</hlayout>
+</cell>
+</row>
+
+<!-- fila 12 -->
+<row>
+<cell colspan="6">
+	<hlayout>
+	<groupbox width="95%" closable="false">
+	<caption label="Control 13 a 16 Meses"/>
+
+		<grid sclass="GridSinBorde" style="border:none">
+			<columns>
+			<column label="" width="20%"/>
+			<column label="" width="20%"/>
+			<column label="" width="30%"/>
+			<column label="" width="30%"/>
+			</columns>
+			<rows>
+
+			<row>
+			<cell><label id="lbFecha_inicial6" value="Fecha: "/></cell>
+			<cell colspan="3"><datebox id="dtbxFecha_inicial6" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="170px"/></cell>
+			</row>
+			
+			
+			<row>
+			<cell><label value="* " style="color: red" tooltiptext="Campo obligatorio"/><label id="lbCodigo_prestador6" value="Prestador: "/></cell>
+			<cell>
+			<bandbox id="tbxIdentificacion6" autodrop="true" readonly="true" width="170px" onOpen='formControl_menor.buscarPrestador(tbxValuePrestador6.getValue(),lbxPrestador6)'>
+			<bandpopup>
+				<vbox>
+					<toolbar>
+						<label value="Buscar: "/>
+					    <textbox id="tbxValuePrestador6" onChanging='formControl_menor.buscarPrestador(event.getValue(),lbxPrestador6)' style="text-transform:uppercase;"/>
+					    <toolbarbutton image="/images/borrar.gif" tooltiptext="Quitar" onClick='formControl_menor.selectedPrestador(new Listitem(), tbxIdentificacion6, tbxNomIdentificacion6)'/>
+					</toolbar>
+					<listbox height="300px" width="600px" mold="paging" pageSize="8" id="lbxPrestador6"
+					    onSelect='formControl_menor.selectedPrestador(self.getSelectedItem(), tbxIdentificacion6, tbxNomIdentificacion6)' >
+					    <listhead>
+					    <listheader label="Tipo Ident." width="65px"/>
+					    <listheader label="Identificación"/>
+					    <listheader label="Nombres"/>
+					    <listheader label="Apellidos"/>
+					    <listheader label="Especialidad"/>
+					    </listhead>
+					</listbox>
+				</vbox>
+			  </bandpopup>
+			</bandbox>
+			</cell>
+			<cell colspan="2"><textbox id="tbxNomIdentificacion6" width="320px" style="text-transform:uppercase" readonly="true"/></cell>
+			</row>
+			
+			<row>
+			<cell><label id="lbEdad6" value="Edad: "/><space></space>
+			<textbox id="tbxEdad6" width="70px" style="text-transform:uppercase"/></cell>
+			
+			<cell><label id="lbPeso6" value="Peso: "/><space></space>
+			<textbox id="tbxPeso6" width="70px" style="text-transform:uppercase"/></cell>
+			
+			<cell><label id="lbTalla6" value="Talla: "/><space></space>
+			<textbox id="tbxTalla6" width="70px" style="text-transform:uppercase"/></cell>
+			
+			<cell><label id="lbPerimietro6" value="Perimetro: "/><space></space>
+			<textbox id="tbxPerimietro6" width="70px" style="text-transform:uppercase"/></cell>
+			</row>			
+			
+			</rows>
+			</grid>
+</groupbox>
+</hlayout>
+</cell>
+</row>
+
+
+<!-- fila 13 -->
+<row>
+<cell colspan="6">
+	<hlayout>
+	<groupbox width="95%" closable="false">
+	<caption label="Control 17 a 20 Meses"/>
+
+		<grid sclass="GridSinBorde" style="border:none">
+			<columns>
+			<column label="" width="20%"/>
+			<column label="" width="20%"/>
+			<column label="" width="30%"/>
+			<column label="" width="30%"/>
+			</columns>
+			<rows>
+
+			<row>
+			<cell><label id="lbFecha_inicial7" value="Fecha: "/></cell>
+			<cell colspan="3"><datebox id="dtbxFecha_inicial7" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="170px"/></cell>
+			</row>
+			
+			
+			<row>
+			<cell><label value="* " style="color: red" tooltiptext="Campo obligatorio"/><label id="lbCodigo_prestador7" value="Prestador: "/></cell>
+			<cell>
+			<bandbox id="tbxIdentificacion7" autodrop="true" readonly="true" width="170px" onOpen='formControl_menor.buscarPrestador(tbxValuePrestador7.getValue(),lbxPrestador7)'>
+			<bandpopup>
+				<vbox>
+					<toolbar>
+						<label value="Buscar: "/>
+					    <textbox id="tbxValuePrestador7" onChanging='formControl_menor.buscarPrestador(event.getValue(),lbxPrestador7)' style="text-transform:uppercase;"/>
+					    <toolbarbutton image="/images/borrar.gif" tooltiptext="Quitar" onClick='formControl_menor.selectedPrestador(new Listitem(), tbxIdentificacion7, tbxNomIdentificacion7)'/>
+					</toolbar>
+					<listbox height="300px" width="600px" mold="paging" pageSize="8" id="lbxPrestador7"
+					    onSelect='formControl_menor.selectedPrestador(self.getSelectedItem(), tbxIdentificacion7, tbxNomIdentificacion7)' >
+					    <listhead>
+					    <listheader label="Tipo Ident." width="65px"/>
+					    <listheader label="Identificación"/>
+					    <listheader label="Nombres"/>
+					    <listheader label="Apellidos"/>
+					    <listheader label="Especialidad"/>
+					    </listhead>
+					</listbox>
+				</vbox>
+			  </bandpopup>
+			</bandbox>
+			</cell>
+			<cell colspan="2"><textbox id="tbxNomIdentificacion7" width="320px" style="text-transform:uppercase" readonly="true"/></cell>
+			</row>
+			
+			<row>
+			<cell><label id="lbEdad7" value="Edad: "/><space></space>
+			<textbox id="tbxEdad7" width="70px" style="text-transform:uppercase"/></cell>
+			
+			<cell><label id="lbPeso7" value="Peso: "/><space></space>
+			<textbox id="tbxPeso7" width="70px" style="text-transform:uppercase"/></cell>
+			
+			<cell><label id="lbTalla7" value="Talla: "/><space></space>
+			<textbox id="tbxTalla7" width="70px" style="text-transform:uppercase"/></cell>
+			
+			<cell><label id="lbPerimietro7" value="Perimetro: "/><space></space>
+			<textbox id="tbxPerimietro7" width="70px" style="text-transform:uppercase"/></cell>
+			</row>			
+			
+			</rows>
+			</grid>
+</groupbox>
+</hlayout>
+</cell>
+</row>
+
+<!-- fila 14 -->
+<row>
+<cell colspan="6">
+	<hlayout>
+	<groupbox width="95%" closable="false">
+	<caption label="Control 21 a 24 Meses"/>
+
+		<grid sclass="GridSinBorde" style="border:none">
+			<columns>
+			<column label="" width="20%"/>
+			<column label="" width="20%"/>
+			<column label="" width="30%"/>
+			<column label="" width="30%"/>
+			</columns>
+			<rows>
+
+			<row>
+			<cell><label id="lbFecha_inicial8" value="Fecha: "/></cell>
+			<cell colspan="3"><datebox id="dtbxFecha_inicial8" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="170px"/></cell>
+			</row>
+			
+			
+			<row>
+			<cell><label value="* " style="color: red" tooltiptext="Campo obligatorio"/><label id="lbCodigo_prestador8" value="Prestador: "/></cell>
+			<cell>
+			<bandbox id="tbxIdentificacion8" autodrop="true" readonly="true" width="170px" onOpen='formControl_menor.buscarPrestador(tbxValuePrestador8.getValue(),lbxPrestador8)'>
+			<bandpopup>
+				<vbox>
+					<toolbar>
+						<label value="Buscar: "/>
+					    <textbox id="tbxValuePrestador8" onChanging='formControl_menor.buscarPrestador(event.getValue(),lbxPrestador8)' style="text-transform:uppercase;"/>
+					    <toolbarbutton image="/images/borrar.gif" tooltiptext="Quitar" onClick='formControl_menor.selectedPrestador(new Listitem(), tbxIdentificacion8, tbxNomIdentificacion8)'/>
+					</toolbar>
+					<listbox height="300px" width="600px" mold="paging" pageSize="8" id="lbxPrestador8"
+					    onSelect='formControl_menor.selectedPrestador(self.getSelectedItem(), tbxIdentificacion8, tbxNomIdentificacion8)' >
+					    <listhead>
+					    <listheader label="Tipo Ident." width="65px"/>
+					    <listheader label="Identificación"/>
+					    <listheader label="Nombres"/>
+					    <listheader label="Apellidos"/>
+					    <listheader label="Especialidad"/>
+					    </listhead>
+					</listbox>
+				</vbox>
+			  </bandpopup>
+			</bandbox>
+			</cell>
+			<cell colspan="2"><textbox id="tbxNomIdentificacion8" width="320px" style="text-transform:uppercase" readonly="true"/></cell>
+			</row>
+			
+			<row>
+			<cell><label id="lbEdad8" value="Edad: "/><space></space>
+			<textbox id="tbxEdad8" width="70px" style="text-transform:uppercase"/></cell>
+			
+			<cell><label id="lbPeso8" value="Peso: "/><space></space>
+			<textbox id="tbxPeso8" width="70px" style="text-transform:uppercase"/></cell>
+			
+			<cell><label id="lbTalla8" value="Talla: "/><space></space>
+			<textbox id="tbxTalla8" width="70px" style="text-transform:uppercase"/></cell>
+			
+			<cell><label id="lbPerimietro8" value="Perimetro: "/><space></space>
+			<textbox id="tbxPerimietro8" width="70px" style="text-transform:uppercase"/></cell>
+			</row>			
+			
+			</rows>
+			</grid>
+</groupbox>
+</hlayout>
+</cell>
+</row>
+
+</rows>
+</grid>
+</groupbox>
+</groupbox>
+</center>
+</borderlayout>
+</zk>

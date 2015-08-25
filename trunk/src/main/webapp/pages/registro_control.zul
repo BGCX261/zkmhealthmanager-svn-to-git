@@ -1,0 +1,153 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+
+ <window id="formRegistro_control" width="100%" height="100%" use="healthmanager.controller.Registro_controlAction" >
+
+<style src="estilo.css" />
+<style>
+body ,table{
+	margin:0;
+	padding:0;
+	
+}
+.z-fieldset{
+	-moz-border-radius:5px;
+	border-radius: 5px;
+	-webkit-border-radius: 5px;
+}
+.combobox{
+	font-size:12px;
+	border: 1px solid silver;
+}
+
+tr.z-row .z-cell{
+	background-image:none;
+}
+
+tr.z-row td.z-row-inner{
+	background-image:none;
+}
+</style>
+<borderlayout width="100%" height="100%">
+<center autoscroll="true" border="none">
+
+<!-- *********************** -->
+<!--        Principal        -->
+<!-- *********************** -->
+<groupbox id="groupboxPrincipal" style="border:0;padding:2px">
+
+<!-- **************** -->
+<!-- Zona de Consulta -->
+<!-- **************** -->
+<groupbox id="groupboxConsulta" visible="false" closable="false" style="border:0;padding:0">
+
+<toolbar sclass="vista">
+<label value="Criterios de B&#250;squeda :" />
+<listbox id="lbxParameter" mold="select" sclass="combobox" width="150px"/>
+<textbox id="tbxValue" width="200px" onOK="formRegistro_control.buscarDatos();" style="text-transform:uppercase"/>
+<toolbarbutton image="/images/Magnifier.gif" onClick="formRegistro_control.buscarDatos();" tooltiptext="Consultar Registro_control" id="btConsultar"/>
+<toolbarbutton image="/images/New16.gif" onClick='formRegistro_control.accionForm(true,"registrar");' tooltiptext="Nuevo Registro_control" id="btNew"/>
+</toolbar>
+
+<space/>
+
+<!-- ***************************** -->
+<!--  Resultado Consulta Maestros  -->
+<!-- ***************************** -->
+<grid id="gridResultado" height="300px" mold="paging" pageSize="20">
+<columns sizable="true">
+	<column label="Acciones" align="center" width="80px"/>
+</columns>
+<rows id="rowsResultado" width="100%" />
+</grid>
+</groupbox>
+
+<!-- *************************** -->
+<!-- *** Insertar/Actualizar *** -->
+<!-- *************************** -->
+<groupbox visible="true" id="groupboxEditar" closable="false" style="border:0;padding:0">
+
+<!-- *************************** -->
+<!-- **** Barra de Botones ***** -->
+<!-- *************************** -->
+
+<toolbar width="100%" align="start">
+<textbox id="tbxAccion" value="registrar" visible="false"/>
+<toolbarbutton image="/images/New16.gif" label="Nuevo" onClick='formRegistro_control.accionForm(true,"registrar");' tooltiptext="Nuevo Registro Control" id="btNuevo"/>
+<toolbarbutton image="/images/activo.gif" label="Ingresar Detalle" onClick='formRegistro_control.verRegistros();' tooltiptext="Ingresar Detalle" id="btRegistro"/>
+</toolbar>
+
+<space/>
+<grid sclass="GridSinBorde">
+<columns>
+<column label="" width="10%"/>
+<column label="" width="25%"/>
+<column label="" width="12%"/>
+<column label="" width="12%"/>
+<column label="" width="12%"/>
+<column label="" width="12%"/>
+<column label="" width="12%"/>
+<column label="" width="5%"/>
+</columns>
+<rows>
+
+<!-- fila 1 -->
+<row>
+<cell></cell>
+<cell></cell>
+<cell></cell>
+<cell></cell>
+<cell><textbox id="tbxCodigo_registro" width="170px" style="text-transform:uppercase" visible="false"/></cell>
+<cell></cell>
+</row>
+
+<!-- fila 2 -->
+<row>
+<cell><label id="lbCodigo_eps" value="Codigo EPS: "/></cell>
+<cell colspan="2">
+<hlayout>
+<bandbox id="tbxCodigo_eps" autodrop="true" readonly="true" width="70px" onOpen='formRegistro_control.buscarEps(tbxCodigo_eps.getValue(),lbxCodigo_eps);'>
+<bandpopup>
+	<vbox>
+		<toolbar>
+			<label value="Buscar: "/>
+		    <textbox id="tbxValueEps" onChanging='formRegistro_control.buscarEps(event.getValue(),lbxCodigo_eps)' style="text-transform:uppercase;"/>
+		    <toolbarbutton image="/images/borrar.gif" tooltiptext="Quitar" onClick='formRegistro_control.selectedEps(new Listitem());'/>
+		</toolbar>
+		<listbox height="300px" width="600px" mold="paging" pageSize="8" id="lbxCodigo_eps"
+		    onSelect='formRegistro_control.selectedEps(self.getSelectedItem());' >
+		    <listhead>
+		    <listheader label="Codigo" width="150px"/>
+		    <listheader label="Nombre" width="450px"/>
+		    </listhead>
+		</listbox>
+	</vbox>
+  </bandpopup>
+</bandbox> <space></space>
+<textbox id="tbxNombre_eps" width="220px" style="text-transform:uppercase" visible="true" />
+</hlayout>
+</cell>
+<cell colspan="2">
+<hlayout>
+<label id="lbFecha_inicial" value="Fecha inicial: "/>
+<datebox id="dtbxFecha_inicial" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="170px"/>
+</hlayout>
+</cell>
+<cell colspan="2">
+<hlayout>
+<label id="lbFecha_final" value="Fecha final: "/>
+<datebox id="dtbxFecha_final" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="170px"/>
+</hlayout>
+</cell>
+<cell><doublebox id="dbxNum_registros" format="#,##0.00" width="50px" value="0.00" visible="false"/></cell>
+</row>
+
+
+</rows>
+</grid>
+</groupbox>
+</groupbox>
+</center>
+</borderlayout>
+</window>
+</zk>

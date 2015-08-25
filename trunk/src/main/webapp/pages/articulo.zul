@@ -1,0 +1,964 @@
+<?page title="Pedido_centro" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formArticulo" width="100%" height="100%"
+		use="healthmanager.controller.ArticuloAction"
+		onCreate="formArticulo.initArticulo();">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+		<groupbox id="groupboxConsulta" visible="true" closable="false"
+			mold="3d" height="100%">
+			<grid id="gridResultado" height="100%" mold="paging"
+				pageSize="20" vflex="1">
+				<auxhead>
+					<auxheader colspan="8">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<separator />
+							<textbox id="tbxValue" width="200px"
+								onOK="formArticulo.buscarDatos();"
+								style="text-transform:uppercase" />
+							<separator />
+							<button mold="trendy"
+								image="/images/Magnifier.gif"
+								onClick="formArticulo.buscarDatos();" tooltiptext="Consultar" />
+							<separator />
+							<button mold="trendy"
+								image="/images/New16.gif"
+								onClick='formArticulo.accionForm(true,"registrar");'
+								tooltiptext="Nuevo" id="btNuevo" />
+
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Codigo articulo" align="left"
+						width="120px" />
+					<column label="Nombre" align="left" />
+					<column label="Grupo" align="left" width="120px" />
+					<column label="Subgrupo" align="left" width="120px" />
+					<column label="Costo" align="left" width="120px" />
+					<column label="Precio" align="left" width="120px" />
+					<column label="Acciones" align="left" width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<borderlayout width="100%" height="100%" id="groupboxEditar"
+			visible="false">
+			<north border="none">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<toolbarbutton image="/images/Save16.gif"
+						label="Guardar" onClick="formArticulo.guardarDatos();"
+						id="btGuardar" />
+					<toolbarbutton image="/images/New16.gif"
+						label="Nuevo" onClick='formArticulo.accionForm(true,"registrar");'
+						id="btNew" />
+					<space />
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Consultar"
+						onClick='formArticulo.accionForm(false,tbxAccion.getText());'
+						id="btCancel" />
+
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center">
+
+					<!-- *************************** -->
+					<!-- *** Insertar/Actualizar *** -->
+					<!-- *************************** -->
+					<groupbox closable="false" width="905px"
+						mold="3d">
+
+						<space />
+						<grid>
+							<auxhead>
+								<auxheader colspan="8"
+									label="MODULO DE ARTICULOS" style="font-weight:bold"
+									align="center" />
+							</auxhead>
+							<columns visible="false">
+								<column align="left" />
+								<column width="100px" align="left" />
+								<column align="left" width="180px" />
+								<column width="120px" align="left" />
+								<column align="left" width="180px" />
+								<column width="120px" align="left" />
+								<column align="left" width="180px" />
+								<column align="left" />
+							</columns>
+							<rows>
+								<!-- Fila 1 -->
+								<row>
+									<cell>
+										<space />
+									</cell>
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbCodigo_articulo"
+											value="Código: " />
+									</cell>
+									<cell>
+										<textbox id="tbxCodigo_articulo"
+											width="160px" style="text-transform:uppercase" />
+									</cell>
+									<cell>
+										<label id="lbCodigo_barra"
+											value="Código barra: " />
+									</cell>
+									<cell>
+										<textbox id="tbxCodigo_barra"
+											width="160px" style="text-transform:uppercase" />
+									</cell>
+									<cell>
+										<label
+											id="lbCodigo_unidad_funcional" value="Tipo de servicio: " />
+									</cell>
+									<cell>
+										<listbox
+											id="lbxCodigo_unidad_funcional"
+											name="Codigo_unidad_funcional" mold="select" width="165px"
+											sclass="combobox" />
+									</cell>
+									<cell>
+										<space />
+									</cell>
+								</row>
+
+								<!-- Fila 2 -->
+								<row>
+									<cell>
+										<space />
+									</cell>
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbNombre1"
+											value="Nombre: " />
+									</cell>
+									<cell colspan="3">
+										<textbox id="tbxNombre1"
+											width="460px" style="text-transform:uppercase"
+											maxlength="100" />
+									</cell>
+									<cell>
+										<label id="lbNombre3"
+											value="Nombre corto: " />
+									</cell>
+									<cell>
+										<textbox id="tbxNombre3"
+											width="160px" style="text-transform:uppercase" />
+									</cell>
+									<cell>
+										<space />
+									</cell>
+								</row>
+
+								<!-- Fila 3 -->
+								<row>
+									<cell>
+										<space />
+									</cell>
+									<cell>
+										<label id="lbGrupo1"
+											value="Grupo: " />
+									</cell>
+									<cell>
+										<listbox id="lbxGrupo1"
+											name="Grupo1" mold="select" width="165px" sclass="combobox"
+											onSelect="formArticulo.listarGrupo2(lbxGrupo1,lbxGrupo2,true);formArticulo.seleccionarGrupo();" />
+									</cell>
+									<cell>
+										<label id="lbGrupo2"
+											value="Subgrupo: " />
+									</cell>
+									<cell>
+										<listbox id="lbxGrupo2"
+											name="Grupo2" mold="select" width="165px" sclass="combobox" />
+									</cell>
+									<cell>
+										<label
+											id="lbReferencia_articulo" value="Referencia: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxReferencia_articulo" width="160px"
+											style="text-transform:uppercase" maxlength="50" />
+									</cell>
+									<cell>
+										<space />
+									</cell>
+								</row>
+
+								<!-- Fila 4 -->
+								<row>
+									<cell>
+										<space />
+									</cell>
+									<cell>
+										<label id="lbUnidad_medida"
+											value="Unidad Medida: " />
+									</cell>
+									<cell>
+										<listbox id="lbxUnidad_medida"
+											name="Unidad_medida" mold="select" width="165px"
+											sclass="combobox" />
+									</cell>
+									<cell>
+										<label id="lbUnm"
+											value="Cantidad contiene: " />
+									</cell>
+									<cell>
+										<intbox
+											constraint="no negative:Este valor no puede ser negativo"
+											id="ibxUnm" width="160px" style="text-transform:uppercase" />
+									</cell>
+									<cell>
+										<label id="lbUnd_unm"
+											value="Medida contiene:" />
+									</cell>
+									<cell>
+										<listbox id="lbxUnd_unm"
+											name="Und_unm" mold="select" width="165px" sclass="combobox" />
+									</cell>
+									<cell>
+										<space />
+									</cell>
+								</row>
+
+								<!-- Fila 5 -->
+								<row>
+									<cell>
+										<space />
+									</cell>
+									<cell>
+										<label id="lbPrecio1"
+											value="Precio : " />
+									</cell>
+									<cell>
+										<doublebox id="dbxPrecio1"
+											format="#,##0.00" width="160px" value="0.00"
+											onFocus="self.select();" />
+									</cell>
+									<cell>
+										<label id="lbCosto"
+											value="Costo: " />
+									</cell>
+									<cell>
+										<doublebox id="dbxCosto"
+											format="#,##0.00" width="160px" value="0.00"
+											onFocus="self.select();" />
+									</cell>
+									<cell>
+										<label id="lbIva" value="Iva: " />
+									</cell>
+									<cell>
+										<doublebox id="dbxIva"
+											format="#,##0.00" width="150px" value="0.00"
+											onFocus="self.select();" />
+										<label value="%" />
+									</cell>
+									<cell>
+										<space />
+									</cell>
+								</row>
+
+								<!-- Fila 6 -->
+								<row>
+									<cell>
+										<space />
+									</cell>
+									<cell>
+										<label id="lbMaximo_permitido"
+											value="Max permitido: " />
+									</cell>
+									<cell>
+										<intbox
+											constraint="no negative:Este valor no puede ser negativo"
+											id="ibxMaximo_permitido" width="160px"
+											onFocus="self.select();" />
+									</cell>
+									<cell>
+										<label id="lbMinimo_permitido"
+											value="Min permitido: " />
+									</cell>
+									<cell>
+										<intbox
+											constraint="no negative:Este valor no puede ser negativo"
+											id="ibxMinimo_permitido" width="160px"
+											onFocus="self.select();" />
+									</cell>
+									<cell>
+										<label
+											id="lbCodigo_contabilidad" value="Contabilización: " />
+									</cell>
+									<cell>
+										<listbox
+											id="lbxCodigo_contabilidad" name="Codigo_contabilidad"
+											mold="select" width="165px" sclass="combobox" />
+									</cell>
+									<cell>
+										<space />
+									</cell>
+								</row>
+
+								<!-- Fila 7 -->
+								<row>
+									<cell>
+										<space />
+									</cell>
+									<cell colspan="6" align="center">
+										<hbox>
+											<checkbox
+												id="chbSin_existencia" label="Facturar sin Existencias"
+												style="font-size:10px" />
+											<space width="20px" />
+											<checkbox id="chbProducto"
+												label="Producto"
+												onClick="if(chbProducto.isChecked())chbServicio_intangible.setChecked(false);"
+												style="font-size:10px" />
+											<space width="20px" />
+											<checkbox id="chbVenta"
+												label="Venta" />
+											<space width="20px"
+												style="font-size:10px" />
+											<checkbox label="Facturable"
+												id="chbFacturable" style="font-size:10px" />
+											<space width="20px" />
+											<checkbox
+												label="Activo Fijo" id="chbActivo_fijo"
+												onCheck="formArticulo.seleccionarActivoFijo();"
+												style="font-size:10px" />
+											<space width="20px" />
+											<checkbox label="Diferido"
+												id="chbDiferido"
+												onCheck="formArticulo.seleccionarDiferido()"
+												style="font-size:10px" />
+											<space width="20px" />
+											<checkbox
+												id="chbServicio_gravado" label="Servicio Gravado"
+												style="font-size:10px" />
+											<space width="20px" />
+											<checkbox
+												id="chbServicio_intangible" label="Servicio Intangible"
+												onClick="if(chbServicio_intangible.isChecked())chbProducto.setChecked(false);"
+												style="font-size:10px" />
+										</hbox>
+									</cell>
+
+									<cell>
+										<space />
+									</cell>
+								</row>
+
+								<!-- Fila 8 -->
+								<row>
+									<cell>
+										<space />
+									</cell>
+									<cell>
+										<label id="lbTitular"
+											value="Titular: " />
+									</cell>
+									<cell colspan="5">
+										<hlayout>
+											<bandbox id="tbxTitular"
+												autodrop="true" readonly="true" width="170px"
+												onOpen='formArticulo.buscarTercero(event.getValue(),lbx_titular,"07");tbxValue_titular.focus();'>
+												<bandpopup>
+													<vbox>
+														<toolbar>
+															<label
+																value="Buscar: " />
+															<textbox
+																id="tbxValue_titular"
+																onChanging='formArticulo.buscarTercero(event.getValue(),lbx_titular,"07")'
+																style="text-transform:uppercase;" />
+															<toolbarbutton
+																image="/images/borrar.gif" tooltiptext="Quitar"
+																onClick='formArticulo.selectedTercero(tbxTitular,tbxNomTitular,new Listitem(),"S","S")' />
+														</toolbar>
+														<listbox
+															height="300px" width="600px" mold="paging" pageSize="8"
+															id="lbx_titular"
+															onSelect='formArticulo.selectedTercero(tbxTitular,tbxNomTitular,self.getSelectedItem(),"S","S");'>
+															<listhead>
+																<listheader
+																	label="DV" width="25px" />
+																<listheader
+																	label="Ident." />
+																<listheader
+																	label="Tipo Ident." width="65px" />
+																<listheader
+																	label="Nombres" />
+																<listheader
+																	label="Apellidos" />
+																<listheader
+																	label="Tipo Terc" />
+															</listhead>
+														</listbox>
+													</vbox>
+												</bandpopup>
+											</bandbox>
+											<space width="1px" />
+											<textbox id="tbxNomTitular"
+												width="575px" style="text-transform:uppercase"
+												readonly="true" />
+										</hlayout>
+									</cell>
+
+
+									<cell>
+										<space />
+									</cell>
+								</row>
+
+								<!-- Fila 9 -->
+								<row>
+									<cell>
+										<space />
+									</cell>
+									<cell>
+										<label id="lbFabricante"
+											value="Fabricante: " />
+									</cell>
+									<cell colspan="5">
+										<hlayout>
+											<bandbox id="tbxFabricante"
+												autodrop="true" readonly="true" width="170px"
+												onOpen='formArticulo.buscarTercero(event.getValue(),lbx_Fabricante,"06");tbxValue_Fabricante.focus();'>
+												<bandpopup>
+													<vbox>
+														<toolbar>
+															<label
+																value="Buscar: " />
+															<textbox
+																id="tbxValue_Fabricante"
+																onChanging='formArticulo.buscarTercero(event.getValue(),lbx_Fabricante,"06")'
+																style="text-transform:uppercase;" />
+															<toolbarbutton
+																image="/images/borrar.gif" tooltiptext="Quitar"
+																onClick='formArticulo.selectedTercero(tbxFabricante,tbxNomFabricante,new Listitem(),"S","S")' />
+														</toolbar>
+														<listbox
+															height="300px" width="600px" mold="paging" pageSize="8"
+															id="lbx_Fabricante"
+															onSelect='formArticulo.selectedTercero(tbxFabricante,tbxNomFabricante,self.getSelectedItem(),"S","S");'>
+															<listhead>
+																<listheader
+																	label="DV" width="25px" />
+																<listheader
+																	label="Ident." />
+																<listheader
+																	label="Tipo Ident." width="65px" />
+																<listheader
+																	label="Nombres" />
+																<listheader
+																	label="Apellidos" />
+																<listheader
+																	label="Tipo Terc" />
+															</listhead>
+														</listbox>
+													</vbox>
+												</bandpopup>
+											</bandbox>
+											<space width="1px" />
+											<textbox
+												id="tbxNomFabricante" width="575px"
+												style="text-transform:uppercase" readonly="true" />
+										</hlayout>
+									</cell>
+
+									<cell>
+										<space />
+									</cell>
+								</row>
+
+								<!-- Fila 9 -->
+								<row>
+									<cell>
+										<space />
+									</cell>
+									<cell>
+										<label id="lbObservaciones"
+											value="Observaciones: " />
+									</cell>
+									<cell colspan="5">
+										<textbox id="tbxObservaciones"
+											width="755px" rows="2" style="text-transform:uppercase" />
+									</cell>
+
+									<cell>
+										<space />
+									</cell>
+								</row>
+
+								<!-- Fila 10 -->
+								<row id="rowMedicamento">
+									<cell>
+										<space />
+									</cell>
+									<cell colspan="6">
+										<groupbox mold="3d"
+											closable="false" width="99%">
+											<caption
+												label="DATOS PARA MEDICAMENTO" />
+
+											<grid>
+												<columns>
+													<column label="" />
+													<column
+														width="100px" align="left" />
+													<column align="left"
+														width="170px" />
+													<column
+														width="100px" align="left" />
+													<column align="left"
+														width="170px" />
+													<column
+														width="120px" align="left" />
+													<column align="left"
+														width="170px" />
+													<column label="" />
+												</columns>
+												<rows>
+													<row>
+														<cell>
+															<space />
+														</cell>
+														<cell>
+															<label
+																value="Nómbre Comercial: " />
+														</cell>
+														<cell
+															colspan="5">
+															<textbox
+																id="tbxNombreComercialMedicamento" hflex="1"
+																style="text-transform:uppercase" />
+														</cell>
+														<cell>
+															<space />
+														</cell>
+													</row>
+													<row>
+														<cell>
+															<space />
+														</cell>
+														<cell>
+															<label
+																id="lbCum" value="Código CUM: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxCum" width="150px"
+																style="text-transform:uppercase" maxlength="12" />
+														</cell>
+														<cell>
+															<label
+																id="lbModalidad" value="Modalidad: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxModalidad" width="150px"
+																style="text-transform:uppercase" />
+														</cell>
+														<cell>
+															<label
+																id="lbRegistro_sanitario" value="Registro sanitario: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxRegistro_sanitario" width="150px"
+																style="text-transform:uppercase" maxlength="40" />
+														</cell>
+														<cell>
+															<space />
+														</cell>
+													</row>
+
+													<row>
+														<cell>
+															<space />
+														</cell>
+														<cell>
+															<label
+																id="lbReferencia" value="Cód POS: " />
+														</cell>
+														<cell>
+															<bandbox
+																id="tbxReferencia" autodrop="true" readonly="true"
+																width="157px"
+																onOpen='formArticulo.buscarPos(tbxValue_pos.getValue(),lbx_pos);tbxValue_pos.focus();'>
+																<bandpopup>
+																	<vbox>
+																		<toolbar>
+																			<label
+																				value="Buscar: " />
+																			<textbox
+																				id="tbxValue_pos"
+																				onChanging='formArticulo.buscarPos(event.getValue(),lbx_pos)'
+																				style="text-transform:uppercase;" />
+																			<toolbarbutton
+																				image="/images/borrar.gif" tooltiptext="Quitar"
+																				onClick='formArticulo.selectedPos(tbxReferencia,new Listitem())' />
+																		</toolbar>
+																		<listbox
+																			height="300px" width="600px" mold="paging"
+																			pageSize="8" id="lbx_pos"
+																			onSelect='formArticulo.selectedPos(tbxReferencia,self.getSelectedItem());'>
+																			<listhead>
+																				<listheader
+																					label="Código" width="90px" />
+																				<listheader
+																					label="Nombres" />
+																				<listheader
+																					label="Concentración" />
+																			</listhead>
+																		</listbox>
+																	</vbox>
+																</bandpopup>
+															</bandbox>
+														</cell>
+														<cell>
+															<label
+																id="lbEstado_registro" value="Estado registro: " />
+														</cell>
+														<cell>
+															<datebox
+																id="dtbxEstado_registro"
+																onCreate="self.value = new Date();" format="yyyy-MM-dd"
+																width="158px" />
+														</cell>
+														<cell>
+															<label
+																id="lbPresentacion" value="Presentación: " />
+														</cell>
+														<cell>
+															<listbox
+																id="lbxPresentacion" name="Presentacion" mold="select"
+																width="155px" sclass="combobox" />
+														</cell>
+														<cell>
+															<space />
+														</cell>
+													</row>
+
+													<row>
+														<cell>
+															<space />
+														</cell>
+														<cell>
+															<label
+																id="lbConcentracion" value="Concentración: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxConcentracion" width="150px"
+																style="text-transform:uppercase" maxlength="30" />
+														</cell>
+														<cell>
+															<label
+																id="lbUnidad_concentracion" value="F. farmaceutica: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxUnidad_concentracion" width="150px"
+																style="text-transform:uppercase" maxlength="30" />
+														</cell>
+														<cell>
+															<label
+																id="lbCantidad" value="Cantidad: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxCantidad" width="150px"
+																style="text-transform:uppercase" />
+														</cell>
+														<cell>
+															<space />
+														</cell>
+													</row>
+
+													<row>
+														<cell>
+															<space />
+														</cell>
+														<cell>
+															<label
+																id="lbVia" value="Via Administ.: " />
+														</cell>
+														<cell>
+															<listbox
+																id="lbxVia" name="via_administracion" mold="select"
+																width="155px" sclass="combobox" />
+														</cell>
+														<cell>
+															<label
+																id="lbValor_adicional" value="V. adicional (%): " />
+														</cell>
+														<cell>
+															<doublebox
+																id="dbxValor_adicional" format="#,##0.00" width="150px"
+																value="0.00" />
+														</cell>
+														<cell>
+															<label
+																id="lbVencimiento" value="Vencimiento: " />
+														</cell>
+														<cell>
+															<listbox
+																id="lbxVencimiento" name="Vencimiento" mold="select"
+																width="170px" sclass="combobox" />
+														</cell>
+														<cell>
+															<space />
+														</cell>
+													</row>
+
+													<row>
+														<cell>
+															<space />
+														</cell>
+														<cell
+															colspan="7" align="center">
+															<hlayout>
+																<checkbox
+																	label="POS" id="chbPos" />
+																<space />
+																<checkbox
+																	label="PYP" id="chbPyp" />
+																<space />
+																<checkbox
+																	label="Alto costo" id="chbAlto_costo" />
+																<space />
+																<checkbox
+																	label="Comercial" id="chbComercial" />
+																<space />
+																<checkbox
+																	label="vademecum institucional"
+																	id="chbVademecumInstitucional" />
+																<space />
+															</hlayout>
+														</cell>
+
+														<cell>
+															<space />
+														</cell>
+													</row>
+												</rows>
+											</grid>
+										</groupbox>
+									</cell>
+
+									<cell>
+										<space />
+									</cell>
+								</row>
+
+								<!-- Fila 11 -->
+								<row id="rowActivos_fijos">
+									<cell>
+										<space />
+									</cell>
+									<cell colspan="6">
+										<groupbox mold="3d"
+											closable="false" width="99%">
+											<caption
+												label="DATOS PARA ACTIVO FIJO" />
+
+											<grid>
+												<columns>
+													<column label="" />
+													<column
+														width="100px" align="left" />
+													<column align="left"
+														width="170px" />
+													<column
+														width="100px" align="left" />
+													<column align="left"
+														width="170px" />
+													<column
+														width="120px" align="left" />
+													<column align="left"
+														width="170px" />
+													<column label="" />
+												</columns>
+												<rows>
+													<row>
+														<cell>
+															<space />
+														</cell>
+														<cell>
+															<label
+																value="Fecha Compra:" />
+														</cell>
+														<cell>
+															<datebox
+																id="dtbxFecha_compra_activo"
+																onCreate="self.value = new Date();" format="yyyy-MM-dd"
+																width="158px" />
+														</cell>
+														<cell>
+															<label
+																value="Valor Activo:" />
+														</cell>
+														<cell>
+															<doublebox
+																id="dbxValor_activo" format="#,##0.00" width="150px"
+																value="0.00" onFocus="self.select();" />
+														</cell>
+														<cell>
+															<label
+																value="Vida util (Años):" />
+														</cell>
+														<cell>
+															<intbox
+																constraint="no negative:Este valor no puede ser negativo"
+																id="ibxVida_util" width="150px"
+																onFocus="self.select();" />
+														</cell>
+														<cell>
+															<space />
+														</cell>
+													</row>
+													<row>
+														<cell>
+															<space />
+														</cell>
+														<cell>
+															<label
+																value="Color:" />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxColor_activo" width="150px"
+																style="text-transform:uppercase" maxlength="50" />
+														</cell>
+														<cell>
+															<label
+																value="Marca:" />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxMarca_activo" width="150px"
+																style="text-transform:uppercase" maxlength="50" />
+														</cell>
+														<cell>
+															<label
+																value="Modelo:" />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxModelo_activo" width="150px"
+																style="text-transform:uppercase" maxlength="50" />
+														</cell>
+														<cell>
+															<space />
+														</cell>
+													</row>
+
+													<row>
+														<cell>
+															<space />
+														</cell>
+														<cell>
+															<label
+																value="Serial:" />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxSerial_activo" width="150px"
+																style="text-transform:uppercase" maxlength="50" />
+														</cell>
+														<cell>
+															<label
+																value="Estado:" />
+														</cell>
+														<cell>
+															<listbox
+																id="lbxEstado_activo" name="estado_activo" mold="select"
+																width="155px" sclass="combobox" />
+														</cell>
+														<cell>
+															<label
+																value="Persona a cargo:" />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxEmpleado" width="150px"
+																style="text-transform:uppercase" />
+														</cell>
+														<cell>
+															<space />
+														</cell>
+													</row>
+
+													<row>
+														<cell>
+															<space />
+														</cell>
+														<cell>
+															<label
+																value="Cargo:" />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxCargo_empleado" width="150px"
+																style="text-transform:uppercase" maxlength="120" />
+														</cell>
+														<cell>
+															<label
+																value="Puesto trabajo:" />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxPuesto_empleado" width="150px"
+																style="text-transform:uppercase" maxlength="120" />
+														</cell>
+														<cell
+															colspan="2" align="center">
+															<checkbox
+																id="chbDepreciable" label="Depreciable" />
+														</cell>
+
+														<cell>
+															<space />
+														</cell>
+													</row>
+												</rows>
+											</grid>
+
+										</groupbox>
+									</cell>
+
+									<cell>
+										<space />
+									</cell>
+								</row>
+
+
+							</rows>
+						</grid>
+
+					</groupbox>
+				</div>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.historia_pyp_menor_2mesesModel">
+	<select id="select" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+SELECT
+		get_edad(paciente.fecha_nacimiento,CURRENT_DATE,'1') AS edad,
+		hisc_deteccion_alt_mn_2mes.codigo_empresa,hisc_deteccion_alt_mn_2mes.codigo_sucursal,
+		hisc_deteccion_alt_mn_2mes.codigo_historia,hisc_deteccion_alt_mn_2mes.identificacion,
+		hisc_deteccion_alt_mn_2mes.fecha_inicial,hisc_deteccion_alt_mn_2mes.nro_ingreso,
+		parentesco,nombre_del_acompanante,nombre_del_padre,edad__del_padre,
+		nombre_de_la_madre,edad_de_la_madre_actual,motivos_de_la_consulta,enfermedad_actual,
+		puede_beber_del_pecho,ha_tenido_vomito,vomita_todo,dificultad_para_respirar,
+		ha_tenido_fiebre,ha_tenido_hipotermia,ha_tenido_convulciones,tiene_diarrea,
+		sangre_en_la_heces,otros_observaciones,perinatales_g,perinatales_p,
+		perinatales_a,perinatales_c,perinatales_unico,perinatales_riesgo_bajo,
+		perinatales_riesgo_alto,parto_cst,control_prenatal,hemoclasificacion,
+		complicaciones_embarazo_parto,talla_al_nacer,edad_de_la_madre_al_nacer,
+		hisc_deteccion_alt_mn_2mes.observaciones,
+		hospitalizacion_neonatal,apagar_al_mnto,reanimacion,peso_nacer,
+		apagar_5_minutos,vdrl_materno,institucioneal,tsh,
+		sem_gestacion,patologico_medico,
+		patologico_quirurgicos,patologico_hospitalizaciones,patologico_medicacion,
+		hisc_deteccion_alt_mn_2mes.creacion_date,hisc_deteccion_alt_mn_2mes.ultimo_update,
+		hisc_deteccion_alt_mn_2mes.creacion_user,hisc_deteccion_alt_mn_2mes.delete_date,
+		hisc_deteccion_alt_mn_2mes.ultimo_user,hisc_deteccion_alt_mn_2mes.delete_user,
+		paciente."tipo_identificacion" AS paciente_tipo_identificacion,
+		paciente."nro_identificacion" AS paciente_nro_identificacion,
+		paciente."codigo_administradora" AS paciente_codigo_administradora,
+		paciente."tipo_usuario" AS paciente_tipo_usuario,
+		paciente."apellido1" AS paciente_apellido1,
+		paciente."apellido2" AS paciente_apellido2,
+		paciente."nombre1" AS paciente_nombre1,
+		paciente."nombre2" AS paciente_nombre2,
+		paciente."unidad_medidad" AS paciente_unidad_medidad,
+		paciente."sexo" AS paciente_sexo,
+		paciente."profesion" AS paciente_profesion,
+		paciente."tel_oficina" AS paciente_tel_oficina,
+		paciente."tel_res" AS paciente_tel_res,
+		paciente."direccion" AS paciente_direccion,
+		paciente."nivel_sisben" AS paciente_nivel_sisben,
+		paciente."edad" AS paciente_edad,
+		pertenencia_etnica."nombre" AS pert_etnica,
+		departamentos."nombre" AS departamento,
+		municipios."nombre" AS municipios,
+		administradora."codigo" AS administradora,
+		ocupaciones."nombre" AS ocupacion,
+		barrio."barrio" AS barrio,
+		elemento."descripcion" AS estado_civil,
+		elemento1."descripcion" AS regimen,
+		nivel_educativo."nombre" AS nivel_educativo,
+		localidad."localidad" AS localidad,
+		paciente."login" AS paciente_login,
+		paciente."fecha_nacimiento" AS paciente_fecha_nacimiento,
+		paciente."codigo_dpto" AS paciente_codigo_dpto,
+		paciente."codigo_municipio" AS paciente_codigo_municipio,
+		u.nombres || ' ' || u.apellidos as medico,
+		u.codigo as codigo_medico,
+		elemento2.descripcion AS elemento2
+
+		FROM
+		"public"."hisc_deteccion_alt_mn_2mes"
+		hisc_deteccion_alt_mn_2mes INNER JOIN "public"."admision" admision ON
+		hisc_deteccion_alt_mn_2mes."codigo_empresa" = admision."codigo_empresa" AND
+		hisc_deteccion_alt_mn_2mes."identificacion" = admision."nro_identificacion" AND
+		hisc_deteccion_alt_mn_2mes."codigo_sucursal" = admision."codigo_sucursal" AND
+		hisc_deteccion_alt_mn_2mes."nro_ingreso" = admision."nro_ingreso"
+
+		INNER
+		JOIN "public"."paciente" paciente ON
+		paciente."codigo_empresa" = admision."codigo_empresa"
+		AND paciente."nro_identificacion" = admision."nro_identificacion"
+		AND paciente.codigo_sucursal = admision.codigo_sucursal
+		AND paciente."codigo_sucursal" = admision."codigo_sucursal"
+
+		INNER JOIN
+		"public"."impresion_diagnostica" impresion_diagnostica ON
+		hisc_deteccion_alt_mn_2mes."codigo_empresa" = impresion_diagnostica."codigo_empresa" AND
+		hisc_deteccion_alt_mn_2mes."codigo_sucursal"=impresion_diagnostica."codigo_sucursal" AND
+		hisc_deteccion_alt_mn_2mes."codigo_historia" = impresion_diagnostica."codigo_historia"
+
+		LEFT JOIN
+		"public".pertenencia_etnica pertenencia_etnica on
+		pertenencia_etnica."id" = paciente."pertenencia_etnica"
+
+		LEFT JOIN
+		"public".municipios municipios on
+		municipios.codigo = paciente.codigo_municipio
+
+		INNER JOIN
+		"public".departamentos departamentos on
+		departamentos.codigo = paciente.codigo_dpto AND
+		municipios.coddep = paciente."codigo_dpto"
+
+		LEFT JOIN
+		"public".administradora administradora on
+		administradora.codigo = paciente.codigo_administradora
+
+		LEFT JOIN
+		"public".ocupaciones ocupaciones on
+		ocupaciones."id" = paciente.codigo_ocupacion
+
+		LEFT JOIN
+		"public".adicional_paciente adicional_paciente on
+		adicional_paciente.codigo_empresa = paciente.codigo_empresa AND
+		adicional_paciente.codigo_sucursal = paciente.codigo_sucursal AND
+		adicional_paciente.nro_identificacion = paciente.nro_identificacion
+
+		LEFT JOIN
+		"public".barrio barrio on
+		barrio.codigo_barrio = adicional_paciente.codigo_barrio
+
+		LEFT JOIN
+		"public".elemento elemento on
+		elemento.codigo = paciente.estado_civil AND
+		elemento.tipo ='estado_civil'
+
+
+		LEFT JOIN
+		"public".usuarios u on
+		u.codigo_empresa = hisc_deteccion_alt_mn_2mes.codigo_empresa
+		and u.codigo_sucursal = hisc_deteccion_alt_mn_2mes.codigo_sucursal
+		and u.codigo = admision.codigo_medico
+
+		LEFT JOIN
+		"public".elemento elemento1 on
+		elemento1.codigo = paciente.tipo_usuario
+		and elemento1.tipo = 'tipo_usuario'
+
+		LEFT JOIN
+		"public".elemento elemento2 on
+		elemento2.codigo = hisc_deteccion_alt_mn_2mes.parentesco
+		and elemento2.tipo = 'relacion_acomp'
+
+		LEFT JOIN
+		"public".nivel_educativo nivel_educativo on
+		nivel_educativo."id" = paciente.codigo_educativo
+
+		LEFT JOIN
+		"public".localidad localidad on
+		localidad.codigo_localidad = barrio.codigo_localidad
+		
+		where
+		hisc_deteccion_alt_mn_2mes.codigo_empresa = #{codigo_empresa}
+		and
+		hisc_deteccion_alt_mn_2mes.codigo_sucursal = #{codigo_sucursal}
+		and
+		hisc_deteccion_alt_mn_2mes.codigo_historia = #{nro_historia}
+
+
+	</select>
+
+</mapper>

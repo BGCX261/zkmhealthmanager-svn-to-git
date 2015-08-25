@@ -1,0 +1,212 @@
+<?page title="Pagare" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+
+	<window id="formPagare" width="100%" height="100%"
+		use="healthmanager.controller.PagareAction"
+		maximizable="true">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+		<borderlayout width="100%" height="100%">
+			<north>
+				<toolbar width="100%" align="start">
+					<hlayout valign="middle">
+						<toolbarbutton image="/images/Save16.gif"
+							label="Guardar"
+							onClick="formPagare.guardarDatos();"
+							id="btGuardar" />
+						<toolbarbutton image="/images/print_ico.gif"
+							label="Imprimir" id="btImprimir"
+							onClick='formPagare.imprimir("PG",tbxCodigo_documento.getValue());' />
+						<toolbarbutton image="/images/eliminar.gif"
+							label="Anular" onClick='' id="btEliminar" visible="false" />
+						<toolbarbutton image="/images/contabilizar.gif"
+							label="Contabilizar"
+							onClick='formPagare.contabilizar("PG",tbxCodigo_documento.getValue());'
+							id="btCont" />
+							
+						
+
+						<toolbarbutton image="/images/print_ico.gif"
+							label="Imprimir contabilización"
+							onClick='formPagare.imprimirNota_contable("PG",tbxCodigo_documento.getValue());'
+							id="btPrintCont" />
+						<toolbarbutton image="/images/atras_.png"
+							label="Cerrar"
+							onClick='formPagare.detach()' />
+						<space />
+
+						<label value="Formato impresión: " />
+						<listbox id="lbxFormato" mold="select"
+							width="150px" sclass="combobox">
+							<listitem value="pdf" label="PDF"
+								selected="true" />
+							<listitem value="rtf" label="WORD" />
+						</listbox>
+
+						<textbox id="tbxCopago_autorizaciones" value=""
+							visible="false" />
+						<textbox id="tbxCopago_medicamentos" value=""
+							visible="false" />
+					</hlayout>
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center">
+					<space />
+					<groupbox id="groupboxPrincipal" mold="3d"
+						width="807px">
+						<caption label="PAGARE GENERADO POR COPAGO"/>
+
+						<grid sclass="GridSinBorde">
+							<columns>
+								<column value="" width="120px" />
+								<column value="" width="145px" />
+								<column value="" width="110px" />
+								<column value="" width="145px" />
+								<column value="" width="112px" />
+								<column value="" width="" />
+							</columns>
+							<rows>
+								<row>
+									<cell>
+										<label value="Identificación:" />
+									</cell>
+									<cell colspan="3">
+										<textbox id="tbxCodigo_tercero"
+											width="100px" style="text-transform:uppercase"
+											readonly="true" />
+										<space width="5px" />
+										<textbox id="tbxNomTercero"
+											hflex="1" style="text-transform:uppercase" readonly="true" />
+									</cell>
+									<cell>
+										<label value="Codigo Recibo:" />
+									</cell>
+									<cell>
+										<textbox id="tbxCodigo_documento"
+											hflex="1" style="font-size:11px" readonly="true" />
+									</cell>
+								</row>
+								<row>
+									<cell>
+										<label value="Administradora:" />
+									</cell>
+									<cell colspan="3">
+										<textbox id="tbxAdministradora"
+											hflex="1" style="text-transform:uppercase;font-size:11px"
+											readonly="true" />
+										
+									</cell>
+									<cell>
+										<label value="Fecha:" />
+									</cell>
+									<cell>
+										<datebox id="dtbxFecha"
+											onCreate="" format="yyyy-MM-dd" hflex="1"
+											onChange="formPagare.consultarValor_copago();formPagare.cambiarFechaVencimiento();" />
+									</cell>
+								</row>
+								<row>
+									<cell>
+										<label value="Nro cuotas:"
+											/>
+									</cell>
+									<cell colspan="3">
+										<hlayout valign="middle">
+											<intbox
+												constraint="no negative:Este valor no puede ser negativo"
+												id="ibxNro_cuota" width="70px"
+												style="text-transform:uppercase" onFocus="self.select();"
+												value="1" onChange="formPagare.calcularTotalInteres();" 
+												onOK="formPagare.calcularTotalInteres();"/>
+												<space width="20px"/>
+											<label value="Primer vencimiento:"/>
+											<datebox id="dtbxPrimer_vencimiento" readonly="true"
+											onCreate="" format="yyyy-MM-dd" hflex="1" buttonVisible="false"/>
+										</hlayout>
+										
+									</cell>
+									<cell colspan="2">
+										<hlayout valign="middle">
+											<label value="Nro Autorización:"
+											id="lbCodigo_anexo4" />
+											<textbox id="tbxCodigo_anexo4"
+											hflex="1" style="font-size:11px" readonly="true" />
+										</hlayout>
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+					<space height="5px" />
+					<grid id="gridDetalle" width="805px" mold="paging"
+						pageSize="20" height="210px"
+						style="padding:1px;border: 1px solid #D8D8D8;">
+						<columns sizable="true">
+							<column label="Codigo" align="center"
+								width="100px" />
+							<column label="Detalle" align="center" />
+							<column label="Cant" align="center"
+								width="50px" />
+							<column label="Valor unit" align="center"
+								width="100px" id="colValor_unitario" />
+							<column label="Valor total" align="center"
+								width="100px" id="colValor_total" />
+							<column label="Porcentaje %" align="center"
+								width="100px" id="colPorcentaje" visible="false" />
+							<column label="Valor Adicional"
+								align="center" width="100px" id="colValorAdicional"
+								visible="false" />
+							<column label="Copago" align="center"
+								width="100px" id="colCopago" />
+						</columns>
+						<rows id="rowsDetalle" width="100%"
+							style="border-left:1px;border-right:1px" />
+						<foot>
+							<footer span="8" align="right">
+								<label value="TOTAL:" />
+								<doublebox id="dbxTotal_dct"
+									format="#,##0.00" width="100px" value="0.00" readonly="true"
+									style="text-align:right;" onFocus="self.select();"
+									inplace="true" />
+								<space/>
+								<label value="TOTAL COPAGO:"
+									id="lbTotal" />
+								<doublebox id="dbxTotal_copago"
+									format="#,##0.00" width="100px" value="0.00" readonly="true"
+									style="text-align:right;" onFocus="self.select();"
+									inplace="true" />
+								<space/>
+								<label value="INTERES:"
+									id="lbInteres" />
+								<doublebox id="dbxInteres"
+									format="#,##0.00" width="100px" value="0.00" readonly="true"
+									style="text-align:right;" onFocus="self.select();"
+									inplace="true" />
+								<space/>
+								<label value="VALOR NETO:"
+									id="lbNeto" />
+								<doublebox id="dbxValor_neto"
+									format="#,##0.00" width="100px" value="0.00" readonly="true"
+									style="text-align:right;" onFocus="self.select();"
+									inplace="true" />
+							</footer>
+						</foot>
+					</grid>
+					
+					<space height="50px"/>
+				</div>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

@@ -1,0 +1,181 @@
+<?page title="Admision" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formAuditoria_admision" width="100%" height="97%"
+		use="healthmanager.controller.Auditoria_admisionAction">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="true" closable="false"
+			mold="3d" height="100%">
+			<caption label="Consultar listado de admisiones"
+				style="color: blue;font-weight: bold" />
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<listbox id="listboxResultado" height="100%" vflex="1"
+				checkmark="true" multiple="true" mold="paging" pageSize="50">
+				<auxhead>
+					<auxheader colspan="8">
+						<label value="Aseguradora" />
+						<space />
+						<bandboxRegistros id="bandboxAseguradora"
+							widthBandbox="100px" widthListbox="600px" heightListbox="300px"
+							columnas="Codigo#65px|Nombres|Nit#100px" />
+						<textbox id="tbxInfoAseguradora" width="200px"
+							style="text-transform:uppercase" readonly="true" />
+						<toolbarbutton id="btnLimpiarAseguradora"
+							image="/images/borrar.gif" />
+						<space />
+						<label value="Contrato" />
+						<space />
+						<listbox id="lbxContratos" width="200px"
+							mold="select" disabled="true" />
+						<space />
+						<toolbarbutton id="btnFiltro_ingreso"
+							image="/images/filtro.png" label="Vias de ingreso"
+							onClick='popupViasIngreso.open(self,"end_after")' />
+						<space />
+						<toolbarbutton id="btnFiltro_centros"
+							image="/images/filtro.png" label="Centros de atencion"
+							onClick='popupCentros_atencion.open(self,"end_after")' />
+					</auxheader>
+				</auxhead>
+				<auxhead>
+					<auxheader colspan="8">
+						<label value="Criterios:" />
+						<space />
+						<listbox id="lbxParametros" mold="select"
+							width="150px" visible="true" />
+						<space />
+						<textbox id="tbxValue" width="200px"
+							onOK="formAuditoria_admision.buscarDatos();"
+							style="text-transform:uppercase" />
+						<space />
+						<label value="Inicial" />
+						<datebox id="dtbxFecha_inicial"
+							format="yyyy-MM-dd" />
+						<space />
+						<label value="Final" />
+						<datebox id="dtbxFecha_final"
+							format="yyyy-MM-dd" />
+						<space />
+						<checkbox id="chkFiltro_atendidas"
+							label="Atendidas" />
+						<space />
+						<toolbarbutton label="Consultar"
+							image="/images/Magnifier.gif"
+							onClick="formAuditoria_admision.buscarDatos();"
+							tooltiptext="Consultar admision" />
+
+					</auxheader>
+				</auxhead>
+				<listhead sizable="true">
+					<listheader label="" width="40px" />
+					<listheader label="Fecha ingreso" width="140px" />
+					<listheader label="Nro. Ingreso" width="90px" />
+					<listheader label="Identificación" width="110px" />
+					<listheader label="Paciente" />
+					<listheader label="Via ingreso" />
+					<listheader label="Administradora" />
+					<listheader label="Estado" width="80px"
+						visible="false" />
+					<listheader label="Atendida" width="80px"
+						visible="true" />
+				</listhead>
+				<listfoot>
+					<listfooter span="7">
+						<toolbarbutton image="/images/print_ico.gif"
+							label="Generar Reporte de las adimisiones seleccionadas"
+							onClick="formAuditoria_admision.generarReporteSeleccionadas()" />
+
+						<space />
+
+						<toolbarbutton image="/images/generar.png"
+							label="Generar facturacion de las adimisiones seleccionadas"
+							onClick="formAuditoria_admision.generarFacturacionSeleccionadas(false)" />
+
+						<space />
+
+						<toolbarbutton image="/images/generar.png"
+							label="Generar facturacion si tienen servicios"
+							onClick="formAuditoria_admision.generarFacturacionSeleccionadas(true)" />
+					</listfooter>
+					<listfooter span="2">
+						<label value="Total: " />
+						<label id="lbTotal_admisiones" />
+					</listfooter>
+				</listfoot>
+			</listbox>
+
+			<popup id="popupViasIngreso">
+				<listbox id="lbxVias_ingreso" multiple="true"
+					checkmark="true" width="250px" name="via_ingreso" rows="8">
+					<custom-attributes org.zkoss.zul.listbox.rod="true" />
+					<listhead>
+						<listheader label="Vias de ingreso" />
+					</listhead>
+					<listfoot>
+						<listfooter align="middle">
+							<vbox>
+								<checkbox
+									id="chkFiltro_incluir_urgencia" label="Incluir cierre Urgencia"
+									tooltiptext="Aplica solo si tiene servicios" />
+								<checkbox id="chkFiltro_incluir_hosp"
+									label="Incluir cierre Hospitalización"
+									tooltiptext="Aplica solo si tiene servicios" />
+							</vbox>
+							<separator />
+							<toolbarbutton
+								label="Consultar por via de ingreso"
+								image="/images/Magnifier.gif"
+								onClick="formAuditoria_admision.buscarDatos()"
+								tooltiptext="Consultar por via de ingreso" />
+						</listfooter>
+					</listfoot>
+				</listbox>
+			</popup>
+
+			<popup id="popupCentros_atencion">
+				<listbox id="lbxCentros_atencion" multiple="true"
+					checkmark="true" width="250px" rows="8">
+					<listhead>
+						<listheader width="30px" />
+						<listheader>
+							<hlayout>
+								<label value="Centros"
+									style="font-weight:bold" />
+								<space />
+								<bandbox hflex="1"
+									id="bandboxBuscar_centros"
+									onOK="formAuditoria_admision.buscarCentro()" />
+							</hlayout>
+						</listheader>
+					</listhead>
+					<listfoot>
+						<listfooter align="middle" span="2">
+							<toolbarbutton
+								label="Consultar por centros de atencion"
+								image="/images/Magnifier.gif"
+								onClick="formAuditoria_admision.buscarDatos()"
+								tooltiptext="Consultar por centros de atencion" />
+						</listfooter>
+					</listfoot>
+				</listbox>
+			</popup>
+
+		</groupbox>
+	</window>
+</zk>

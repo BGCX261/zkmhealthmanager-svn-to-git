@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.Detalle_nota_enfDao">
+
+	<!--<typeAlias alias="Detalle_nota_enf" type="healthmanager.modelo.bean.Detalle_nota_enf" />-->
+
+	<!--<mapper resource="healthmanager/modelo/dao/xml/detalle_nota_enfSQL.xml" />-->
+
+	<resultMap id="detalle_nota_enfMap" type="detalle_nota_enf">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="codigo_nota" property="codigo_nota" />
+		<result column="consecutivo" property="consecutivo" />
+		<result column="fecha" property="fecha" />
+		<result column="nota" property="nota" />
+		<result column="asunto" property="asunto" />
+	</resultMap>
+
+	<insert id="crear" parameterType="detalle_nota_enf">
+		insert into public.detalle_nota_enf (codigo_empresa,codigo_sucursal,
+		codigo_nota,consecutivo,fecha,
+		nota,asunto)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{codigo_nota},#{consecutivo},#{fecha},
+		#{nota},#{asunto})
+	</insert>
+
+	<update id="actualizar" parameterType="detalle_nota_enf">
+		update public.detalle_nota_enf set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},codigo_nota = #{codigo_nota},
+		consecutivo = #{consecutivo},fecha = #{fecha},
+		nota = #{nota},asunto = #{asunto}
+		where 		codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and codigo_nota = #{codigo_nota}
+		and consecutivo = #{consecutivo}
+	</update>
+
+	<select id="consultar" resultMap="detalle_nota_enfMap" parameterType="detalle_nota_enf">
+		select codigo_empresa,codigo_sucursal,
+		codigo_nota,consecutivo,fecha,nota,
+		asunto
+		from public.detalle_nota_enf where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_nota = #{codigo_nota}
+		and consecutivo = #{consecutivo}
+	</select>
+
+	<delete id="eliminar" parameterType="detalle_nota_enf">
+		delete from public.detalle_nota_enf
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">AND codigo_empresa = #{codigo_empresa}</if>
+			<if test="codigo_sucursal != null">AND codigo_sucursal = #{codigo_sucursal}</if>
+			<if test="codigo_nota != null">AND codigo_nota = #{codigo_nota}</if>
+			<if test="consecutivo != null">AND consecutivo = #{consecutivo}</if>
+		</trim>
+	</delete>
+
+	<select id="listar" resultMap="detalle_nota_enfMap" parameterType="java.util.Map">
+		select codigo_empresa,codigo_sucursal,
+		codigo_nota,consecutivo,fecha,nota,
+		asunto
+		from public.detalle_nota_enf 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">AND codigo_empresa = #{codigo_empresa}</if>
+			<if test="codigo_sucursal != null">AND codigo_sucursal = #{codigo_sucursal}</if>
+			<if test="codigo_nota != null">AND codigo_nota = #{codigo_nota}</if>
+			<if test="parameter != null">AND ${parameter} like '${value}'</if>
+		</trim>
+		order by fecha
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

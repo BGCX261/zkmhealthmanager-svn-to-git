@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="contaweb.modelo.dao.report.factura_cap_agrupadaESEModel">
+	<select id="select" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+		SELECT
+			fact.id_factura,
+			fact.codigo_documento,
+			fact.fecha,
+			fact.fecha_inicio,
+			fact.fecha_final,
+			fact.fecha_vencimiento,
+			fact.codigo_administradora,
+			fact.id_plan,
+			fact.plazo,
+			fact.codigo_tercero,
+			fact.creacion_user,
+			fact.nro_contrato,
+			fact.nro_poliza,
+			fact.valor_total,
+			fact.dto_factura,
+			fact.dto_copago,
+			fact.valor_copago,
+			fact.descripcion,
+			fact.retencion,
+			fact.tipo,
+			fact.concepto,
+			adra.nombre AS nombre_cliente,
+			adra.direccion AS direccion_cliente,
+			adra.telefono AS telefono_cliente,
+			"upper"(mun.nombre) AS municipio_cliente,
+			fact.descipcion_mes_facturado, 
+			fact.poblacion_segun_base_datos, 
+			fact.descripcion_nro_contrato, 
+			fact.descripcion_tipo_servicio,
+			adra.nit
+		FROM contaweb.facturacion AS fact
+		INNER JOIN public.administradora AS adra ON (adra.codigo_empresa = fact.codigo_empresa 
+		AND adra.codigo_sucursal = fact.codigo_sucursal AND adra.codigo = fact.codigo_administradora)
+		INNER JOIN public.municipios AS mun ON (mun.codigo = adra.codigo_municipio AND mun.coddep = adra.codigo_dpto)
+		WHERE fact.id_factura = #{id_factura}
+		AND fact.post = 'N' AND (fact.tipo = 'GEN_CAP' OR fact.tipo = 'GEN_AGR')
+	</select>
+</mapper>

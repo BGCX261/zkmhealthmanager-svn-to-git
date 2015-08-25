@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.PaisDao">
+
+	<resultMap id="paisMap" type="pais">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="codigo_pais" property="codigo_pais" />
+		<result column="id" property="id" />
+		<result column="nombre" property="nombre" />
+		<result column="creacion_user" property="creacion_user" />
+		<result column="creacion_date" property="creacion_date" />
+	</resultMap>
+
+	<insert id="crear" parameterType="pais" >
+		insert into public.pais (codigo_empresa,codigo_sucursal,
+		codigo_pais,nombre,
+		creacion_user,creacion_date)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{codigo_pais},#{nombre},
+		#{creacion_user},#{creacion_date})
+		RETURNING id
+	</insert>
+
+	<update id="actualizar" parameterType="pais">
+		update public.pais set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},codigo_pais = #{codigo_pais},
+		id = #{id},nombre = #{nombre},
+		creacion_user = #{creacion_user},creacion_date = #{creacion_date}
+		where id = #{id}
+	</update>
+
+	<select id="consultarID" parameterType="pais" resultMap="paisMap">
+		select codigo_empresa,codigo_sucursal,
+		codigo_pais,id,nombre,creacion_user,
+		creacion_date
+		from public.pais where id = #{id}
+	</select>
+	
+	<select id="consultar" parameterType="pais" resultMap="paisMap">
+		select codigo_empresa,codigo_sucursal,
+		codigo_pais,id,nombre,creacion_user,
+		creacion_date
+		from public.pais where codigo_empresa = #{codigo_empresa}
+		AND codigo_sucursal = #{codigo_sucursal}
+		AND codigo_pais = #{codigo_pais}
+	</select>
+
+	<delete id="eliminar" parameterType="pais">
+		delete from public.pais
+		where id = #{id}
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="paisMap">
+		select codigo_empresa,codigo_sucursal,
+		codigo_pais,id,nombre,creacion_user,
+		creacion_date
+		from public.pais 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+			<if test="paramTodo != null">AND (lower(codigo_pais) like '%${value}%' or lower(nombre) like '%${value}%')</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+	<select id="exist" resultType="java.lang.Boolean">
+		select count(*) != 0 AS exist 		from public.pais 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.reporte_afiliadosModel">
+	<select id="select" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+		SELECT
+		pac.tipo_identificacion,
+		pac.nro_identificacion,
+		pac.apellido1,
+		pac.apellido2,
+		pac.nombre1,
+		pac.nombre2,
+		pac.sexo,
+		afi.tipo_afiliado,
+		upper(elem_tipo_afil.descripcion) AS tipo_afiliado_descripcion,
+		CASE WHEN  elem_estado.descripcion IS NULL THEN 'NO ENCONTRADO' ELSE elem_estado.descripcion END AS estado_afiliacion_descripcion,
+		pac.estado_afiliacion
+		FROM
+		public.afiliaciones_me AS afi
+		INNER JOIN public.paciente AS pac ON pac.codigo_empresa = afi.codigo_empresa AND pac.codigo_sucursal = afi.codigo_sucursal AND pac.nro_identificacion = afi.nro_identificacion_afiliado
+		LEFT JOIN public.elemento AS elem_tipo_afil ON elem_tipo_afil.codigo = (CASE WHEN afi.tipo_afiliado = 'C' THEN '1' WHEN afi.tipo_afiliado = 'B' THEN '2' ELSE '3' END) AND elem_tipo_afil.tipo = 'tipo_afiliado2'
+		LEFT JOIN public.elemento AS elem_estado ON elem_estado.codigo = pac.estado_afiliacion AND elem_estado.tipo = 'estado_afiliacion'
+		WHERE afi.codigo_empresa = 	#{codigo_empresa}
+		AND afi.codigo_sucursal = #{codigo_sucursal}
+		<if test="estado">
+		   AND pac.estado_afiliacion = #{estado}
+		</if>
+		<if test="tipo_afiliado">
+		   AND afi.tipo_afiliado = #{tipo_afiliado}
+		</if>
+		<if test="filtro_afiliados != null">
+			AND pac.documento IN
+			<foreach collection="filtro_afiliados" item="i" open="("
+				separator="," close=")">
+				#{i.documento}
+			</foreach>
+		</if>
+	</select>
+</mapper>

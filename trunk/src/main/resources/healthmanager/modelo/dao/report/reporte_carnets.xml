@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.carnetsModel">
+	<select id="select" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+		SELECT
+		pac.codigo_empresa,
+		pac.codigo_sucursal,
+		pac.tipo_identificacion,
+		pac.nro_identificacion,
+		pac.codigo_administradora,
+		pac.tipo_usuario,
+		pac.apellido1,
+		pac.apellido2,
+		pac.nombre1,
+		pac.nombre2,
+		pac.fecha_nacimiento,
+		pac.edad,
+		pac.unidad_medidad,
+		pac.sexo,
+		pac.codigo_dpto,
+		pac.codigo_municipio,
+		pac.zona,
+		pac.lugar_exp,
+		pac.profesion,
+		pac.tel_oficina,
+		pac.tel_res,
+		pac.direccion,
+		pac.estado_civil,
+		pac.paciente_particula,
+		pac.estrato,
+		ame.tipo_afiliado,
+		pac.creacion_date,
+		pac.ultimo_update,
+		pac.delete_date,
+		pac.creacion_user,
+		pac.ultimo_user,
+		pac.delete_user,
+		pac.estado_afiliacion,
+		pac.ingresos,
+		pac.grupo_cuota,
+		pac.pertenencia_etnica,
+		pac.codigo_ocupacion,
+		pac.codigo_educativo,
+		pac.password,
+		pac.login,
+		ame.rh,
+		to_char(ame.fecha_afiliacion, 'DD-MM-YYYY') AS fecha_afiliacion,
+		to_char(ame.fecha_vencimiento, 'DD-MM-YYYY') AS fecha_vencimiento
+		FROM
+		public.paciente AS pac
+		INNER JOIN "public".afiliaciones_me AS ame ON ame.codigo_empresa =
+		ame.codigo_empresa AND pac.codigo_sucursal = ame.codigo_sucursal AND
+		ame.nro_identificacion_afiliado = pac.nro_identificacion
+		where
+		pac.codigo_empresa = #{codigo_empresa}
+		and
+		pac.codigo_sucursal = #{codigo_sucursal}
+		<if test="filtro != null">
+			AND nro_identificacion IN
+			<foreach open="(" close=")" separator="," collection="filtro"
+				item="i">#{i.value.nro_identificacion}</foreach>
+		</if>
+	</select>
+
+</mapper>

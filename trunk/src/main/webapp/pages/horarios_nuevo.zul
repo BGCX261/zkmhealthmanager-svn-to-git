@@ -1,0 +1,211 @@
+<?page title="Horarios_nuevo" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formHorarios_nuevo" width="100%" height="100%"
+		use="healthmanager.controller.Horarios_nuevoAction">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="true" closable="false"
+			mold="3d" height="100%">
+			<caption label="Consultar Horarios_nuevos Registrados"
+				style="font-weight: bold" />
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<div>
+				<label value="Criterios de B&#250;squeda :" />
+				<textbox id="tbxValue" width="250px"
+					onOK="formHorarios_nuevo.buscarDatos();"
+					style="text-transform:uppercase" />
+				<toolbarbutton image="/images/Magnifier.gif"
+					onClick="formHorarios_nuevo.buscarDatos();"
+					label="Buscar Horarios nuevo" tooltiptext="Buscar Horarios nuevo" />
+				<toolbarbutton image="/images/New16.gif"
+					onClick='formHorarios_nuevo.accionForm(true,"registrar");'
+					tooltiptext="Nuevo Horarios nuevo" id="btnNuevo"
+					label="Nuevo Horarios nuevo" />
+			</div>
+			<grid id="gridResultado" autopaging="true"
+				style="margin-top:5px" vflex="1">
+				<columns sizable="true">
+					<column label="Codigo horario" width="" />
+					<column label="Descripcion" width="" />
+					<column label="Codigo centro" width="" />
+					<column label="Acciones" align="center"
+						width="120px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<borderlayout width="100%" height="100%" id="groupboxEditar"
+			visible="false">
+			<north border="none">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<toolbarbutton image="/images/Save16.gif"
+						label="Guardar Horario"
+						onClick="formHorarios_nuevo.guardarDatos();" id="btnGuardar" />
+					<toolbarbutton image="/images/New16.gif"
+						label="Nuevo Horario"
+						onClick='formHorarios_nuevo.accionForm(true,"registrar");'
+						id="btnNuevo2" visible="false" />
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Atras"
+						onClick='formHorarios_nuevo.accionForm(false,tbxAccion.getText());'
+						id="btnAtras" />
+					<space />
+					<toolbarbutton image="/images/add.png"
+						label="Agregar secuencia de horario" onClick='formHorarios_nuevo.agregarSecuenciaHorario()' />
+					<toolbarbutton image="/images/cancelar_mini.png"
+						label="Eliminar secuencia de horario" onClick='' />
+				</toolbar>
+			</north>
+
+			<west width="360px" splittable="true" collapsible="true">
+				<grid>
+					<columns>
+						<column label="Filtros de consultas" />
+					</columns>
+					<rows>
+						<row>
+							<cell>
+								<label value="Fecha inicio" />
+								<space width="5px" />
+								<datebox format="yyyy-MM-dd"
+									id="dtbxFecha_inicio" width="100px" />
+								<space />
+								<label value="Fecha final" />
+								<space width="5px" />
+								<datebox format="yyyy-MM-dd"
+									id="dtbxFecha_final" width="100px" />
+							</cell>
+						</row>
+						<row>
+							<cell>
+								<label value="Hora inicio" />
+								<space width="10px" />
+								<timebox format="hh:mm a"
+									id="tmbxFecha_inicio" width="100px" />
+								<space />
+								<label value="Fecha final" />
+								<space width="7px" />
+								<timebox format="hh:mm a"
+									id="tmbxFecha_final" width="100px" />
+							</cell>
+						</row>
+						<row>
+							<cell valign="middle">
+								<checkbox label="Dom" value="1" />
+								<space width="7px" />
+								<checkbox label="Lun" value="2" />
+								<space width="7px" />
+								<checkbox label="Mar" value="3" />
+								<space width="7px" />
+								<checkbox label="Mie" value="4" />
+								<space width="7px" />
+								<checkbox label="Jue" value="5" />
+								<space width="7px" />
+								<checkbox label="Vie" value="6" />
+								<space width="7px" />
+								<checkbox label="Sab" value="7" />
+							</cell>
+						</row>
+						<row>
+							<cell>
+								<label value="Prestador" />
+								<space width="7px" />
+
+							</cell>
+						</row>
+
+						<row>
+							<cell>
+								<label value="Tiempo/cita"
+									tooltiptext="Tiempo inicial que se tiene entre una cita y otra" />
+								<space />
+								<spinner step="5" width="70px"
+									constraint="min 0" value="15" id="spinnerTiempo_cita"
+									tooltiptext="Tiempo inicial que se tiene entre una cita y otra" />
+								<space />
+								<label value="Minutos" />
+							</cell>
+						</row>
+
+						<row>
+							<cell>
+								<toolbarbutton label="Filtrar"
+									image="/images/filtro1.png" />
+									<space />
+									
+							</cell>
+						</row>
+					</rows>
+				</grid>
+			</west>
+
+			<center autoscroll="true" border="none">
+				<div height="100%">
+					<!-- *************************** -->
+					<!-- *** Insertar/Actualizar *** -->
+					<!-- *************************** -->
+					<groupbox closable="false" mold="3d"
+						height="100%">
+
+						<caption label="DATOS DEL REGISTRO (HORARIOS)" />
+
+						<listbox id="listboxRegistros" vflex="1"
+							multiple="true" checkmark="true">
+							<auxhead>
+								<auxheader colspan="6">
+									<label value="Descripción" />
+									<space />
+									<textbox id="tbxDescripcion"
+										hflex="1" />
+									<space />
+									<label value="Año" />
+									<listbox id="lbxAnios" mold="select"
+										sclass="combobox" width="100px" />
+									<space />
+									<label value="Mes: " />
+									<listbox id="lbxMeses" mold="select"
+										sclass="combobox" width="140px">
+										<listitem label="${each}"
+											forEach="Enero,Febrero,Marzo,Abril,Mayo,Junio,Julio,Agosto,Septiembre,Octubre,Noviembre,Diciembre" />
+									</listbox>
+									<space />
+									<space />
+								</auxheader>
+							</auxhead>
+							<listhead>
+								<listheader label="Estado"
+									width="120px" />
+								<listheader label="Inicio" width="80px" />
+								<listheader label="Final" width="80px" />
+								<listheader label="Prestador" />
+								<listheader label="Consultorio" />
+								<listheader label="Servicio" />
+							</listhead>
+						</listbox>
+						<textbox id="tbxCodigo_horario" visible="false" />
+						<textbox id="tbxCodigo_centro" visible="false" />
+					</groupbox>
+				</div>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

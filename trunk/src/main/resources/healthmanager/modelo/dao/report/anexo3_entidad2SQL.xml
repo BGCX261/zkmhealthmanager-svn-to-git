@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.anexo3_entidad2Model">
+	<select id="select" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+
+		SELECT
+		detalle_anexo3.unidades AS cantidad,
+		detalle_anexo3.nombre_pcd,
+		detalle_anexo3.codigo_cups AS codigo_procedimiento,
+		anexo3_entidad."codigo" AS anexo3_entidad_codigo,
+		anexo3_entidad."guia_atencion" AS anexo3_entidad_guia_atencion,
+		anexo3_entidad."justificacion" AS anexo3_entidad_justificacion,
+		anexo3_entidad."cie_p" AS anexo3_entidad_cie_p,
+		cp.nombre as cp,
+		anexo3_entidad."cie_1" AS anexo3_entidad_cie_1,
+		c1.nombre as c1,
+		anexo3_entidad."cie_2" AS anexo3_entidad_cie_2,
+		c2.nombre as c2,
+		us.nombres AS anexo3_entidad_nombre_reporta,
+		anexo3_entidad."cargo_reporta" AS anexo3_entidad_cargo_reporta,
+		us.tel_res AS anexo3_entidad_tel_reporta,
+		anexo3_entidad."cel_reporta" AS anexo3_entidad_cel_reporta,
+		anexo3_entidad."creacion_date" AS anexo3_entidad_creacion_date,
+		anexo3_entidad."autorizado" AS anexo3_entidad_autorizado,
+<!-- 		anexo3_entidad."codigo_ips" AS anexo3_entidad_codigo_ips, -->
+		us.apellidos as anexo3_entidad_codigo_ips,
+		anexo3_entidad."cons_ips" AS anexo3_entidad_cons_ips,
+		anexo3_entidad."entidad" AS anexo3_entidad_entidad,
+		anexo3_entidad."leido" AS anexo3_entidad_leido,
+		anexo3_entidad."leido_rechazado" AS anexo3_entidad_leido_rechazado,
+		anexo3_entidad."nro_historia" AS anexo3_entidad_nro_historia,
+		anexo3_entidad."need_autorizacion" AS anexo3_entidad_need_autorizacion,
+		anexo3_entidad."codigo_receta" AS anexo3_entidad_codigo_receta,
+		anexo3_entidad."tipo_anexo" AS anexo3_entidad_tipo_anexo,
+		anexo3_entidad."estado" AS anexo3_entidad_estado,
+		anexo3_entidad."ultimo_user" AS anexo3_entidad_nro_identificacion_reporta,
+		departamentos.nombre AS nombre_dpt,
+		municipios.nombre AS nombre_mun,
+		empresa.direccion AS anexo3_entidad_direccion_reporta,
+		empresa.nombre_empresa AS nom_empresa,
+		empresa.codigo_habilitacion AS codigo_empresa,
+		empresa.telefonos AS tel_empresa,
+		paciente.nro_identificacion AS nro_identificacion,
+		paciente.apellido1 AS apellido1,
+		paciente.apellido2 AS apellido2,
+		paciente.nombre1 AS nombre1,
+		paciente.nombre2 AS nombre2,
+		paciente.tel_oficina AS tel_oficina,
+		paciente.tel_res AS tel_res,
+		paciente.direccion AS direccion,
+		anexo3_entidad."numero_solicitud" AS anexo3_entidad_numero_solicitud,
+		anexo3_entidad."fecha" AS anexo3_entidad_fecha,
+		anexo3_entidad."codigo_administradora" AS anexo3_entidad_codigo_administradora,
+		anexo3_entidad."codigo_paciente" AS anexo3_entidad_codigo_paciente,
+		anexo3_entidad."cobertura" AS anexo3_entidad_cobertura,
+		anexo3_entidad."origen_general" AS anexo3_entidad_origen_general,
+		anexo3_entidad."origen_profesional" AS
+		anexo3_entidad_origen_profesional,
+		anexo3_entidad."origen_trabajo" AS anexo3_entidad_origen_trabajo,
+		anexo3_entidad."origen_transito" AS anexo3_entidad_origen_transito,
+		anexo3_entidad."origen_evento" AS anexo3_entidad_origen_evento,
+		anexo3_entidad."tipo_servicio" AS anexo3_entidad_tipo_servicio,
+		anexo3_entidad."prioridad" AS anexo3_entidad_prioridad,
+		anexo3_entidad."ubicacion" AS anexo3_entidad_ubicacion,
+		anexo3_entidad."justificacion" AS justificacion,
+		anexo3_entidad."servicio" AS anexo3_entidad_servicio,
+		anexo3_entidad."cama" AS anexo3_entidad_cama,
+		elemento.codigo AS codigo,
+		administradora."nombre" AS nom_admi,
+		administradora."codigo" AS cod_adm,
+		empresa."nro_identificacion" AS nit
+
+
+		FROM
+		"public"."anexo3_entidad" anexo3_entidad
+
+		INNER JOIN "public".detalle_anexo3 detalle_anexo3 ON
+		detalle_anexo3.codigo_empresa = anexo3_entidad.codigo_empresa
+		AND detalle_anexo3.codigo_orden = anexo3_entidad.codigo
+		AND detalle_anexo3.codigo_sucursal = anexo3_entidad.codigo_sucursal
+		INNER JOIN "public".paciente paciente ON paciente.nro_identificacion =
+		anexo3_entidad.codigo_paciente
+		AND paciente.codigo_empresa = anexo3_entidad.codigo_empresa AND
+		paciente.codigo_sucursal = anexo3_entidad.codigo_sucursal
+		LEFT JOIN "public".empresa empresa on empresa.codigo_empresa =
+		anexo3_entidad.codigo_empresa
+		INNER JOIN "public".municipios municipios on municipios.codigo =
+		empresa.codigo_municipio
+		INNER JOIN "public".departamentos departamentos on departamentos.codigo =
+		empresa.codigo_dpto
+		AND municipios.coddep = empresa.codigo_dpto
+		LEFT JOIN "public".elemento elemento ON
+		elemento.codigo=paciente.tipo_identificacion
+		
+		 left join cie cp on(cp.codigo=anexo3_entidad.cie_p)
+		 left join cie c1 on(c1.codigo=anexo3_entidad.cie_1)
+		 left join cie c2 on(c2.codigo=anexo3_entidad.cie_2)
+		 	
+		 left join usuarios us on(us.codigo=anexo3_entidad.ultimo_user)
+
+		LEFT JOIN "public".administradora administradora ON administradora.codigo
+		= paciente.codigo_administradora
+
+		where
+		anexo3_entidad.codigo_empresa
+		=#{codigo_empresa}
+		AND
+		anexo3_entidad.codigo_sucursal
+		=#{codigo_sucursal}
+		AND
+		anexo3_entidad.codigo = #{codigo_orden}
+
+
+	</select>
+
+</mapper>

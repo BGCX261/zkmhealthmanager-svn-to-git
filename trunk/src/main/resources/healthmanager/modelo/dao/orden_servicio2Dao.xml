@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Orden_servicio2Dao">
+
+	<!--<typeAlias alias="orden_servicio2" type="healthmanager.modelo.bean.Orden_servicio2" />-->
+
+	<!--<mapper resource="healthmanager/modelo/dao/xml/orden_servicio2SQL.xml" />-->
+
+	<resultMap id="orden_servicio2Map" type="orden_servicio2">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="codigo_orden" property="codigo_orden" />
+		<result column="fecha_orden" property="fecha_orden" />
+		<result column="codigo_paciente" property="codigo_paciente" />
+		<result column="codigo_prestador" property="codigo_prestador" />
+		<result column="estado" property="estado" />
+		<result column="creacion_date" property="creacion_date" />
+		<result column="ultimo_update" property="ultimo_update" />
+		<result column="creacion_user" property="creacion_user" />
+		<result column="ultimo_user" property="ultimo_user" />
+		<result column="codigo_dx1" property="codigo_dx1" />
+		<result column="codigo_dx2" property="codigo_dx2" />
+		<result column="observaciones" property="observaciones" />
+		
+		<result column="pnombre1" property="paciente.nombre1" />
+		<result column="pnombre2" property="paciente.nombre2" />
+		<result column="papellido1" property="paciente.apellido1" />
+		<result column="papellido2" property="paciente.apellido2" />
+		<result column="ptipo_identificacion" property="paciente.tipo_identificacion" />
+		<result column="pfecha_nacimiento" property="paciente.fecha_nacimiento" />
+		<result column="psexo" property="paciente.sexo" />
+		<result column="pestrato" property="paciente.estrato" />
+		
+		<result column="mednombres" property="prestadores.nombres" />
+		<result column="medapellidos" property="prestadores.apellidos" />
+		
+		<association property="lista_detalle" column="{codigo_empresa=codigo_empresa,
+			codigo_sucursal=codigo_sucursal,codigo_orden=codigo_orden}" 
+				select="healthmanager.modelo.dao.Detalle_orden2Dao.listar" />
+	</resultMap>
+
+	<insert id="crear" parameterType="orden_servicio2">
+		insert into public.orden_servicio2 (codigo_empresa,codigo_sucursal,
+		codigo_orden,fecha_orden,codigo_paciente,
+		codigo_prestador,estado,creacion_date,
+		ultimo_update,creacion_user,ultimo_user,
+		codigo_dx1,codigo_dx2,observaciones)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{codigo_orden},#{fecha_orden},#{codigo_paciente},
+		#{codigo_prestador},#{estado},#{creacion_date},
+		#{ultimo_update},#{creacion_user},#{ultimo_user},
+		#{codigo_dx1},#{codigo_dx2},#{observaciones})
+	</insert>
+
+	<update id="actualizar" parameterType="orden_servicio2">
+		update public.orden_servicio2 set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},codigo_orden = #{codigo_orden},
+		fecha_orden = #{fecha_orden},codigo_paciente = #{codigo_paciente},
+		codigo_prestador = #{codigo_prestador},estado = #{estado},
+		ultimo_update = #{ultimo_update},
+		ultimo_user = #{ultimo_user},
+		codigo_dx1 = #{codigo_dx1},codigo_dx2 = #{codigo_dx2},
+		observaciones = #{observaciones}
+		where 		codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and codigo_orden = #{codigo_orden}
+	</update>
+
+	<select id="consultar" parameterType="orden_servicio2" resultMap="orden_servicio2Map">
+		select os.codigo_empresa,os.codigo_sucursal,
+		os.codigo_orden,os.fecha_orden,os.codigo_paciente,os.codigo_prestador,
+		os.estado,os.creacion_date,os.ultimo_update,os.creacion_user,
+		os.ultimo_user,os.codigo_dx1,os.codigo_dx2,os.observaciones,
+		t2.nombre1 as pnombre1,t2.nombre2 as pnombre2,t2.apellido1 as papellido1,
+		t2.apellido2 as papellido2,t2.tipo_identificacion as ptipo_identificacion,
+		t2.fecha_nacimiento as pfecha_nacimiento,t2.estrato as pestrato,t2.sexo as psexo,
+		t3.nombres as mednombres,t3.apellidos as medapellidos
+		from public.orden_servicio2 os
+		left join paciente t2 ON (os.codigo_empresa=t2.codigo_empresa 
+		and os.codigo_sucursal=t2.codigo_sucursal and os.codigo_paciente=t2.nro_identificacion)
+		left join prestadores t3 ON (os.codigo_empresa=t3.codigo_empresa 
+		and os.codigo_sucursal=t3.codigo_sucursal and os.codigo_prestador=t3.nro_identificacion)
+		where os.codigo_empresa = #{codigo_empresa}
+		and os.codigo_sucursal = #{codigo_sucursal} and codigo_orden = #{codigo_orden}
+	</select>
+
+	<delete id="eliminar" parameterType="orden_servicio2">
+		delete from public.orden_servicio2
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_orden = #{codigo_orden}
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="orden_servicio2Map">
+		select os.codigo_empresa,os.codigo_sucursal,
+		os.codigo_orden,os.fecha_orden,os.codigo_paciente,os.codigo_prestador,
+		os.estado,os.creacion_date,os.ultimo_update,os.creacion_user,
+		os.ultimo_user,os.codigo_dx1,os.codigo_dx2,os.observaciones,
+		t2.nombre1 as pnombre1,t2.nombre2 as pnombre2,t2.apellido1 as papellido1,
+		t2.apellido2 as papellido2,t2.tipo_identificacion as ptipo_identificacion,
+		t2.fecha_nacimiento as pfecha_nacimiento,t2.estrato as pestrato,t2.sexo as psexo,
+		t3.nombres as mednombres,t3.apellidos as medapellidos
+		from public.orden_servicio2 os
+		left join paciente t2 ON (os.codigo_empresa=t2.codigo_empresa 
+		and os.codigo_sucursal=t2.codigo_sucursal and os.codigo_paciente=t2.nro_identificacion)
+		left join prestadores t3 ON (os.codigo_empresa=t3.codigo_empresa 
+		and os.codigo_sucursal=t3.codigo_sucursal and os.codigo_prestador=t3.nro_identificacion)
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND os.codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND os.codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="codigo_paciente != null">
+			AND os.codigo_paciente = #{codigo_paciente}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from public.orden_servicio2 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

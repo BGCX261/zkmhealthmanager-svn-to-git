@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="contaweb.modelo.dao.report.factura_cap_agrupadaModel">
+	<select id="select" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+
+		select 
+		f.id_factura,
+		f.codigo_documento,
+		f.fecha,
+		f.fecha_inicio,
+		f.fecha_final,
+		f.fecha_vencimiento,
+		f.codigo_administradora,
+		f.id_plan,
+		f.plazo,
+		f.codigo_tercero,
+		f.creacion_user,
+		f.nro_contrato,
+		f.nro_poliza,
+		f.valor_total,
+		f.dto_factura,
+		f.dto_copago,
+		f.valor_copago,
+		df.codigo_articulo,
+		df.creacion_date as fecha_interna,
+		df.detalle,
+		df.cantidad,
+		df.valor_unitario,
+		df.valor_total as total,
+		f.descripcion,
+		f.retencion,
+		f.tipo,
+		f.concepto,
+		f.anio,
+		pr.prefijo_venta  
+		from contaweb.facturacion f
+		left join contaweb.detalle_factura df on
+		f.id_factura = df.id_factura 
+		left join contaweb.periodo pr on 
+		f.codigo_empresa = pr.codigo_empresa and 
+		f.codigo_sucursal = pr.codigo_sucursal and 
+		f.anio = pr.anio  
+		where f.id_factura = #{id_factura}
+		and f.post = 'N'
+		and (f.tipo = 'GEN_CAP' or f.tipo = 'GEN_AGR')
+		order by df.codigo_articulo;
+	</select>
+
+</mapper>

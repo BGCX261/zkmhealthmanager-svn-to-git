@@ -1,0 +1,1411 @@
+<?page title="Hisc_fisioterapia" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<?component name="informacionPacientes" macroURI="/WEB-INF/macros/informacionPacientes.zul"?>
+<?component name="impresionDiagnostica" macroURI="/WEB-INF/macros/impresionDiagnostica.zul"?>
+<?component name="remision_interna" macroURI="/WEB-INF/macros/remision_interna.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formHisc_fisioterapia" width="100%" height="98%"
+		use="healthmanager.controller.Hisc_fisioterapiaAction">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="false" closable="false"
+			mold="3d" height="90%">
+			<caption label="Consultar Historias Clinicas "
+				style="font-weight: bold">
+				<toolbarbutton image="/images/add_perfil.png"
+					style="font-weight:bold;float:right;margin-right:50px"
+					label="PACIENTE ADMISIONADO"
+					id="toolbarbuttonPaciente_admisionado1" />
+			</caption>
+			<separator />
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" height="90%" mold="paging"
+				pageSize="20" vflex="1">
+				<auxhead>
+					<auxheader colspan="6">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<separator />
+							<textbox id="tbxValue" width="200px"
+								onOK="formHisc_fisioterapia.buscarDatos();"
+								style="text-transform:uppercase" />
+							<separator />
+							<button mold="trendy"
+								image="/images/Magnifier.gif"
+								onClick="formHisc_fisioterapia.buscarDatos();"
+								tooltiptext="Consultar Hisc fisioterapia" />
+							<separator />
+							<button mold="trendy"
+								image="/images/New16.gif"
+								onClick='formHisc_fisioterapia.accionForm(true,"registrar");'
+								tooltiptext="Nuevo Hisc fisioterapia" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Código historia" width="150px" />
+					<column label="Identificación" width="200px" />
+					<column label="Nombre" />
+					<column label="Fecha" width="150px" />
+					<column label="Acciones" align="center"
+						width="100px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<borderlayout width="100%" height="98%" id="groupboxEditar"
+			visible="true">
+			<north border="none">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<toolbarbutton image="/images/Save16.gif"
+						label="Guardar Hisc fisioterapia"
+						onClick="formHisc_fisioterapia.guardarDatos();" id="btGuardar" />
+					<toolbarbutton image="/images/New16.gif"
+						label="Nueva Hisc fisioterapia"
+						onClick='formHisc_fisioterapia.accionForm(true,"registrar");'
+						id="btNew" visible="false"/>
+					<space />
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Cancelar"
+						onClick='formHisc_fisioterapia.accionForm(false,tbxAccion.getText());'
+						id="btCancel" visible="false"/>
+					<toolbarbutton image="/images/print_ico.gif"
+						label="Imprimir Hisc fisioterapia"
+						onClick="formHisc_fisioterapia.imprimir();" id="btImprimir"
+						visible="false" />
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Consultar"
+						onClick='formHisc_fisioterapia.accionForm(healthmanager.controller.ZKWindow.OpcionesFormulario.CONSULTAR,null);'
+						id="btnCancelar" visible="false"/> 
+					<space />
+					<label value="Formato impresión: " visible="false" />
+					<listbox id="lbxFormato" mold="select" width="150px"
+						visible="false" sclass="combobox">
+						<listitem value="pdf" label="PDF"
+							selected="true" />
+						<listitem value="rtf" label="WORD" />
+					</listbox>
+					<toolbarbutton image="/images/add_perfil.png"
+						style="font-weight:bold;float:right;margin-right:50px"
+						label="PACIENTE ADMISIONADO"
+						id="toolbarbuttonPaciente_admisionado2" visible="false"/> 
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center">
+					<space />
+					<groupbox mold="3d" closable="false" visible="true"
+						id="gbxIdentificacion" width="920px">
+						<caption label="INFORMACIÓN CONSULTA"
+							style="font-weight:bold" />
+						<informacionPacientes id="infoPacientes" />
+
+						<grid>
+							<columns visible="false">
+								<column />
+								<column />
+								<column />
+								<column />
+								<column />
+								<column />
+							</columns>
+							<rows>
+								<row>
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label value="Prestador: " />
+									</cell>
+									<cell colspan="5"
+										id="celdaPrestador">
+										<space />
+										<bandbox id="bandboxPrestador"
+											width="170px" readonly="true" disabled="false" />
+										<space />
+										<textbox id="tbxNomPrestador"
+											width="420px" style="text-transform:uppercase"
+											readonly="true" />
+										<toolbarbutton
+											id="btnLimpiar_prestador" image="/images/borrar.gif"
+											visible="false" />
+									</cell>
+								</row>
+
+								<row>
+									<cell colspan="4">
+										<label id="lbAcompaniante"
+											value="Nombre del acompañante: " />
+										<space />
+
+										<textbox id="tbxAcompaniante"
+											hflex="1" style="text-transform:uppercase" />
+									</cell>
+									<cell colspan="2">
+										<label id="lbCedula"
+											value="Número de cédula: " />
+										<space />
+										<textbox id="tbxCedula_acomp"
+											hflex="1" style="text-transform:uppercase" />
+									</cell>
+								</row>
+
+								<row>
+									<cell colspan="2">
+										<label
+											value="Teléfono Acompañante " />
+										<space width="30px" />
+										<doublebox
+											id="dbxTel_acompaniante" hflex="1"
+											style="text-transform:uppercase" format="#" />
+									</cell>
+									<cell colspan="5">
+										<space width="55px" />
+										<label id="lbRelacion"
+											value="Relación: " />
+										<space />
+										<listbox id="lbxRelacion"
+											name="relacion_acomp" mold="select" width="170px"
+											sclass="combobox" />
+										<space />
+										<label id="lbLateralidad_motora"
+											value="Lateralidad motora: " />
+										<space />
+										<listbox
+											id="lbxLateralidad_motora" name="lateralidad_motora"
+											mold="select" width="175px" sclass="combobox" />
+									</cell>
+								</row>
+							</rows>
+						</grid>
+
+					</groupbox>
+					<space height="5px" />
+					<!-- *************************** -->
+					<!-- *** Insertar/Actualizar *** -->
+					<!-- *************************** -->
+
+					<groupbox mold="3d" closable="false"
+						width="920px">
+						<caption label="ANTECEDENTES PERSONALES"
+							style="font-weight:bold" />
+						<hlayout id="hlayoutAntecedentes_personales" />
+						<grid id="gridAntecedentes_personales">
+							<columns>
+								<column />
+								<column label="S" width="30px" />
+								<column label="N" width="30px" />
+								<column />
+								<column />
+								<column label="S" width="30px" />
+								<column label="N" width="30px" />
+								<column />
+							</columns>
+						</grid>
+
+					</groupbox>
+
+					<separator />
+
+					<groupbox mold="3d" closable="false"
+						width="920px">
+						<caption label="ANTECEDENTES FAMILIARES"
+							style="font-weight:bold" />
+
+						<grid sclass="GridSinBorde">
+							<columns visible="false">
+								<column />
+								<column />
+								<column width="18%" />
+								<column />
+							</columns>
+							<rows>
+								<row>
+									<cell>
+										<label
+											id="lbAnte_fam_hipertension" value="Hipertensión: " />
+									</cell>
+									<cell>
+										<bandbox
+											id="bandboxAnte_fam_hipertension" readonly="true"
+											width="170px"
+											onOpen="formHisc_fisioterapia.generarContendioAntecedentesFamiliares(bandboxAnte_fam_hipertension)"
+											onCreate="self.appendChild(crearBandpopupAntecedentesFamiliares())" />
+									</cell>
+									<cell>
+										<label id="lbAnte_fam_obesos"
+											value="Obesos: " />
+									</cell>
+									<cell>
+										<bandbox
+											id="bandboxAnte_fam_obesos" readonly="true" width="170px"
+											onOpen="formHisc_fisioterapia.generarContendioAntecedentesFamiliares(bandboxAnte_fam_obesos)"
+											onCreate="self.appendChild(crearBandpopupAntecedentesFamiliares())" />
+									</cell>
+								</row>
+
+								<row>
+
+									<cell>
+										<label id="lbAnte_fam_ecv"
+											value="Enfermedad cerebro-vascular: " />
+									</cell>
+									<cell>
+										<bandbox
+											id="bandboxAnte_fam_ecv" readonly="true" width="170px"
+											onOpen="formHisc_fisioterapia.generarContendioAntecedentesFamiliares(bandboxAnte_fam_ecv)"
+											onCreate="self.appendChild(crearBandpopupAntecedentesFamiliares())" />
+									</cell>
+									<cell>
+										<label id="lbAnte_fam_diabetes"
+											value="Diabetes: " />
+									</cell>
+									<cell>
+										<bandbox
+											id="bandboxAnte_fam_diabetes" readonly="true" width="170px"
+											onOpen="formHisc_fisioterapia.generarContendioAntecedentesFamiliares(bandboxAnte_fam_diabetes)"
+											onCreate="self.appendChild(crearBandpopupAntecedentesFamiliares())" />
+									</cell>
+
+								</row>
+
+
+								<row>
+
+									<cell>
+										<label
+											id="lbAnte_fam_enf_coronaria" value="Enf. Coronaria: " />
+									</cell>
+									<cell>
+										<bandbox
+											id="bandboxAnte_fam_enf_coronaria" readonly="true"
+											width="170px"
+											onOpen="formHisc_fisioterapia.generarContendioAntecedentesFamiliares(bandboxAnte_fam_enf_coronaria)"
+											onCreate="self.appendChild(crearBandpopupAntecedentesFamiliares())" />
+									</cell>
+									<cell>
+										<label
+											id="lbAnte_fam_enf_mental" value="Enfermedad Mental: " />
+									</cell>
+									<cell>
+										<bandbox
+											id="bandboxAnte_fam_enf_mental" readonly="true" width="170px"
+											onOpen="formHisc_fisioterapia.generarContendioAntecedentesFamiliares(bandboxAnte_fam_enf_mental)"
+											onCreate="self.appendChild(crearBandpopupAntecedentesFamiliares())" />
+									</cell>
+								</row>
+
+
+								<row>
+									<cell>
+										<label
+											id="lbAnte_fam_muerte_im_acv"
+											value="Muerte en &#60; 60 años (Infarto al miocardio)" />
+									</cell>
+									<cell>
+										<bandbox
+											id="bandboxAnte_fam_muerte_im_acv" readonly="true"
+											width="170px"
+											onOpen="formHisc_fisioterapia.generarContendioAntecedentesFamiliares(bandboxAnte_fam_muerte_im_acv)"
+											onCreate="self.appendChild(crearBandpopupAntecedentesFamiliares())" />
+									</cell>
+									<cell>
+										<label id="lbAnte_fam_cancer"
+											value="Neoplásicos: " />
+									</cell>
+									<cell>
+										<bandbox
+											id="bandboxAnte_fam_cancer" readonly="true" width="170px"
+											onOpen="formHisc_fisioterapia.generarContendioAntecedentesFamiliares(bandboxAnte_fam_cancer)"
+											onCreate="self.appendChild(crearBandpopupAntecedentesFamiliares())" />
+									</cell>
+								</row>
+
+								<row>
+									<cell>
+										<label
+											id="lbAnte_fam_dislipidemia" value="Dislipidemia: " />
+									</cell>
+									<cell>
+										<bandbox
+											id="bandboxAnte_fam_dislipidemia" readonly="true"
+											width="170px"
+											onOpen="formHisc_fisioterapia.generarContendioAntecedentesFamiliares(bandboxAnte_fam_dislipidemia)"
+											onCreate="self.appendChild(crearBandpopupAntecedentesFamiliares())" />
+									</cell>
+									<cell>
+										<label
+											id="lbAnte_fam_hematologia" value="Hematología: " />
+									</cell>
+									<cell>
+										<bandbox
+											id="bandboxAnte_fam_hematologia" readonly="true"
+											width="170px"
+											onOpen="formHisc_fisioterapia.generarContendioAntecedentesFamiliares(bandboxAnte_fam_hematologia)"
+											onCreate="self.appendChild(crearBandpopupAntecedentesFamiliares())" />
+									</cell>
+								</row>
+
+								<row>
+									<cell>
+										<label id="lbAnte_fam_alergicos"
+											value="Alergicos: " />
+									</cell>
+									<cell>
+										<bandbox
+											id="bandboxAnte_fam_alergicos" readonly="true" width="170px"
+											onOpen="formHisc_fisioterapia.generarContendioAntecedentesFamiliares(bandboxAnte_fam_alergicos)"
+											onCreate="self.appendChild(crearBandpopupAntecedentesFamiliares())" />
+									</cell>
+									<cell>
+										<label
+											id="lbAnte_fam_infecciosa_vih" value="VIH: " />
+									</cell>
+									<cell>
+										<bandbox
+											id="bandboxAnte_fam_infecciosa_vih" readonly="true"
+											width="170px"
+											onOpen="formHisc_fisioterapia.generarContendioAntecedentesFamiliares(bandboxAnte_fam_infecciosa_vih)"
+											onCreate="self.appendChild(crearBandpopupAntecedentesFamiliares())" />
+									</cell>
+								</row>
+
+								<row>
+									<cell>
+										<label
+											id="lbAnte_fam_infecciosa_sifilis" value="Sífilis: " />
+									</cell>
+									<cell>
+										<bandbox
+											id="bandboxAnte_fam_infecciosa_sifilis" readonly="true"
+											width="170px"
+											onOpen="formHisc_fisioterapia.generarContendioAntecedentesFamiliares(bandboxAnte_fam_infecciosa_sifilis)"
+											onCreate="self.appendChild(crearBandpopupAntecedentesFamiliares())" />
+									</cell>
+									<cell>
+										<label
+											id="lbAnte_fam_infecciosa_hepatitisb" value="Hepatitis B: " />
+									</cell>
+									<cell>
+										<bandbox
+											id="bandboxAnte_fam_infecciosa_hepatitisb" readonly="true"
+											width="170px"
+											onOpen="formHisc_fisioterapia.generarContendioAntecedentesFamiliares(bandboxAnte_fam_infecciosa_hepatitisb)"
+											onCreate="self.appendChild(crearBandpopupAntecedentesFamiliares())" />
+									</cell>
+								</row>
+
+								<row>
+									<cell>
+										<label
+											id="lbAnte_fam_infecciosa_tuberculosis"
+											value="Tuberculosis: " />
+									</cell>
+									<cell>
+										<bandbox
+											id="bandboxAnte_fam_infecciosa_tuberculosis" readonly="true"
+											width="170px"
+											onOpen="formHisc_fisioterapia.generarContendioAntecedentesFamiliares(bandboxAnte_fam_infecciosa_tuberculosis)"
+											onCreate="self.appendChild(crearBandpopupAntecedentesFamiliares())" />
+									</cell>
+									<cell>
+										<label
+											id="lbAnte_fam_infecciosa_lepra" value="Lepra: " />
+									</cell>
+									<cell>
+										<bandbox
+											id="bandboxAnte_fam_infecciosa_lepra" readonly="true"
+											width="170px"
+											onOpen="formHisc_fisioterapia.generarContendioAntecedentesFamiliares(bandboxAnte_fam_infecciosa_lepra)"
+											onCreate="self.appendChild(crearBandpopupAntecedentesFamiliares())" />
+									</cell>
+								</row>
+
+								<row>
+									<cell>
+										<label
+											id="lbAnte_fam_nefropatias" value="Nefropatías: " />
+									</cell>
+									<cell>
+										<bandbox
+											id="bandboxAnte_fam_nefropatias" readonly="true"
+											width="170px"
+											onOpen="formHisc_fisioterapia.generarContendioAntecedentesFamiliares(bandboxAnte_fam_nefropatias)"
+											onCreate="self.appendChild(crearBandpopupAntecedentesFamiliares())" />
+									</cell>
+									<cell>
+										<label id="lbAnte_fam_asma"
+											value="Asma: " />
+									</cell>
+									<cell>
+										<bandbox
+											id="bandboxAnte_fam_asma" readonly="true" width="170px"
+											onOpen="formHisc_fisioterapia.generarContendioAntecedentesFamiliares(bandboxAnte_fam_asma)"
+											onCreate="self.appendChild(crearBandpopupAntecedentesFamiliares())" />
+									</cell>
+								</row>
+
+								<row>
+									<cell>
+										<label id="lbAnte_fam_otros"
+											value="Otros: " />
+									</cell>
+									<cell colspan="3">
+										<textbox
+											id="bandboxAnte_fam_otros" width="570px" />
+									</cell>
+								</row>
+
+								<row visible="false">
+									<cell>
+										<label
+											id="lbAnte_fam_estecifique" value="Especifique: " />
+									</cell>
+									<cell colspan="3">
+										<textbox
+											id="tbxAnte_fam_estecifique" width="93%"
+											style="text-transform:uppercase" maxlength="100" />
+									</cell>
+								</row>
+
+								<row>
+									<cell colspan="4">
+										<div align="left"
+											width="100%">
+											<label
+												id="lbAnte_fam_observaciones" value="Observaciones: " />
+											<textbox
+												id="tbxAnte_fam_observaciones" width="98%" rows="4"
+												style="text-transform:uppercase" maxlength="100" />
+										</div>
+									</cell>
+								</row>
+
+							</rows>
+						</grid>
+					</groupbox>
+
+					<separator />
+					<groupbox closable="false" width="920px"
+						mold="3d">
+						<caption label="ANTECEDENTES" />
+
+						<grid sclass="GridSinBorde" hflex="1">
+							<columns>
+								<column label="" width="5px" />
+								<column label="" width="182px"
+									align="left" />
+								<column label="" align="left" />
+								<column label="" width="182px"
+									align="left" />
+								<column label="" align="left" />
+								<column label="" width="5px"
+									align="left" />
+							</columns>
+							<rows>
+								<row>
+									<cell></cell>
+									<cell colspan="4">
+										<label
+											id="lbQuirurgicos_toxicos" value="Quirúrgicos Tóxicos: " />
+									</cell>
+									<cell></cell>
+								</row>
+								<row style="background-color:#ffffff">
+									<cell></cell>
+									<cell colspan="4">
+										<textbox
+											id="tbxQuirurgicos_toxicos" hflex="1"
+											style="text-transform:uppercase" rows="3" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 9 -->
+								<row>
+									<cell></cell>
+									<cell height="30px" colspan="4">
+										<label id="lbFarmacologicos"
+											value="Farmacologicos: " />
+									</cell>
+									<cell></cell>
+								</row>
+								<row style="background-color:#ffffff">
+									<cell></cell>
+									<cell colspan="4">
+										<textbox id="tbxFarmacologicos"
+											hflex="1" style="text-transform:uppercase" rows="3" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 10 -->
+								<row>
+									<cell></cell>
+									<cell height="30px" colspan="4">
+										<label id="lbSicologicos"
+											value="Sicologicos: " />
+									</cell>
+									<cell></cell>
+								</row>
+								<row style="background-color:#ffffff">
+									<cell></cell>
+									<cell colspan="4">
+										<textbox id="tbxSicologicos"
+											hflex="1" style="text-transform:uppercase" rows="3" />
+									</cell>
+									<cell></cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+
+					<separator />
+					<groupbox closable="false" width="920px"
+						mold="3d">
+						<caption label="VALORACIÓN INICIAL" />
+						<grid sclass="GridSinBorde" hflex="1">
+							<columns>
+								<column label="" width="5px" />
+								<column label="" width="182px"
+									align="left" />
+								<column label="" align="left" />
+								<column label="" width="182px"
+									align="left" />
+								<column label="" align="left" />
+								<column label="" width="5px"
+									align="left" />
+							</columns>
+							<rows>
+								<!-- fila 11 -->
+								<row>
+									<cell></cell>
+									<cell height="30px" colspan="4">
+										<label id="lbMotivo_consulta"
+											value="Motivo de consulta:: " />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<row style="background-color:#ffffff">
+									<cell></cell>
+									<cell colspan="4">
+										<textbox id="tbxMotivo_consulta"
+											hflex="1" style="text-transform:uppercase" rows="3" />
+									</cell>
+									<cell />
+								</row>
+
+								<row>
+									<cell />
+									<cell colspan="4">
+										<groupbox closable="false">
+											<caption
+												label="SISTEMA CARDIOPULMONAR" style="font-weight:bold" />
+											<grid sclass="GridSinBorde"
+												hflex="1">
+												<columns>
+													<column label=""
+														width="10px" />
+													<column label=""
+														width="110px" align="left" />
+													<column label=""
+														align="left" />
+													<column label=""
+														width="110px" align="left" />
+													<column label=""
+														align="left" />
+													<column label=""
+														width="110px" align="left" />
+													<column label=""
+														align="left" />
+													<column label=""
+														width="110px" align="left" />
+													<column label=""
+														align="left" />
+													<column label=""
+														width="10px" align="left" />
+												</columns>
+												<rows>
+
+													<row>
+														<cell></cell>
+														<cell
+															height="30px">
+															<label
+																id="lbEval_pa" value="P.A.: " />
+														</cell>
+														<cell>
+															<doublebox
+																id="dbxEval_pa" format="###0.##" hflex="1" />
+														</cell>
+														<cell
+															height="30px">
+															<label
+																id="lbEval_fc" value="F.C.(min): " />
+														</cell>
+														<cell>
+															<doublebox
+																id="dbxEval_fc" format="###0.##" hflex="1" />
+														</cell>
+														<cell
+															height="30px">
+															<label
+																id="lbEval_fr" value="F.R.(min): " />
+														</cell>
+														<cell>
+															<doublebox
+																id="dbxEval_fr" hflex="1" format="###0.##" />
+														</cell>
+														<cell
+															height="30px">
+															<label
+																id="lbEval_temp" value="Temperatura (°C): " />
+														</cell>
+														<cell>
+															<doublebox
+																id="dbxEval_temp" format="###0.##" hflex="1" />
+														</cell>
+														<cell></cell>
+													</row>
+
+
+
+													<row>
+														<cell />
+														<cell
+															height="30px">
+															<label
+																id="lbFis_torax" value="Tórax: "
+																style="font-weight:bold" />
+														</cell>
+														<cell
+															colspan="2">
+															<listbox
+																id="lbxFis_torax" width="120px" mold="select">
+																<listitem
+																	label="SIN ALTERACIÓN" value="S" selected="true" />
+																<listitem
+																	label="NO EXPLORADO" value="RNE" />
+															</listbox>
+														</cell>
+														<cell
+															colspan="6" />
+													</row>
+													<row>
+														<cell />
+														<cell
+															colspan="8">
+															<textbox
+																id="tbxFis_torax" hflex="1"
+																style="text-transform:uppercase" rows="3" />
+														</cell>
+														<cell />
+													</row>
+
+													<row>
+														<cell />
+														<cell
+															height="30px">
+															<label
+																id="lbFis_pulmones" value="Pulmones: "
+																style="font-weight:bold" />
+														</cell>
+														<cell
+															colspan="2">
+															<listbox
+																id="lbxFis_pulmones" width="120px" mold="select">
+																<listitem
+																	label="SIN ALTERACIÓN" value="S" selected="true" />
+																<listitem
+																	label="NO EXPLORADO" value="RNE" />
+															</listbox>
+														</cell>
+														<cell
+															colspan="6" />
+													</row>
+													<row>
+														<cell />
+														<cell
+															colspan="8">
+															<textbox
+																id="tbxFis_pulmones" hflex="1"
+																style="text-transform:uppercase" rows="3" />
+														</cell>
+														<cell />
+													</row>
+
+
+													<row>
+														<cell />
+														<cell
+															height="30px">
+															<label
+																value="Abdomen: " style="font-weight:bold" />
+														</cell>
+														<cell
+															colspan="2">
+															<listbox
+																id="lbxFis_abdomen" width="120px" mold="select">
+																<listitem
+																	label="SIN ALTERACIÓN" value="S" selected="true" />
+																<listitem
+																	label="NO EXPLORADO" value="RNE" />
+															</listbox>
+														</cell>
+														<cell
+															colspan="6" />
+													</row>
+													<row>
+														<cell />
+														<cell
+															colspan="8">
+															<textbox
+																id="tbxFs_abdomen" hflex="1"
+																style="text-transform:uppercase" rows="3" />
+														</cell>
+														<cell />
+													</row>
+												</rows>
+											</grid>
+										</groupbox>
+										<separator />
+										<groupbox closable="false">
+											<caption
+												label="SISTEMA OSTEO - NEURO - MUSCULAR"
+												style="font-weight:bold" />
+											<grid sclass="GridSinBorde"
+												hflex="1">
+												<columns>
+													<column label=""
+														width="10px" />
+													<column label=""
+														width="110px" align="left" />
+													<column label=""
+														align="left" />
+													<column label=""
+														width="110px" align="left" />
+													<column label=""
+														align="left" />
+													<column label=""
+														width="110px" align="left" />
+													<column label=""
+														align="left" />
+													<column label=""
+														width="110px" align="left" />
+													<column label=""
+														align="left" />
+													<column label=""
+														width="10px" align="left" />
+												</columns>
+												<rows>
+													<row>
+														<cell></cell>
+														<cell
+															height="30px">
+															<label
+																id="lbEval_peso" value="Peso (Kgr): " />
+														</cell>
+														<cell>
+															<doublebox
+																id="dbxEval_peso" format="###0.##" hflex="1" />
+														</cell>
+														<cell
+															height="30px">
+															<label
+																id="lbEval_talla" value="Talla(Cm): " />
+														</cell>
+														<cell>
+															<doublebox
+																id="dbxEval_talla" format="###0.##" hflex="1" />
+														</cell>
+														<cell>
+															<label
+																value="IMC:" style="font-weight:bold"
+																tooltiptext="Indice de Masa Corporal" />
+														</cell>
+
+														<cell>
+															<doublebox
+																id="mcDbxIMC" readonly="true" hflex="1" format="###0.##"
+																locale="en" />
+														</cell>
+														<cell
+															colspan="3" />
+													</row>
+													<row>
+														<cell />
+														<cell
+															height="30px">
+															<label
+																value="Postura: " style="font-weight:bold" />
+														</cell>
+														<cell
+															colspan="2">
+															<listbox
+																id="lbxFis_postura" width="120px" mold="select">
+																<listitem
+																	label="SIN ALTERACIÓN" value="S" selected="true" />
+																<listitem
+																	label="NO EXPLORADO" value="RNE" />
+															</listbox>
+														</cell>
+														<cell
+															colspan="6" />
+													</row>
+													<row>
+														<cell />
+														<cell
+															colspan="8">
+															<textbox
+																id="tbxFis_postura" hflex="1"
+																style="text-transform:uppercase" rows="3" />
+														</cell>
+														<cell />
+													</row>
+
+
+													<row>
+														<cell />
+														<cell
+															height="30px">
+															<label
+																value="RDM: " style="font-weight:bold" />
+														</cell>
+														<cell
+															colspan="2">
+															<listbox
+																id="lbxFis_rdm" width="120px" mold="select">
+																<listitem
+																	label="SIN ALTERACIÓN" value="S" selected="true" />
+																<listitem
+																	label="NO EXPLORADO" value="RNE" />
+															</listbox>
+														</cell>
+														<cell
+															colspan="6" />
+													</row>
+													<row>
+														<cell />
+														<cell
+															colspan="8">
+															<textbox
+																id="tbxFis_rdm" hflex="1"
+																style="text-transform:uppercase" rows="3" />
+														</cell>
+														<cell />
+													</row>
+
+
+
+													<row>
+														<cell />
+														<cell
+															height="30px">
+															<label
+																value="Tono Muscular: " style="font-weight:bold" />
+														</cell>
+														<cell
+															colspan="2">
+															<listbox
+																id="lbxFis_tono_muscular" width="120px" mold="select">
+																<listitem
+																	label="SIN ALTERACIÓN" value="S" selected="true" />
+																<listitem
+																	label="NO EXPLORADO" value="RNE" />
+															</listbox>
+														</cell>
+														<cell
+															colspan="6" />
+													</row>
+													<row>
+														<cell />
+														<cell
+															colspan="8">
+															<textbox
+																id="tbxFis_tono_muscular" hflex="1"
+																style="text-transform:uppercase" rows="3" />
+														</cell>
+														<cell />
+													</row>
+
+
+
+													<row>
+														<cell />
+														<cell
+															height="30px">
+															<label
+																value="Fuerza Muscular: " style="font-weight:bold" />
+														</cell>
+														<cell
+															colspan="2">
+															<listbox
+																id="lbxFis_fuerza_muscular" width="120px"
+																mold="select">
+																<listitem
+																	label="SIN ALTERACIÓN" value="S" selected="true" />
+																<listitem
+																	label="NO EXPLORADO" value="RNE" />
+															</listbox>
+														</cell>
+														<cell
+															colspan="6" />
+													</row>
+													<row>
+														<cell />
+														<cell
+															colspan="8">
+															<textbox
+																id="tbxFis_fuerza_muscular" hflex="1"
+																style="text-transform:uppercase" rows="3" />
+														</cell>
+														<cell />
+													</row>
+
+
+													<row>
+														<cell />
+														<cell
+															height="30px">
+															<label
+																value="Limitación y/o Discapacidad: "
+																style="font-weight:bold" />
+														</cell>
+														<cell
+															colspan="2">
+															<listbox
+																id="lbxFis_limitacion_discapacidad" width="120px"
+																mold="select">
+																<listitem
+																	label="SIN ALTERACIÓN" value="S" selected="true" />
+																<listitem
+																	label="NO EXPLORADO" value="RNE" />
+															</listbox>
+														</cell>
+														<cell
+															colspan="6" />
+													</row>
+													<row>
+														<cell />
+														<cell
+															colspan="8">
+															<textbox
+																id="tbxFis_limitacion_discapacidad" hflex="1"
+																style="text-transform:uppercase" rows="3" />
+														</cell>
+														<cell />
+													</row>
+												</rows>
+											</grid>
+										</groupbox>
+										<separator />
+										<groupbox closable="false">
+											<caption
+												label="SISTEMA TEGUMENTARIO" style="font-weight:bold" />
+											<grid sclass="GridSinBorde"
+												hflex="1">
+												<columns>
+													<column label=""
+														width="10px" />
+													<column label=""
+														width="110px" align="left" />
+													<column label=""
+														align="left" />
+													<column label=""
+														width="110px" align="left" />
+													<column label=""
+														align="left" />
+													<column label=""
+														width="110px" align="left" />
+													<column label=""
+														align="left" />
+													<column label=""
+														width="110px" align="left" />
+													<column label=""
+														align="left" />
+													<column label=""
+														width="10px" align="left" />
+												</columns>
+												<rows>
+													<row>
+														<cell />
+													</row>
+													<row>
+														<cell />
+														<cell
+															height="30px">
+															<label
+																value="Coloración: " style="font-weight:bold" />
+														</cell>
+														<cell
+															colspan="2">
+															<listbox
+																id="lbxFis_coloracion" width="120px" mold="select">
+																<listitem
+																	label="SIN ALTERACIÓN" value="S" selected="true" />
+																<listitem
+																	label="NO EXPLORADO" value="RNE" />
+															</listbox>
+														</cell>
+														<cell
+															colspan="6" />
+													</row>
+													<row>
+														<cell />
+														<cell
+															colspan="8">
+															<textbox
+																id="tbxFis_coloracion" hflex="1"
+																style="text-transform:uppercase" rows="3" />
+														</cell>
+														<cell />
+													</row>
+
+
+													<row>
+														<cell />
+														<cell
+															height="30px">
+															<label
+																value="Hidratación: " style="font-weight:bold" />
+														</cell>
+														<cell
+															colspan="2">
+															<listbox
+																id="lbxFis_hidratacion" width="120px" mold="select">
+																<listitem
+																	label="SIN ALTERACIÓN" value="S" selected="true" />
+																<listitem
+																	label="NO EXPLORADO" value="RNE" />
+															</listbox>
+														</cell>
+														<cell
+															colspan="6" />
+													</row>
+													<row>
+														<cell />
+														<cell
+															colspan="8">
+															<textbox
+																id="tbxFis_hidratacion" hflex="1"
+																style="text-transform:uppercase" rows="3" />
+														</cell>
+														<cell />
+													</row>
+
+
+
+
+													<row>
+														<cell />
+														<cell
+															height="30px">
+															<label
+																value="Temperatura: " style="font-weight:bold" />
+														</cell>
+														<cell
+															colspan="2">
+															<listbox
+																id="lbxFis_temperatura" width="120px" mold="select">
+																<listitem
+																	label="SIN ALTERACIÓN" value="S" selected="true" />
+																<listitem
+																	label="NO EXPLORADO" value="RNE" />
+															</listbox>
+														</cell>
+														<cell
+															colspan="6" />
+													</row>
+													<row>
+														<cell />
+														<cell
+															colspan="8">
+															<textbox
+																id="tbxFis_temperatura" hflex="1"
+																style="text-transform:uppercase" rows="3" />
+														</cell>
+														<cell />
+													</row>
+
+
+													<row>
+														<cell />
+														<cell
+															height="30px">
+															<label
+																value="Sudoración: " style="font-weight:bold" />
+														</cell>
+														<cell
+															colspan="2">
+															<listbox
+																id="lbxFis_sudoracion" width="120px" mold="select">
+																<listitem
+																	label="SIN ALTERACIÓN" value="S" selected="true" />
+																<listitem
+																	label="NO EXPLORADO" value="RNE" />
+															</listbox>
+														</cell>
+														<cell
+															colspan="6" />
+													</row>
+													<row>
+														<cell />
+														<cell
+															colspan="8">
+															<textbox
+																id="tbxFis_sudoracion" hflex="1"
+																style="text-transform:uppercase" rows="3" />
+														</cell>
+														<cell />
+													</row>
+
+
+													<row>
+														<cell />
+														<cell
+															height="30px">
+															<label
+																value="Heridas: " style="font-weight:bold" />
+														</cell>
+														<cell
+															colspan="2">
+															<listbox
+																id="lbxFis_heridas" width="120px" mold="select">
+																<listitem
+																	label="SIN ALTERACIÓN" value="S" selected="true" />
+																<listitem
+																	label="NO EXPLORADO" value="RNE" />
+															</listbox>
+														</cell>
+														<cell
+															colspan="6" />
+													</row>
+													<row>
+														<cell />
+														<cell
+															colspan="8">
+															<textbox
+																id="tbxFis_heridas" hflex="1"
+																style="text-transform:uppercase" rows="3" />
+														</cell>
+														<cell />
+													</row>
+
+
+
+													<row>
+														<cell />
+														<cell
+															height="30px">
+															<label
+																value="Cicatrices: " style="font-weight:bold" />
+														</cell>
+														<cell
+															colspan="2">
+															<listbox
+																id="lbxFis_cicatrices" width="120px" mold="select">
+																<listitem
+																	label="SIN ALTERACIÓN" value="S" selected="true" />
+																<listitem
+																	label="NO EXPLORADO" value="RNE" />
+															</listbox>
+														</cell>
+														<cell
+															colspan="6" />
+													</row>
+													<row>
+														<cell />
+														<cell
+															colspan="8">
+															<textbox
+																id="tbxFis_cicatrices" hflex="1"
+																style="text-transform:uppercase" rows="3" />
+														</cell>
+														<cell />
+													</row>
+
+
+
+													<!-- fila 31 -->
+													<row>
+														<cell></cell>
+														<cell
+															height="30px">
+															<label
+																id="lbFis_dolor" value="Dolor: "
+																style="font-weight:bold" />
+															<radiogroup
+																id="rgFis_dolor" />
+														</cell>
+														<cell
+															colspan="2">
+															<radio
+																value="01" radiogroup="rgFis_dolor" />
+															<label
+																value="Leve" style="font-weight:bold;font-size:15px" />
+														</cell>
+														<cell
+															colspan="2">
+															<radio
+																value="02" radiogroup="rgFis_dolor" />
+															<label
+																value="Moderado"
+																style="font-weight:bold;font-size:15px" />
+														</cell>
+														<cell>
+															<radio
+																value="03" radiogroup="rgFis_dolor" />
+															<label
+																value="Severo"
+																style="color:#f79a2f; font-weight:bold;font-size:15px" />
+														</cell>
+														<cell
+															colspan="2" align="right">
+															<radio
+																value="04" radiogroup="rgFis_dolor" />
+															<label
+																value="Insoportable"
+																style="color:#ED4545;font-size:15px;font-weight:bold;" />
+														</cell>
+														<cell></cell>
+													</row>
+												</rows>
+											</grid>
+
+										</groupbox>
+									</cell>
+									<cell />
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+
+					<separator />
+					<groupbox closable="false" width="930px"
+						contentStyle="border:0">
+						<impresionDiagnostica
+							id="macroImpresion_diagnostica" />
+					</groupbox>
+
+					<separator />
+					<groupbox closable="false" mold="3d"
+						width="920px">
+						<caption label="INTERVENCIÓN FISIOTERAPÉUTICA"
+							style="font-weight:bold" />
+						<grid sclass="GridSinBorde" hflex="1">
+							<columns>
+								<column label="" width="10px" />
+								<column label="" width="110px"
+									align="left" />
+								<column label="" align="left" />
+								<column label="" width="110px"
+									align="left" />
+								<column label="" align="left" />
+								<column label="" width="110px"
+									align="left" />
+								<column label="" align="left" />
+								<column label="" width="110px"
+									align="left" />
+								<column label="" align="left" />
+								<column label="" width="10px"
+									align="left" />
+							</columns>
+							<rows>
+								<row>
+									<cell />
+								</row>
+								<row>
+									<cell />
+									<cell height="30px" colspan="3">
+										<label value="Objetivos: "
+											style="font-weight:bold" />
+									</cell>
+									<cell colspan="6" />
+								</row>
+								<row>
+									<cell />
+									<cell colspan="8">
+										<textbox
+											id="tbxIntervencion_objetivo" hflex="1"
+											style="text-transform:uppercase" rows="3" />
+									</cell>
+									<cell />
+								</row>
+								<row>
+									<cell />
+									<cell height="30px" colspan="3">
+										<label
+											value="Intervención y/o tratamiento fisioterapéutico:"
+											style="font-weight:bold" />
+									</cell>
+									<cell colspan="6" />
+								</row>
+								<row>
+									<cell />
+									<cell colspan="8">
+										<textbox
+											id="tbxIntervencion_tratamiento" hflex="1"
+											style="text-transform:uppercase" rows="3" />
+									</cell>
+									<cell />
+								</row>
+
+							</rows>
+						</grid>
+					</groupbox>
+
+					<separator />
+					<groupbox mold="3d" closable="false"
+						width="920px" id="gbPLanManejo" visible="false">
+						<caption label="Planes y Manejos" />
+ 
+						<div style="" id="divModuloFarmacologico"
+							visible="true">
+						</div>
+					</groupbox>
+					<separator />
+
+					<groupbox mold="3d" closable="false" visible="true"
+						width="930px" contentStyle="border:0">
+						<div>
+							<remision_interna
+								id="macroRemision_interna" />
+						</div>
+					</groupbox>
+				</div>
+			</center>
+		</borderlayout>
+		<zscript>
+			<![CDATA[
+	public Bandpopup crearBandpopupAntecedentesFamiliares() {
+		Bandpopup bandpopup = new Bandpopup();
+		bandpopup.setWidth("300px");
+		return bandpopup;
+	}
+]]>
+		</zscript>
+	</window>
+</zk>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Porcentajes_cirugiasDao">
+
+	<!--<typeAlias alias="porcentajes_cirugias" type="healthmanager.modelo.bean.Porcentajes_cirugias" />-->
+
+	<!--<mapper resource="healthmanager/modelo/dao/xml/porcentajes_cirugiasSQL.xml" />-->
+
+	<resultMap id="porcentajes_cirugiasMap" type="porcentajes_cirugias">
+		<result column="manual_tarifario" property="manual_tarifario" />
+		<result column="tipo_intervencion" property="tipo_intervencion" />
+		<result column="porcentaje_cirujano" property="porcentaje_cirujano" />
+		<result column="porcentaje_anestesiologo" property="porcentaje_anestesiologo" />
+		<result column="porcentaje_ayudante" property="porcentaje_ayudante" />
+		<result column="porcentaje_sala" property="porcentaje_sala" />
+		<result column="porcentaje_materiales" property="porcentaje_materiales" />
+		<result column="porcentaje_perfusionista" property="porcentaje_perfusionista" />
+	</resultMap>
+
+	<insert id="crear" parameterType="porcentajes_cirugias">
+		insert into public.porcentajes_cirugias (manual_tarifario,tipo_intervencion,
+		porcentaje_cirujano,porcentaje_anestesiologo,porcentaje_ayudante,
+		porcentaje_sala,porcentaje_materiales,porcentaje_perfusionista)
+
+		values (#{manual_tarifario},#{tipo_intervencion},
+		#{porcentaje_cirujano},#{porcentaje_anestesiologo},#{porcentaje_ayudante},
+		#{porcentaje_sala},#{porcentaje_materiales},#{porcentaje_perfusionista})
+	</insert>
+
+	<update id="actualizar" parameterType="porcentajes_cirugias">
+		update public.porcentajes_cirugias set manual_tarifario = #{manual_tarifario},
+		tipo_intervencion = #{tipo_intervencion},porcentaje_cirujano = #{porcentaje_cirujano},
+		porcentaje_anestesiologo = #{porcentaje_anestesiologo},porcentaje_ayudante = #{porcentaje_ayudante},
+		porcentaje_sala = #{porcentaje_sala},porcentaje_materiales = #{porcentaje_materiales},
+		porcentaje_perfusionista = #{porcentaje_perfusionista}
+		where 		manual_tarifario = #{manual_tarifario}
+		and tipo_intervencion = #{tipo_intervencion}
+	</update>
+
+	<select id="consultar" parameterType="porcentajes_cirugias" resultMap="porcentajes_cirugiasMap">
+		select manual_tarifario,tipo_intervencion,
+		porcentaje_cirujano,porcentaje_anestesiologo,porcentaje_ayudante,porcentaje_sala,
+		porcentaje_materiales,porcentaje_perfusionista
+		from public.porcentajes_cirugias where manual_tarifario = #{manual_tarifario}
+		and tipo_intervencion = #{tipo_intervencion}
+	</select>
+
+	<delete id="eliminar" parameterType="porcentajes_cirugias">
+		delete from public.porcentajes_cirugias
+		where manual_tarifario = #{manual_tarifario}
+		and tipo_intervencion = #{tipo_intervencion}
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="porcentajes_cirugiasMap">
+		select manual_tarifario,tipo_intervencion,
+		porcentaje_cirujano,porcentaje_anestesiologo,porcentaje_ayudante,porcentaje_sala,
+		porcentaje_materiales,porcentaje_perfusionista
+		from public.porcentajes_cirugias 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		$limit$
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from public.porcentajes_cirugias 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

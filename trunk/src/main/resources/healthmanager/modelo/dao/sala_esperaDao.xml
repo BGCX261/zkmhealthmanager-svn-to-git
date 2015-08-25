@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Sala_esperaDao">
+
+	<resultMap id="sala_esperaMap" type="sala_espera">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="nro_ingreso" property="nro_ingreso" />
+		<result column="nro_identificacion_paciente" property="nro_identificacion_paciente" />
+		<result column="orden_atencion" property="orden_atencion" />
+		<result column="estado" property="estado" />
+		<result column="fecha_incio" property="fecha_incio" />
+		<result column="fecha_final" property="fecha_final" />
+		<result column="creacion_date" property="creacion_date" />
+		<result column="creacion_user" property="creacion_user" />
+	</resultMap>
+
+	<insert id="crear" parameterType="sala_espera">
+		insert into public.sala_espera (codigo_empresa,codigo_sucursal,
+		nro_ingreso,nro_identificacion_paciente,orden_atencion,
+		estado,fecha_incio,fecha_final,
+		creacion_date,creacion_user)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{nro_ingreso},#{nro_identificacion_paciente},#{orden_atencion},
+		#{estado},#{fecha_incio},#{fecha_final},
+		#{creacion_date},#{creacion_user})
+	</insert>
+
+	<update id="actualizar" parameterType="sala_espera">
+		update public.sala_espera set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},nro_ingreso = #{nro_ingreso},
+		nro_identificacion_paciente = #{nro_identificacion_paciente},orden_atencion = #{orden_atencion},
+		estado = #{estado},fecha_incio = #{fecha_incio},
+		fecha_final = #{fecha_final},creacion_date = #{creacion_date},
+		creacion_user = #{creacion_user}
+		where 		codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and nro_ingreso = #{nro_ingreso}
+		and nro_identificacion_paciente = #{nro_identificacion_paciente}
+	</update>
+
+	<select id="consultar" parameterType="sala_espera" resultMap="sala_esperaMap">
+		select codigo_empresa,codigo_sucursal,
+		nro_ingreso,nro_identificacion_paciente,orden_atencion,estado,
+		fecha_incio,fecha_final,creacion_date,creacion_user
+		from public.sala_espera where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and nro_ingreso = #{nro_ingreso}
+		and nro_identificacion_paciente = #{nro_identificacion_paciente}
+	</select>
+
+	<delete id="eliminar" parameterType="sala_espera">
+		delete from public.sala_espera
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and nro_ingreso = #{nro_ingreso}
+		and nro_identificacion_paciente = #{nro_identificacion_paciente}
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="sala_esperaMap">
+		select codigo_empresa,codigo_sucursal,
+		nro_ingreso,nro_identificacion_paciente,orden_atencion,estado,
+		fecha_incio,fecha_final,creacion_date,creacion_user
+		from public.sala_espera 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from public.sala_espera 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

@@ -1,0 +1,1459 @@
+<?page title="Ficha_epidemiologia_n24" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formFicha_epidemiologia_n24" width="950px" height="450px"
+		border="normal"
+		use="healthmanager.controller.Ficha_epidemiologia_n24Action">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+		<style>
+			div.minimize { border: 1px solid #79858E; background:
+			#D3E1EC; position: absolute; opacity: 0.8; } div.loginGrid {
+			border: none; } td.loginCtl { text-align: center; }
+			td.loginCtl .z-label { color: red; font-style: italic; }
+		</style>
+	
+
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="false" closable="false"
+			mold="3d" height="90%">
+			<caption label="Consultar"
+				style="color: blue;font-weight: bold" />
+
+			<separator />
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" height="90%" mold="paging"
+				pageSize="20" vflex="1">
+				<auxhead>
+					<auxheader colspan="2">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<separator />
+							<textbox id="tbxValue" width="200px"
+								onOK="formFicha_epidemiologia_n24.buscarDatos();"
+								style="text-transform:uppercase" />
+							<separator />
+							<button mold="trendy"
+								image="/images/Magnifier.gif"
+								onClick="formFicha_epidemiologia_n24.buscarDatos();"
+								tooltiptext="Consultar Ficha epidemiologia n24" />
+							<separator />
+							<button mold="trendy"
+								image="/images/New16.gif"
+								onClick='formFicha_epidemiologia_n24.accionForm(true,"registrar");'
+								tooltiptext="Nuevo Ficha epidemiologia n24" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Codigo ficha" />
+					<column label="Acciones" align="center"
+						width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<borderlayout width="100%" height="90%" id="groupboxEditar"
+			visible="true">
+			<north border="none" visible="false">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<toolbarbutton image="/images/Save16.gif"
+						label="Guardar Ficha epidemiologia n24"
+						onClick="formFicha_epidemiologia_n24.guardarDatos();"
+						id="btGuardar" />
+					<toolbarbutton image="/images/New16.gif"
+						label="Nueva Ficha epidemiologia n24"
+						onClick='formFicha_epidemiologia_n24.accionForm(true,"registrar");'
+						id="btNew" />
+					<space />
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Cancelar"
+						onClick='formFicha_epidemiologia_n24.accionForm(false,tbxAccion.getText());'
+						id="btCancel" />
+					<toolbarbutton image="/images/print_ico.gif"
+						label="Imprimir Ficha epidemiologia n24"
+						onClick="formFicha_epidemiologia_n24.imprimir();" id="btImprimir"
+						visible="false" />
+					<space />
+					<label value="Formato impresión: " visible="false" />
+					<listbox id="lbxFormato" mold="select" width="150px"
+						visible="false" sclass="combobox">
+						<listitem value="pdf" label="PDF"
+							selected="true" />
+						<listitem value="rtf" label="WORD" />
+					</listbox>
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center">
+
+					<groupbox closable="false" mold="3d"
+						width="905px">
+						<caption label="DATOS DE LA FICHA " />
+						<grid>
+							<columns>
+								<column />
+							</columns>
+							<rows>
+								<row>
+									<cell>
+										<hlayout>
+											<space width="130px" />
+											<label value="* "
+												style="color: red" tooltiptext="Campo obligatorio" />
+											<label id="lbFecha_inicial"
+												value="Fecha: " />
+											<datebox
+												id="fecha_ficha" onCreate="self.value = new Date();"
+												format="dd-MM-yyyy" width="170px" readonly="true" buttonVisible="false"/>
+											<space width="70px" />
+											<label value="* "
+												style="color: red" tooltiptext="Campo obligatorio" />
+											<label id="lbCodigo_ficha"
+												value="Codigo ficha: " />
+											<textbox readonly="true"
+												id="tbxCodigo_ficha" width="170px"
+												style="text-transform:uppercase" maxlength="20" />
+										</hlayout>
+									</cell>
+								</row>
+
+							</rows>
+						</grid>
+					</groupbox>
+					<groupbox mold="3d" closable="false"
+						width="905px">
+						<caption label="RELACIÓN CON DATOS BÁSICOS">
+						</caption>
+						<grid>
+							<columns>
+							<column width="100px" />
+							<column />
+							<column />
+							<column />
+							<column />
+							<column width="220px" />
+
+							</columns>
+							<rows>
+
+								
+								<row>
+									<cell>
+										<label value="* " style="color: red"
+											tooltiptext="Campo obligatorio" />
+										<label value="Paciente: " />
+									</cell>
+									<cell colspan="4">
+										<textbox id="tbx_nro_identificacion" width="27%" readonly="true" disabled="true"/>
+											<!--  -->
+										<space width="1%" />
+										<textbox id="tbx_nombres" width="65%"
+											style="text-transform:uppercase" readonly="true" />
+									</cell>
+									<cell>
+										<space width="15px" />
+										<label value="Tipo: " />
+										<space width="23px" />
+										<textbox id="tbx_tipo_identificacion" width="135px" style="text-transform:uppercase" readonly="true"/>
+									</cell>
+										
+								</row>
+								<row>
+									<cell>
+										<label value="* " style="color: red"
+											tooltiptext="Campo obligatorio" />
+										<label value="Aseguradora: " />
+									</cell>
+									<cell colspan="4">
+										<textbox id="tbxAseguradora" width="27%" readonly="true" disabled="true"/>
+											<!--  -->
+										<space width="1%" />
+										<textbox id="tbxNombre_aseguradora" width="65%"
+											style="text-transform:uppercase" readonly="true" />
+									</cell>
+									<cell></cell>
+										
+								</row>
+							</rows>
+						</grid>
+
+					</groupbox>
+					
+
+					<groupbox closable="false" width="905px"
+						mold="3d">
+						<caption label="INFORMACIÓN GENERAL" />
+						<grid sclass="GridSinBorde" hflex="1">
+							<columns>
+								<column width="120px" />
+								<column width="130px" />
+								<column width="100px" />
+								<column width="120px" />
+								<column width="80px" />
+								<column width="140px" />
+								<column />
+								<column />
+							</columns>
+							<rows>
+
+
+								<!-- fila 2 -->
+								<row>
+									<cell>
+										<label id="lbNombre_del_evento"
+											value="Nombre del evento: " />
+									</cell>
+									<cell colspan="4">
+										<radiogroup
+											id="rdbNombre_del_evento">
+											<radio
+												label="650 Rabia animal" value="1" />
+											<space />
+											<radio
+												label="652 Vigilancia activa de la rabia por laboratorio"
+												value="2" checked="true" />
+										</radiogroup>
+									</cell>
+
+									<cell>
+										<label id="lbFecha_notificacion"
+											value="Fecha notificacion " />
+									</cell>
+									<cell>
+										<datebox
+											id="dtbxFecha_notificacion"
+											onCreate="self.value = new Date();" format="yyyy-MM-dd"
+											width="100px" />
+									</cell>
+								</row>
+								<row>
+									<cell colspan="4">
+										<label
+											id="lbRazon_social_de_la_upgd"
+											value=" Razón social de la Unidad primaria genradora de datos UPGD" />
+									</cell>
+									<cell colspan="4">
+										<textbox
+											id="tbxRazon_social_de_la_upgd" width="250px"
+											style="text-transform:uppercase" maxlength="45" />
+									</cell>
+								</row>
+								<row>
+									<cell>
+										<label id="lbDepartamento"
+											value="Departamento " />
+									</cell>
+									<cell>
+										<textbox id="tbxDepartamento"
+											width="100px" style="text-transform:uppercase"
+											maxlength="45" />
+									</cell>
+
+									<cell>
+										<label id="lbMunicipio"
+											value="Municipio " />
+									</cell>
+									<cell>
+										<textbox id="tbxMunicipio"
+											width="100px" style="text-transform:uppercase"
+											maxlength="45" />
+									</cell>
+									<cell>
+										<label id="lbCodigo_1"
+											value="Codigo" />
+									</cell>
+									<cell>
+										<textbox id="tbxCodigo_1"
+											width="100px" style="text-transform:uppercase"
+											maxlength="45" />
+									</cell>
+
+									<cell>
+										<label id="lbSubindice"
+											value="Subindice " />
+									</cell>
+									<cell>
+										<textbox id="tbxSubindice"
+											width="70px" style="text-transform:uppercase" maxlength="45" />
+									</cell>
+								</row>
+
+								<!-- fila 9 -->
+								<row>
+									<cell colspan="2">
+										<label
+											id="lbClasificacion_inicial_del_caso"
+											value="Clasificación inicial del caso" />
+									</cell>
+									<cell colspan="6">
+										<radiogroup
+											id="rdbClasificacion_inicial_del_caso">
+											<radio label="Probable"
+												value="1" />
+											<space />
+											<radio
+												label="Confirmado por laboratorio" value="1" checked="true" />
+										</radiogroup>
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+					<groupbox closable="false" mold="3d"
+						width="905px">
+						<caption label="DATOS DEL PROPIETARIO" />
+						<grid>
+							<columns>
+
+								<column width="230px" />
+								<column width="240px" />
+								<column width="100px" />
+								<column />
+
+							</columns>
+							<rows>
+								<!-- fila 10 -->
+								<row>
+									<cell>
+										<label
+											id="lbNombres_y_apellidos_del_propietario"
+											value="Nombres y apellidos del propietario" />
+									</cell>
+									<cell colspan="3">
+										<textbox
+											id="tbxNombres_y_apellidos_del_propietario" width="440px"
+											style="text-transform:uppercase" maxlength="50" />
+									</cell>
+								</row>
+								<row>
+									<cell>
+										<label
+											id="lbDireccion_de_recidencia"
+											value="Direccion de recidencia: " />
+									</cell>
+
+									<cell colspan="3">
+										<textbox
+											id="tbxDireccion_de_recidencia" width="440px"
+											style="text-transform:uppercase" maxlength="50" />
+									</cell>
+								</row>
+								<row>
+									<cell>
+										<label id="lbTelefono"
+											value="Telefono " />
+									</cell>
+									<cell colspan="3">
+										<intbox
+											constraint="no negative:Este valor no puede ser negativo"
+											id="ibxTelefono" width="170px"
+											style="text-transform:uppercase" maxlength="10" />
+									</cell>
+								</row>
+
+								<!-- fila 13 -->
+								<row>
+									<cell>
+										<label
+											id="lbDepartamento_recidencia"
+											value="Departamento recidencia " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxDepartamento_recidencia" width="170px"
+											style="text-transform:uppercase" maxlength="45" />
+									</cell>
+
+									<cell>
+										<label
+											id="lbCodigo_departamento" value="Codigo" />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxCodigo_departamento" width="100px"
+											style="text-transform:uppercase" maxlength="10" />
+									</cell>
+								</row>
+
+								<!-- fila 15 -->
+								<row>
+									<cell>
+										<label
+											id="lbMunicipio_recidencia" value="Municipio recidencia " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxMunicipio_recidencia" width="170px"
+											style="text-transform:uppercase" maxlength="45" />
+									</cell>
+
+									<cell>
+										<label id="lbCodigo_municipio"
+											value="Codigo" />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxCodigo_municipio" width="100px"
+											style="text-transform:uppercase" maxlength="10" />
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+
+					<groupbox closable="false" width="905px"
+						mold="3d">
+						<caption label="DATOS DEL ANIMAL" />
+						<grid>
+							<columns>
+
+								<column />
+								<column />
+								<column />
+								<column />
+								<column />
+								<column />
+								<column />
+								<column />
+								<column />
+								<column />
+								<column />
+								<column />
+								<column />
+
+							</columns>
+							<rows>
+
+								<!-- fila 17 -->
+								<row>
+									<cell>
+										<label id="lbEspecie"
+											value="Especie" />
+									</cell>
+									<cell colspan="4">
+										<radiogroup id="rdbEspecie">
+											<radio label="Perro"
+												value="1" />
+											<space />
+											<radio label="Gato"
+												value="2" />
+											<space />
+											<radio label="Zorro"
+												value="3" />
+											<space></space>
+											<radio label="Murciélago"
+												value="4" checked="true" />
+										</radiogroup>
+									</cell>
+
+									<cell>
+										<label id="lbRaza"
+											value="Raza: " />
+									</cell>
+									<cell>
+										<textbox id="tbxRaza"
+											width="50px" style="text-transform:uppercase" maxlength="45" />
+									</cell>
+
+									<cell colspan="3">
+										<label
+											id="lbColor_de_la_cabeza_del_animal"
+											value="Color de la cabeza del animal " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxColor_de_la_cabeza_del_animal" width="50px"
+											style="text-transform:uppercase" maxlength="45" />
+									</cell>
+
+									<cell>
+										<label id="lbEdad"
+											value="Edad " />
+									</cell>
+									<cell>
+										<intbox
+											constraint="no negative:Este valor no puede ser negativo"
+											id="ibxEdad" width="40px" style="text-transform:uppercase" />
+									</cell>
+								</row>
+
+								<row>
+									<cell colspan="3">
+										<label
+											id="lbUnidad_de_medida_de_edad"
+											value="Unidad de medida de edad" />
+									</cell>
+									<cell colspan="2">
+										<radiogroup
+											id="rdbUnidad_de_medida_de_edad">
+											<radio label="Años"
+												value="1" />
+											<space />
+											<radio label="Meses"
+												value="2" checked="true" />
+										</radiogroup>
+									</cell>
+
+									<cell colspan="3">
+										<label
+											id="lbAntecedente_de_vacunacion"
+											value="Antecedente de vacunacion " />
+									</cell>
+									<cell colspan="5">
+										<radiogroup
+											id="rdbAntecedente_de_vacunacion">
+											<radio label="SÍ" value="1" />
+											<space />
+											<radio label="NO" value="2" />
+											<space />
+											<radio label="Desconocido"
+												value="3" checked="true" />
+										</radiogroup>
+									</cell>
+								</row>
+
+								<row>
+									<cell colspan="2">
+										<label
+											id="lbFecha_de_vacunacion" value="Fecha de vacunacion " />
+									</cell>
+									<cell colspan="3">
+										<datebox
+											id="dtbxFecha_de_vacunacion"
+											onCreate="self.value = new Date();" format="yyyy-MM-dd"
+											width="170px" />
+									</cell>
+									<cell colspan="3">
+										<label
+											id="lbPresento_carnet_vigente"
+											value="¿Presentó carné vigente?" />
+									</cell>
+									<cell colspan="2">
+										<radiogroup
+											id="rdbPresento_carnet_vigente">
+											<radio label="SÍ" value="1" />
+											<space />
+											<radio label="NO" value="2"
+												checked="true" />
+										</radiogroup>
+									</cell>
+								</row>
+
+								<!-- fila 25 -->
+								<row>
+									<cell colspan="2">
+										<label id="lbTipo_de_vacuna"
+											value="Tipo de vacuna " />
+									</cell>
+									<cell colspan="3">
+										<textbox id="tbxTipo_de_vacuna"
+											width="170px" style="text-transform:uppercase"
+											maxlength="45" />
+									</cell>
+
+									<cell colspan="2">
+										<label id="lbLote_de_vacuna"
+											value="Lote de vacuna" />
+									</cell>
+									<cell colspan="6">
+										<textbox id="tbxLote_de_vacuna"
+											width="170px" style="text-transform:uppercase"
+											maxlength="45" />
+									</cell>
+								</row>
+
+								<row>
+									<cell colspan="3">
+										<label
+											id="lbArea_de_procedencia_del_animal"
+											value="Área de procedencia del animal " />
+									</cell>
+									<cell colspan="6">
+										<radiogroup
+											id="rdbArea_de_procedencia_del_animal">
+											<radio
+												label="Cabecera municipal" value="1" />
+											<space />
+											<radio
+												label="Centro poblado" value="2" />
+											<space />
+											<radio
+												label="Rural disperso" value="3" checked="true" />
+										</radiogroup>
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+
+					<groupbox closable="false" mold="3d"
+						width="905px">
+						<caption label="DATOS CLÍNICOS DEL ANIMAL" />
+						<grid>
+							<columns>
+
+								<column />
+								<column />
+								<column />
+								<column />
+								<column />
+								<column />
+								<column />
+								<column />
+
+
+
+							</columns>
+							<rows>
+								<row>
+									<cell colspan="3">
+										<label value="Signos y síntomas"
+											style="font-weight:bold" />
+									</cell>
+								</row>
+
+								<row>
+									<cell>
+										<label id="lbNinguno"
+											value="Ninguno: " />
+									</cell>
+									<cell>
+										<checkbox id="chbNinguno" />
+									</cell>
+
+									<cell>
+										<label id="lbAgrecividad"
+											value="Agrecividad: " />
+									</cell>
+									<cell>
+										<checkbox id="chbAgrecividad" />
+									</cell>
+
+									<cell>
+										<label
+											id="lbParalisis_miembros_posteriores"
+											value="Paralisis miembros posteriores: " />
+									</cell>
+									<cell>
+										<checkbox
+											id="chbParalisis_miembros_posteriores" />
+									</cell>
+
+									<cell>
+										<label id="lbSalivacion"
+											value="Salivacion: " />
+									</cell>
+									<cell>
+										<checkbox id="chbSalivacion" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 32 -->
+								<row>
+									<cell>
+										<label id="lbApetito_alterado"
+											value="Apetito alterado " />
+									</cell>
+									<cell>
+										<checkbox
+											id="chbApetito_alterado" />
+									</cell>
+
+									<cell>
+										<label id="lbVoracidad"
+											value="Voracidad" />
+									</cell>
+									<cell>
+										<checkbox id="chbVoracidad" />
+									</cell>
+
+									<cell>
+										<label
+											id="lbDeglucion_dificultosa" value="Deglucion dificultosa: " />
+									</cell>
+									<cell>
+										<checkbox
+											id="chbDeglucion_dificultosa" />
+									</cell>
+
+									<cell>
+										<label id="lbLadrido_ronco"
+											value="Ladrido ronco" />
+									</cell>
+									<cell>
+										<checkbox id="chbLadrido_ronco" />
+									</cell>
+								</row>
+
+								<!-- fila 36 -->
+								<row>
+									<cell>
+										<label id="lbMandibula_trabada"
+											value="Mandibula trabada" />
+									</cell>
+									<cell>
+										<checkbox
+											id="chbMandibula_trabada" />
+									</cell>
+
+									<cell>
+										<label id="lbAnisocoria"
+											value="Anisocoria: " />
+									</cell>
+									<cell>
+										<checkbox id="chbAnisocoria" />
+									</cell>
+
+									<cell>
+										<label id="lbOtro"
+											value="Otro " />
+									</cell>
+									<cell>
+										<checkbox id="chbOtro"
+											onCheck="formFicha_epidemiologia_n24.mostrarChec()" />
+									</cell>
+
+									<cell colspan="2">
+
+										<label id="lbCual_otro"
+											value="¿Cual? " />
+										<space></space>
+										<textbox id="tbxCual_otro"
+											disabled="true" width="100px"
+											style="text-transform:uppercase" maxlength="45" />
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+					<groupbox closable="false" width="905px">
+						<grid>
+							<columns>
+								<column width="200px" />
+								<column width="300px" />
+								<column width="140px" />
+								<column width="140px" />
+							</columns>
+							<rows>
+
+								<!-- fila 40 -->
+								<row>
+									<cell>
+										<label
+											id="lbFecha_de_inicio_de_sintomas"
+											value="Fecha de inicio de sintomas " />
+									</cell>
+									<cell>
+										<datebox
+											id="dtbxFecha_de_inicio_de_sintomas"
+											onCreate="self.value = new Date();" format="yyyy-MM-dd"
+											width="170px" />
+									</cell>
+								</row>
+
+								<row>
+									<cell>
+										<label id="lbTipo_de_muerte"
+											value="Tipo de muerte" />
+									</cell>
+									<cell>
+										<radiogroup
+											id="rdbTipo_de_muerte">
+											<radio label=" Espontánea"
+												value="1" />
+											<space />
+											<radio label="Sacrificada"
+												value="2" />
+											<space />
+											<radio label="Accidentada"
+												value="3" checked="true" />
+										</radiogroup>
+									</cell>
+
+									<cell>
+										<label id="lbFecha_de_muerte"
+											value="Fecha de muerte " />
+									</cell>
+									<cell>
+										<datebox
+											id="dtbxFecha_de_muerte" onCreate="self.value = new Date();"
+											format="yyyy-MM-dd" width="100px" />
+									</cell>
+									<cell></cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+
+					<groupbox closable="false" mold="3d"
+						width="905px">
+						<caption label="CONTROL DE FOCO" />
+						<grid>
+							<columns>
+
+								<column width="210px" />
+								<column />
+								<column />
+								<column />
+								<column />
+								<column width="100px" />
+								<column />
+								<column width="80px" />
+								<column />
+								<column />
+								<column />
+
+
+
+							</columns>
+							<rows>
+
+								<!-- fila 43 -->
+								<row>
+									<cell colspan="2">
+										<label
+											id="lbNumero_de_personas_expuestas"
+											value="Numero de personas expuestas" />
+									</cell>
+									<cell colspan="5">
+										<intbox
+											constraint="no negative:Este valor no puede ser negativo"
+											id="ibxNumero_de_personas_expuestas" width="50px"
+											style="text-transform:uppercase" />
+									</cell>
+								</row>
+								<row>
+									<cell>
+										<label
+											value="Número de animales expuestos" />
+									</cell>
+
+									<cell>
+										<label id="lbPerros_expuestos"
+											value="Perros" />
+									</cell>
+									<cell>
+										<intbox
+											constraint="no negative:Este valor no puede ser negativo"
+											id="ibxPerros_expuestos" width="50px"
+											style="text-transform:uppercase" />
+
+									</cell>
+									<cell>
+										<label id="lbGatos_expuestos"
+											value="Gatos" />
+									</cell>
+									<cell>
+										<intbox
+											constraint="no negative:Este valor no puede ser negativo"
+											id="ibxGatos_expuestos" width="50px"
+											style="text-transform:uppercase" />
+									</cell>
+									<cell>
+										<label id="lbOtros_expuestos"
+											value="Otros " />
+									</cell>
+									<cell colspan="5">
+										<intbox
+											constraint="no negative:Este valor no puede ser negativo"
+											id="ibxOtros_expuestos" width="50px"
+											style="text-transform:uppercase"
+											 onChange="formFicha_epidemiologia_n24.mostrar_fila_expuestos()"/>
+									</cell>
+								</row>
+
+								<!-- fila 46 -->
+								<row id="row_1">
+
+
+									<cell colspan="6">
+										<label id="lbCuales_expuestos"
+											value="¿Cuáles?" />
+									</cell>
+									<cell colspan="3">
+										<textbox
+											id="tbxCuales_expuestos" width="170px"
+											style="text-transform:uppercase" maxlength="-5" />
+									</cell>
+								</row>
+
+								<row>
+									<cell>
+										<label
+											value="Número de animales con sintomatología nerviosa" />
+									</cell>
+
+
+									<cell>
+										<label
+											id="lbPerros_sintomatologia_nerviosa" value="Perros" />
+									</cell>
+									<cell>
+										<intbox
+											constraint="no negative:Este valor no puede ser negativo"
+											id="ibxPerros_sintomatologia_nerviosa" width="50px"
+											style="text-transform:uppercase" />
+									</cell>
+
+									<cell>
+										<label
+											id="lbGatos_sintomatologia_nerviosa" value="Gatos" />
+									</cell>
+									<cell>
+										<intbox
+											constraint="no negative:Este valor no puede ser negativo"
+											id="ibxGatos_sintomatologia_nerviosa" width="50px"
+											style="text-transform:uppercase" />
+									</cell>
+
+									<cell>
+										<label
+											id="lbZorros_sintomatologia_nerviosa" value="Zorros" />
+									</cell>
+									<cell>
+										<intbox
+											constraint="no negative:Este valor no puede ser negativo"
+											id="ibxZorros_sintomatologia_nerviosa" width="50px"
+											style="text-transform:uppercase" />
+									</cell>
+									<cell>
+										<label
+											id="lbMurcielagos_sintomatologia_nerviosa"
+											value="Murcielagos " />
+									</cell>
+									<cell>
+										<intbox
+											constraint="no negative:Este valor no puede ser negativo"
+											id="ibxMurcielagos_sintomatologia_nerviosa" width="50px"
+											style="text-transform:uppercase" />
+									</cell>
+
+									<cell>
+										<label
+											id="lbOtros_sintomatologia_nerviosa" value="Otros" />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxOtros_sintomatologia_nerviosa" width="50px"
+											style="text-transform:uppercase" maxlength="45" />
+									</cell>
+
+
+								</row>
+								<row>
+
+									<cell colspan="6">
+										<label
+											id="lbCuales_sintomatologia_nerviosa" value="¿Cuáles?" />
+									</cell>
+									<cell colspan="4">
+										<textbox
+											id="tbxCuales_sintomatologia_nerviosa" width="170px"
+											style="text-transform:uppercase" maxlength="45" />
+									</cell>
+								</row>
+
+								<row>
+									<cell>
+										<label
+											value="Número de animales en cuarentena" />
+									</cell>
+
+									<cell>
+										<label
+											id="lbPerros_en_cuarentena" value="Perros" />
+									</cell>
+									<cell>
+										<intbox
+											constraint="no negative:Este valor no puede ser negativo"
+											id="ibxPerros_en_cuarentena" width="50px"
+											style="text-transform:uppercase" />
+									</cell>
+
+									<cell>
+										<label
+											id="lbGatos_en_cuarentena" value="Gatos" />
+									</cell>
+									<cell>
+										<intbox
+											constraint="no negative:Este valor no puede ser negativo"
+											id="ibxGatos_en_cuarentena" width="50px"
+											style="text-transform:uppercase" />
+									</cell>
+
+									<cell>
+										<label
+											id="lbOtros_en_cuarentena" value="Otros " />
+									</cell>
+									<cell colspan="5">
+										<intbox
+											constraint="no negative:Este valor no puede ser negativo"
+											id="ibxOtros_en_cuarentena" width="50px"
+											style="text-transform:uppercase" />
+									</cell>
+								</row>
+
+								<!-- fila 56 -->
+								<row id="row_3" visible="false">
+									<cell>
+										<label
+											id="lbCuales_otros_en_cuarentena" value="¿Cuales?" />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxCuales_otros_en_cuarentena" width="170px"
+											style="text-transform:uppercase" maxlength="45" />
+									</cell>
+								</row>
+
+								<!-- fila 57 -->
+								<row>
+									<cell>
+										<label
+											value="Número de animales eliminados" />
+									</cell>
+									<cell>
+										<label id="lbPerros_eliminados"
+											value="Perros" />
+									</cell>
+									<cell>
+										<intbox
+											constraint="no negative:Este valor no puede ser negativo"
+											id="ibxPerros_eliminados" width="50px"
+											style="text-transform:uppercase" />
+									</cell>
+
+									<cell>
+										<label id="lbGatos_eliminados"
+											value="Gatos" />
+									</cell>
+									<cell>
+										<intbox
+											constraint="no negative:Este valor no puede ser negativo"
+											id="ibxGatos_eliminados" width="50px"
+											style="text-transform:uppercase" />
+									</cell>
+
+									<cell>
+										<label id="lbZorros_eliminados"
+											value="Zorros" />
+									</cell>
+									<cell>
+										<intbox
+											constraint="no negative:Este valor no puede ser negativo"
+											id="ibxZorros_eliminados" width="50px"
+											style="text-transform:uppercase" />
+									</cell>
+
+									<cell>
+										<label
+											id="lbMurcielagos_eliminados" value="Murcielagos " />
+									</cell>
+									<cell>
+										<intbox
+											constraint="no negative:Este valor no puede ser negativo"
+											id="ibxMurcielagos_eliminados" width="50px"
+											style="text-transform:uppercase" />
+									</cell>
+
+									<cell>
+										<label id="lbOtros_eliminados"
+											value="Otros " />
+									</cell>
+									<cell>
+										<intbox
+											constraint="no negative:Este valor no puede ser negativo"
+											id="ibxOtros_eliminados" width="50px"
+											style="text-transform:uppercase" />
+									</cell>
+								</row>
+
+								<row id="row_4">
+									<cell colspan="6">
+										<label
+											id="lbCuales_otros_eliminados" value="¿Cuáles? " />
+									</cell>
+									<cell colspan="5">
+										<textbox
+											id="tbxCuales_otros_eliminados" width="170px"
+											style="text-transform:uppercase" maxlength="45" />
+									</cell>
+								</row>
+								<row>
+									<cell>
+										<label
+											value="Número de animales vacunados" />
+									</cell>
+
+									<cell>
+										<label id="lbPerros_vacunados"
+											value="Perros" />
+									</cell>
+									<cell>
+										<intbox
+											constraint="no negative:Este valor no puede ser negativo"
+											id="ibxPerros_vacunados" width="50px"
+											style="text-transform:uppercase" />
+									</cell>
+
+									<cell>
+										<label id="lbGatos_vacunados"
+											value="Gatos" />
+									</cell>
+									<cell>
+										<intbox
+											constraint="no negative:Este valor no puede ser negativo"
+											id="ibxGatos_vacunados" width="50px"
+											style="text-transform:uppercase" />
+									</cell>
+
+									<cell>
+										<label id="lbOtros_vacunados"
+											value="Otros" />
+									</cell>
+									<cell colspan="5">
+										<intbox
+											constraint="no negative:Este valor no puede ser negativo"
+											id="ibxOtros_vacunados" width="50px"
+											style="text-transform:uppercase" />
+									</cell>
+								</row>
+
+								<!-- fila 66 -->
+								<row id="row_5" >
+									<cell colspan="6">
+										<label
+											id="lbCuales_otros_vacunados" value="¿Cuáles? " />
+									</cell>
+									<cell colspan="5">
+										<textbox
+											id="tbxCuales_otros_vacunados" width="170px"
+											style="text-transform:uppercase" maxlength="45" />
+									</cell>
+								</row>
+								<row>
+									<cell>
+										<label
+											value="Número de muestras de animales tomadas" />
+									</cell>
+									<cell>
+										<label
+											id="lbPerros_muestras_tomadas" value="Perros " />
+									</cell>
+									<cell>
+										<intbox
+											constraint="no negative:Este valor no puede ser negativo"
+											id="ibxPerros_muestras_tomadas" width="50px"
+											style="text-transform:uppercase" />
+									</cell>
+
+									<cell>
+										<label
+											id="lbGatos_muestras_tomadas" value="Gatos " />
+									</cell>
+									<cell>
+										<intbox
+											constraint="no negative:Este valor no puede ser negativo"
+											id="ibxGatos_muestras_tomadas" width="50px"
+											style="text-transform:uppercase" />
+									</cell>
+
+									<cell>
+										<label
+											id="lbZorros_muestras_tomadas" value="Zorros " />
+									</cell>
+									<cell>
+										<intbox
+											constraint="no negative:Este valor no puede ser negativo"
+											id="ibxZorros_muestras_tomadas" width="50px"
+											style="text-transform:uppercase" />
+									</cell>
+
+									<cell>
+										<label
+											id="lbMurcielagos_muestras_tomadas" value="Murcielagos " />
+									</cell>
+									<cell>
+										<intbox
+											constraint="no negative:Este valor no puede ser negativo"
+											id="ibxMurcielagos_muestras_tomadas" width="50px"
+											style="text-transform:uppercase" />
+									</cell>
+
+									<cell>
+										<label
+											id="lbOtros_muestras_tomadas" value="Otros " />
+									</cell>
+									<cell>
+										<intbox
+											constraint="no negative:Este valor no puede ser negativo"
+											id="ibxOtros_muestras_tomadas" width="50px"
+											style="text-transform:uppercase" />
+									</cell>
+								</row>
+
+								<row id="row_6" visible="false">
+									<cell>
+										<label
+											id="lbCuales_otros_muestras_tomadas" value="¿ Cuáles? " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxCuales_otros_muestras_tomadas" width="170px"
+											style="text-transform:uppercase" maxlength="45" />
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+
+					<groupbox closable="false" mold="3d"
+						width="905px">
+						<caption label="DATOS DE LABORATORIO" />
+						<grid>
+							<columns>
+								<column />
+								<column width="170px" />
+								<column />
+								<column />
+								<column />
+								<column />
+							</columns>
+							<rows>
+
+								<!-- fila 73 -->
+								<row>
+									<cell>
+										<label
+											id="lbNomre_de_quien_remite_la_muestra"
+											value="Nomre de quien remite la muestra " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxNomre_de_quien_remite_la_muestra" width="100px"
+											style="text-transform:uppercase" maxlength="45" />
+									</cell>
+
+									<cell>
+										<label id="lbInstitucion"
+											value="Institucion " />
+									</cell>
+									<cell>
+										<textbox id="tbxInstitucion"
+											width="100px" style="text-transform:uppercase"
+											maxlength="45" />
+									</cell>
+
+									<cell>
+										<label id="lbTelefono_1"
+											value="Telefono " />
+									</cell>
+									<cell>
+										<intbox
+											constraint="no negative:Este valor no puede ser negativo"
+											id="ibxTelefono_1" width="100px"
+											style="text-transform:uppercase" />
+									</cell>
+								</row>
+
+								<row>
+									<cell>
+										<label id="lbCargo"
+											value="Cargo " />
+									</cell>
+									<cell>
+										<textbox id="tbxCargo"
+											width="100px" style="text-transform:uppercase"
+											maxlength="45" />
+									</cell>
+
+									<cell>
+										<label
+											id="lbFecha_de_toma_de_muestra"
+											value="Fecha de toma de muestra " />
+									</cell>
+									<cell>
+										<datebox
+											id="dtbxFecha_de_toma_de_muestra"
+											onCreate="self.value = new Date();" format="yyyy-MM-dd"
+											width="100px" />
+									</cell>
+
+									<cell>
+										<label
+											id="lbFecha_de_remision_de_muestra"
+											value="Fecha de remision de muestra " />
+									</cell>
+									<cell>
+										<datebox
+											id="dtbxFecha_de_remision_de_muestra"
+											onCreate="self.value = new Date();" format="yyyy-MM-dd"
+											width="100px" />
+									</cell>
+								</row>
+
+								<!-- fila 79 -->
+								<row>
+									<cell>
+										<label id="lbDestino_de_muestra"
+											value="Destino de muestra" />
+									</cell>
+									<cell>
+										<radiogroup
+											id="rdbDestino_de_muestra"
+											onCheck="formFicha_epidemiologia_n24.mostrar_fila(self)">
+											<radio label="INS"
+												value="1" />
+											<space />
+											<radio label="ICA" value="2"
+												checked="true" />
+											<space />
+											<radio label="Otro"
+												value="3" />
+										</radiogroup>
+									</cell>
+									<cell>
+										<label
+											id="lbPrueba_diagnostica_confirmatoria"
+											value="Prueba diagnostica confirmatoria " />
+									</cell>
+									<cell colspan="2">
+										<radiogroup
+											id="rdbPrueba_diagnostica_confirmatoria">
+											<radio label="IFD"
+												value="1" />
+											<space />
+											<radio
+												label="Prueba biológica" value="2" checked="true" />
+										</radiogroup>
+									</cell>
+								</row>
+								<row id="row_2" visible="false">
+									<cell>
+										<label id="lbOtro_destino"
+											value="¿Cuál?" />
+									</cell>
+
+									<cell colspan="6">
+										<textbox id="tbxOtro_destino"
+											width="170px" style="text-transform:uppercase"
+											maxlength="45" />
+									</cell>
+
+
+								</row>
+
+
+								<!-- fila 82 -->
+								<row>
+									<cell>
+										<label id="lbResultado"
+											value="Resultado " />
+									</cell>
+									<cell colspan="3">
+										<radiogroup id="rdbResultado">
+											<radio label="Positivo"
+												value="1" />
+											<space />
+											<radio label="Negtivo"
+												value="2" />
+											<space />
+											<radio label="Inadecuado"
+												value="3" />
+											<space />
+											<radio label="Pendiente"
+												value="4" checked="true" />
+										</radiogroup>
+									</cell>
+
+									<cell>
+										<label
+											id="lbIdentificacion_variante"
+											value="Identificacion variante " />
+									</cell>
+									<cell>
+										<radiogroup
+											id="rdbIdentificacion_variante">
+											<radio label="SÍ" value="1" />
+											<space />
+											<radio label="NO" value="2"
+												checked="true" />
+										</radiogroup>
+									</cell>
+								</row>
+
+								<!-- fila 84 -->
+								<row>
+									<cell>
+										<label
+											id="lbVariante_identificada" value="Variante identificada " />
+									</cell>
+									<cell colspan="5">
+										<radiogroup
+											id="rdbVariante_identificada" onCheck="formFicha_epidemiologia_n24.mostrar_fila_7(self)">
+											<radio label="1" value="1"
+												checked="true" />
+											<space />
+											<radio label="2" value="2" />
+											<space />
+											<radio label="3" value="3" />
+											<space />
+											<radio label="4" value="4" />
+											<space />
+											<radio label="5" value="5" />
+											<space />
+											<radio label="6" value="6" />
+											<space />
+											<radio label="7" value="7" />
+											<space />
+											<radio label="8" value="8" />
+											<space />
+											<radio label="Otro" value="9" />
+										</radiogroup>
+									</cell>
+								</row>
+
+								<!-- fila 85 -->
+								<row id="row_7" visible="false">
+									<cell >
+										<label id="lbOtra_variante"
+											value="¿Cuál?" />
+									</cell>
+									<cell colspan="5">
+										<textbox id="tbxOtra_variante"
+											width="170px" style="text-transform:uppercase"
+											maxlength="45" />
+									</cell>
+									<cell></cell>
+								</row>
+
+							</rows>
+						</grid>
+
+					</groupbox>
+				</div>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.autorizaciones_realizadasModel">
+	<select id="select" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+		SELECT
+		getzerofill(auto.codigo, 10) AS numero_orden,
+		auto.fecha AS fecha_realizacion,
+		pres.nombre AS nombre_prestador,
+		auto.codigo_prestador,
+		pac.documento,
+		pac.apellido1,
+		pac.apellido2,
+		pac.nombre1,
+		pac.nombre2,
+		auto.nro_identificacion_reporta,
+		usuario.nombres AS nombres_usuarios,
+		usuario.apellidos AS apellidos_usuarios
+		FROM
+		public.anexo4_entidad AS auto
+		INNER JOIN public.administradora AS pres ON pres.codigo_empresa = auto.codigo_empresa AND pres.codigo_sucursal = auto.codigo_sucursal AND pres.codigo = auto.codigo_prestador
+		INNER JOIN public.paciente AS pac ON auto.codigo_empresa = pac.codigo_empresa AND auto.codigo_sucursal = pac.codigo_sucursal AND auto.nro_identificacion_paciente = pac.nro_identificacion
+		INNER JOIN public.usuarios AS usuario ON usuario.codigo_empresa = auto.codigo_empresa AND usuario.codigo_sucursal = auto.codigo_sucursal AND usuario.codigo = auto.nro_identificacion_reporta
+		where auto.codigo_empresa = #{codigo_empresa}
+		AND auto.codigo_sucursal = #{codigo_sucursal}
+		<if test="usuarios != null">
+			AND auto.nro_identificacion_reporta IN
+			<foreach collection="usuarios" open="(" item="i" separator=","
+				close=")">
+				#{i.codigo}
+			</foreach>
+		</if>
+		AND CAST(auto.fecha AS DATE) BETWEEN #{fecha_inicio} AND
+			#{fecha_final}
+		ORDER BY auto.nro_identificacion_reporta, numero_orden
+	</select>
+</mapper>

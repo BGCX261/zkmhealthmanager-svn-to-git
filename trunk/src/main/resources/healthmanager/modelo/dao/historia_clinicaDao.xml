@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Historia_clinicaDao">
+
+    <resultMap id="historia_clinicaMap" type="historia_clinica">
+        <result column="codigo_empresa" property="codigo_empresa" />
+        <result column="codigo_sucursal" property="codigo_sucursal" />
+        <result column="codigo_historia" property="codigo_historia" />
+        <result column="nro_identificacion" property="nro_identificacion" />
+        <result column="nro_ingreso" property="nro_ingreso" />
+        <result column="via_ingreso" property="via_ingreso" />
+        <result column="fecha_historia" property="fecha_historia" />
+        <result column="prestador" property="prestador" />
+        <result column="delete_user" property="delete_user" />
+    </resultMap>
+
+    <insert id="crear" parameterType="historia_clinica">
+    	<selectKey keyProperty="codigo_historia" resultType="java.lang.Long" >
+    		insert into public.historia_clinica (codigo_empresa,codigo_sucursal,
+        nro_identificacion,nro_ingreso,
+        via_ingreso,fecha_historia,prestador)
+
+        values (#{codigo_empresa},#{codigo_sucursal},
+        #{nro_identificacion},#{nro_ingreso},
+        #{via_ingreso},#{fecha_historia},#{prestador})
+        RETURNING codigo_historia;
+    	</selectKey>
+       
+    </insert>
+
+    <update id="actualizar" parameterType="historia_clinica">
+        update public.historia_clinica set codigo_empresa = #{codigo_empresa},
+        codigo_sucursal = #{codigo_sucursal},codigo_historia = #{codigo_historia},
+        nro_identificacion = #{nro_identificacion},nro_ingreso = #{nro_ingreso},
+        via_ingreso = #{via_ingreso},fecha_historia = #{fecha_historia}, prestador = #{prestador}
+        where codigo_empresa = #{codigo_empresa}
+        and codigo_sucursal = #{codigo_sucursal}
+        and codigo_historia = #{codigo_historia}
+    </update>
+
+    <select id="consultar" parameterType="historia_clinica" resultMap="historia_clinicaMap">
+        select codigo_empresa,codigo_sucursal,
+        codigo_historia,nro_identificacion,nro_ingreso,via_ingreso,
+        fecha_historia,prestador
+        from public.historia_clinica
+        <trim prefix="WHERE" prefixOverrides="AND |OR ">
+              <if test="codigo_empresa != null">
+                and codigo_empresa = codigo_empresa
+            </if>
+            <if test="codigo_sucursal != null">
+                and codigo_sucursal = codigo_sucursal
+            </if>
+            <if test="codigo_historia != null">
+                and codigo_historia = #{codigo_historia}
+            </if>
+            <if test="nro_ingreso != null">
+                and nro_ingreso = #{nro_ingreso}
+            </if>
+            <if test="via_ingreso != null">
+                and via_ingreso = #{via_ingreso}
+            </if>
+            <if test="nro_identificacion != null">
+                and nro_identificacion = #{nro_identificacion}
+            </if>
+        </trim>
+    </select>
+
+    <sql id="sql_complementacion_eliminacion">
+        WHERE codigo_empresa = #{codigo_empresa}
+        and codigo_sucursal = #{codigo_sucursal} and codigo_historia = #{codigo_historia}
+    </sql>
+	
+    <delete id="eliminar" parameterType="historia_clinica">
+        UPDATE public.historia_clinica SET delete_user = #{delete_user} 
+        <include refid="sql_complementacion_eliminacion"/>;
+        DELETE FROM public.historia_clinica <include refid="sql_complementacion_eliminacion"/> 
+    </delete>
+
+    <select id="listar" parameterType="java.util.Map" resultMap="historia_clinicaMap">
+        select codigo_empresa,codigo_sucursal,
+        codigo_historia,nro_identificacion,nro_ingreso,via_ingreso,
+        fecha_historia,prestador
+        from public.historia_clinica 
+        <trim prefix="WHERE" prefixOverrides="AND |OR ">
+            <if test="codigo_empresa != null">
+                AND codigo_empresa = #{codigo_empresa}
+            </if>
+            <if test="codigo_sucursal != null">
+                AND codigo_sucursal = #{codigo_sucursal}
+            </if>
+            <if test="nro_identificacion != null">
+                AND nro_identificacion = #{nro_identificacion}
+            </if>
+            <if test="via_ingreso != null">
+                AND via_ingreso = #{via_ingreso}
+            </if>
+            <if test="nro_ingreso != null">
+                AND nro_ingreso = #{nro_ingreso}
+            </if>
+            <if test="anio != null">
+                AND date_part('year', fecha_historia) = #{anio} 
+            </if>
+            <if test="parameter != null">
+                AND ${parameter} like '${value}'
+            </if>
+        </trim>
+        <if test="limite_paginado != null">
+            ${limite_paginado}
+        </if>
+    </select>
+
+    <select id="existe" resultType="java.lang.Boolean">
+        select count(1) != 0 AS exist 		from public.historia_clinica 
+        <trim prefix="WHERE" prefixOverrides="AND |OR ">
+            <if test="codigo_empresa != null">
+                AND codigo_empresa = #{codigo_empresa}
+            </if>
+            <if test="codigo_sucursal != null">
+                AND codigo_sucursal = #{codigo_sucursal}
+            </if>
+            <if test="nro_identificacion != null">
+                AND nro_identificacion = #{nro_identificacion}
+            </if>
+            <if test="via_ingreso != null">
+                AND via_ingreso = #{via_ingreso}
+            </if>
+            <if test="parameter != null">
+                AND ${parameter} like '${value}'
+            </if>
+        </trim>
+        <if test="limite_paginado != null">
+            ${limite_paginado}
+        </if>
+    </select>
+
+</mapper>

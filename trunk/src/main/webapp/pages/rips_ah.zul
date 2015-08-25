@@ -1,0 +1,443 @@
+<?page title="Rips_ah" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formRips_ah" width="100%" height="100%"
+		use="healthmanager.controller.Rips_ahAction">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="true" closable="false"
+			mold="3d" height="100%">
+
+			<separator />
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" height="200px" mold="paging"
+				pageSize="20" vflex="1">
+				<auxhead visible="false"> 
+					<auxheader colspan="17">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<separator />
+							<textbox id="tbxValue" width="200px"
+								onOK="formRips_ah.buscarDatos();"
+								style="text-transform:uppercase" />
+							<separator />
+							<button mold="trendy"
+								image="/images/Magnifier.gif"
+								onClick="formRips_ah.buscarDatos();"
+								tooltiptext="Consultar Rips ah" />
+							<separator />
+							<button mold="trendy"
+								image="/images/New16.gif"
+								onClick='formRips_ah.accionForm(true,"registrar");'
+								tooltiptext="Nuevo Rips ah" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<frozen style="background: #DFDED8" columns="3">
+                  <div style="padding: 0 10px;" />
+                </frozen>
+				<columns sizable="true" >
+					<column label="Tipo id" width="120px"/>
+					<column label="Nro id" width="120px"/>
+					<column label="Via ingreso" width="120px"/>
+					<column label="Fech ingreso" width="120px"/>
+					<column label="Hra ingreso" width="120px"/>
+					<column label="Nro autorizacion" width="120px"/>
+					<column label="Causa externa" width="120px"/>
+					<column label="Diag principal ingreso" width="170px"/>
+					<column label="Diag principal egreso" width="170px"/>
+					<column label="Diag principal egreso 1" width="200px"/>
+					<column label="Diag principal egreso 2" width="200px"/>
+					<column label="Diag principal egreso 3" width="200px"/>
+					<column label="Diag complicacion" width="120px"/>
+					<column label="Estado salida" width="120px"/>
+					<column label="Diag causa basica" width="120px"/>
+					<column label="Fech egreso" width="120px"/>
+					<column label="Hra egreso" width="120px"/>
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<borderlayout width="100%" height="90%" id="groupboxEditar"
+			visible="false">
+			<north border="none">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<toolbarbutton image="/images/Save16.gif"
+						label="Guardar Rips ah" onClick="formRips_ah.guardarDatos();"
+						id="btGuardar" />
+					<toolbarbutton image="/images/New16.gif"
+						label="Nueva Rips ah"
+						onClick='formRips_ah.accionForm(true,"registrar");' id="btNew" />
+					<space />
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Cancelar"
+						onClick='formRips_ah.accionForm(false,tbxAccion.getText());'
+						id="btCancel" />
+					<toolbarbutton image="/images/print_ico.gif"
+						label="Imprimir Rips ah" onClick="formRips_ah.imprimir();"
+						id="btImprimir" visible="false" />
+					<space />
+					<label value="Formato impresión: " visible="false" />
+					<listbox id="lbxFormato" mold="select" width="150px"
+						visible="false" sclass="combobox">
+						<listitem value="pdf" label="PDF"
+							selected="true" />
+						<listitem value="rtf" label="WORD" />
+					</listbox>
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center">
+
+					<!-- *************************** -->
+					<!-- *** Insertar/Actualizar *** -->
+					<!-- *************************** -->
+					<groupbox closable="false" width="905px"
+						mold="3d">
+						<grid sclass="GridSinBorde" hflex="1">
+							<columns>
+								<column label="" width="276px" />
+								<column label="" width="170px"
+									align="left" />
+								<column label="" width="182px" />
+								<column label="" width="276px" />
+							</columns>
+							<rows>
+
+								<!-- fila 1 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbNro_factura"
+											value="Nro factura: " />
+									</cell>
+									<cell>
+										<textbox id="tbxNro_factura"
+											width="170px" style="text-transform:uppercase"
+											maxlength="20" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 2 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbId" value="Id: " />
+									</cell>
+									<cell>
+										<intbox
+											constraint="no negative:Este valor no puede ser negativo"
+											id="ibxId" width="170px" style="text-transform:uppercase" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 3 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbCodigo_prestador"
+											value="Codigo prestador: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxCodigo_prestador" width="170px"
+											style="text-transform:uppercase" maxlength="10" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 4 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbTipo_id"
+											value="Tipo id: " />
+									</cell>
+									<cell>
+										<textbox id="tbxTipo_id"
+											width="170px" style="text-transform:uppercase" maxlength="2" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 5 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbNro_id"
+											value="Nro id: " />
+									</cell>
+									<cell>
+										<textbox id="tbxNro_id"
+											width="170px" style="text-transform:uppercase"
+											maxlength="20" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 6 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbVia_ingreso"
+											value="Via ingreso: " />
+									</cell>
+									<cell>
+										<textbox id="tbxVia_ingreso"
+											width="170px" style="text-transform:uppercase" maxlength="1" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 7 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbFecha_ingreso"
+											value="Fecha ingreso: " />
+									</cell>
+									<cell>
+										<textbox id="tbxFecha_ingreso"
+											width="170px" style="text-transform:uppercase"
+											maxlength="10" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 8 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbHora_ingreso"
+											value="Hora ingreso: " />
+									</cell>
+									<cell>
+										<textbox id="tbxHora_ingreso"
+											width="170px" style="text-transform:uppercase" maxlength="5" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 9 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbNro_autorizacion"
+											value="Nro autorizacion: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxNro_autorizacion" width="170px"
+											style="text-transform:uppercase" maxlength="15" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 10 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbCausa_externa"
+											value="Causa externa: " />
+									</cell>
+									<cell>
+										<textbox id="tbxCausa_externa"
+											width="170px" style="text-transform:uppercase" maxlength="2" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 11 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label
+											id="lbDiagnostico_principal_ingreso"
+											value="Diagnostico principal ingreso: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxDiagnostico_principal_ingreso" width="170px"
+											style="text-transform:uppercase" maxlength="4" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 12 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label
+											id="lbDiagnostico_principal_egreso"
+											value="Diagnostico principal egreso: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxDiagnostico_principal_egreso" width="170px"
+											style="text-transform:uppercase" maxlength="4" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 13 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label
+											id="lbDiagnostico_principal_ingreso_2"
+											value="Diagnostico principal ingreso 2: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxDiagnostico_principal_ingreso_2" width="170px"
+											style="text-transform:uppercase" maxlength="4" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 14 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label
+											id="lbDiagnostico_principal_ingreso_3"
+											value="Diagnostico principal ingreso 3: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxDiagnostico_principal_ingreso_3" width="170px"
+											style="text-transform:uppercase" maxlength="4" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 15 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label
+											id="lbDiagnostico_complicacion"
+											value="Diagnostico complicacion: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxDiagnostico_complicacion" width="170px"
+											style="text-transform:uppercase" maxlength="4" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 16 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbEstado_salida"
+											value="Estado salida: " />
+									</cell>
+									<cell>
+										<textbox id="tbxEstado_salida"
+											width="170px" style="text-transform:uppercase" maxlength="1" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 17 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label
+											id="lbDiagnostico_causa_basica"
+											value="Diagnostico causa basica: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxDiagnostico_causa_basica" width="170px"
+											style="text-transform:uppercase" maxlength="4" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 18 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbFecha_egreso"
+											value="Fecha egreso: " />
+									</cell>
+									<cell>
+										<datebox id="dtbxFecha_egreso"
+											onCreate="self.value = new Date();" format="yyyy-MM-dd"
+											width="170px" />
+									</cell>
+									<cell></cell>
+								</row>
+
+							</rows>
+						</grid>
+
+					</groupbox>
+				</div>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

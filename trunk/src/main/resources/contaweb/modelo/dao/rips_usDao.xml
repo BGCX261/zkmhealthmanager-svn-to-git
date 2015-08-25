@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="contaweb.modelo.dao.Rips_usDao">
+
+	<!--<typeAlias alias="rips_us" type="healthmangerauditor.modelo.bean.Rips_us" />-->
+
+	<!--<mapper resource="healthmangerauditor/modelo/dao/xml/rips_usSQL.xml" />-->
+
+	<resultMap id="rips_usMap" type="rips_us">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="id" property="id" />
+		<result column="codigo_administradora" property="codigo_administradora" />
+		<result column="tipo_usuario" property="tipo_usuario" />
+		<result column="primer_apellido" property="primer_apellido" />
+		<result column="segundo_apellido" property="segundo_apellido" />
+		<result column="primer_nombre" property="primer_nombre" />
+		<result column="segundo_nombre" property="segundo_nombre" />
+		<result column="edad" property="edad" />
+		<result column="unidad_medida_edad" property="unidad_medida_edad" />
+		<result column="sexo" property="sexo" />
+		<result column="codigo_dpto" property="codigo_dpto" />
+		<result column="codigo_municipio" property="codigo_municipio" />
+		<result column="zona_residencia" property="zona_residencia" />
+		<result column="creacion_date" property="creacion_date" />
+		<result column="ultimo_update" property="ultimo_update" />
+		<result column="creacion_user" property="creacion_user" />
+		<result column="ultimo_user" property="ultimo_user" />
+		<result column="tipo_id_usuario" property="tipo_id_usuario" />
+		<result column="identificacion" property="identificacion" />
+	</resultMap>
+
+	<insert id="crear" parameterType="rips_us">
+		insert into contaweb.rips_us (codigo_empresa,codigo_sucursal,
+		codigo_administradora,tipo_usuario,
+		primer_apellido,segundo_apellido,primer_nombre,
+		segundo_nombre,edad,unidad_medida_edad,
+		sexo,codigo_dpto,codigo_municipio,
+		zona_residencia,creacion_date,ultimo_update,
+		creacion_user,ultimo_user,tipo_id_usuario,
+		identificacion)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{codigo_administradora},#{tipo_usuario},
+		#{primer_apellido},#{segundo_apellido},#{primer_nombre},
+		#{segundo_nombre},#{edad},#{unidad_medida_edad},
+		#{sexo},#{codigo_dpto},#{codigo_municipio},
+		#{zona_residencia},#{creacion_date},#{ultimo_update},
+		#{creacion_user},#{ultimo_user},#{tipo_id_usuario},
+		#{identificacion})
+	</insert>
+
+	<update id="actualizar" parameterType="rips_us">
+		update contaweb.rips_us set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},id = #{id},
+		codigo_administradora = #{codigo_administradora},tipo_usuario = #{tipo_usuario},
+		primer_apellido = #{primer_apellido},segundo_apellido = #{segundo_apellido},
+		primer_nombre = #{primer_nombre},segundo_nombre = #{segundo_nombre},
+		edad = #{edad},unidad_medida_edad = #{unidad_medida_edad},
+		sexo = #{sexo},codigo_dpto = #{codigo_dpto},
+		codigo_municipio = #{codigo_municipio},zona_residencia = #{zona_residencia},
+		creacion_date = #{creacion_date},ultimo_update = #{ultimo_update},
+		creacion_user = #{creacion_user},ultimo_user = #{ultimo_user},
+		tipo_id_usuario = #{tipo_id_usuario},identificacion = #{identificacion}
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and id = #{id}
+	</update>
+
+	<select id="consultar" parameterType="rips_us" resultMap="rips_usMap">
+		select codigo_empresa,codigo_sucursal,
+		id,codigo_administradora,tipo_usuario,primer_apellido,
+		segundo_apellido,primer_nombre,segundo_nombre,edad,
+		unidad_medida_edad,sexo,codigo_dpto,codigo_municipio,
+		zona_residencia,creacion_date,ultimo_update,creacion_user,
+		ultimo_user,tipo_id_usuario,identificacion
+		from contaweb.rips_us where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and id = #{id}
+	</select>
+
+	<delete id="eliminar" parameterType="rips_us">
+		delete from contaweb.rips_us
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and id = #{id}
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="rips_usMap">
+		select codigo_empresa,codigo_sucursal,
+		id,codigo_administradora,tipo_usuario,primer_apellido,
+		segundo_apellido,primer_nombre,segundo_nombre,edad,
+		unidad_medida_edad,sexo,codigo_dpto,codigo_municipio,
+		zona_residencia,creacion_date,ultimo_update,creacion_user,
+		ultimo_user,tipo_id_usuario,identificacion
+		from contaweb.rips_us 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from contaweb.rips_us 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

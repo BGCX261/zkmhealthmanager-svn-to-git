@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.anexo10CR">
+	<select id="select" resultType="java.util.HashMap" parameterType="java.util.Map">
+		select (a.fecha::VARCHAR) as fecha, 'NI' as
+	tipo_id_prestador, e2.nombre as nombres,
+	e2.nit as id_eprestador,e2.codigo as codigo_prestador,
+	e2.direccion as direccion_prestador,e2.telefono as tel_prestador,e2.codigo_dpto as
+	cod_dpto_empresa,
+	de.nombre as dpto_prestador,e2.codigo_municipio as cod_mun_empresa, mp.nombre as
+	municipio_presatdor, '' as dv_prestador,
+	(p.apellido1 || ' ' || p.apellido2 || ' ' || p.nombre1 || ' ' || p.nombre2) as
+	nombre_paciente, p.tipo_identificacion as tipo_id_paceinte,
+	p.nro_identificacion as nro_id_paciente, (p.fecha_nacimiento::VARCHAR)
+	as fecha_nacimiento_paciente, p.direccion as dir_paciente,
+	dp_p.nombre as deptamento_paciente, mp_p.nombre as municipio_paciente, p.tel_res
+	as tel_paciente,
+	(a.apellido_responsable || ' ' || a.nombre_responsable) as nombres_responsable,
+	a.ter_responsable, a.tipo_id_responsable,
+	a.nro_id_responsable, a.dir_responsable, a.ter_responsable, dp_r.nombre as dep_responsable,
+	mp_r.nombre as mun_responsable, a.servicio_contrarefiere as servicio_solicita,
+	a.nombre_solicita, a.telefono_solicita, a.cel_solicita, u.registro_medico,
+	a.informacion_clinica, emp.nombre_empresa as responsable_pago
+	
+	from anexo10_entidad a
+	left join administradora e2 on(e2.codigo = a.codigo_prestador)
+	left join departamentos de on(de.codigo=e2.codigo_dpto)
+	left join municipios me on(me.codigo=e2.codigo_municipio and me.coddep = e2.codigo_dpto)
+	left join paciente p
+	on(p.codigo_empresa = a.codigo_empresa
+	and p.codigo_sucursal = a.codigo_sucursal
+	and p.nro_identificacion = a.codigo_paciente)
+	left join departamentos dp
+	on(dp.codigo=e2.codigo_dpto)
+	left join municipios mp on(mp.codigo = e2.codigo_municipio and mp.coddep =
+	e2.codigo_dpto)
+	left join departamentos dp_p
+	on(dp_p.codigo=p.codigo_dpto)
+	left join municipios mp_p on(mp_p.codigo = p.codigo_municipio and
+	mp_p.coddep = p.codigo_dpto)
+	left join departamentos dp_r
+	on(dp_r.codigo=a.dep_responsable)
+	left join municipios mp_r on(mp_r.codigo = a.mun_responsable and
+	mp_r.coddep = a.dep_responsable)
+	left join empresa emp
+	on(emp.codigo_empresa = a.codigo_empresa)
+	LEFT JOIN usuarios u
+	on (u.codigo_empresa = a.codigo_empresa and u.codigo_sucursal =
+	a.codigo_sucursal and u.codigo = a.codigo_medico)
+	
+	where a.codigo = #{codigo}
+	and a.codigo_empresa = #{codigo_empresa}
+	and a.codigo_sucursal = #{codigo_sucursal}
+    </select>
+
+</mapper>

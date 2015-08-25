@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Puntos_graficas_embarazoDao">
+
+	<resultMap id="puntos_graficas_embarazoMap" type="puntos_graficas_embarazo">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="codigo_punto" property="codigo_punto" />
+		<result column="nro_identificacion" property="nro_identificacion" />
+		<result column="tipo_grafica" property="tipo_grafica" />
+		<result column="punto_x" property="punto_x" />
+		<result column="punto_y" property="punto_y" />
+		<result column="creacion_date" property="creacion_date" />
+		<result column="creacion_user" property="creacion_user" />
+	</resultMap>
+
+	<insert id="crear" parameterType="puntos_graficas_embarazo">
+		insert into public.puntos_graficas_embarazo (codigo_empresa,codigo_sucursal,
+		codigo_punto,nro_identificacion,tipo_grafica,
+		punto_x,punto_y,creacion_date,
+		creacion_user)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{codigo_punto},#{nro_identificacion},#{tipo_grafica},
+		#{punto_x},#{punto_y},#{creacion_date},
+		#{creacion_user})
+	</insert>
+
+	<update id="actualizar" parameterType="puntos_graficas_embarazo">
+		update public.puntos_graficas_embarazo set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},codigo_punto = #{codigo_punto},
+		nro_identificacion = #{nro_identificacion},tipo_grafica = #{tipo_grafica},
+		punto_x = #{punto_x},punto_y = #{punto_y},
+		creacion_date = #{creacion_date},creacion_user = #{creacion_user}
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and codigo_punto = #{codigo_punto}
+	</update>
+
+	<select id="consultar" parameterType="puntos_graficas_embarazo" resultMap="puntos_graficas_embarazoMap">
+		select codigo_empresa,codigo_sucursal,
+		codigo_punto,nro_identificacion,tipo_grafica,punto_x,
+		punto_y,creacion_date,creacion_user
+		from public.puntos_graficas_embarazo where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_punto = #{codigo_punto}
+	</select>
+
+	<delete id="eliminar" parameterType="puntos_graficas_embarazo">
+		delete from public.puntos_graficas_embarazo
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_punto = #{codigo_punto}
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="puntos_graficas_embarazoMap">
+		select codigo_empresa,codigo_sucursal,
+		codigo_punto,nro_identificacion,tipo_grafica,punto_x,
+		punto_y,creacion_date,creacion_user
+		from public.puntos_graficas_embarazo 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="nro_identificacion != null">
+			AND nro_identificacion = #{nro_identificacion}
+			</if>
+			<if test="tipo_grafica != null">
+			AND tipo_grafica = #{tipo_grafica}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+		
+		order by codigo_punto
+		
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from public.puntos_graficas_embarazo 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

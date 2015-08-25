@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="healthmanager.modelo.dao.report.reporte_gruposetarios_procedimientosModel">
+	<select id="select" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+		SELECT
+		<if test="tipo_item == 1">
+			cie_principal.codigo || ' ' || cie_principal.nombre AS item,
+		</if>
+		<if test="tipo_item == 2">
+			pcd.codigo_cups || ' ' || pcd.descripcion AS item,
+		</if>
+		pcd.codigo_cups AS codigo_cups_,
+		cie_principal.nombre AS nombre_cie,
+		cie_principal.codigo AS codigo_cie,
+		pac.nro_identificacion,
+		pac.nombre1,
+		cg.consecutivo,
+		(cg.descripcion || CASE WHEN cg.genero = 'A' THEN '' ELSE E'\r\n ' || (CASE WHEN
+		cg.condicion_embarazada = 'S' THEN 'Embarazada' ELSE sexo.descripcion
+		END) END) AS grupo_et,
+		ads.codigo_administradora,
+		med.nro_identificacion AS codigo_medico,
+		med.apellidos || ' ' || med.nombres AS nombre_medico,
+		eps.nombre,
+		upper(${grupo1}) AS grupo_1,
+		upper(${grupo2}) AS grupo_2,
+		upper(${grupo3}) AS grupo_3,
+		upper(${grupo4}) AS grupo_4,
+		upper(${grupo5}) AS grupo_5,
+		contrato.nombre,
+		cg.genero,
+		sexo.descripcion
+		FROM
+		public.datos_procedimiento AS dtt_proc 
+		
+		INNER JOIN public.admision AS ads ON (dtt_proc.codigo_empresa = ads.codigo_empresa AND
+		dtt_proc.codigo_sucursal = ads.codigo_sucursal
+		AND dtt_proc.nro_ingreso = ads.nro_ingreso AND
+		dtt_proc.nro_identificacion = ads.nro_identificacion)
+						
+		INNER JOIN public.paciente AS pac ON pac.codigo_empresa =
+		ads.codigo_empresa AND pac.codigo_sucursal = ads.codigo_sucursal AND
+		pac.nro_identificacion = ads.nro_identificacion
+		 
+		INNER JOIN public.cie AS cie_principal ON cie_principal.codigo =
+		dtt_proc.codigo_diagnostico_principal
+
+		INNER JOIN "public".procedimientos AS pcd ON (pcd.id_procedimiento::VARCHAR
+		= dtt_proc.codigo_procedimiento)
+
+		INNER JOIN public.condiciones_grupos_etareos AS cg ON cg.id_grupo_etareo =
+		#{grupos_etarios}
+		AND public.aplicagrupoetario(pac.fecha_nacimiento, ads.fecha_ingreso,
+		CAST(cg.edad_inicial AS INTEGER), cg.unidad_edad_inicial,
+		CAST(cg.edad_final AS INTEGER), cg.unidad_edad_final)
+		INNER JOIN public.prestadores AS med ON med.codigo_empresa =
+		dtt_proc.codigo_empresa AND med.codigo_sucursal =
+		dtt_proc.codigo_sucursal AND med.nro_identificacion =
+		dtt_proc.codigo_prestador
+
+		INNER JOIN public.administradora AS eps ON eps.codigo_empresa =
+		ads.codigo_empresa AND eps.codigo_sucursal = ads.codigo_sucursal AND
+		eps.codigo = ads.codigo_administradora
+		INNER JOIN public.elemento AS elm ON elm.codigo = ads.via_ingreso AND
+		elm.tipo = 'via_ingreso'
+		LEFT JOIN public.elemento AS sexo ON sexo.codigo = cg.genero AND sexo.tipo
+		= 'sexo'
+		INNER JOIN public.contratos AS contrato ON contrato.codigo_empresa =
+		ads.codigo_empresa AND contrato.codigo_sucursal = ads.codigo_sucursal
+		AND contrato.codigo_administradora = ads.codigo_administradora AND
+		contrato.id_plan = ads.id_plan
+		INNER JOIN public.centro_atencion AS centro ON centro.codigo_empresa =
+		ads.codigo_empresa AND centro.codigo_sucursal = ads.codigo_sucursal
+		AND centro.codigo_centro = ads.codigo_centro
+
+		WHERE (pac.sexo = cg.genero OR cg.genero = 'A') AND
+		CASE WHEN cg.condicion_embarazada = 'S' THEN ads.condicion_usuaria = '001'
+		ELSE true END
+
+		and ads.codigo_empresa = #{codigo_empresa}
+		and ads.codigo_sucursal = #{codigo_sucursal}
+		AND ads.estado = '2'
+		AND CAST(ads.fecha_ingreso AS DATE) BETWEEN CAST(#{fecha_inicio} AS DATE)
+		AND CAST(#{fecha_final} AS DATE)
+
+		<if test="contratos != null">
+			AND ads.id_plan || ads.codigo_administradora
+			<foreach collection="contratos" item="item" open="IN(" close=")"
+				separator=",">
+				'${item.id_plan}${item.codigo_administradora}'
+			</foreach>
+		</if>
+
+		<if test="eps != null">
+			AND ads.codigo_administradora
+			<foreach collection="eps" item="item" open="IN(" close=")"
+				separator=",">
+				#{item.codigo}
+			</foreach>
+		</if>
+
+		<if test="procedimientos != null">
+			AND dtt_proc.codigo_procedimiento IN
+			<foreach collection="procedimientos" item="item" open="(" close=")"
+				separator=",">
+				'${item.id_procedimiento}'
+			</foreach>
+		</if>
+
+		<if test="diagnostico != null">
+			<foreach collection="diagnostico" item="item"
+				open="AND cie_principal.codigo IN(" close=")" separator=",">
+				#{item.codigo}
+			</foreach>
+		</if>
+
+		<if test="medicos != null">
+			<foreach collection="medicos" item="item"
+				open="AND med.nro_identificacion IN(" close=")" separator=",">
+				#{item.nro_identificacion}
+			</foreach>
+		</if>
+
+		<if test="servicios != null">
+			<foreach collection="servicios" item="item"
+				open="AND ads.via_ingreso IN(" close=")" separator=",">
+				#{item.codigo}
+			</foreach>
+		</if>
+
+		<if test="centros_salud != null">
+			AND centro.codigo_centro
+			<foreach collection="centros_salud" item="item" open="IN("
+				close=")" separator=",">
+				#{item.codigo_centro}
+			</foreach>
+		</if>
+
+		ORDER BY
+		<if test="grupo1 != null and grupo1 != ''">
+			grupo_1 ASC,
+		</if>
+		<if test="grupo2 != null and grupo2 != ''">
+			grupo_2 ASC,
+		</if>
+		<if test="grupo3 != null and grupo3 != ''">
+			grupo_3 ASC,
+		</if>
+		<if test="grupo4 != null and grupo4 != ''">
+			grupo_4 ASC,
+		</if>
+		<if test="grupo5 != null and grupo5 != ''">
+			grupo_5 ASC,
+		</if>
+		cg.consecutivo ASC
+	</select>
+</mapper>

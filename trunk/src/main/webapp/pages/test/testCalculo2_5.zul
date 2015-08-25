@@ -1,0 +1,148 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk>
+	<window id="from" title="new page title" border="normal"
+		use="healthmanager.controller.test.TestCalculoAction">
+		<vbox>
+			Peso:
+			<doublebox id="dbxpeso" />
+			Talla:
+			<doublebox id="dbxtalla" />
+			Perimetro Cefalico:
+			<doublebox id="dbxPerimetroCefalico" />
+			<space />
+			<button label="Calcular Peso Edad" onClick="calcular()" />
+			<button label="Calcular Talla edad"
+				onClick="calcularTallaEdad()" />
+			<button label="Calcular Peso Tall"
+				onClick="calcularPesoTalla()" />
+				<button label="Calcular Perimetro Cefalico Edad"
+				onClick="calcularPerimetroCefalicoEdad()" />
+			<space />
+			P/E:
+			<label id="labelPE" />
+			T/E:
+			<label id="labelTE" />
+			TC/E:
+			<label id="labelTCE" />
+			<space />
+			<button label="Mostrar Grafica Peso edad 0 a 2"
+				id="btnCalcular" onClick="graficar()" disabled="true" />
+			<space />
+			<button label="Mostrar Grafica Talla edad 0 a 2"
+				id="btnCalcularTalla" onClick="graficarTalla()" disabled="true" />
+
+			<space />
+			<button label="Mostrar Grafica Peso talla 0 a 2"
+				id="btnCalcularPesoTalla" onClick="graficarPesoTalla()"
+				disabled="true" />
+				<space />
+			<button label="Mostrar Grafica Perimetro cefalico edad 0 a 5"
+				id="btnCalcularPerimetroCefalicoEdad" onClick="Graficar(com.framework.util.GraficasCalculadorUtils.TipoGrafica.PERIMETRO_CEFALICO_EDAD_0_5)"
+				disabled="true" />
+		</vbox>
+
+
+		<zscript>
+   <![CDATA[
+	com.framework.macros.graficas.respuesta.RespuestaInt respuestaInt;
+	void calcular() {
+		double peso = dbxpeso.getValue();
+		double talla = dbxtalla.getValue();
+		respuestaInt = com.framework.util.GraficasCalculadorUtils
+				.calcularPesoEdad0$2Anios(
+						com.framework.macros.graficas.interceptor.IInterceptorGrafica.ESexo.FEMENINO,
+						peso, talla,
+						java.sql.Timestamp.valueOf("2013-06-10 01:00:00"));
+		labelPE.setValue("" + respuestaInt.getValor());
+		btnCalcular.setDisabled(false);
+	}
+	
+	void calcularPerimetroCefalicoEdad() {
+		double perimetro_cefalico = dbxPerimetroCefalico.getValue();
+		respuestaInt = com.framework.util.GraficasCalculadorUtils
+				.calcularPerimetroCefalicoEdad0$2Anios(
+						com.framework.macros.graficas.interceptor.IInterceptorGrafica.ESexo.FEMENINO,
+						perimetro_cefalico,
+						java.sql.Timestamp.valueOf("2013-06-10 01:00:00"));
+		labelTCE.setValue("" + respuestaInt.getValor());
+		btnCalcularPerimetroCefalicoEdad.setDisabled(false);
+	}
+	
+	void calcularPesoTalla() {
+		double peso = dbxpeso.getValue();
+		double talla = dbxtalla.getValue();
+		respuestaInt = com.framework.util.GraficasCalculadorUtils
+				.calcularPesoTalla2$5Anios(
+						com.framework.macros.graficas.interceptor.IInterceptorGrafica.ESexo.FEMENINO,
+						peso, talla);
+		labelPE.setValue("" + respuestaInt.getValor());
+		btnCalcularPesoTalla.setDisabled(false);
+	}
+	
+	void calcularTallaEdad() {
+		double imc = dbxPerimetroCefalico.getValue();
+		respuestaInt = com.framework.util.GraficasCalculadorUtils
+				.calcularIMCEdad2$5Anios(
+						com.framework.macros.graficas.interceptor.IInterceptorGrafica.ESexo.FEMENINO,
+						imc,
+						java.sql.Timestamp.valueOf("2011-07-16 01:00:00"));
+		labelTE.setValue("" + respuestaInt.getValor());
+		btnCalcularTalla.setDisabled(false);
+	}
+	/* Graficamos */
+	void graficar() {
+		List respuestaInts = new ArrayList();
+		respuestaInts.add(respuestaInt);
+		
+		for(int i = 2; i < 4; i++){
+			com.framework.macros.graficas.respuesta.RespuestaInt respuestaIntT = new com.framework.macros.graficas.respuesta.RespuestaInt();
+			respuestaIntT.setX(respuestaInt.getX() * (i + 1));
+			respuestaIntT.setY(respuestaInt.getY() * (i));
+			respuestaInts.add(respuestaIntT);
+		}
+		com.framework.util.GraficasCalculadorUtils
+				.mostrarGrafica(
+						com.framework.util.GraficasCalculadorUtils.TipoGrafica.PESO_EDAD_0_A_2_ANIOS,
+						respuestaInts,
+						from,
+						com.framework.macros.graficas.interceptor.IInterceptorGrafica.ESexo.FEMENINO);
+	}
+	
+	void graficarTalla() {
+		List respuestaInts = new ArrayList();
+		respuestaInts.add(respuestaInt);
+		com.framework.util.GraficasCalculadorUtils
+				.mostrarGrafica(
+						com.framework.util.GraficasCalculadorUtils.TipoGrafica.IMC_EDAD_2_A_5,
+						respuestaInts,
+						from,
+						com.framework.macros.graficas.interceptor.IInterceptorGrafica.ESexo.FEMENINO);
+	}
+	
+	
+	void graficarPesoTalla() {
+		List respuestaInts = new ArrayList();
+		respuestaInts.add(respuestaInt);
+		com.framework.util.GraficasCalculadorUtils
+				.mostrarGrafica(
+						com.framework.util.GraficasCalculadorUtils.TipoGrafica.PESO_TALLA_2_A_5,
+						respuestaInts,
+						from,
+						com.framework.macros.graficas.interceptor.IInterceptorGrafica.ESexo.FEMENINO);
+	}
+	
+	void Graficar(com.framework.util.GraficasCalculadorUtils.TipoGrafica tipo){
+		List respuestaInts = new ArrayList();
+		respuestaInts.add(respuestaInt);
+		com.framework.util.GraficasCalculadorUtils
+				.mostrarGrafica(
+						tipo,
+						respuestaInts,
+						from,
+						com.framework.macros.graficas.interceptor.IInterceptorGrafica.ESexo.FEMENINO);
+	}
+	
+]]>
+   </zscript>
+	</window>
+</zk>

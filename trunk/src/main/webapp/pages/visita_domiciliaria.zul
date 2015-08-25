@@ -1,0 +1,1241 @@
+<?page title="Visita_domiciliaria" contentType="text/html;charset=UTF-8"?>
+<?component name="informacionPacientes" macroURI="/WEB-INF/macros/informacionPacientes.zul"?>
+<?component name="impresionDiagnostica" macroURI="/WEB-INF/macros/impresionDiagnostica.zul"?>
+<?component name="remision_interna" macroURI="/WEB-INF/macros/remision_interna.zul"?>
+
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+<window id="formVisita_domiciliaria" width="100%" height="97%" 
+	use="healthmanager.controller.Visita_domiciliariaAction"
+		onCreate="formVisita_domiciliaria.init();">
+<style>
+		body ,table{ margin:0; padding:0;
+		} .z-fieldset{ -moz-border-radius:5px; border-radius: 5px;
+		-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+		border: 1px solid silver; }
+		tr.z-row .z-cell{ background-image:none; }
+		tr.z-row td.z-row-hover{ background-image:none; }
+		.GridSinBorde tr.z-row td.z-row-inner, tr.z-row
+			.z-cell,div.z-grid { border: none; overflow: hidden;
+			zoom: 1; border-top: none; border-left: none;
+			border-right: none; border-bottom: none; }
+		</style>
+		
+		
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="false" closable="false"
+			mold="3d" height="90%">
+			<caption label="Consultar Historias Clínicas "
+				style="font-weight: bold">
+				<toolbarbutton image="/images/add_perfil.png"
+					style="font-weight:bold;float:right;margin-right:50px"
+					label="PACIENTE ADMISIONADO"
+					id="toolbarbuttonPaciente_admisionado1" />
+			</caption>
+
+			<textbox id="tbxEstado" value="" visible="false" />
+			<textbox id="tbxId_plan" value="" visible="false" />
+			<listbox id="lbxAtendida" mold="select" sclass="combobox"
+				width="150px" visible="false" />
+
+			<separator />
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" height="90%" mold="paging" pageSize="20"  vflex="1">
+			<auxhead>
+						<auxheader colspan="3">
+								<hbox align="center">
+										<label value="Criterios de B&#250;squeda :" />
+										<space />
+										<listbox id="lbxParameter" mold="select"
+												sclass="combobox" width="150px" />
+										<separator />
+										<textbox id="tbxValue" width="120px"
+												onOK="formVisita_domiciliaria.buscarDatos();"
+												style="text-transform:uppercase" />
+										<space />
+
+											<label value="Tipo" />
+											<space width="5px" />
+											<listbox id="lbxTipo_historia" mold="select"
+												width="120px"
+												onSelect="formVisita_domiciliaria.buscarDatos()">
+												<listitem label="Todas" selected="true"
+													value="0" />
+												<listitem label="Primera Vez" value="1" />
+												<listitem label="Control" value="2" />
+											</listbox>
+											
+											<space />
+											<toolbarbutton label="Consultar"
+												image="/images/Magnifier.gif"
+												onClick="formVisita_domiciliaria.buscarDatos();" 
+												tooltiptext="Consultar Visita domiciliaria" 
+												/>
+											<space width="5px" />
+											<button mold="trendy"
+												image="/images/New16.gif"
+												onClick='formVisita_domiciliaria.accionForm(true,"registrar");'
+												tooltiptext="Nuevo" visible="false" />	
+												
+								</hbox>
+						</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Código historia" width="150px" />
+					<column label="Identificación" width="200px" />
+					<column label="Nombre" />
+					<column label="Fecha" width="150px" />
+					<column label="Tipo Historia" width="150px" />
+					<column label="Acciones" align="center"
+						width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+				</grid>
+				</groupbox>
+				
+				<groupbox id="groupboxEditar" visible="true" closable="false"
+					mold="3d" height="100%">
+					<caption label="Registrar/Modificar Historias Clínicas"
+						style="font-weight: bold">
+						<toolbarbutton image="/images/add_perfil.png"
+							style="font-weight:bold;float:right;margin-right:50px"
+							label="PACIENTE ADMISIONADO"
+							id="toolbarbuttonPaciente_admisionado2" />
+					</caption>
+				
+				<borderlayout width="100%" height="90%" id="borderlayoutEditar" visible="true">
+				<north border="none" id="northEditar">
+					<div height="50px">
+						<toolbar width="100%" align="start">
+								<textbox id="tbxAccion" value="registrar"
+										visible="false" />
+								<toolbarbutton image="/images/Save16.gif"
+										label="Guardar HC Visita Domiciliaria"
+										onClick="formVisita_domiciliaria.guardarDatos();" id="btGuardar" />
+		 		                  <toolbarbutton image="/images/New16.gif"
+										label="Nuevo"
+										onClick='formVisita_domiciliaria.accionForm(true,"registrar");'
+										id="btNew" visible="false"/>
+								<space />
+		 		                  <toolbarbutton image="/images/trasladar.gif"
+										label="Cancelar" onClick='formVisita_domiciliaria.accionForm(false,tbxAccion.getText());'
+										id="btnCancelar" visible="false"/>
+								<toolbarbutton image="/images/print_ico.gif"
+										label="Imprimir Visita domiciliaria"
+										onClick="formVisita_domiciliaria.imprimir();"
+										id="btImprimir" visible="false"/>
+								<space />
+								<label value="Formato impresión: " visible="false"/>
+									<listbox id="lbxFormato" mold="select" width="150px" visible="false"
+										sclass="combobox">
+										<listitem value="pdf" label="PDF"
+												selected="true" />
+										<listitem value="rtf" label="WORD" />
+								</listbox>
+						</toolbar>
+						<toolbarbutton image="/images/info_icon.png"
+							style="font-weight:bold;float:right;margin-right:50px"
+							label="Historia Clínica de Control"
+							id="toolbarbuttonTipo_historia" />
+					</div>
+				</north>
+				<center autoscroll="true" border="none" >
+				<div align="center">
+				
+				
+<!-- *************************** -->
+<!-- *** Insertar/Actualizar *** -->
+<!-- *************************** -->
+<groupbox  closable="false"  width="905px" mold="3d">
+<grid sclass="GridSinBorde" hflex="1">
+<columns>
+<column label="" width="120px" />
+<column label="" width="180px"/>
+<column label="" width="210px"/>
+<column label="" width="100px"/>
+<column label="" width="120px"/>
+<column label="" width="150px"/>
+</columns>
+<rows>
+
+<row>
+<cell>
+<textbox id="tbxContrato" visible="false"/>
+</cell>
+</row>
+
+<row>
+	<cell colspan="6">
+		<groupbox mold="3d"
+			closable="false" visible="true" id="gbxIdentificacion">
+			<caption
+				label="IDENTIFICACIÓN" style="font-weight:bold" />
+
+			<informacionPacientes
+				id="infoPacientes" />
+			
+		</groupbox>
+	</cell>
+</row>
+
+
+	<!-- fila 5 -->
+	<row>
+		<cell colspan="6">
+			<groupbox mold="3d">
+				<caption label="INFORMACIÓN DE LA VISITA" />
+				<grid sclass="GridSinBorde" style="border:none">
+					<columns>
+						<column width="120px" />
+						<column width="180px" />
+						<column width="160px" />
+						<column width="100px" />
+						<column width="120px" />
+						<column />
+					</columns>
+					<rows>
+						<!-- fila 4 -->
+					<row>
+					<cell><label id="lbCodigo_usuario" value="Visita Atendida por: "/>  </cell>
+					<cell colspan="2"><textbox id="tbxCodigo_usuario" width="280px" style="text-transform:uppercase"/></cell>
+					<cell ><label id="lbParentesco" value="Parentesco: "/> 
+					</cell ><cell colspan="2">
+					<listbox id="lbxParentesco" name="relacion_acomp" mold="select" width="220px" sclass="combobox"/>
+					</cell>
+					</row>
+					
+					<row>
+					<cell>
+					<label id="lbNotifica" value="Notifica: " />
+					</cell>
+					<cell colspan="2">
+						<listbox
+							id="lbxNotifica" name="unidad_notificadora"
+							mold="select" width="220px" sclass="combobox" 
+							onSelect="formVisita_domiciliaria.seleccion(self, 21,new AbstractComponent[]{tbxOtros_notifica})"/>
+					</cell>
+					<cell colspan="3">
+					<textbox id="tbxOtros_notifica" width="95%" style="text-transform:uppercase" visible="false"/>
+					</cell>
+					
+					</row>
+					
+					</rows>
+				</grid>
+			</groupbox>
+		</cell>
+	</row>
+
+	<!-- fila 6 -->
+<row id="rowComposicion_familiar" visible="false">
+<cell colspan="6">
+<groupbox mold="3d" width="100%" closable="false">
+<caption label="COMPOSICIÓN FAMILIAR"/>
+			<grid sclass="GridSinBorde" style="border:none">
+				<columns>
+				<column label="No." width="5%"/>
+				<column label="Nombre y Apellidos" width="33%"/>
+				<column label="Edad" width="8%"/>
+				<column label="Escolaridad" width="20%"/>
+				<column label="Parentesco" width="14%"/>
+				<column label="Ocupación" width="20%"/>
+				</columns>
+				<rows>
+								
+				<!-- fila 10 -->
+				<row>
+				<cell><label id="lbFamiliar_nombre1" value="1. "/></cell>
+				<cell><textbox id="tbxFamiliar_nombre1" width="95%" style="text-transform:uppercase"/></cell>
+				<cell><intbox constraint="no negative:Este valor no puede ser negativo" maxlength="3"
+							id="ibxFamiliar_edad1" width="95%" style="text-transform:uppercase"/></cell>
+				
+				<cell>
+				<hlayout>
+				<bandbox id="tbxNombre_Familiar_escolaridad1" autodrop="true" readonly="true" width="90%" onOpen='formVisita_domiciliaria.buscarCodigo_educativo(tbxNombre_Familiar_escolaridad1.getValue(),lbxCodigo_Familiar_escolaridad1);'>
+				<bandpopup>
+					<vbox>
+						<toolbar>
+							<label value="Buscar: "/>
+						    <textbox id="tbxValueCodigo_educativo1" onChanging='formVisita_domiciliaria.buscarCodigo_educativo(event.getValue(),lbxCodigo_Familiar_escolaridad1)' style="text-transform:uppercase;"/>
+						    <toolbarbutton image="/images/borrar.gif" tooltiptext="Quitar" onClick='formVisita_domiciliaria.selectedCodigo_educativo(new Listitem(), tbxFamiliar_escolaridad1, tbxNombre_Familiar_escolaridad1);'/>
+						</toolbar>
+						<listbox height="300px" width="600px" mold="paging" pageSize="8" id="lbxCodigo_Familiar_escolaridad1"
+						    onSelect='formVisita_domiciliaria.selectedCodigo_educativo(self.getSelectedItem(), tbxFamiliar_escolaridad1, tbxNombre_Familiar_escolaridad1);' >
+						    <listhead>
+						    <listheader label="Codigo" width="150px"/>
+						    <listheader label="Nombre" width="450px"/>
+						    </listhead>
+						</listbox>
+					</vbox>
+				  </bandpopup>
+				</bandbox>
+				<textbox id="tbxFamiliar_escolaridad1" width="20px" style="text-transform:uppercase" visible="false"/>
+				</hlayout>
+				</cell>
+				
+				<cell><listbox id="tbxFamiliar_parentesco1" name="relacion_acomp" mold="select" width="100%" sclass="combobox"/>
+				</cell>
+				
+				<cell>
+				<hlayout>
+				<bandbox id="tbxNombre_Familiar_ocupacion1" autodrop="true" readonly="true" width="90%" onOpen='formVisita_domiciliaria.buscarOcupaciones(tbxNombre_Familiar_ocupacion1.getValue(),lbxCodigo_ocupacion1);'>
+				<bandpopup>
+					<vbox>
+						<toolbar>
+							<label value="Buscar: "/>
+						    <textbox id="tbxValueOcupaciones1" onChanging='formVisita_domiciliaria.buscarOcupaciones(event.getValue(),lbxCodigo_ocupacion1)' style="text-transform:uppercase;"/>
+						    <toolbarbutton image="/images/borrar.gif" tooltiptext="Quitar" onClick='formVisita_domiciliaria.selectedOcupaciones(new Listitem(), tbxFamiliar_ocupacion1, tbxNombre_Familiar_ocupacion1);'/>
+						</toolbar>
+						<listbox height="300px" width="600px" mold="paging" pageSize="8" id="lbxCodigo_ocupacion1"
+						    onSelect='formVisita_domiciliaria.selectedOcupaciones(self.getSelectedItem(), tbxFamiliar_ocupacion1, tbxNombre_Familiar_ocupacion1);' >
+						    <listhead>
+						    <listheader label="Codigo" width="150px"/>
+						    <listheader label="Nombre" width="450px"/>
+						    </listhead>
+						</listbox>
+					</vbox>
+				  </bandpopup>
+				</bandbox>
+				<textbox id="tbxFamiliar_ocupacion1" width="200px" style="text-transform:uppercase" visible="false" /><space></space>
+				</hlayout>
+				</cell>
+				</row>
+				
+				<!-- fila 15 -->
+				<row>
+				<cell><label id="lbFamiliar_nombre2" value="2. "/></cell>
+				<cell><textbox id="tbxFamiliar_nombre2" width="95%" style="text-transform:uppercase"/></cell>
+				<cell><intbox constraint="no negative:Este valor no puede ser negativo" maxlength="3" 
+							id="ibxFamiliar_edad2" width="95%" style="text-transform:uppercase"/></cell>
+				<cell>
+				<hlayout>
+				<bandbox id="tbxNombre_Familiar_escolaridad2" autodrop="true" readonly="true" width="90%" onOpen='formVisita_domiciliaria.buscarCodigo_educativo(tbxNombre_Familiar_escolaridad2.getValue(),lbxCodigo_Familiar_escolaridad2);'>
+				<bandpopup>
+					<vbox>
+						<toolbar>
+							<label value="Buscar: "/>
+						    <textbox id="tbxValueCodigo_educativo2" onChanging='formVisita_domiciliaria.buscarCodigo_educativo(event.getValue(),lbxCodigo_Familiar_escolaridad2)' style="text-transform:uppercase;"/>
+						    <toolbarbutton image="/images/borrar.gif" tooltiptext="Quitar" onClick='formVisita_domiciliaria.selectedCodigo_educativo(new Listitem(), tbxFamiliar_escolaridad2, tbxNombre_Familiar_escolaridad2);'/>
+						</toolbar>
+						<listbox height="300px" width="600px" mold="paging" pageSize="8" id="lbxCodigo_Familiar_escolaridad2"
+						    onSelect='formVisita_domiciliaria.selectedCodigo_educativo(self.getSelectedItem(), tbxFamiliar_escolaridad2, tbxNombre_Familiar_escolaridad2);' >
+						    <listhead>
+						    <listheader label="Codigo" width="150px"/>
+						    <listheader label="Nombre" width="450px"/>
+						    </listhead>
+						</listbox>
+					</vbox>
+				  </bandpopup>
+				</bandbox>
+				<textbox id="tbxFamiliar_escolaridad2" width="20px" style="text-transform:uppercase" visible="false"/>
+				</hlayout>
+				</cell>
+				<cell><listbox id="tbxFamiliar_parentesco2" name="relacion_acomp" mold="select" width="100%" sclass="combobox"/>
+				</cell>
+				<cell>
+				<hlayout>
+				<bandbox id="tbxNombre_Familiar_ocupacion2" autodrop="true" readonly="true" width="90%" onOpen='formVisita_domiciliaria.buscarOcupaciones(tbxNombre_Familiar_ocupacion2.getValue(),lbxCodigo_ocupacion2);'>
+				<bandpopup>
+					<vbox>
+						<toolbar>
+							<label value="Buscar: "/>
+						    <textbox id="tbxValueOcupaciones2" onChanging='formVisita_domiciliaria.buscarOcupaciones(event.getValue(),lbxCodigo_ocupacion2)' style="text-transform:uppercase;"/>
+						    <toolbarbutton image="/images/borrar.gif" tooltiptext="Quitar" onClick='formVisita_domiciliaria.selectedOcupaciones(new Listitem(), tbxFamiliar_ocupacion2, tbxNombre_Familiar_ocupacion2);'/>
+						</toolbar>
+						<listbox height="300px" width="600px" mold="paging" pageSize="8" id="lbxCodigo_ocupacion2"
+						    onSelect='formVisita_domiciliaria.selectedOcupaciones(self.getSelectedItem(), tbxFamiliar_ocupacion2, tbxNombre_Familiar_ocupacion2);' >
+						    <listhead>
+						    <listheader label="Codigo" width="150px"/>
+						    <listheader label="Nombre" width="450px"/>
+						    </listhead>
+						</listbox>
+					</vbox>
+				  </bandpopup>
+				</bandbox>
+				<textbox id="tbxFamiliar_ocupacion2" width="200px" style="text-transform:uppercase" visible="false" /><space></space>
+				</hlayout>
+				</cell>
+				</row>
+				
+				<!-- fila 20 -->
+				<row>
+				<cell><label id="lbFamiliar_nombre3" value="3. "/></cell>
+				<cell><textbox id="tbxFamiliar_nombre3" width="95%" style="text-transform:uppercase"/></cell>
+				<cell><intbox constraint="no negative:Este valor no puede ser negativo" maxlength="3" 
+							id="ibxFamiliar_edad3" width="95%" style="text-transform:uppercase"/></cell>
+				<cell>
+				<hlayout>
+				<bandbox id="tbxNombre_Familiar_escolaridad3" autodrop="true" readonly="true" width="90%" onOpen='formVisita_domiciliaria.buscarCodigo_educativo(tbxNombre_Familiar_escolaridad3.getValue(),lbxCodigo_Familiar_escolaridad3);'>
+				<bandpopup>
+					<vbox>
+						<toolbar>
+							<label value="Buscar: "/>
+						    <textbox id="tbxValueCodigo_educativo3" onChanging='formVisita_domiciliaria.buscarCodigo_educativo(event.getValue(),lbxCodigo_Familiar_escolaridad3)' style="text-transform:uppercase;"/>
+						    <toolbarbutton image="/images/borrar.gif" tooltiptext="Quitar" onClick='formVisita_domiciliaria.selectedCodigo_educativo(new Listitem(), tbxFamiliar_escolaridad3, tbxNombre_Familiar_escolaridad3);'/>
+						</toolbar>
+						<listbox height="300px" width="600px" mold="paging" pageSize="8" id="lbxCodigo_Familiar_escolaridad3"
+						    onSelect='formVisita_domiciliaria.selectedCodigo_educativo(self.getSelectedItem(), tbxFamiliar_escolaridad3, tbxNombre_Familiar_escolaridad3);' >
+						    <listhead>
+						    <listheader label="Codigo" width="150px"/>
+						    <listheader label="Nombre" width="450px"/>
+						    </listhead>
+						</listbox>
+					</vbox>
+				  </bandpopup>
+				</bandbox>
+				<textbox id="tbxFamiliar_escolaridad3" width="20px" style="text-transform:uppercase" visible="false"/>
+				</hlayout>
+				</cell>
+				<cell><listbox id="tbxFamiliar_parentesco3" name="relacion_acomp" mold="select" width="100%" sclass="combobox"/>
+				</cell>
+				<cell>
+				<hlayout>
+				<bandbox id="tbxNombre_Familiar_ocupacion3" autodrop="true" readonly="true" width="90%" onOpen='formVisita_domiciliaria.buscarOcupaciones(tbxNombre_Familiar_ocupacion3.getValue(),lbxCodigo_ocupacion3);'>
+				<bandpopup>
+					<vbox>
+						<toolbar>
+							<label value="Buscar: "/>
+						    <textbox id="tbxValueOcupaciones3" onChanging='formVisita_domiciliaria.buscarOcupaciones(event.getValue(),lbxCodigo_ocupacion3)' style="text-transform:uppercase;"/>
+						    <toolbarbutton image="/images/borrar.gif" tooltiptext="Quitar" onClick='formVisita_domiciliaria.selectedOcupaciones(new Listitem(), tbxFamiliar_ocupacion3, tbxNombre_Familiar_ocupacion3);'/>
+						</toolbar>
+						<listbox height="300px" width="600px" mold="paging" pageSize="8" id="lbxCodigo_ocupacion3"
+						    onSelect='formVisita_domiciliaria.selectedOcupaciones(self.getSelectedItem(), tbxFamiliar_ocupacion3, tbxNombre_Familiar_ocupacion3);' >
+						    <listhead>
+						    <listheader label="Codigo" width="150px"/>
+						    <listheader label="Nombre" width="450px"/>
+						    </listhead>
+						</listbox>
+					</vbox>
+				  </bandpopup>
+				</bandbox>
+				<textbox id="tbxFamiliar_ocupacion3" width="200px" style="text-transform:uppercase" visible="false" /><space></space>
+				</hlayout>
+				</cell>
+				</row>
+				
+				<!-- fila 25 -->
+				<row>
+				<cell><label id="lbFamiliar_nombre4" value="4. "/></cell>
+				<cell><textbox id="tbxFamiliar_nombre4" width="95%" style="text-transform:uppercase"/></cell>
+				<cell><intbox constraint="no negative:Este valor no puede ser negativo" maxlength="3" 
+							id="ibxFamiliar_edad4" width="95%" style="text-transform:uppercase"/></cell>
+				<cell>
+				<hlayout>
+				<bandbox id="tbxNombre_Familiar_escolaridad4" autodrop="true" readonly="true" width="90%" onOpen='formVisita_domiciliaria.buscarCodigo_educativo(tbxNombre_Familiar_escolaridad4.getValue(),lbxCodigo_Familiar_escolaridad4);'>
+				<bandpopup>
+					<vbox>
+						<toolbar>
+							<label value="Buscar: "/>
+						    <textbox id="tbxValueCodigo_educativo4" onChanging='formVisita_domiciliaria.buscarCodigo_educativo(event.getValue(),lbxCodigo_Familiar_escolaridad4)' style="text-transform:uppercase;"/>
+						    <toolbarbutton image="/images/borrar.gif" tooltiptext="Quitar" onClick='formVisita_domiciliaria.selectedCodigo_educativo(new Listitem(), tbxFamiliar_escolaridad4, tbxNombre_Familiar_escolaridad4);'/>
+						</toolbar>
+						<listbox height="300px" width="600px" mold="paging" pageSize="8" id="lbxCodigo_Familiar_escolaridad4"
+						    onSelect='formVisita_domiciliaria.selectedCodigo_educativo(self.getSelectedItem(), tbxFamiliar_escolaridad4, tbxNombre_Familiar_escolaridad4);' >
+						    <listhead>
+						    <listheader label="Codigo" width="150px"/>
+						    <listheader label="Nombre" width="450px"/>
+						    </listhead>
+						</listbox>
+					</vbox>
+				  </bandpopup>
+				</bandbox>
+				<textbox id="tbxFamiliar_escolaridad4" width="20px" style="text-transform:uppercase" visible="false"/>
+				</hlayout>
+				</cell>
+				<cell><listbox id="tbxFamiliar_parentesco4" name="relacion_acomp" mold="select" width="100%" sclass="combobox"/>
+				</cell>
+				<cell>
+				<hlayout>
+				<bandbox id="tbxNombre_Familiar_ocupacion4" autodrop="true" readonly="true" width="90%" onOpen='formVisita_domiciliaria.buscarOcupaciones(tbxNombre_Familiar_ocupacion4.getValue(),lbxCodigo_ocupacion4);'>
+				<bandpopup>
+					<vbox>
+						<toolbar>
+							<label value="Buscar: "/>
+						    <textbox id="tbxValueOcupaciones4" onChanging='formVisita_domiciliaria.buscarOcupaciones(event.getValue(),lbxCodigo_ocupacion4)' style="text-transform:uppercase;"/>
+						    <toolbarbutton image="/images/borrar.gif" tooltiptext="Quitar" onClick='formVisita_domiciliaria.selectedOcupaciones(new Listitem(), tbxFamiliar_ocupacion4, tbxNombre_Familiar_ocupacion4);'/>
+						</toolbar>
+						<listbox height="300px" width="600px" mold="paging" pageSize="8" id="lbxCodigo_ocupacion4"
+						    onSelect='formVisita_domiciliaria.selectedOcupaciones(self.getSelectedItem(), tbxFamiliar_ocupacion4, tbxNombre_Familiar_ocupacion4);' >
+						    <listhead>
+						    <listheader label="Codigo" width="150px"/>
+						    <listheader label="Nombre" width="450px"/>
+						    </listhead>
+						</listbox>
+					</vbox>
+				  </bandpopup>
+				</bandbox>
+				<textbox id="tbxFamiliar_ocupacion4" width="200px" style="text-transform:uppercase" visible="false" /><space></space>
+				</hlayout>
+				</cell>
+				</row>
+				
+				<!-- fila 30 -->
+				<row>
+				<cell><label id="lbFamiliar_nombre5" value="5. "/></cell>
+				<cell><textbox id="tbxFamiliar_nombre5" width="95%" style="text-transform:uppercase"/></cell>
+				<cell><intbox constraint="no negative:Este valor no puede ser negativo" maxlength="3" 
+							id="ibxFamiliar_edad5" width="95%" style="text-transform:uppercase"/></cell>
+				<cell>
+				<hlayout>
+				<bandbox id="tbxNombre_Familiar_escolaridad5" autodrop="true" readonly="true" width="90%" onOpen='formVisita_domiciliaria.buscarCodigo_educativo(tbxNombre_Familiar_escolaridad5.getValue(),lbxCodigo_Familiar_escolaridad5);'>
+				<bandpopup>
+					<vbox>
+						<toolbar>
+							<label value="Buscar: "/>
+						    <textbox id="tbxValueCodigo_educativo5" onChanging='formVisita_domiciliaria.buscarCodigo_educativo(event.getValue(),lbxCodigo_Familiar_escolaridad5)' style="text-transform:uppercase;"/>
+						    <toolbarbutton image="/images/borrar.gif" tooltiptext="Quitar" onClick='formVisita_domiciliaria.selectedCodigo_educativo(new Listitem(), tbxFamiliar_escolaridad5, tbxNombre_Familiar_escolaridad5);'/>
+						</toolbar>
+						<listbox height="300px" width="600px" mold="paging" pageSize="8" id="lbxCodigo_Familiar_escolaridad5"
+						    onSelect='formVisita_domiciliaria.selectedCodigo_educativo(self.getSelectedItem(), tbxFamiliar_escolaridad5, tbxNombre_Familiar_escolaridad5);' >
+						    <listhead>
+						    <listheader label="Codigo" width="150px"/>
+						    <listheader label="Nombre" width="450px"/>
+						    </listhead>
+						</listbox>
+					</vbox>
+				  </bandpopup>
+				</bandbox>
+				<textbox id="tbxFamiliar_escolaridad5" width="20px" style="text-transform:uppercase" visible="false"/>
+				</hlayout>
+				</cell>
+				<cell><listbox id="tbxFamiliar_parentesco5" name="relacion_acomp" mold="select" width="100%" sclass="combobox"/>
+				</cell>
+				<cell>
+				<hlayout>
+				<bandbox id="tbxNombre_Familiar_ocupacion5" autodrop="true" readonly="true" width="90%" onOpen='formVisita_domiciliaria.buscarOcupaciones(tbxNombre_Familiar_ocupacion5.getValue(),lbxCodigo_ocupacion5);'>
+				<bandpopup>
+					<vbox>
+						<toolbar>
+							<label value="Buscar: "/>
+						    <textbox id="tbxValueOcupaciones5" onChanging='formVisita_domiciliaria.buscarOcupaciones(event.getValue(),lbxCodigo_ocupacion5)' style="text-transform:uppercase;"/>
+						    <toolbarbutton image="/images/borrar.gif" tooltiptext="Quitar" onClick='formVisita_domiciliaria.selectedOcupaciones(new Listitem(), tbxFamiliar_ocupacion5, tbxNombre_Familiar_ocupacion5);'/>
+						</toolbar>
+						<listbox height="300px" width="600px" mold="paging" pageSize="8" id="lbxCodigo_ocupacion5"
+						    onSelect='formVisita_domiciliaria.selectedOcupaciones(self.getSelectedItem(), tbxFamiliar_ocupacion5, tbxNombre_Familiar_ocupacion5);' >
+						    <listhead>
+						    <listheader label="Codigo" width="150px"/>
+						    <listheader label="Nombre" width="450px"/>
+						    </listhead>
+						</listbox>
+					</vbox>
+				  </bandpopup>
+				</bandbox>
+				<textbox id="tbxFamiliar_ocupacion5" width="200px" style="text-transform:uppercase" visible="false" /><space></space>
+				</hlayout>
+				</cell>
+				</row>
+				
+				<!-- fila 35 -->
+				<row>
+				<cell><label id="lbFamiliar_nombre6" value="6. "/></cell>
+				<cell><textbox id="tbxFamiliar_nombre6" width="95%" style="text-transform:uppercase"/></cell>
+				<cell><intbox constraint="no negative:Este valor no puede ser negativo"  maxlength="3"
+							id="ibxFamiliar_edad6" width="95%" style="text-transform:uppercase"/></cell>
+				<cell>
+				<hlayout>
+				<bandbox id="tbxNombre_Familiar_escolaridad6" autodrop="true" readonly="true" width="90%" onOpen='formVisita_domiciliaria.buscarCodigo_educativo(tbxNombre_Familiar_escolaridad6.getValue(),lbxCodigo_Familiar_escolaridad6);'>
+				<bandpopup>
+					<vbox>
+						<toolbar>
+							<label value="Buscar: "/>
+						    <textbox id="tbxValueCodigo_educativo6" onChanging='formVisita_domiciliaria.buscarCodigo_educativo(event.getValue(),lbxCodigo_Familiar_escolaridad6)' style="text-transform:uppercase;"/>
+						    <toolbarbutton image="/images/borrar.gif" tooltiptext="Quitar" onClick='formVisita_domiciliaria.selectedCodigo_educativo(new Listitem(), tbxFamiliar_escolaridad6, tbxNombre_Familiar_escolaridad6);'/>
+						</toolbar>
+						<listbox height="300px" width="600px" mold="paging" pageSize="8" id="lbxCodigo_Familiar_escolaridad6"
+						    onSelect='formVisita_domiciliaria.selectedCodigo_educativo(self.getSelectedItem(), tbxFamiliar_escolaridad6, tbxNombre_Familiar_escolaridad6);' >
+						    <listhead>
+						    <listheader label="Codigo" width="150px"/>
+						    <listheader label="Nombre" width="450px"/>
+						    </listhead>
+						</listbox>
+					</vbox>
+				  </bandpopup>
+				</bandbox>
+				<textbox id="tbxFamiliar_escolaridad6" width="20px" style="text-transform:uppercase" visible="false"/>
+				</hlayout>
+				</cell>
+				<cell><listbox id="tbxFamiliar_parentesco6" name="relacion_acomp" mold="select" width="100%" sclass="combobox"/>
+				</cell>
+				<cell>
+				<hlayout>
+				<bandbox id="tbxNombre_Familiar_ocupacion6" autodrop="true" readonly="true" width="90%" onOpen='formVisita_domiciliaria.buscarOcupaciones(tbxNombre_Familiar_ocupacion6.getValue(),lbxCodigo_ocupacion6);'>
+				<bandpopup>
+					<vbox>
+						<toolbar>
+							<label value="Buscar: "/>
+						    <textbox id="tbxValueOcupaciones6" onChanging='formVisita_domiciliaria.buscarOcupaciones(event.getValue(),lbxCodigo_ocupacion6)' style="text-transform:uppercase;"/>
+						    <toolbarbutton image="/images/borrar.gif" tooltiptext="Quitar" onClick='formVisita_domiciliaria.selectedOcupaciones(new Listitem(), tbxFamiliar_ocupacion6, tbxNombre_Familiar_ocupacion6);'/>
+						</toolbar>
+						<listbox height="300px" width="600px" mold="paging" pageSize="8" id="lbxCodigo_ocupacion6"
+						    onSelect='formVisita_domiciliaria.selectedOcupaciones(self.getSelectedItem(), tbxFamiliar_ocupacion6, tbxNombre_Familiar_ocupacion6);' >
+						    <listhead>
+						    <listheader label="Codigo" width="150px"/>
+						    <listheader label="Nombre" width="450px"/>
+						    </listhead>
+						</listbox>
+					</vbox>
+				  </bandpopup>
+				</bandbox>
+				<textbox id="tbxFamiliar_ocupacion6" width="200px" style="text-transform:uppercase" visible="false" /><space></space>
+				</hlayout>
+				</cell>
+				</row>
+				
+				<!-- fila 40 -->
+				<row>
+				<cell><label id="lbFamiliar_nombre7" value="7. "/></cell>
+				<cell><textbox id="tbxFamiliar_nombre7" width="95%" style="text-transform:uppercase"/></cell>
+				<cell><intbox constraint="no negative:Este valor no puede ser negativo" maxlength="3" 
+							id="ibxFamiliar_edad7" width="95%" style="text-transform:uppercase"/></cell>
+				<cell>
+				<hlayout>
+				<bandbox id="tbxNombre_Familiar_escolaridad7" autodrop="true" readonly="true" width="90%" onOpen='formVisita_domiciliaria.buscarCodigo_educativo(tbxNombre_Familiar_escolaridad7.getValue(),lbxCodigo_Familiar_escolaridad7);'>
+				<bandpopup>
+					<vbox>
+						<toolbar>
+							<label value="Buscar: "/>
+						    <textbox id="tbxValueCodigo_educativo7" onChanging='formVisita_domiciliaria.buscarCodigo_educativo(event.getValue(),lbxCodigo_Familiar_escolaridad7)' style="text-transform:uppercase;"/>
+						    <toolbarbutton image="/images/borrar.gif" tooltiptext="Quitar" onClick='formVisita_domiciliaria.selectedCodigo_educativo(new Listitem(), tbxFamiliar_escolaridad7, tbxNombre_Familiar_escolaridad7);'/>
+						</toolbar>
+						<listbox height="300px" width="600px" mold="paging" pageSize="8" id="lbxCodigo_Familiar_escolaridad7"
+						    onSelect='formVisita_domiciliaria.selectedCodigo_educativo(self.getSelectedItem(), tbxFamiliar_escolaridad7, tbxNombre_Familiar_escolaridad7);' >
+						    <listhead>
+						    <listheader label="Codigo" width="150px"/>
+						    <listheader label="Nombre" width="450px"/>
+						    </listhead>
+						</listbox>
+					</vbox>
+				  </bandpopup>
+				</bandbox>
+				<textbox id="tbxFamiliar_escolaridad7" width="20px" style="text-transform:uppercase" visible="false"/>
+				</hlayout>
+				</cell>
+				<cell><listbox id="tbxFamiliar_parentesco7" name="relacion_acomp" mold="select" width="100%" sclass="combobox"/>
+				</cell>
+				<cell>
+				<hlayout>
+				<bandbox id="tbxNombre_Familiar_ocupacion7" autodrop="true" readonly="true" width="90%" onOpen='formVisita_domiciliaria.buscarOcupaciones(tbxNombre_Familiar_ocupacion7.getValue(),lbxCodigo_ocupacion7);'>
+				<bandpopup>
+					<vbox>
+						<toolbar>
+							<label value="Buscar: "/>
+						    <textbox id="tbxValueOcupaciones7" onChanging='formVisita_domiciliaria.buscarOcupaciones(event.getValue(),lbxCodigo_ocupacion7)' style="text-transform:uppercase;"/>
+						    <toolbarbutton image="/images/borrar.gif" tooltiptext="Quitar" onClick='formVisita_domiciliaria.selectedOcupaciones(new Listitem(), tbxFamiliar_ocupacion7, tbxNombre_Familiar_ocupacion7);'/>
+						</toolbar>
+						<listbox height="300px" width="600px" mold="paging" pageSize="8" id="lbxCodigo_ocupacion7"
+						    onSelect='formVisita_domiciliaria.selectedOcupaciones(self.getSelectedItem(), tbxFamiliar_ocupacion7, tbxNombre_Familiar_ocupacion7);' >
+						    <listhead>
+						    <listheader label="Codigo" width="150px"/>
+						    <listheader label="Nombre" width="450px"/>
+						    </listhead>
+						</listbox>
+					</vbox>
+				  </bandpopup>
+				</bandbox>
+				<textbox id="tbxFamiliar_ocupacion7" width="200px" style="text-transform:uppercase" visible="false" /><space></space>
+				</hlayout>
+				</cell>
+				</row>
+				
+				<!-- fila 45 -->
+				<row>
+				<cell><label id="lbFamiliar_nombre8" value="8. "/></cell>
+				<cell><textbox id="tbxFamiliar_nombre8" width="95%" style="text-transform:uppercase"/></cell>
+				<cell><intbox constraint="no negative:Este valor no puede ser negativo" maxlength="3" 
+							id="ibxFamiliar_edad8" width="95%" style="text-transform:uppercase"/></cell>
+				<cell>
+				<hlayout>
+				<bandbox id="tbxNombre_Familiar_escolaridad8" autodrop="true" readonly="true" width="90%" onOpen='formVisita_domiciliaria.buscarCodigo_educativo(tbxNombre_Familiar_escolaridad8.getValue(),lbxCodigo_Familiar_escolaridad8);'>
+				<bandpopup>
+					<vbox>
+						<toolbar>
+							<label value="Buscar: "/>
+						    <textbox id="tbxValueCodigo_educativo8" onChanging='formVisita_domiciliaria.buscarCodigo_educativo(event.getValue(),lbxCodigo_Familiar_escolaridad8)' style="text-transform:uppercase;"/>
+						    <toolbarbutton image="/images/borrar.gif" tooltiptext="Quitar" onClick='formVisita_domiciliaria.selectedCodigo_educativo(new Listitem(), tbxFamiliar_escolaridad8, tbxNombre_Familiar_escolaridad8);'/>
+						</toolbar>
+						<listbox height="300px" width="600px" mold="paging" pageSize="8" id="lbxCodigo_Familiar_escolaridad8"
+						    onSelect='formVisita_domiciliaria.selectedCodigo_educativo(self.getSelectedItem(), tbxFamiliar_escolaridad8, tbxNombre_Familiar_escolaridad8);' >
+						    <listhead>
+						    <listheader label="Codigo" width="150px"/>
+						    <listheader label="Nombre" width="450px"/>
+						    </listhead>
+						</listbox>
+					</vbox>
+				  </bandpopup>
+				</bandbox>
+				<textbox id="tbxFamiliar_escolaridad8" width="20px" style="text-transform:uppercase" visible="false"/>
+				</hlayout>
+				</cell>
+				<cell><listbox id="tbxFamiliar_parentesco8" name="relacion_acomp" mold="select" width="100%" sclass="combobox"/>
+				</cell>
+				<cell>
+				<hlayout>
+				<bandbox id="tbxNombre_Familiar_ocupacion8" autodrop="true" readonly="true" width="90%" onOpen='formVisita_domiciliaria.buscarOcupaciones(tbxNombre_Familiar_ocupacion8.getValue(),lbxCodigo_ocupacion8);'>
+				<bandpopup>
+					<vbox>
+						<toolbar>
+							<label value="Buscar: "/>
+						    <textbox id="tbxValueOcupaciones8" onChanging='formVisita_domiciliaria.buscarOcupaciones(event.getValue(),lbxCodigo_ocupacion8)' style="text-transform:uppercase;"/>
+						    <toolbarbutton image="/images/borrar.gif" tooltiptext="Quitar" onClick='formVisita_domiciliaria.selectedOcupaciones(new Listitem(), tbxFamiliar_ocupacion8, tbxNombre_Familiar_ocupacion8);'/>
+						</toolbar>
+						<listbox height="300px" width="600px" mold="paging" pageSize="8" id="lbxCodigo_ocupacion8"
+						    onSelect='formVisita_domiciliaria.selectedOcupaciones(self.getSelectedItem(), tbxFamiliar_ocupacion8, tbxNombre_Familiar_ocupacion8);' >
+						    <listhead>
+						    <listheader label="Codigo" width="150px"/>
+						    <listheader label="Nombre" width="450px"/>
+						    </listhead>
+						</listbox>
+					</vbox>
+				  </bandpopup>
+				</bandbox>
+				<textbox id="tbxFamiliar_ocupacion8" width="200px" style="text-transform:uppercase" visible="false" /><space></space>
+				</hlayout>
+				</cell>
+				</row>
+				
+				<!-- fila 50 -->
+				<row>
+				<cell><label id="lbFamiliar_nombre9" value="9. "/></cell>
+				<cell><textbox id="tbxFamiliar_nombre9" width="95%" style="text-transform:uppercase"/></cell>
+				<cell><intbox constraint="no negative:Este valor no puede ser negativo"  maxlength="3"
+							id="ibxFamiliar_edad9" width="95%" style="text-transform:uppercase"/></cell>
+				<cell>
+				<hlayout>
+				<bandbox id="tbxNombre_Familiar_escolaridad9" autodrop="true" readonly="true" width="90%" onOpen='formVisita_domiciliaria.buscarCodigo_educativo(tbxNombre_Familiar_escolaridad9.getValue(),lbxCodigo_Familiar_escolaridad9);'>
+				<bandpopup>
+					<vbox>
+						<toolbar>
+							<label value="Buscar: "/>
+						    <textbox id="tbxValueCodigo_educativo9" onChanging='formVisita_domiciliaria.buscarCodigo_educativo(event.getValue(),lbxCodigo_Familiar_escolaridad9)' style="text-transform:uppercase;"/>
+						    <toolbarbutton image="/images/borrar.gif" tooltiptext="Quitar" onClick='formVisita_domiciliaria.selectedCodigo_educativo(new Listitem(), tbxFamiliar_escolaridad9, tbxNombre_Familiar_escolaridad9);'/>
+						</toolbar>
+						<listbox height="300px" width="600px" mold="paging" pageSize="8" id="lbxCodigo_Familiar_escolaridad9"
+						    onSelect='formVisita_domiciliaria.selectedCodigo_educativo(self.getSelectedItem(), tbxFamiliar_escolaridad9, tbxNombre_Familiar_escolaridad9);' >
+						    <listhead>
+						    <listheader label="Codigo" width="150px"/>
+						    <listheader label="Nombre" width="450px"/>
+						    </listhead>
+						</listbox>
+					</vbox>
+				  </bandpopup>
+				</bandbox>
+				<textbox id="tbxFamiliar_escolaridad9" width="20px" style="text-transform:uppercase" visible="false"/>
+				</hlayout>
+				</cell>
+				<cell><listbox id="tbxFamiliar_parentesco9" name="relacion_acomp" mold="select" width="100%" sclass="combobox"/>
+				</cell>
+				<cell>
+				<hlayout>
+				<bandbox id="tbxNombre_Familiar_ocupacion9" autodrop="true" readonly="true" width="90%" onOpen='formVisita_domiciliaria.buscarOcupaciones(tbxNombre_Familiar_ocupacion9.getValue(),lbxCodigo_ocupacion9);'>
+				<bandpopup>
+					<vbox>
+						<toolbar>
+							<label value="Buscar: "/>
+						    <textbox id="tbxValueOcupaciones9" onChanging='formVisita_domiciliaria.buscarOcupaciones(event.getValue(),lbxCodigo_ocupacion9)' style="text-transform:uppercase;"/>
+						    <toolbarbutton image="/images/borrar.gif" tooltiptext="Quitar" onClick='formVisita_domiciliaria.selectedOcupaciones(new Listitem(), tbxFamiliar_ocupacion9, tbxNombre_Familiar_ocupacion9);'/>
+						</toolbar>
+						<listbox height="300px" width="600px" mold="paging" pageSize="8" id="lbxCodigo_ocupacion9"
+						    onSelect='formVisita_domiciliaria.selectedOcupaciones(self.getSelectedItem(), tbxFamiliar_ocupacion9, tbxNombre_Familiar_ocupacion9);' >
+						    <listhead>
+						    <listheader label="Codigo" width="150px"/>
+						    <listheader label="Nombre" width="450px"/>
+						    </listhead>
+						</listbox>
+					</vbox>
+				  </bandpopup>
+				</bandbox>
+				<textbox id="tbxFamiliar_ocupacion9" width="200px" style="text-transform:uppercase" visible="false" /><space></space>
+				</hlayout>
+				</cell>
+				</row>
+				
+				<!-- fila 55 -->
+				<row>
+				<cell><label id="lbFamiliar_nombre10" value="10. "/></cell>
+				<cell><textbox id="tbxFamiliar_nombre10" width="95%" style="text-transform:uppercase"/></cell>
+				<cell><intbox constraint="no negative:Este valor no puede ser negativo" maxlength="3" 
+							id="ibxFamiliar_edad10" width="95%" style="text-transform:uppercase"/></cell>
+				<cell>
+				<hlayout>
+				<bandbox id="tbxNombre_Familiar_escolaridad10" autodrop="true" readonly="true" width="90%" onOpen='formVisita_domiciliaria.buscarCodigo_educativo(tbxNombre_Familiar_escolaridad10.getValue(),lbxCodigo_Familiar_escolaridad10);'>
+				<bandpopup>
+					<vbox>
+						<toolbar>
+							<label value="Buscar: "/>
+						    <textbox id="tbxValueCodigo_educativo10" onChanging='formVisita_domiciliaria.buscarCodigo_educativo(event.getValue(),lbxCodigo_Familiar_escolaridad10)' style="text-transform:uppercase;"/>
+						    <toolbarbutton image="/images/borrar.gif" tooltiptext="Quitar" onClick='formVisita_domiciliaria.selectedCodigo_educativo(new Listitem(), tbxFamiliar_escolaridad10, tbxNombre_Familiar_escolaridad10);'/>
+						</toolbar>
+						<listbox height="300px" width="600px" mold="paging" pageSize="8" id="lbxCodigo_Familiar_escolaridad10"
+						    onSelect='formVisita_domiciliaria.selectedCodigo_educativo(self.getSelectedItem(), tbxFamiliar_escolaridad10, tbxNombre_Familiar_escolaridad10);' >
+						    <listhead>
+						    <listheader label="Codigo" width="150px"/>
+						    <listheader label="Nombre" width="450px"/>
+						    </listhead>
+						</listbox>
+					</vbox>
+				  </bandpopup>
+				</bandbox>
+				<textbox id="tbxFamiliar_escolaridad10" width="20px" style="text-transform:uppercase" visible="false"/>
+				</hlayout>
+				</cell>
+				<cell><listbox id="tbxFamiliar_parentesco10" name="relacion_acomp" mold="select" width="100%" sclass="combobox"/>
+				</cell>
+				<cell>
+				<hlayout>
+				<bandbox id="tbxNombre_Familiar_ocupacion10" autodrop="true" readonly="true" width="90%" onOpen='formVisita_domiciliaria.buscarOcupaciones(tbxNombre_Familiar_ocupacion10.getValue(),lbxCodigo_ocupacion10);'>
+				<bandpopup>
+					<vbox>
+						<toolbar>
+							<label value="Buscar: "/>
+						    <textbox id="tbxValueOcupaciones10" onChanging='formVisita_domiciliaria.buscarOcupaciones(event.getValue(),lbxCodigo_ocupacion10)' style="text-transform:uppercase;"/>
+						    <toolbarbutton image="/images/borrar.gif" tooltiptext="Quitar" onClick='formVisita_domiciliaria.selectedOcupaciones(new Listitem(), tbxFamiliar_ocupacion10, tbxNombre_Familiar_ocupacion10);'/>
+						</toolbar>
+						<listbox height="300px" width="600px" mold="paging" pageSize="8" id="lbxCodigo_ocupacion10"
+						    onSelect='formVisita_domiciliaria.selectedOcupaciones(self.getSelectedItem(), tbxFamiliar_ocupacion10, tbxNombre_Familiar_ocupacion10);' >
+						    <listhead>
+						    <listheader label="Codigo" width="150px"/>
+						    <listheader label="Nombre" width="450px"/>
+						    </listhead>
+						</listbox>
+					</vbox>
+				  </bandpopup>
+				</bandbox>
+				<textbox id="tbxFamiliar_ocupacion10" width="200px" style="text-transform:uppercase" visible="false" /><space></space>
+				</hlayout>
+				</cell>
+				</row>
+				
+				</rows>
+			</grid>
+</groupbox>
+</cell>
+</row>
+
+
+<!-- fila 7 -->
+<row id="rowDescripcion_vivienda" visible="false">
+<cell colspan="6">
+<groupbox mold="3d" width="100%" closable="false">
+<caption label="DESCRIPCIÓN DE LA VIVIENDA"/>
+			<grid sclass="GridSinBorde" style="border:none">
+				<columns>
+				<column label="" width="110px"/>
+				<column />
+				<column label="" width="110px"/>
+				<column />
+				</columns>
+				<rows>
+				
+				<!-- fila 63 -->
+				<row>
+				<cell><label id="lbNo_habitaciones" value="No. Habitaciones: "/></cell>
+				<cell>
+				<listbox id="lbxNo_habitaciones" name="veces" mold="select" width="35%" sclass="combobox" />
+				</cell>
+				<cell><label id="lbTecho" value="Material Techo: "/></cell>
+				<cell>
+				<listbox id="lbxTecho" name="material_techo" mold="select" width="35%" sclass="combobox" 
+				onSelect="formVisita_domiciliaria.seleccion(self, 5,new AbstractComponent[]{tbxOtros_techo})"/>
+				<space width="3%"></space>
+				<textbox id="tbxOtros_techo" width="57%" style="text-transform:uppercase" visible="false"/>
+				</cell>
+				</row>
+				
+				<!-- fila 61 -->
+				<row>
+				<cell><label id="lbPiso" value="Material Piso: "/></cell>
+				<cell>
+				<listbox id="lbxPiso" name="material_piso" mold="select" width="35%" sclass="combobox" 
+				onSelect="formVisita_domiciliaria.seleccion(self, 5,new AbstractComponent[]{tbxOtros_piso})"/>
+				<space width="3%"></space>
+				<textbox id="tbxOtros_piso" width="57%" style="text-transform:uppercase" visible="false"/>
+				</cell>
+				<cell><label id="lbParedes" value="Material Paredes: "/></cell>
+				<cell>
+				<listbox id="lbxParedes" name="material_paredes" mold="select" width="35%" sclass="combobox" 
+				onSelect="formVisita_domiciliaria.seleccion(self, 6,new AbstractComponent[]{tbxOtros_paredes})"/>
+				<space width="3%"></space>
+				<textbox id="tbxOtros_paredes" width="57%" style="text-transform:uppercase" visible="false"/>
+				</cell>
+				</row>
+
+				</rows>
+			</grid>
+</groupbox>
+</cell>
+</row>
+
+<!-- fila 8 -->
+<row id="rowCondiciones" visible="false">
+<cell colspan="6">
+<groupbox mold="3d" width="100%" closable="false">
+<caption label="CONDICIONES DE SALUBRIDAD"/>
+			<grid sclass="GridSinBorde" style="border:none">
+				<columns>
+				<column label="" width="15%"/>
+				<column label="" width="18%"/>
+				<column label="" width="15%"/>
+				<column label="" width="18%"/>
+				<column label="" width="15%"/>
+				<column />
+				</columns>
+				<rows>
+				
+				<!-- fila 64 -->
+				<row>
+				<cell colspan="2"><label id="lbEliminacion_excretas" value="Forma de eliminación de excretas: "/></cell>
+				<cell colspan="4">
+				<listbox id="lbxEliminacion_excretas" name="eliminacion_excretas" mold="select" width="20%" sclass="combobox"
+				onSelect="formVisita_domiciliaria.seleccion(self, 4,new AbstractComponent[]{tbxOtros_excretas})"/>
+				<space width="10%"></space>
+				<textbox id="tbxOtros_excretas" width="65%" style="text-transform:uppercase" visible="false"/>
+				</cell>
+				</row>
+				
+				<row>
+				<cell><label id="lbRecoleccion" value="Recoleccion: "/></cell>
+				<cell>
+				<radiogroup id="rdbRecoleccion">
+				<radio id="Recoleccion1" label="SÍ" value="1"/><space/>
+				<radio id="Recoleccion2" label="NO" checked="true" value="2"/><space/>
+				</radiogroup>
+				</cell>
+				<cell><label id="lbAgua_potable" value="Agua potable: "/></cell>
+				<cell colspan="3">
+				<radiogroup id="rdbAgua_potable">
+				<radio id="Agua_potable1" label="SÍ" value="1"/><space/>
+				<radio id="Agua_potable2" label="NO" checked="true" value="2"/><space/>
+				</radiogroup>
+				</cell>
+				</row>
+				
+
+				</rows>
+			</grid>
+</groupbox>
+</cell>
+</row>
+
+
+<!-- fila 9 -->
+<row id="rowDescripcion" visible="false">
+<cell colspan="6">
+<groupbox mold="3d" width="100%" closable="false">
+<caption label="DESCRIPCIÓN"/>
+			<grid sclass="GridSinBorde" style="border:none">
+				<columns>
+				<column label="" width="20%"/>
+				<column label="" width="30%"/>
+				<column label="" width="20%"/>
+				<column label="" width="30%"/>
+				</columns>
+				<rows>
+				
+				<!-- fila 67 -->
+				<row>
+				<cell colspan="4"><label id="lbEnfermedad_actual" value="¿Cuál es la Enfermedad actual y Cuáles son o eran los signos y síntomas? "/></cell>
+				</row>
+				
+				<!-- fila 67 -->
+				<row>
+				<cell colspan="4"><textbox id="tbxEnfermedad_actual" width="98%" rows="4" style="text-transform:uppercase"/></cell>
+				</row>
+				
+				<!-- fila 68 -->
+				<row>
+				<cell colspan="3"><label id="lbRecibido_medico" value="¿El paciente recibe o ha recibido atención médica por estos signos y síntomas? "/></cell>
+				<cell><radiogroup id="rdbRecibido_medico" onCheck="formVisita_domiciliaria.seleccion_radio(self, new AbstractComponent[]{lbTipo_atencion, tbxTipo_atencion, lbEntidad, tbxEntidad, lbProfesional, tbxProfesional, lbMotivo, tbxMotivo, rowMot1, rowMot2, rowMot3, rowMot4})">
+				<radio id="Recibido_medico1" label="SÍ" value="1"/><space/>
+				<radio id="Recibido_medico2" label="NO" checked="true" value="2"/><space/>
+				</radiogroup>
+				</cell>
+				</row>
+				
+				<!-- fila 69 -->
+				<row id="rowMot1" visible="false">
+				<cell><label id="lbTipo_atencion" value="Tipo de atención: " visible="false"/></cell>
+				<cell><textbox id="tbxTipo_atencion" width="220px" style="text-transform:uppercase" visible="false"/></cell>
+				<cell><label id="lbEntidad" value="Entidad: " visible="false"/></cell>
+				<cell><textbox id="tbxEntidad" width="220px" style="text-transform:uppercase" visible="false"/></cell>
+				</row>
+				
+				<row id="rowMot2" visible="false">
+				<cell><label id="lbProfesional" value="Profesional: " visible="false"/></cell>
+				<cell colspan="3"><textbox id="tbxProfesional" width="220px" style="text-transform:uppercase" visible="false"/></cell>
+				
+				</row>
+				
+				<!-- fila 67 -->
+				<row id="rowMot3" visible="false">
+				<cell colspan="4"><label id="lbMotivo" value="Motivo de Consulta: " visible="false"/></cell>
+				</row>
+				
+				<!-- fila 67 -->
+				<row id="rowMot4" visible="false">
+				<cell colspan="4"><textbox id="tbxMotivo" width="98%" rows="4" style="text-transform:uppercase" visible="false"/></cell>
+				</row>
+
+				
+
+				</rows>
+			</grid>
+</groupbox>
+</cell>
+</row>
+
+
+<!-- fila 10 -->
+<row id="rowEnfermedad_actual" visible="false">
+<cell colspan="6">
+<groupbox mold="3d" width="100%" closable="false">
+<caption label="HISTORIA ENFERMEDAD ACTUAL"/>
+			<grid sclass="GridSinBorde" style="border:none">
+				<columns>
+				<column label="" width="82px"/>
+				<column label="" width="180px"/>
+				<column label="" width="82px"/>
+				<column label="" width="225px"/>
+				<column label="" width="79px"/>
+				<column label="" />
+				</columns>
+				<rows>
+				<row>
+				<cell colspan="6"><textbox id="tbxHistoria_enfermedad_actual" width="98%" rows="5" style="text-transform:uppercase"/></cell>
+				</row>
+				</rows>
+			</grid>
+</groupbox>
+</cell>
+</row>
+
+<!-- fila 11 -->
+<row id="rowIntervencion_visita" visible="false">
+<cell colspan="6">
+<groupbox mold="3d" width="100%" closable="false">
+<caption label="ACCIONES DE INTERVENCIÓN DE LA VISITA"/>
+			<grid sclass="GridSinBorde" style="border:none">
+				<columns>
+				<column label="" width="82px"/>
+				<column label="" width="180px"/>
+				<column label="" width="82px"/>
+				<column label="" width="225px"/>
+				<column label="" width="79px"/>
+				<column label="" />
+				</columns>
+				<rows>
+
+				<row>
+				<cell colspan="6"><label id="lbAcciones_pyp" value="Acciones de Promoción y Prevención: "/></cell>
+				</row>
+				
+				<row>
+				<cell colspan="6"><textbox id="tbxAcciones_pyp" width="98%" rows="3" style="text-transform:uppercase"/></cell>
+				</row>
+
+
+				<row>
+				<cell colspan="6">
+				<label id="lbCanalizacion" value="Canalización: "/><space></space>
+				<radiogroup id="rdbCanalizacion" onCheck="formVisita_domiciliaria.seleccion_radio(self, new AbstractComponent[]{ tbxEntidad_canalizacion, lbMensaje, rowCon})">
+				<radio id="Canalizacion1" label="SÍ" value="1"/><space/>
+				<radio id="Canalizacion2" label="NO" checked="true" value="2"/><space/>
+				</radiogroup><space></space>
+				<label id="lbMensaje" value="(Especifique la Entidad a la cual se remite) " visible="false"/>
+				</cell>
+				</row>
+				
+				<row id="rowCon" visible="false">
+				<cell colspan="6"><textbox id="tbxEntidad_canalizacion" width="98%" rows="3" style="text-transform:uppercase" visible="false"/></cell>
+				</row>
+
+				</rows>
+			</grid>
+</groupbox>
+</cell>
+</row>
+
+
+<!-- fila 12 -->
+<row id="rowTratamiento" visible="false">
+<cell colspan="6">
+<groupbox mold="3d" width="100%" closable="false">
+<caption label="TRATAMIENTO ACTUAL (Psicología, psiquiatría o farmacológico)"/>
+			<grid sclass="GridSinBorde" style="border:none">
+				<columns>
+				<column label="" width="82px"/>
+				<column label="" width="180px"/>
+				<column label="" width="82px"/>
+				<column label="" width="225px"/>
+				<column label="" width="79px"/>
+				<column label="" />
+				</columns>
+				<rows>
+				<row>
+				<cell colspan="6"><textbox id="tbxTratamiento_actual" width="98%" rows="5" style="text-transform:uppercase"/></cell>
+				</row>
+				</rows>
+			</grid>
+</groupbox>
+</cell>
+</row>
+
+<!-- fila 13 -->
+<row id="rowEvaluacion" visible="false">
+<cell colspan="6">
+<groupbox mold="3d" width="100%" closable="false">
+<caption label="EVALUACIÓN DE LA VISITA"/>
+			<grid sclass="GridSinBorde" style="border:none">
+				<columns>
+				<column label="" width="82px"/>
+				<column label="" width="180px"/>
+				<column label="" width="82px"/>
+				<column label="" width="225px"/>
+				<column label="" width="79px"/>
+				<column label="" />
+				</columns>
+				<rows>
+
+				<row>
+				<cell colspan="6"><label id="lbActitud_familiares" value="Actitud de familiares durante la visita: "/></cell>
+				</row>
+				
+				<row>
+				<cell colspan="6"><textbox id="tbxActitud_familiares" width="98%" rows="3" style="text-transform:uppercase"/></cell>
+				</row>
+				
+				<row>
+				<cell colspan="6"><label id="lbPercepcion" value="Percepción de la comunicación durante la visita frente al caso: "/></cell>
+				</row>
+				
+				<row>
+				<cell colspan="6"><textbox id="tbxPercepcion" width="98%" rows="3" style="text-transform:uppercase"/></cell>
+				</row>
+				
+				<row>
+				<cell colspan="6"><label id="lbDisposicion" value="Disposición de quien recibe la intervención durante la visita: "/></cell>
+				</row>
+				
+				<row>
+				<cell colspan="6"><textbox id="tbxDisposicion" width="98%" rows="3" style="text-transform:uppercase"/></cell>
+				</row>
+				
+				<row>
+				<cell colspan="6"><label id="lbPercepcion_paciente" value="Como se percibe al paciente en cuanto al futuro impacto de la Visita: "/></cell>
+				</row>
+				
+				<row>
+				<cell colspan="6"><textbox id="tbxPercepcion_paciente" width="98%" rows="3" style="text-transform:uppercase"/></cell>
+				</row>
+				
+				</rows>
+			</grid>
+</groupbox>
+</cell>
+</row>
+
+<!-- fila 15 -->
+<row id="rowSeguimiento" visible="false">
+<cell colspan="6">
+<groupbox mold="3d" width="100%" closable="false">
+<caption label="SEGUIMIENTO"/>
+			<grid sclass="GridSinBorde" style="border:none">
+				<columns>
+				<column label="" width="82px"/>
+				<column label="" width="180px"/>
+				<column label="" width="82px"/>
+				<column label="" width="225px"/>
+				<column label="" width="79px"/>
+				<column label="" />
+				</columns>
+				<rows>
+				<row>
+				<cell colspan="6"><textbox id="tbxSeguimiento" width="98%" rows="5" style="text-transform:uppercase"/></cell>
+				</row>
+				</rows>
+			</grid>
+</groupbox>
+</cell>
+</row>
+
+<!-- fila 14 -->
+<row>
+<cell colspan="6">
+
+	<impresionDiagnostica id="macroImpresion_diagnostica" />
+	
+</cell>
+</row>
+
+
+<!-- fila 15 -->
+<row id="rowObservaciones" visible="false">
+<cell colspan="6">
+<groupbox mold="3d" width="100%" closable="false">
+<caption label="OBSERVACIONES"/>
+			<grid sclass="GridSinBorde" style="border:none">
+				<columns>
+				<column label="" width="82px"/>
+				<column label="" width="180px"/>
+				<column label="" width="82px"/>
+				<column label="" width="225px"/>
+				<column label="" width="79px"/>
+				<column label=""/>
+				</columns>
+				<rows>
+				<row>
+				<cell colspan="6"><textbox id="tbxObservacion" width="98%" rows="5" style="text-transform:uppercase"/></cell>
+				</row>
+				</rows>
+			</grid>
+</groupbox>
+</cell>
+</row>
+
+
+<!-- fila 15 -->
+<row id="rowRecomendaciones" visible="false">
+<cell colspan="6">
+<groupbox mold="3d" width="100%" closable="false">
+<caption label="RECOMENDACIONES"/>
+			<grid sclass="GridSinBorde" style="border:none">
+				<columns>
+				<column label="" width="82px"/>
+				<column label="" width="180px"/>
+				<column label="" width="82px"/>
+				<column label="" width="225px"/>
+				<column label="" width="79px"/>
+				<column label=""/>
+				</columns>
+				<rows>
+				<row>
+				<cell colspan="6"><textbox id="tbxRecomendacion" width="98%" rows="5" style="text-transform:uppercase"/></cell>
+				</row>
+				</rows>
+			</grid>
+</groupbox>
+</cell>
+</row>
+
+
+									<row>
+										<cell colspan="6">
+											<remision_interna
+												id="macroRemision_interna" />
+										</cell>
+									</row>
+
+					
+					</rows>
+					</grid>
+
+					</groupbox>
+				</div>
+			</center>
+		</borderlayout>
+	</groupbox>
+</window>
+</zk>

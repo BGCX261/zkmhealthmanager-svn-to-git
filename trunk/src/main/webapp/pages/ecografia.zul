@@ -1,0 +1,521 @@
+<?page title="Ecografia" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formEcografia" width="100%" height="97%"
+		use="healthmanager.controller.EcografiaAction">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="false" closable="false"
+			mold="3d" height="100%">
+			<caption label="Consultar"
+				style="color: blue;font-weight: bold" />
+
+			<separator />
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" mold="paging" pageSize="20"
+				vflex="1">
+				<auxhead>
+					<auxheader colspan="1">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<separator />
+							<textbox id="tbxValue" width="200px"
+								onOK="formEcografia.buscarDatos();"
+								style="text-transform:uppercase" />
+							<separator />
+							<button mold="trendy"
+								image="/images/Magnifier.gif"
+								onClick="formEcografia.buscarDatos();"
+								tooltiptext="Consultar Ecografia" />
+							<separator />
+							<button mold="trendy"
+								image="/images/New16.gif"
+								onClick='formEcografia.accionForm(true,"registrar");'
+								tooltiptext="Nuevo Ecografia" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Acciones" align="center"
+						width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<borderlayout width="100%" height="100%" id="groupboxEditar"
+			visible="true">
+			<north border="none">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<toolbarbutton image="/images/Save16.gif"
+						label="Guardar Ecografia" onClick="formEcografia.guardarDatos();"
+						id="btGuardar" />
+					<toolbarbutton image="/images/New16.gif"
+						label="Nueva Ecografia"
+						onClick='formEcografia.accionForm(true,"registrar");' id="btNew"
+						visible="false" />
+					<space />
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Cancelar"
+						onClick='formEcografia.accionForm(false,tbxAccion.getText());'
+						id="btCancel" visible="false" />
+					<toolbarbutton image="/images/print_ico.gif"
+						disabled="true" label="Imprimir Ecografia"
+						onClick="formEcografia.imprimir();" id="btImprimir" />
+					<space />
+					<label value="Formato impresión: " />
+					<listbox id="lbxFormato" mold="select" width="150px"
+						disabled="true" sclass="combobox">
+						<listitem value="pdf" label="PDF"
+							selected="true" />
+						<listitem value="rtf" label="WORD" />
+					</listbox>
+				</toolbar>
+			</north>
+
+			<center autoscroll="true" border="none">
+				<div align="center">
+					<space />
+					<!-- *************************** -->
+					<!-- *** Insertar/Actualizar *** -->
+					<!-- *************************** -->
+					<groupbox mold="3d" closable="false"
+						width="678px">
+						<caption label="HALLAZGOS" />
+						<grid>
+							<columns>
+								<column width="10px" />
+								<column width="140px" />
+								<column width="182px" />
+								<column width="140px" />
+								<column width="182px" />
+								<column width="10px" />
+							</columns>
+							<rows>
+								<row>
+									<cell></cell>
+									<cell>
+										<label id="lbFum"
+											value="F.U.M: " />
+									</cell>
+									<cell>
+										<datebox id="dtbxFum"
+											format="yyyy-MM-dd" hflex="1" />
+									</cell>
+									<cell height="30px">
+										<label id="lbFpp"
+											value="F.P.P: " />
+									</cell>
+									<cell>
+										<datebox id="dtbxFpp"
+											format="yyyy-MM-dd" hflex="1" buttonVisible="false"/> 
+									</cell>
+									<cell></cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label id="lbEdad_gestacional"
+											value="Edad gestacional (sem.): "
+											tooltiptext="Edad gestacional (Semanas)"
+											style="font-size:10px" />
+									</cell>
+									<cell>
+										<listbox id="lbxEdad_gestional"
+											hflex="1" mold="select" sclass="combobox" />
+									</cell>
+									<cell>
+										<label id="lbUtero"
+											value="Utero: " />
+									</cell>
+									<cell>
+										<textbox id="tbxUtero" hflex="1"
+											style="text-transform:uppercase" maxlength="-1" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<row>
+									<cell></cell>
+									<cell>
+										<label id="lbActividad_cardiaca"
+											value="Actividad cardiaca: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxActividad_cardiaca" hflex="1"
+											style="text-transform:uppercase" maxlength="5" />
+									</cell>
+									<cell>
+										<label id="lbMov_fetal"
+											value="Movimiento fetal: " />
+									</cell>
+									<cell>
+										<textbox id="tbxMov_fetal"
+											hflex="1" style="text-transform:uppercase" maxlength="2" />
+									</cell>
+									<cell></cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell>
+										<label id="lbPresentacion"
+											value="Presentacion: " />
+									</cell>
+									<cell>
+										<textbox id="tbxPresentacion"
+											hflex="1" style="text-transform:uppercase" maxlength="2" />
+									</cell>
+									<cell height="30px">
+										<label id="lbSituacion"
+											value="Situación: " />
+									</cell>
+									<cell>
+										<textbox id="tbxSituacion"
+											hflex="1" style="text-transform:uppercase" maxlength="2" />
+									</cell>
+									<cell></cell>
+								</row>
+								<row>
+									<cell></cell>
+
+
+									<cell>
+										<label id="lbDorso"
+											value="Dorso: " />
+									</cell>
+									<cell>
+										<textbox id="tbxDorso" hflex="1"
+											style="text-transform:uppercase" maxlength="2" />
+									</cell>
+									<cell>
+										<label id="lbPlacenta"
+											value="Placenta: " />
+									</cell>
+									<cell>
+										<textbox id="tbxPlacenta"
+											hflex="1" style="text-transform:uppercase" maxlength="-1" />
+									</cell>
+									<cell></cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell>
+										<label id="lbGrado"
+											value="Grado: " />
+									</cell>
+									<cell>
+										<textbox id="tbxGrado" hflex="1"
+											style="text-transform:uppercase" maxlength="2" />
+									</cell>
+									<cell height="30px">
+										<label id="lbGrosor"
+											value="Grosor: " />
+									</cell>
+									<cell>
+										<textbox id="tbxGrosor"
+											hflex="1" style="text-transform:uppercase" maxlength="40" />
+									</cell>
+									<cell></cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell>
+										<label id="lbLiquido_amniotico"
+											value="Liquido amniotico: " />
+									</cell>
+									<cell colspan="3">
+										<textbox
+											id="tbxLiquido_amniotico" hflex="1"
+											style="text-transform:uppercase" />
+									</cell>
+									<cell></cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell>
+										<label id="lbDms"
+											value="D.M.S.: " />
+									</cell>
+									<cell>
+										<doublebox id="dbxDms" hflex="1"
+											format="####" maxlength="5" tooltiptext="Diametro medio del saco"/>
+									</cell>
+									<cell>
+										<label id="lbSem_dms"
+											value="Semana: " />
+									</cell>
+									<cell>
+										<listbox id="lbxSem_dms"
+											hflex="1" style="text-transform:uppercase" mold="select"
+											sclass="combobox" />
+									</cell>
+									<cell></cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell>
+										<label id="lbCrl"
+											value="C.R.L: " />
+									</cell>
+									<cell>
+										<doublebox id="dbxCrl" hflex="1"
+											format="####" maxlength="5" />
+									</cell>
+									<cell>
+										<label id="lbSem_crl"
+											value="Semana: " />
+									</cell>
+									<cell>
+										<listbox id="lbxSem_crl"
+											hflex="1" style="text-transform:uppercase" mold="select"
+											sclass="combobox" />
+									</cell>
+									<cell></cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell>
+										<label id="lbDbp"
+											value="D.B.P(MM): " />
+									</cell>
+									<cell>
+										<doublebox id="dbxDbp" hflex="1"
+											maxlength="5" format="####" />
+									</cell>
+
+									<cell>
+										<label id="lbSem_dbp"
+											value="Semana: " />
+									</cell>
+									<cell>
+										<listbox id="lbxSem_dbp"
+											hflex="1" style="text-transform:uppercase" mold="select"
+											sclass="combobox" />
+									</cell>
+									<cell></cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell>
+										<label id="lbPc" value="P.C: " />
+									</cell>
+									<cell>
+										<doublebox id="dbxPc" hflex="1"
+											maxlength="5" format="####" />
+									</cell>
+
+									<cell>
+										<label id="lbSem_pc"
+											value="Semana: " />
+									</cell>
+									<cell>
+										<listbox id="lbxSem_pc"
+											hflex="1" style="text-transform:uppercase" mold="select"
+											sclass="combobox" />
+									</cell>
+									<cell></cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell>
+										<label id="lbCa" value="C.A(MM): " />
+									</cell>
+									<cell>
+										<doublebox id="dbxCa" hflex="1"
+											format="####" maxlength="5" />
+									</cell>
+									<cell>
+										<label id="lbSem_ca"
+											value="Semana: " />
+									</cell>
+									<cell>
+										<listbox id="lbxSem_ca"
+											hflex="1" style="text-transform:uppercase" mold="select"
+											sclass="combobox" />
+									</cell>
+									<cell></cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell>
+										<label id="lbFemur"
+											value="Femur(MM): " />
+									</cell>
+									<cell>
+										<doublebox id="dbxFemur"
+											hflex="1" format="####" maxlength="5" />
+									</cell>
+									<cell>
+										<label id="lbSem_femur"
+											value="Semana: " />
+									</cell>
+									<cell>
+										<listbox id="lbxSem_femur"
+											hflex="1" style="text-transform:uppercase" mold="select"
+											sclass="combobox" />
+									</cell>
+									<cell></cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label id="lbSexo"
+											value="Sexo: " />
+									</cell>
+									<cell>
+										<listbox id="lbxSexo" hflex="1"
+											sclass="combobox" mold="select" name="sexo">
+										</listbox>
+									</cell>
+									<cell>
+										<label id="lbPeso"
+											value="Peso fetal estimado: " />
+									</cell>
+									<cell>
+										<doublebox id="dbxPeso"
+											hflex="1" format="####" maxlength="5" />
+									</cell>
+									<cell></cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell>
+										<label id="lbOvario_derecho"
+											value="Ovario Derecho: " />
+									</cell>
+									<cell>
+										<textbox id="tbxOvario_derecho"
+											hflex="1" style="text-transform:uppercase" maxlength="30" />
+									</cell>
+									<cell>
+										<label id="lbOvario_izquierdo"
+											value="Ovario Izquierdo: " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxOvario_izquierdo" hflex="1"
+											style="text-transform:uppercase" maxlength="30" />
+									</cell>
+									<cell></cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell>
+										<label id="lbD_s_douglas"
+											value="F. de S. Douglas(grs): " />
+									</cell>
+									<cell colspan="3">
+										<textbox id="tbxD_s_douglas"
+											hflex="1" style="text-transform:uppercase" />
+									</cell>
+									<cell></cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label id="lbObservaciones"
+											value="Observaciones: " />
+									</cell>
+									<cell colspan="3">
+										<textbox id="tbxObservaciones"
+											hflex="1" rows="4" style="text-transform:uppercase"
+											maxlength="-1" />
+									</cell>
+									<cell></cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+					<space height="5px" />
+					<groupbox mold="3d" closable="false"
+						width="678px">
+						<caption label="CONCLUSION" />
+						<grid>
+							<columns>
+								<column />
+							</columns>
+							<rows>
+								<row>
+									<cell>
+										<label id="lbDiagnostico"
+											value="Diagnóstico: " />
+									</cell>
+								</row>
+								<row>
+									<cell>
+										<textbox id="tbxDiagnostico"
+											hflex="1" rows="4" style="text-transform:uppercase"
+											maxlength="-1" />
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+					<space height="5px" />
+					<groupbox mold="3d" closable="false"
+						width="678px">
+						<caption label="TECNICA" />
+						<grid>
+							<columns>
+								<column />
+							</columns>
+							<rows>
+								<row>
+									<cell>
+										<label id="lbFppEcografia"
+											value="F.P.P. POR ECOGRAFIA: " />
+										<datebox
+											id="dtbxFPPPorEcografia" format="yyyy-MM-dd" width="170px" />
+									</cell>
+								</row>
+								<row>
+									<cell>
+										<label id="lbNotas"
+											value="Notas: " />
+									</cell>
+								</row>
+								<row>
+									<cell>
+										<textbox id="tbxNotas" hflex="1"
+											rows="4" style="text-transform:uppercase" maxlength="-1" />
+									</cell>
+								</row>
+
+								<row id="rowGinecologo" visible="false">
+ 									<cell>
+										<label value="Ginecólogo: "
+											style="font-weight: bold;" />
+										<label id="lbGinecologo" />
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+
+
+				</div>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

@@ -1,0 +1,1000 @@
+<?page title="Muestra_citologia_vaginal" contentType="text/html;charset=UTF-8"?>
+<?component name="informacionPacientes" macroURI="/WEB-INF/macros/informacionPacientes.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formMuestra_citologia_vaginal" width="100%" height="97%"
+		use="healthmanager.controller.Muestra_citologia_vaginalAction">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="false" closable="false"
+			mold="3d" height="100%">
+			<caption label="Consultar"
+				style="color: blue;font-weight: bold">
+				<toolbarbutton image="/images/add_perfil.png"
+					style="font-weight:bold;float:right;margin-right:50px"
+					label="PACIENTE ADMISIONADO"
+					id="toolbarbuttonPaciente_admisionado1" visible="false" />
+			</caption>
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" height="100%" mold="paging"
+				pageSize="20" vflex="1">
+				<auxhead>
+					<auxheader colspan="6">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<separator />
+							<textbox id="tbxValue" width="200px"
+								onOK="formMuestra_citologia_vaginal.buscarDatos();"
+								style="text-transform:uppercase" />
+							<separator />
+							<button mold="trendy"
+								image="/images/Magnifier.gif"
+								onClick="formMuestra_citologia_vaginal.buscarDatos();"
+								tooltiptext="Consultar Muestra citologia vaginal" />
+							<separator />
+							<button mold="trendy"
+								image="/images/New16.gif" visible="false"
+								onClick='formMuestra_citologia_vaginal.accionForm(healthmanager.controller.ZKWindow.OpcionesFormulario.REGISTRAR,null);'
+								tooltiptext="Nuevo Muestra citologia vaginal" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Codigo historia" width="10%" />
+					<column label="Identificacion" width="10%" />
+					<column label="Nombre paciente" />
+					<column label="Fecha inicial" width="20%" />
+					<column label="Acciones" align="center"
+						width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<groupbox id="groupboxEditar" visible="true" closable="false"
+			mold="3d" height="100%">
+			<caption label="Registrar/Modificar Historia"
+				style="font-weight: bold">
+				<toolbarbutton image="/images/add_perfil.png"
+					style="font-weight:bold;float:right;margin-right:50px"
+					label="PACIENTE ADMISIONADO"
+					id="toolbarbuttonPaciente_admisionado2" />
+			</caption>
+
+			<borderlayout width="100%" height="100%"
+				id="borderlayoutEditar" visible="true">
+				<north border="none" id="northEditar">
+					<div height="50px">
+						<toolbar width="100%" align="start">
+							<textbox id="tbxAccion" value="registrar"
+								visible="false" />
+							<textbox id="tbxIdentificacion" value=""
+								visible="false" />
+							<toolbarbutton image="/images/Save16.gif"
+								label="Guardar Muestra citologia vaginal"
+								onClick="formMuestra_citologia_vaginal.guardarDatos();"
+								id="btGuardar" />
+							<toolbarbutton image="/images/New16.gif"
+								onClick='formMuestra_citologia_vaginal.accionForm(healthmanager.controller.ZKWindow.OpcionesFormulario.REGISTRAR,null);'
+								label="Nueva Muestra citologia vaginal" id="btNew"
+								visible="false" />
+							<space />
+							<toolbarbutton image="/images/trasladar.gif"
+								label="Cancelar"
+								onClick='formMuestra_citologia_vaginal.accionForm(healthmanager.controller.ZKWindow.OpcionesFormulario.CONSULTAR,null);'
+								id="btnCancelar" />
+							<toolbarbutton image="/images/print_ico.gif"
+								label="Imprimir Citología"
+								onClick="formMuestra_citologia_vaginal.imprimir();"
+								id="btImprimir" />
+							<space />
+							<label value="Formato impresión: "
+								visible="false" />
+							<listbox id="lbxFormato" mold="select"
+								width="150px" visible="false" sclass="combobox">
+								<listitem value="pdf" label="PDF"
+									selected="true" />
+								<listitem value="rtf" label="WORD" />
+							</listbox>
+						</toolbar>
+						<toolbarbutton image="/images/info_icon.png"
+							style="font-weight:bold;float:right;margin-right:50px"
+							id="toolbarbuttonTipo_historia" visible="false" />
+					</div>
+				</north>
+				<center autoscroll="true" border="none">
+					<div align="center">
+
+						<groupbox closable="false" width="800px"
+							mold="3d">
+
+							<groupbox mold="3d" closable="false"
+								visible="true" id="gbxIdentificacion">
+								<caption label="INFORMACIÓN CONSULTA"
+									style="font-weight:bold" />
+								<informacionPacientes
+									id="infoPacientes" />
+							</groupbox>
+
+							<groupbox id="groupboxPrimera"
+								visible="false">
+								<groupbox mold="3d" closable="false">
+									<caption
+										label="IDENTIFICACIÓN DE LA UNIDAD" style="font-weight:bold" />
+									<grid>
+										<columns>
+											<column />
+										</columns>
+										<rows>
+											<row>
+												<cell align="center">
+													<label
+														value="CAP/UPA" />
+													<space />
+													<textbox
+														constraint="no negative:Este valor no puede ser negativo"
+														id="tbxIdentificacio_unidad" width="370px"
+														style="text-transform:uppercase" />
+												</cell>
+											</row>
+										</rows>
+									</grid>
+								</groupbox>
+
+								<groupbox mold="3d" closable="false">
+									<caption label="ANTECEDENTES"
+										style="font-weight:bold" />
+									<grid>
+										<columns>
+											<column />
+										</columns>
+										<rows>
+											<row>
+												<cell>
+													<groupbox>
+														<grid>
+															<columns>
+																<column />
+																<column />
+																<column />
+																<column
+																	width="18%" />
+															</columns>
+															<rows>
+																<row>
+																	<cell
+																		colspan="4">
+																		<label
+																			value="DETECCIÓN DE CANCER DE CERVIX"
+																			style="font-weight:bold" />
+																	</cell>
+																</row>
+																<row>
+																	<cell>
+																		<radiogroup
+																			id="rdbDeteccion_cancer" />
+																		<radio
+																			label="Primera vez en la vida"
+																			radiogroup="rdbDeteccion_cancer" value="1"
+																			checked="true" />
+																	</cell>
+																	<cell>
+																		<radio
+																			label="Un año o menos"
+																			radiogroup="rdbDeteccion_cancer" value="2" />
+																	</cell>
+																	<cell>
+																		<radio
+																			label="2-3 años" radiogroup="rdbDeteccion_cancer"
+																			value="3" />
+																	</cell>
+																	<cell>
+																		<radio
+																			label="Mas de 3 meses"
+																			radiogroup="rdbDeteccion_cancer" value="4" />
+																	</cell>
+																</row>
+															</rows>
+														</grid>
+													</groupbox>
+												</cell>
+											</row>
+											<row>
+												<cell>
+													<groupbox>
+														<grid>
+															<columns>
+																<column />
+																<column />
+																<column />
+																<column />
+																<column
+																	width="12%" />
+															</columns>
+															<rows>
+																<row>
+																	<cell
+																		colspan="5">
+																		<label
+																			value="GINECO-OBSTÉTRICO" style="font-weight:bold" />
+																	</cell>
+																</row>
+																<row>
+																	<cell
+																		align="center">
+																		<label
+																			value="Número de embarazos" style="color:red" />
+																	</cell>
+
+																	<cell
+																		align="center">
+																		<label
+																			value="Número de partos" style="color:red" />
+																	</cell>
+
+																	<cell
+																		align="center">
+																		<label
+																			value="Número de abortos" style="color:red" />
+																	</cell>
+
+																	<cell
+																		align="center">
+																		<label
+																			value="Número de cesareas" style="color:red" />
+																	</cell>
+																	<cell
+																		align="center">
+																		<label
+																			value="Nacidos vivos" style="color:red" />
+																	</cell>
+																</row>
+																<row>
+																	<cell
+																		align="center">
+																		<label
+																			id="lbPerinatales_g" value="G: " style="color:red" />
+																		<intbox
+																			constraint="no negative:Este valor no puede ser negativo"
+																			id="ibxPerinatales_g" width="50px"
+																			style="text-transform:uppercase" />
+																	</cell>
+																	<cell
+																		align="center">
+																		<label
+																			id="lbPerinatales_p" value="P: " style="color:red" />
+																		<intbox
+																			constraint="no negative:Este valor no puede ser negativo"
+																			id="ibxPerinatales_p" width="50px"
+																			style="text-transform:uppercase" />
+																	</cell>
+																	<cell
+																		align="center">
+																		<label
+																			id="lbPerinatales_a" value="A: " style="color:red" />
+																		<intbox
+																			constraint="no negative:Este valor no puede ser negativo"
+																			id="ibxPerinatales_a" width="50px"
+																			style="text-transform:uppercase" />
+																	</cell>
+																	<cell
+																		align="center">
+																		<label
+																			id="lbPerinatales_c" value="C: " style="color:red" />
+																		<intbox
+																			constraint="no negative:Este valor no puede ser negativo"
+																			id="ibxPerinatales_c" width="50px"
+																			style="text-transform:uppercase" />
+																	</cell>
+																	<cell
+																		align="center">
+																		<label
+																			id="lbPerinatales_v" value="V: " style="color:red" />
+																		<intbox
+																			constraint="no negative:Este valor no puede ser negativo"
+																			id="ibxPerinatales_v" width="50px"
+																			style="text-transform:uppercase" />
+																	</cell>
+																</row>
+																<row>
+																	<cell
+																		colspan="2">
+																		<label
+																			value="Fecha última mestruación" />
+																		<space />
+																		<datebox
+																			id="dtbxFum" format="yyyy-MM-dd" width="110px" />
+																	</cell>
+																	<cell>
+																		<checkbox
+																			id="chbCauterizacion_cevix"
+																			label="Cauterización cervix" />
+																	</cell>
+																	<cell>
+																		<checkbox
+																			id="chbConizacion_cervix" label="Conización cervix" />
+																	</cell>
+																	<cell>
+																		<checkbox
+																			id="chbDiu" label="Diu" />
+																	</cell>
+																</row>
+																<row>
+																	<cell>
+																		<checkbox
+																			id="chbPost_evento" label="Post evento obstetrico" />
+																	</cell>
+																	<cell>
+																		<checkbox
+																			id="chbPostmenopausia" label="Postmenopausia" />
+																	</cell>
+																	<cell>
+																		<checkbox
+																			id="chbRadioterapia" label="Radioterapia" />
+																	</cell>
+																	<cell>
+																		<checkbox
+																			id="chbHisterectomia" label="Histerectomía" />
+																	</cell>
+																	<cell>
+																		<checkbox
+																			id="chbEmbarazo" label="Embarazo" />
+																	</cell>
+																</row>
+																<row>
+																	<cell
+																		colspan="5">
+																		<checkbox
+																			id="chbAnticoncepcion"
+																			label="Anticoncepción hormonal" />
+																	</cell>
+																</row>
+															</rows>
+														</grid>
+													</groupbox>
+												</cell>
+											</row>
+											<row>
+												<cell>
+													<groupbox>
+														<grid>
+															<columns>
+																<column />
+																<column />
+																<column
+																	width="12%" />
+															</columns>
+															<rows>
+																<row>
+																	<cell
+																		colspan="3">
+																		<label
+																			value="RESULTADO CITOLOGÍA ANTERIOR"
+																			style="font-weight:bold" />
+																	</cell>
+																</row>
+																<row>
+																	<cell>
+																		<radiogroup
+																			id="rdbResul_cita_anterio" />
+																		<radio
+																			radiogroup="rdbResul_cita_anterio" checked="true"
+																			label="Normal" value="0" visible="false" />
+																		<radio
+																			radiogroup="rdbResul_cita_anterio" label="Normal"
+																			value="1" />
+																	</cell>
+																	<cell>
+																		<radio
+																			radiogroup="rdbResul_cita_anterio" label="Anormal"
+																			value="2" />
+																	</cell>
+																	<cell>
+																		<radio
+																			radiogroup="rdbResul_cita_anterio" label="No sabe"
+																			value="3" />
+																	</cell>
+																</row>
+															</rows>
+														</grid>
+													</groupbox>
+												</cell>
+											</row>
+										</rows>
+									</grid>
+								</groupbox>
+								<groupbox mold="3d" closable="false">
+									<caption label="ASPECTOS DEL CUELLO"
+										style="font-weight:bold" />
+									<grid>
+										<columns>
+											<column />
+											<column />
+											<column />
+											<column width="15%" />
+										</columns>
+										<rows>
+											<row>
+												<cell>
+													<checkbox
+														id="chbAspecto_normal" label="Normal" />
+												</cell>
+												<cell>
+													<checkbox
+														id="chbAspecto_hipertrofico" label="Hipertrófico" />
+												</cell>
+												<cell>
+													<checkbox
+														id="chbAspecto_erosion" label="Erosión periorificiaria" />
+												</cell>
+												<cell>
+													<checkbox
+														id="chbAspecto_leucorrea" label="Leucorrea" />
+												</cell>
+											</row>
+											<row>
+												<cell>
+													<checkbox
+														id="chbAspecto_sangrado" label="Sangrado endocervical" />
+												</cell>
+												<cell>
+													<checkbox
+														id="chbAspecto_diu_visible" label="Diu visible" />
+												</cell>
+												<cell colspan="2">
+													<checkbox
+														id="chbOtro" onFocus="tbxOtro_cual.focus();"
+														onCheck="formMuestra_citologia_vaginal.deshabilitar_conCheck(self, new AbstractComponent[]{tbxOtro_cual})"
+														label="Otro" />
+													<space />
+													<textbox
+														readonly="true" id="tbxOtro_cual" width="238px"
+														style="text-transform:uppercase" maxlength="150" />
+												</cell>
+											</row>
+										</rows>
+									</grid>
+								</groupbox>
+
+								<groupbox mold="3d" closable="false">
+									<caption
+										label="CITOLOGÍA TOMADA POR" style="font-weight:bold" />
+									<grid>
+										<columns>
+											<column width="22%" />
+											<column width="53%" />
+											<column />
+										</columns>
+										<rows>
+											<row>
+												<cell>
+													<radiogroup
+														id="rdbMedico_o_enfermera" />
+													<radio
+														label="Médico" value="S"
+														radiogroup="rdbMedico_o_enfermera" />
+													<space />
+													<radio
+														label="Enfermera" value="N"
+														radiogroup="rdbMedico_o_enfermera" checked="true" />
+												</cell>
+												<cell>
+													<label
+														value="Nombre" />
+													<space />
+													<textbox
+														id="tbxNombre_del_profesional" width="325px"
+														style="text-transform:uppercase" maxlength="150" />
+												</cell>
+												<cell>
+													<label
+														id="lbFecha_toma" value="Fecha toma: " />
+													<space />
+													<datebox
+														id="dtbxFecha_toma" onCreate="self.value = new Date();"
+														format="yyyy-MM-dd" width="100px" />
+												</cell>
+											</row>
+										</rows>
+									</grid>
+								</groupbox>
+							</groupbox>
+							<groupbox id="groupboxSegunda"
+								visible="false">
+								<groupbox mold="3d" closable="false">
+									<caption label="LECTURA" />
+									<grid>
+										<columns>
+											<column />
+											<column width="27%"
+												label="" />
+											<column width="20%" />
+										</columns>
+										<rows>
+											<row>
+												<cell>
+													<label
+														id="lbLaboratorio" value="Laboratorio: " />
+													<space />
+													<textbox
+														id="tbxLaboratorio" width="310px"
+														style="text-transform:uppercase" maxlength="100" />
+												</cell>
+												<cell>
+													<label
+														id="lbFecha_lectura" value="Fecha lectura: " />
+													<space />
+													<datebox
+														id="dtbxFecha_lectura" format="yyyy-MM-dd" width="90px" />
+												</cell>
+												<cell>
+													<label
+														id="lbNro_placa" value="Nro placa: " />
+													<space />
+													<intbox
+														constraint="no negative:Este valor no puede ser negativo"
+														id="ibxNro_placa" width="60px"
+														style="text-transform:uppercase" />
+												</cell>
+											</row>
+										</rows>
+									</grid>
+								</groupbox>
+								<groupbox mold="3d" closable="false">
+									<caption
+										label="CALIDAD DE LA MUESTRA" style="font-weight:bold" />
+									<grid>
+										<columns>
+											<column width="23%" />
+											<column />
+											<column />
+										</columns>
+										<rows>
+											<row>
+												<cell />
+												<cell>
+													<radiogroup
+														id="rdbCalidad_muestra" />
+													<radio
+														label="Satisfactoria zona de transformación presente"
+														radiogroup="rdbCalidad_muestra" value="1" />
+												</cell>
+												<cell>
+													<radio
+														label="Insatisfactoria" radiogroup="rdbCalidad_muestra"
+														value="2" />
+												</cell>
+											</row>
+											<row>
+												<cell align="center"
+													colspan="3">
+													<radio
+														label="Satisfactoria cona de trans	formación ausente"
+														radiogroup="rdbCalidad_muestra" value="3" />
+													<space />
+													<radio
+														label="Rechazada" radiogroup="rdbCalidad_muestra"
+														value="4" />
+													<space />
+													<radio
+														label="No aplica" radiogroup="rdbCalidad_muestra"
+														value="5" checked="true" />
+												</cell>
+											</row>
+											<row>
+												<cell colspan="3">
+													<label
+														value="Especifique motivo:" />
+													<textbox
+														id="tbxEspecifique_motivo" width="98%" rows="3"
+														style="text-transform:uppercase" maxlength="-1" />
+												</cell>
+											</row>
+										</rows>
+									</grid>
+								</groupbox>
+								<groupbox mold="3d" closable="false">
+									<caption label="RESULTADOS"
+										style="font-weight:bold" />
+									<grid>
+										<columns>
+											<column />
+										</columns>
+										<rows>
+											<row>
+												<cell>
+													<groupbox>
+														<grid>
+															<columns>
+																<column />
+																<column
+																	width="38%" />
+															</columns>
+															<rows>
+																<row>
+																	<cell
+																		colspan="2">
+																		<label
+																			value="EVALUACIÓN GENERAL" style="font-weight:bold" />
+																	</cell>
+																</row>
+																<row>
+																	<cell
+																		align="center" colspan="2">
+																		<radiogroup
+																			id="rdbEvaluacion_general" />
+																		<radio
+																			label="Citología negativa para lesión intrapitelial"
+																			radiogroup="rdbEvaluacion_general" value="S" />
+																		<space />
+																		<radio
+																			label="Anormalidades de las células epiteliales"
+																			radiogroup="rdbEvaluacion_general" value="N" />
+																		<space />
+																		<radio
+																			label="No aplica" radiogroup="rdbEvaluacion_general"
+																			value="P" checked="true" />
+																	</cell>
+																</row>
+															</rows>
+														</grid>
+													</groupbox>
+												</cell>
+											</row>
+											<row>
+												<cell>
+													<groupbox>
+														<grid>
+															<columns>
+																<column />
+																<column
+																	width="60%" />
+															</columns>
+															<rows>
+																<row>
+																	<cell
+																		colspan="2">
+																		<label
+																			value="MICROORGANISMOS" style="font-weight:bold" />
+																	</cell>
+																</row>
+																<row>
+																	<cell>
+																		<radiogroup
+																			onCheck="formMuestra_citologia_vaginal.deshabilitar_conRadio(self,new AbstractComponent[]{tbxCual_otro})"
+																			id="rdbMicroorganismos" />
+																		<radio
+																			radiogroup="rdbMicroorganismos"
+																			label="Cambios sugestivos de vaginosis bacteriana"
+																			value="N" />
+																	</cell>
+																	<cell>
+																		<radio
+																			onFocus="tbxCual_otro.focus()"
+																			radiogroup="rdbMicroorganismos" label="Otros"
+																			value="S" />
+																		<space />
+																		<label
+																			value="¿Cuál?" />
+																		<space />
+																		<textbox
+																			readonly="true" id="tbxCual_otro" width="315px"
+																			style="text-transform:uppercase" maxlength="50" />
+																	</cell>
+																</row>
+																<row>
+																	<cell
+																		colspan="2" align="center">
+																		<radio
+																			radiogroup="rdbMicroorganismos" label="No aplica"
+																			value="P" checked="true" />
+																	</cell>
+																</row>
+															</rows>
+														</grid>
+													</groupbox>
+												</cell>
+											</row>
+										</rows>
+									</grid>
+								</groupbox>
+								<groupbox mold="3d" closable="false">
+									<caption
+										label="ANORMALIDADES DE LAS CÉLULAS EPITELIALES EN LAS CÉLULAS EXOCERVICALES"
+										style="font-weight:bold" />
+									<grid>
+										<columns>
+											<column />
+										</columns>
+										<rows>
+											<row>
+												<cell>
+													<groupbox>
+														<grid>
+															<columns>
+																<column />
+																<column
+																	width="38%" />
+															</columns>
+															<rows>
+																<row>
+																	<cell
+																		colspan="2">
+																		<label
+																			value="CÉLULAS ESCAMOSAS ATIPICAS (ASC)"
+																			style="font-weight:bold" />
+																	</cell>
+																</row>
+																<row>
+																	<cell
+																		align="center" colspan="2">
+																		<radiogroup
+																			id="rdbCelulas_escamosas" />
+																		<radio
+																			label="De significado indeterminado (ASC-US)"
+																			radiogroup="rdbCelulas_escamosas" value="S" />
+																		<space />
+																		<radio
+																			label="Que no puede excluir H-SIL (ASC-H)"
+																			radiogroup="rdbCelulas_escamosas" value="N" />
+																		<space />
+																		<radio
+																			label="No aplica" radiogroup="rdbCelulas_escamosas"
+																			value="P" checked="true" />
+																	</cell>
+																</row>
+															</rows>
+														</grid>
+													</groupbox>
+												</cell>
+											</row>
+											<row>
+												<cell>
+													<groupbox>
+														<grid>
+															<columns>
+																<column
+																	width="20%" />
+																<column />
+																<column />
+															</columns>
+															<rows>
+																<row>
+																	<cell
+																		colspan="3">
+																		<label
+																			value="LESIÓN ESCAMOSA INTRAEPITELIAL DE BAJO GRADO (LIE BAJO GRADO)"
+																			style="font-weight:bold" />
+																	</cell>
+																</row>
+																<row>
+																	<cell
+																		colspan="3" align="center">
+																		<radiogroup
+																			id="rdbLesion_bajo_grado" />
+																		<radio
+																			radiogroup="rdbLesion_bajo_grado"
+																			label="Cambios sugestivos de vaginosis bacteriana"
+																			value="S" />
+																		<space />
+																		<radio
+																			radiogroup="rdbLesion_bajo_grado" label="Otros"
+																			value="N" />
+																		<space />
+																		<radio
+																			radiogroup="rdbLesion_bajo_grado" label="No aplica"
+																			value="P" checked="true" />
+																	</cell>
+																</row>
+															</rows>
+														</grid>
+													</groupbox>
+												</cell>
+											</row>
+											<row>
+												<cell>
+													<groupbox>
+														<grid>
+															<columns>
+																<column />
+																<column />
+																<column />
+																<column />
+															</columns>
+															<rows>
+																<row>
+																	<cell
+																		colspan="4">
+																		<label
+																			value="LESIÓN ESCAMOSA INTRAEPITELIAL DE ALTO GRADO (LIE ALTO GRADO)"
+																			style="font-weight:bold" />
+																	</cell>
+																</row>
+																<row>
+																	<cell
+																		colspan="4" align="center">
+																		<radiogroup
+																			id="rdbLesion_alto_grado" />
+																		<radio
+																			radiogroup="rdbLesion_alto_grado" label="NIC II"
+																			value="1" />
+																		<space />
+																		<radio
+																			radiogroup="rdbLesion_alto_grado" label="NIC III"
+																			value="2" />
+																		<space />
+																		<radio
+																			radiogroup="rdbLesion_alto_grado"
+																			label="Carcinoma IN SITU" value="3" />
+																		<space />
+																		<radio
+																			radiogroup="rdbLesion_alto_grado"
+																			label="Carcinoma Escamocélular" value="4" />
+																		<space />
+																		<radio
+																			radiogroup="rdbLesion_alto_grado" label="No aplica"
+																			value="5" checked="true" />
+																	</cell>
+																</row>
+															</rows>
+														</grid>
+													</groupbox>
+												</cell>
+											</row>
+										</rows>
+									</grid>
+								</groupbox>
+								<groupbox mold="3d" closable="false">
+									<caption
+										label="ANORMALIDADES DE LAS CÉLULAS EPITELIALES EN CÉLULAS GLANDULARES"
+										style="font-weight:bold" />
+									<grid>
+										<columns>
+											<column />
+											<column width="40%" />
+										</columns>
+										<rows>
+											<row>
+												<cell>
+													<checkbox
+														id="chbEndocervicales"
+														label="Células endocervicales atípicas" />
+												</cell>
+												<cell>
+													<checkbox
+														id="chbEndometriales" label="Células endometriales" />
+												</cell>
+											</row>
+											<row>
+												<cell>
+													<checkbox
+														id="chbGlandulares"
+														label="Células glandulares atípicas(AGC)" />
+												</cell>
+												<cell>
+													<checkbox
+														id="chbEdenocarcinomia_insitu"
+														label="Adenocarcinoma endocervical IN SITU(AIS)" />
+												</cell>
+											</row>
+											<row>
+												<cell>
+													<checkbox
+														id="chbAdenocarcinoma" label="Adenocarcinoma" />
+												</cell>
+											</row>
+										</rows>
+									</grid>
+								</groupbox>
+
+								<groupbox mold="3d" closable="false">
+									<caption label="SUGERENCIAS"
+										style="font-weight:bold" />
+									<grid>
+										<columns>
+											<column />
+											<column />
+											<column />
+										</columns>
+										<rows>
+											<row>
+												<cell colspan="3"
+													align="center">
+													<label
+														value="Control en:" />
+													<space />
+													<datebox
+														id="dtbxFecha_control" format="yyyy-MM-dd" width="100px" />
+													<space width="25px" />
+													<label
+														value="Repetir citología en:" />
+													<space />
+													<datebox
+														id="dtbxRepetir_citologia" format="yyyy-MM-dd"
+														width="100px" />
+													<space width="25px" />
+													<label
+														value="Colposcopia y Biopsia:" />
+													<space />
+													<radiogroup
+														id="rdbColposcopia_biopsia" />
+													<radio label="SÍ"
+														radiogroup="rdbColposcopia_biopsia" value="S" />
+													<space />
+													<radio label="NO"
+														radiogroup="rdbColposcopia_biopsia" value="N" />
+													<space />
+													<radio
+														label="No aplica" radiogroup="rdbColposcopia_biopsia"
+														value="P" checked="true" />
+												</cell>
+											</row>
+											<row>
+												<cell colspan="3">
+													<groupbox>
+														<grid>
+															<columns>
+																<column
+																	width="10%" />
+																<column
+																	width="30%" />
+																<column />
+															</columns>
+															<rows>
+																<row>
+																	<cell />
+																	<cell>
+																		<label
+																			value="Responsable de la muestra:" />
+																	</cell>
+																	<cell>
+																		<textbox
+																			id="tbxResponsable_toma" width="350px"
+																			style="text-transform:uppercase" maxlength="150" />
+																	</cell>
+																</row>
+																<row>
+																	<cell />
+																	<cell>
+																		<label
+																			value="Responsable de la lectura:" />
+																	</cell>
+																	<cell>
+																		<textbox
+																			id="tbxResponsable_lectura" width="350px"
+																			style="text-transform:uppercase" maxlength="150" />
+																	</cell>
+																</row>
+															</rows>
+														</grid>
+													</groupbox>
+												</cell>
+											</row>
+										</rows>
+									</grid>
+								</groupbox>
+							</groupbox>
+
+						</groupbox>
+					</div>
+				</center>
+			</borderlayout>
+		</groupbox>
+	</window>
+</zk>

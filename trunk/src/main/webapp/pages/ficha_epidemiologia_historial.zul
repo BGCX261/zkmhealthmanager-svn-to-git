@@ -1,0 +1,254 @@
+<?page title="Consulta Historias Clínica" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formFicha_epidemiologia_historial" width="100%" height="100%"
+		use="healthmanager.controller.Ficha_epidemiologia_historialAction">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsultar" visible="true" closable="false"
+			mold="3d" height="100%">
+			<caption label="Consultar listado de Fichas Epidemiologicas"
+				style="color: blue;font-weight: bold" />
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+
+			<listbox id="listboxResultado" vflex="1" hflex="1"
+				multiple="false" checkmark="true" mold="paging">
+				<auxhead hflex="1">
+					<auxheader colspan="8">
+						<hbox align="center" hflex="1">
+							<label value="Prestador" />
+							<space width="5px" />
+							<bandboxRegistros id="tbxCodigo_medico"
+								widthBandbox="100px" widthListbox="450px" heightListbox="300px"
+								columnas="Identificación#100px|Nombres|Apellidos" />
+							<textbox id="tbxNomPrestador" width="210px"
+								style="text-transform:uppercase" readonly="true" />
+							<toolbarbutton id="btnLimpiarPrestador"
+								image="/images/borrar.gif" />
+							<space />
+							<label value="Fecha" />
+							<space width="5px" />
+							<datebox id="dtbxFecha_inicial"
+								format="yyyy-MM-dd" onCreate="self.setValue(new Date())" />
+							<space width="5px" />
+							<label value="-" />
+							<space width="5px" />
+							<datebox id="dtbxFecha_final"
+								format="yyyy-MM-dd"  />
+							<space />
+							<toolbarbutton id="btnFiltro_ingreso"
+								image="/images/filtro.png" label="Fichas Epidemiológicas"
+								onClick='popupFichas.open(self,"end_after")' />
+						</hbox>
+						<space />
+						<hbox align="center" hflex="1">
+							<label value="Criterios de B&#250;squeda" />
+							<space width="35px" />
+							<textbox id="tbxValue" hflex="1"
+								onOK="formFicha_epidemiologia_historial.buscarDatos();"
+								style="text-transform:uppercase" />
+							<checkbox id="chkFiltro_atendidas"
+								label="Atendidas" checked="true" visible="false" />
+							<space />
+							<toolbarbutton label="Consultar Historias"
+								image="/images/Magnifier.gif"
+								onClick="formFicha_epidemiologia_historial.buscarDatos();"
+								tooltiptext="Consultar Historia" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+
+				<listhead>
+					<listheader label="" width="40px" align="center" />
+					<listheader label="Fecha" width="140px" />
+					<listheader label="Diagnostico" width="90px" />
+					<listheader label="Identificación" width="110px" />
+					<listheader label="Paciente" />
+					<listheader label="Prestador" />
+					<listheader label="Via ingreso" />
+				</listhead>
+
+				<listfoot>
+					<listfooter span="2">
+						<label value="Total: " />
+						<label id="lbTotal_historias" />
+					</listfooter>
+				</listfoot>
+			</listbox>
+		</groupbox>
+
+		<borderlayout id="borderlayoutEditar" width="100%" height="100%"
+			visible="false">
+			<west title="Información del Paciente" collapsible="true"
+				width="370px" autoscroll="true">
+				<vbox>
+					<groupbox
+						style="margin-right:5px;margin-left:5px;margin-top:5px" mold="3d"
+						closable="false" width="360px">
+						<caption>
+							<hlayout>
+								<toolbarbutton label=""
+									id="toolbarbuttonInformacion_paciente"
+									image="/images/add_perfil.png"
+									style="float:right;margin-right:10px;font-weight:bold;font-size:x-small" />
+								<toolbarbutton label="ATRAS"
+									image="/images/quit.png"
+									style="float:right;margin-right:10px;font-weight:bold;font-size:x-small"
+									onClick='formFicha_epidemiologia_historial.accionForm2("buscar")' />
+							</hlayout>
+						</caption>
+						<grid>
+							<columns>
+								<column width="105px" />
+								<column />
+							</columns>
+							<rows>
+								<row height="20px" visible="false">
+									<cell>
+										<label value="Ingreso"
+											style="font-size:x-small;font-weight:bold" />
+									</cell>
+									<cell>
+										<textbox id="tbxIngreso"
+											readonly="true" inplace="false" width="97%" />
+									</cell>
+								</row>
+
+								<row height="20px">
+									<cell>
+										<label value="Fecha de Ingreso"
+											style="font-size:x-small;font-weight:bold" />
+									</cell>
+									<cell>
+										<textbox id="tbxFecha_ingreso"
+											readonly="true" inplace="false" width="97%" />
+									</cell>
+								</row>
+								<row height="20px">
+									<cell>
+										<label
+											value="Nro Identificación"
+											style="font-size:x-small;font-weight:bold" />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxNro_identificacion" readonly="true" inplace="false"
+											width="97%" />
+									</cell>
+								</row>
+								<row height="20px">
+									<cell>
+										<label
+											value="Tipo Identificación"
+											style="font-size:x-small;font-weight:bold" />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxTipo_identificacion" readonly="true" inplace="false"
+											width="97%" />
+									</cell>
+								</row>
+								<row height="20px">
+									<cell>
+										<label value="Edad"
+											style="font-size:x-small;font-weight:bold" />
+									</cell>
+									<cell>
+										<textbox id="tbxEdad"
+											readonly="true" inplace="false" width="97%" />
+									</cell>
+								</row>
+								<row height="20px">
+									<cell>
+										<label value="Sexo"
+											style="font-size:x-small;font-weight:bold" />
+									</cell>
+									<cell>
+										<textbox id="tbxSexo"
+											readonly="true" inplace="false" width="97%" />
+									</cell>
+								</row>
+								<row height="20px">
+									<cell>
+										<label
+											value="Pertenencia étnica"
+											style="font-size:x-small;font-weight:bold" />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxPertencia_etnica" readonly="true" inplace="false"
+											width="97%" popup="popupPertenencia" />
+									</cell>
+								</row>
+								<row height="20px">
+									<cell>
+										<label value="Nivel Educativo"
+											style="font-size:x-small;font-weight:bold" />
+									</cell>
+									<cell>
+										<textbox id="tbxNivel_educativo"
+											readonly="true" inplace="false" width="97%"
+											popup="popupNiveleducativo" />
+									</cell>
+								</row>
+
+								<row height="20px">
+									<cell>
+										<label value="Aseguradora"
+											style="font-size:x-small;font-weight:bold" />
+									</cell>
+									<cell>
+										<textbox id="tbxAseguradora"
+											readonly="true" inplace="false" width="97%"
+											popup="popupAseguradora" />
+									</cell>
+								</row>
+								
+							</rows>
+						</grid>
+					</groupbox>
+				</vbox>
+			</west>
+			<center>
+				<div height="100%">
+					<tabbox id="tabboxContendor" width="100%"
+						height="100%" use="com.framework.macros.ContenedorPaginasMacro" />
+				</div>
+			</center>
+		</borderlayout>
+
+		<popup id="popupFichas">
+			<listbox id="lbxFichas_epidemiologicas" multiple="true"
+				checkmark="true" width="250px" name="ficha_epidemiologia" rows="8">
+				<custom-attributes org.zkoss.zul.listbox.rod="true" />
+				<listhead>
+					<listheader label="Fichas Epidemiológicas" />
+				</listhead>
+				<listfoot>
+					<listfooter align="middle">
+						<toolbarbutton
+							label="Consultar por fichas epidemiológicas"
+							image="/images/Magnifier.gif"
+							onClick="formFicha_epidemiologia_historial.buscarDatos()"
+							tooltiptext="Consultar por fichas epidemiológicas" />
+					</listfooter>
+				</listfoot>
+			</listbox>
+		</popup>
+	</window>
+</zk>

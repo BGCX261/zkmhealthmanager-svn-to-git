@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.AdminDao">
+
+	<!--<typeAlias alias="admin" type="resolucion4505.modelo.bean.Admin" /> -->
+
+	<!--<mapper resource="resolucion4505/modelo/dao/xml/adminSQL.xml" /> -->
+
+	<resultMap id="adminMap" type="admin">
+		<result column="id" property="id" />
+		<result column="login" property="login" />
+		<result column="password" property="password" />
+		<result column="nombre" property="nombre" />
+		<result column="apellido" property="apellido" />
+		<result column="nro_identificacion" property="nro_identificacion" />
+	</resultMap>
+
+	<insert id="crear" parameterType="admin">
+		insert into
+		resolucion4505.admin (id,login,
+		password,nombre,apellido,
+		nro_identificacion)
+
+		values (#{id},#{login},
+		#{password},#{nombre},#{apellido},
+		#{nro_identificacion})
+	</insert>
+
+	<update id="actualizar" parameterType="admin">
+		update
+		resolucion4505.admin set id = #{id},
+		login = #{login},password =
+		#{password},
+		nombre = #{nombre},apellido = #{apellido},
+		nro_identificacion = #{nro_identificacion}
+		where id = #{id}
+	</update>
+
+	<select id="consultar" parameterType="admin" resultMap="adminMap">
+		select id,login,
+		password,nombre,apellido,nro_identificacion
+		from
+		resolucion4505.admin
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="login != null">
+				AND login = #{login}
+			</if>
+			<if test="password != null">
+				AND password = #{password}
+			</if>
+			<if test="id != null">
+				AND id = #{id}
+			</if>
+		</trim>
+	</select>
+
+	<delete id="eliminar" parameterType="admin">
+		delete from
+		resolucion4505.admin
+		where id = #{id}
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="adminMap">
+		select id,login,
+		password,nombre,apellido,nro_identificacion
+		from
+		resolucion4505.admin
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="parameter != null">
+				AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+			${limit}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist from resolucion4505.admin
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="parameter != null">
+				AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+			${limit}
+		</if>
+	</select>
+
+</mapper>

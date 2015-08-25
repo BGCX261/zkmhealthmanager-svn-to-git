@@ -1,0 +1,148 @@
+<?page title="servicios facturacion" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<listbox width="100%" checkmark="true" multiple="true"
+		id="lbxservicios" nonselectableTags="*"
+		emptyMessage="No se han agregado detalles a la factura"
+		use="com.framework.macros.facturacion.ServiciosFacturacionMacro">
+		<auxhead>
+			<auxheader label="" colspan="10">
+				<hlayout>
+					<toolbarbutton image="/images/agregar.png"
+						label="Agregar Servicio(Alt+S)" id="tbbAgregarServicios"
+						onClick='lbxservicios.agregarServicio(com.framework.macros.facturacion.ServiciosFacturacionMacro.ETIPO_SERVICIO.SERVICIO, true)' />
+					<toolbarbutton image="/images/agregar.png"
+						label="Agregar Articulos(Alt+A)" id="tbbAgregarArticulos"
+						onClick='lbxservicios.agregarServicio(com.framework.macros.facturacion.ServiciosFacturacionMacro.ETIPO_SERVICIO.ARTICULO, true)' />
+					<toolbarbutton image="/images/borrar.gif"
+						label="Quitar" id="tbbQuitar"
+						onClick="lbxservicios.quitarServicio()" />
+					<space />
+					<checkbox id="chkIncluir_paquetes" checked="true"
+						label="Detalles de paquetes" tooltiptext="Mostrar detalles de la facturación de paquetes"
+						style="float:right"
+						onCheck="" />
+					<space />
+					<toolbarbutton image="/images/multiple.png"
+						id="tbbComplementacionMultiple" label="Compl. multiple"
+						onClick="lbxservicios.onComplementarInformacion()" />
+					<space />
+				</hlayout>
+			</auxheader>
+		</auxhead>
+		<listhead>
+			<listheader label="" width="30px" />
+			<listheader label="Und. Func." width="100px"
+				tooltiptext="Unidad funcional" visible="false" />
+			<listheader label="Codigo" width="85px" />
+			<listheader label="Concepto" />
+			<listheader label="Fecha" width="90px" />
+			<listheader label="Cant" width="50px" />
+			<listheader label="Vlr Unitario" width="80px" />
+			<listheader label="Total" width="80px" />
+			<listheader label="Tipo" width="50px" />
+			<listheader label="Fac" width="35px"
+				tooltiptext="Detalles de facturas con estado facturable" />
+			<listheader label="Cmpl" width="40px"
+				tooltiptext="Complementa los datos de los servicios" />
+		</listhead>
+
+		<listfoot>
+			<listfooter span="10">
+				<separator />
+				<grid>
+					<columns>
+						<column value="" width="100px" />
+						<column value="" width="150px" />
+						<column value="" width="60px" />
+						<column value="" width="150px" />
+						<column value="" width="90px" />
+						<column value="" />
+					</columns>
+					<rows>
+						<row>
+							<cell>
+								<label value="Valor Moderado:" />
+							</cell>
+							<cell>
+								<doublebox id="dbxValor_cuota"
+									format="#,##0" width="130px" readonly="false" value="0.0" />
+							</cell>
+							<cell>
+								<label value="Subtotal:" />
+							</cell>
+							<cell>
+								<doublebox id="dbxSubtotal"
+									format="#,##0" width="130px" readonly="true" value="0.0" />
+							</cell>
+							<cell colspan="2">
+								<checkbox id="chkAplica_descuento"
+									label="Aplica descuento"
+									onCheck="lbxservicios.onCalcularDescuento()" />
+								<space />
+								<intbox id="intboxPorcentaje"
+									width="50px" onChange="lbxservicios.onCalcularDescuento()"
+									onOK="lbxservicios.onCalcularDescuento()" />
+								<label value="%" />
+							</cell>
+						</row>
+						<row>
+							<cell>
+								<label value="Copago:" />
+							</cell>
+							<cell>
+								<doublebox id="dbxValor_copago"
+									format="#,##0" width="130px" readonly="false" value="0.0"
+									onChange="lbxservicios.calcularCopagoManual();" />
+							</cell>
+							<cell>
+								<label value="Total:" />
+							</cell>
+							<cell>
+								<doublebox id="dbxValor_total"
+									format="#,##0" width="130px" readonly="true" value="0.0" />
+							</cell>
+							<cell>
+								<label value="Dto Facturas:" />
+							</cell>
+							<cell>
+								<doublebox id="dbxDto_factura"
+									format="#,##0" width="130px" readonly="false" value="0.0" />
+							</cell>
+						</row>
+						<row>
+							<cell colspan="2" align="left">
+								<checkbox id="chbNocopago"
+									label="No Copago"
+									onCheck="lbxservicios.calcularCopago(self.isChecked())" />
+							</cell>
+							<cell colspan="2" align="center">
+								<hlayout>
+									<checkbox id="chbMediana"
+										label="Media Hoja" />
+									<space />
+									<checkbox id="chbAgrupar"
+										label="Agrupar" />
+								</hlayout>
+							</cell>
+
+							<cell>
+								<label value="Copago canc:"
+									visible="false" />
+								<label value="Dto Copago:"
+									visible="false" />
+							</cell>
+							<cell>
+								<doublebox id="dbxCop_canc"
+									visible="false" format="#,##0" width="130px" readonly="true"
+									value="0.0" />
+								<doublebox id="dbxDto_copago"
+									format="#,##0" width="130px" readonly="false" value="0.0"
+									visible="false" />
+							</cell>
+						</row>
+					</rows>
+				</grid>
+			</listfooter>
+		</listfoot>
+	</listbox>
+</zk>

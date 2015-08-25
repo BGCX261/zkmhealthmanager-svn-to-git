@@ -1,0 +1,4979 @@
+<?page title="His_atencion_crecimiento_menor2_5" contentType="text/html;charset=UTF-8"?>
+<?component name="informacionPacientes" macroURI="/WEB-INF/macros/informacionPacientes.zul"?>
+<?component name="impresionDiagnostica" macroURI="/WEB-INF/macros/impresionDiagnostica.zul"?>
+<?component name="escalaDesarrollo" macroURI="/WEB-INF/macros/escalaDesarrollo.zul"?>
+<?component name="remision_interna" macroURI="/WEB-INF/macros/remision_interna.zul"?>
+<?component name="agudeza_visual" macroURI="/WEB-INF/macros/agudeza_visual.zul"?>
+<?component name="autorizaciones" macroURI="/pages/autorizaciones.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formHis_atencion_crecimiento_menor2_5" width="100%"
+		height="97%"
+		use="healthmanager.controller.His_atencion_crecimiento_menor2_5Action">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="false" closable="false"
+			mold="3d" height="100%">
+			<caption label="Consultar Historias Clinicas "
+				style="font-weight: bold">
+				<toolbarbutton image="/images/add_perfil.png"
+					style="font-weight:bold;float:right;margin-right:50px"
+					label="PACIENTE ADMISIONADO"
+					id="toolbarbuttonPaciente_admisionado1" />
+			</caption>
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" height="90%" mold="paging"
+				pageSize="20" vflex="1">
+				<auxhead>
+					<auxheader colspan="6">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="120px" />
+							<space width="5px" />
+							<textbox id="tbxValue" width="120px"
+								onOK="formHis_atencion_crecimiento_menor2_5.buscarDatos();"
+								style="text-transform:uppercase" />
+							<separator />
+							<label value="Tipo de Historia :" />
+							<listbox id="lbxTipoHistoria" mold="select"
+								sclass="combobox" width="150px"
+								onSelect="formHis_atencion_crecimiento_menor2_5.buscarDatos()">
+								<listitem label="Todas" selected="true"
+									value="0" />
+								<listitem label="Primera Vez" value="1" />
+								<listitem label="Control" value="2" />
+							</listbox>
+							<toolbarbutton label="Consultar"
+								image="/images/Magnifier.gif"
+								onClick="formHis_atencion_crecimiento_menor2_5.buscarDatos();"
+								tooltiptext="Consultar Hisc deteccion alt menor 2m 2a" />
+							<separator />
+							<toolbarbutton label="Nueva" visible="false"
+								image="/images/New16.gif"
+								onClick='formHis_atencion_crecimiento_menor2_5.accionForm(healthmanager.controller.ZKWindow.OpcionesFormulario.REGISTRAR,null);'
+								tooltiptext="Nuevo Hisc deteccion alt menor 2m 2a" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Codigo historia" width="150px" />
+					<column label="Identificacion" width="200px" />
+					<column label="Nombre" />
+					<column label="Fecha inicial" width="150px" />
+					<column label="Tipo Historia" align="center"
+						width="100px" />
+					<column label="Acciones" align="center"
+						width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+		<groupbox id="groupboxEditar" visible="true" closable="false"
+			mold="3d" height="100%">
+			<caption label="Registrar/Modificar Historias Clinicas"
+				style="font-weight: bold">
+				<toolbarbutton image="/images/add_perfil.png"
+					style="font-weight:bold;float:right;margin-right:50px"
+					label="PACIENTE ADMISIONADO"
+					id="toolbarbuttonPaciente_admisionado2" />
+			</caption>
+
+			<borderlayout width="100%" height="100%"
+				id="borderlayoutEditar" visible="true">
+				<north border="none" id="northEditar">
+					<div height="50px">
+						<toolbar width="100%" align="start">
+							<textbox id="tbxAccion" value="registrar"
+								visible="false" />
+							<toolbarbutton image="/images/Save16.gif"
+								label="Guardar Historia"
+								onClick="formHis_atencion_crecimiento_menor2_5.guardarDatos();"
+								id="btGuardar" />
+							<toolbarbutton image="/images/New16.gif"
+								label="Nueva Historia" id="btNew" visible="false" />
+							<space />
+							<toolbarbutton image="/images/trasladar.gif"
+								label="Cancelar"
+								onClick='formHis_atencion_crecimiento_menor2_5.accionForm(healthmanager.controller.ZKWindow.OpcionesFormulario.CONSULTAR,null);'
+								id="btnCancelar" />
+							<toolbarbutton image="/images/print_ico.gif"
+								label="Imprimir Historia"
+								onClick="formHis_atencion_crecimiento_menor2_5.imprimir();"
+								id="btnImprimir"/>
+														
+							<space />
+							<label value="Formato impresión: "
+								visible="false" />
+							<listbox id="lbxFormato" mold="select"
+								width="150px" visible="false" sclass="combobox">
+								<listitem value="pdf" label="PDF"
+									selected="true" />
+								<listitem value="rtf" label="WORD" />
+							</listbox>
+						</toolbar>
+						<toolbarbutton image="/images/info_icon.png"
+							style="font-weight:bold;float:right;margin-right:50px"
+							label="Historia Clinica de Control"
+							id="toolbarbuttonTipo_historia" />
+					</div>
+				</north>
+
+				<center autoscroll="true" border="none">
+					<div align="center">
+
+						<!-- *************************** -->
+						<!-- *** Insertar/Actualizar *** -->
+						<!-- *************************** -->
+						<groupbox closable="false" width="900px"
+							mold="3d">
+							<grid sclass="GridSinBorde" hflex="1">
+								<columns>
+									<column label="" width="276px" />
+									<column label="" width="170px"
+										align="left" />
+									<column label="" width="182px" />
+									<column label="" />
+								</columns>
+								<rows>
+
+									<row>
+										<cell colspan="4">
+											<groupbox mold="3d"
+												closable="false" visible="true" id="gbxIdentificacion">
+												<caption
+													label="IDENTIFICACIÓN" style="font-weight:bold" />
+												<informacionPacientes
+													id="infoPacientes" />
+											</groupbox>
+										</cell>
+									</row>
+
+									<row>
+										<cell colspan="4">
+											<groupbox mold="3d"
+												closable="false" visible="true" id="gbxDatosPaciente">
+												<caption
+													label="DATOS DEL PACIENTE" style="font-weight:bold" />
+												<grid>
+													<columns>
+														<column label=""
+															width="85px" />
+														<column label=""
+															width="130px" />
+														<column label=""
+															width="320px" />
+														<column label=""
+															width="90px" />
+														<column
+															label="" />
+													</columns>
+													<rows>
+														<row>
+															<cell></cell>
+															<cell>
+																<label
+																	value="* " style="color: red"
+																	tooltiptext="Campo obligatorio" />
+																<label
+																	id="lbNombre_del_acompanante" value="Acompañante: " />
+															</cell>
+															<cell>
+																<textbox
+																	id="tbxNom_acompanante" width="300px"
+																	style="text-transform:uppercase" />
+															</cell>
+															<cell>
+																<label
+																	id="lbParentesco" value="Parentesco: " />
+															</cell>
+															<cell
+																colspan="4">
+																<listbox
+																	id="lbxRelacion" mold="select" name="relacion_acomp"
+																	width="150px" sclass="combobox" />
+															</cell>
+														</row>
+														<row>
+															<cell></cell>
+															<cell>
+																<label
+																	id="lbNombre_del_padre" value="Nombre del padre: " />
+															</cell>
+															<cell>
+																<textbox
+																	id="tbxNom_padre" width="300px"
+																	style="text-transform:uppercase" />
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbEdad_padre" value="Edad padre: " />
+															</cell>
+															<cell
+																colspan="4">
+																<intbox
+																	constraint="no negative:Este valor no puede ser negativo"
+																	id="ibxEdad_padre" width="70px"
+																	style="text-transform:uppercase" />
+															</cell>
+														</row>
+
+														<row>
+															<cell></cell>
+															<cell>
+																<label
+																	id="lbNombre_de_la_madre" value="Nombre de la madre: " />
+															</cell>
+															<cell>
+																<textbox
+																	id="tbxNom_madre" width="300px"
+																	style="text-transform:uppercase" />
+															</cell>
+
+															<cell
+																height="30px">
+																<label
+																	id="lbEdad_madre" value="Edad madre: " />
+															</cell>
+															<cell
+																colspan="4">
+																<intbox
+																	constraint="no negative:Este valor no puede ser negativo"
+																	id="ibxEdad_madre" width="70px"
+																	style="text-transform:uppercase" />
+															</cell>
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+
+
+									<row id="rowCita_anterior"
+										visible="false">
+										<cell colspan="4">
+											<groupbox mold="3d">
+												<caption
+													label="DIAGNÓSTICO CITA ANTERIOR" />
+												<grid
+													sclass="GridSinBorde" width="100%" style="border:none">
+													<columns>
+														<column label=""
+															width="100%" />
+													</columns>
+													<rows>
+
+														<row>
+															<cell
+																colspan="4">
+																<groupbox
+																	mold="3d">
+																	<caption
+																		label="Diagnóstico del Desarrollo" />
+																	<grid
+																		sclass="GridSinBorde" style="border:none">
+																		<columns>
+																			<column
+																				label="" width="118px" />
+																			<column
+																				label="" width="249px" />
+																			<column
+																				label="" width="30px" />
+																			<column
+																				label="" width="15px" />
+																			<column
+																				label="" width="15px" />
+																			<column
+																				label="" width="240px" />
+																			<column
+																				label="" width="30px" />
+																			<column
+																				label="" width="5px" />
+																			<column
+																				label="" width="5px" />
+																			<column
+																				label="" width="100px" />
+
+																		</columns>
+																		<rows>
+																			<row>
+																				<cell></cell>
+																				<cell
+																					height="30px">
+																					<label
+																						id="lbCa_Sosp_retras_desarrollo2"
+																						value="Sospecha de retraso del desarrollo: " />
+																				</cell>
+																				<cell>
+																					<checkbox
+																						id="chbCa_Sosp_retras_desarrollo2"
+																						disabled="true" />
+																				</cell>
+																				<cell></cell>
+																				<cell></cell>
+																				<cell
+																					height="30px">
+																					<label
+																						id="lbCa_Desarrollo_normal_fac_riesgo22"
+																						value="Desarrollo normal con factores de riesgo: " />
+																				</cell>
+																				<cell>
+																					<checkbox
+																						id="chbCa_Desarrollo_normal_fac_riesgo22"
+																						disabled="true" />
+																				</cell>
+																				<cell
+																					colspan="6">
+																				</cell>
+																			</row>
+
+																			<row>
+																				<cell></cell>
+																				<cell
+																					height="30px">
+																					<label
+																						id="lbCa_Riesgo_problema_desarrollo2"
+																						value="Riesgo de problema en el desarrollo: " />
+																				</cell>
+																				<cell>
+																					<checkbox
+																						id="chbCa_Riesgo_problema_desarrollo2"
+																						disabled="true" />
+																				</cell>
+																				<cell></cell>
+																				<cell></cell>
+																				<cell
+																					height="30px">
+																					<label
+																						id="lbCa_Desarrollo_normal2"
+																						value="Desarrollo normal: " />
+																				</cell>
+																				<cell>
+																					<checkbox
+																						id="chbCa_Desarrollo_normal2" disabled="true" />
+																				</cell>
+																				<cell
+																					colspan="6">
+																				</cell>
+																			</row>
+																		</rows>
+																	</grid>
+																</groupbox>
+															</cell>
+														</row>
+
+
+														<row>
+															<cell
+																colspan="4">
+																<groupbox
+																	mold="3d" closable="false">
+																	<caption
+																		label="DIAGNÓSTICO MALTRATO" />
+																	<grid
+																		sclass="GridSinBorde" style="border:none">
+																		<columns>
+																			<column
+																				label="" width="118px" />
+																			<column
+																				label="" width="249px" />
+																			<column
+																				label="" width="30px" />
+																			<column
+																				label="" width="15px" />
+																			<column
+																				label="" width="15px" />
+																			<column
+																				label="" width="240px" />
+																			<column
+																				label="" width="30px" />
+																			<column
+																				label="" width="5px" />
+																			<column
+																				label="" width="5px" />
+																			<column
+																				label="" width="100px" />
+
+																		</columns>
+																		<rows>
+
+																			<row>
+																				<cell></cell>
+																				<cell
+																					height="30px">
+																					<label
+																						id="lbCa_Maltrato_fisico"
+																						value="Sospecha maltrato físico: " />
+																				</cell>
+																				<cell>
+																					<checkbox
+																						id="chbCa_Maltrato_fisico" disabled="true" />
+																				</cell>
+																				<cell></cell>
+																				<cell></cell>
+																				<cell
+																					height="30px">
+																					<label
+																						id="lbCa_Maltrato_emocional"
+																						value="Sospecha de maltrato emocional: " />
+																				</cell>
+																				<cell>
+																					<checkbox
+																						id="chbCa_Maltrato_emocional" disabled="true" />
+																				</cell>
+																				<cell
+																					colspan="6">
+																				</cell>
+																			</row>
+
+																			<row>
+																				<cell></cell>
+																				<cell
+																					height="30px">
+																					<label
+																						id="lbCa_Sospechas_abuso_sexual"
+																						value="Sospecha abuso sexual: " />
+																				</cell>
+																				<cell>
+																					<checkbox
+																						id="chbCa_Sospechas_abuso_sexual" disabled="true" />
+																				</cell>
+																				<cell></cell>
+																				<cell></cell>
+																				<cell
+																					height="30px">
+																					<label
+																						id="lbCa_No_hay_sospechas_maltrato"
+																						value="No hay sospechas maltrato: " />
+																				</cell>
+																				<cell>
+																					<checkbox
+																						id="chbCa_No_hay_sospechas_maltrato"
+																						disabled="true" />
+																				</cell>
+																				<cell
+																					colspan="6">
+																				</cell>
+																			</row>
+
+																		</rows>
+																	</grid>
+																</groupbox>
+															</cell>
+														</row>
+													</rows>
+												</grid>
+
+											</groupbox>
+										</cell>
+									</row>
+
+									<row>
+										<cell colspan="4">
+											<groupbox mold="3d"
+												closable="false">
+												<caption
+													label="MOTIVO DE CONSULTA " />
+												<grid
+													sclass="GridSinBorde" style="border:none">
+													<columns>
+														<column label=""
+															width="100%" />
+													</columns>
+													<rows>
+														<row>
+															<cell>
+																<label
+																	value="* " style="color: red"
+																	tooltiptext="Campo obligatorio" />
+																<label
+																	id="lbMotivo_consulta" value="Motivo consulta: " />
+															</cell>
+														</row>
+														<row>
+															<cell>
+																<textbox
+																	id="tbxMotivo_consulta" width="99%" rows="10"
+																	height="50px" style="text-transform:uppercase" />
+															</cell>
+															<cell></cell>
+														</row>
+														<row
+															visible="false">
+															<cell>
+																<label
+																	value="* " style="color: red"
+																	tooltiptext="Campo obligatorio" />
+																<label
+																	id="lbEnfermedad_actual" value="Enfermedad actual: " />
+															</cell>
+														</row>
+														<row
+															visible="false">
+															<cell>
+																<textbox
+																	id="tbxEnfermedad_actual" width="99%" rows="10"
+																	height="50px" style="text-transform:uppercase" />
+															</cell>
+															<cell></cell>
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+
+									<row>
+										<cell colspan="4">
+											<groupbox mold="3d"
+												closable="false">
+												<caption
+													label="REVISIÓN POR SISTEMA (Signos generales de peligro)" />
+												<grid
+													sclass="GridSinBorde" style="border:none">
+													<columns>
+														<column
+															label="" />
+														<column
+															label="SI" width="28px" />
+														<column
+															label="NO" width="28px" />
+
+														<column
+															label="" />
+														<column
+															label="SI" width="28px" />
+														<column
+															label="NO" width="28px" />
+
+														<column
+															label="" />
+														<column
+															label="SI" width="28px" />
+														<column
+															label="NO" width="28px" />
+													</columns>
+													<rows>
+														<row>
+															<cell
+																height="30px">
+																<label
+																	id="lbVomita_todo" value="Vomita todo: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbVomita_todo">
+																	<radio
+																		id="vomita_todo1" label="" value="1" />
+																	<radio
+																		id="vomita_todo2" checked="true" label="" value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbDiarrea_ultimas"
+																	value="Diarrea últimas 4 horas: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbDiarrea_ultimas">
+																	<radio
+																		label="" value="S" />
+																	<radio
+																		checked="true" label="" value="N" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbV_v_zona_dengue"
+																	value="Vive o visitó (últimos 15 días) zona dengue: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbVive_zona_dengue">
+																	<radio
+																		label="" value="S" />
+																	<radio
+																		checked="true" label="" value="N" />
+																</radiogroup>
+															</cell>
+														</row>
+														<row>
+															<cell
+																height="30px">
+																<label
+																	id="lbConvulsiones" value="Convulsiones: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbConvulsiones">
+																	<radio
+																		id="convulsiones1" label="" value="1" />
+																	<radio
+																		id="convulsiones2" checked="true" label="" value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbSangre_heces" value="Hay sangre en las heces: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbSangre_heces">
+																	<radio
+																		id="sangre_heces1" label="" value="1" />
+																	<radio
+																		id="sangre_heces2" checked="true" label="" value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbV_v_zona_malaria"
+																	value="Vive o visitó (últimos 15 días) zona malaria: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbVive_zona_malaria">
+																	<radio
+																		label="" value="S" />
+																	<radio
+																		checked="true" label="" value="N" />
+																</radiogroup>
+															</cell>
+														</row>
+														<row>
+															<cell
+																height="30px">
+																<label
+																	id="lbTiene_tos_disnea" value="Tiene tos o disnea: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbTiene_tos_disnea">
+																	<radio
+																		id="tiene_tos_disnea1" label="" value="1" />
+																	<radio
+																		id="tiene_tos_disnea2" checked="true" label=""
+																		value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbTiene_movito" value="Tiene vómito " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbTiene_movito">
+																	<radio
+																		id="tiene_movito1" label="" value="1" />
+																	<radio
+																		id="tiene_movito2" checked="true" label="" value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbTiene_otalgia" value="Tiene otalgia: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbTiene_otalgia">
+																	<radio
+																		id="tiene_otalgia1" label="" value="1" />
+																	<radio
+																		id="tiene_otalgia2" label="" checked="true" value="2" />
+																</radiogroup>
+															</cell>
+														</row>
+														<row>
+															<cell
+																height="30px">
+																<label
+																	id="lbTiene_sibilancia" value="Tiene sibilancia: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbTiene_sibilancia">
+																	<radio
+																		id="tiene_sibilancia1" label="" value="1" />
+																	<radio
+																		id="tiene_sibilancia2" label="" checked="true"
+																		value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbVomito_ultimas_hora"
+																	value="Vómito últimas 4 horas: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbVomito_ultimas_hora">
+																	<radio
+																		id="vomito_ultimas_hora1" label="" value="1" />
+																	<radio
+																		id="vomito_ultimas_hora2" checked="true" label=""
+																		value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbTiene_supuracion_oido"
+																	value="Tiene supuración oído  " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbTiene_supuracion_oido">
+																	<radio
+																		id="tiene_supuracion_oido1" label="" value="1" />
+																	<radio
+																		id="tiene_supuracion_oido2" checked="true" label=""
+																		value="2" />
+																</radiogroup>
+															</cell>
+														</row>
+														<row>
+															<cell
+																height="30px">
+																<label
+																	id="lbSibigilancias_previas"
+																	value="Sibilancias previas: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbSibigilancias_previas">
+																	<radio
+																		id="sibigilancias_previas1" label="" value="1" />
+																	<radio
+																		id="sibigilancias_previas2" checked="true" label=""
+																		value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbTiene_fibre_mayor5_dias"
+																	value="Tiene febre &gt; 5 días: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbTiene_fibre_mayor5_dias">
+																	<radio
+																		id="tiene_fibre_mayor5_dias1" label="" value="1" />
+																	<radio
+																		id="tiene_fibre_mayor5_dias2" checked="true" label=""
+																		value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbEpisodios_previos_otitis"
+																	value="Episodios previos otitis: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbEpisodios_previos_otitis">
+																	<radio
+																		id="episodios_previos_otitis1" label="" value="1" />
+																	<radio
+																		id="episodios_previos_otitis2" label="" checked="true"
+																		value="2" />
+																</radiogroup>
+															</cell>
+														</row>
+
+														<row>
+															<cell
+																height="30px">
+																<label
+																	id="lbCuadro_gripal_ultimos_dias"
+																	value="Cuadro gripal últimos  días: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbCuadro_gripal_ultimos_dias">
+																	<radio
+																		id="cuadro_gripal_ultimos_dias1" label="" value="1" />
+																	<radio
+																		id="cuadro_gripal_ultimos_dias2" checked="true"
+																		label="" value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbTiene_fiebre_menor5"
+																	value="Tiene fiebre &lt; 5 días: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbTiene_fiebre_menor5">
+																	<radio
+																		id="tiene_fiebre_menor51" label="" value="1" />
+																	<radio
+																		id="tiene_fiebre_menor52" checked="true" label=""
+																		value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbTien_dolor_gargan"
+																	value="Tiene dolor garganta: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbTien_dolor_gargan">
+																	<radio
+																		id="tien_dolor_gargan1" label="" value="1" />
+																	<radio
+																		id="tien_dolor_gargan2" checked="true" label=""
+																		value="2" />
+																</radiogroup>
+															</cell>
+														</row>
+														<row>
+															<cell
+																height="30px">
+																<label
+																	id="lbTien_diarrea" value="Tiene Diarrea: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbTien_diarrea">
+																	<radio
+																		id="tien_diarrea1" label="" value="1" />
+																	<radio
+																		id="tien_diarrea2" checked="true" label="" value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbFiebre_mayor38" value="Fiebre &gt; 38 C°: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbFiebre_mayor38">
+																	<radio
+																		id="fiebre_mayor381" label="" value="1" />
+																	<radio
+																		id="fiebre_mayor382" checked="true" label=""
+																		value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbCefalea_dolor_retocular"
+																	value="Cefalea-dolor retroocular: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbCefalea_dolor_retocular">
+																	<radio
+																		id="cefalea_dolor_retocular1" label="" value="1" />
+																	<radio
+																		id="cefalea_dolor_retocular2" checked="true" label=""
+																		value="2" />
+																</radiogroup>
+															</cell>
+														</row>
+														<row>
+															<cell
+																height="30px">
+																<label
+																	id="lbDiarrea_ultimas_24horas"
+																	value="Diarrea últimas 24 horas: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbDiarrea_ultimas_24horas">
+																	<radio
+																		id="diarrea_ultimas_24horas1" label="" value="1" />
+																	<radio
+																		id="diarrea_ultimas_24horas2" checked="true" label=""
+																		value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbFiebre_mayor39" value="Fiebre &gt; 39 C°: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbFiebre_mayor39">
+																	<radio
+																		id="fiebre_mayor391" label="" value="1" />
+																	<radio
+																		id="fiebre_mayor392" label="" checked="true"
+																		value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbMialgias_artralgias"
+																	value="Mialgias-artralgias: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbMialgias_artralgias">
+																	<radio
+																		id="mialgias_artralgias1" label="" value="1" />
+																	<radio
+																		id="mialgias_artralgias2" checked="true" label=""
+																		value="2" />
+																</radiogroup>
+															</cell>
+														</row>
+
+														<row>
+															<cell
+																colspan="9">
+																<label
+																	value="Otros y Observaciones" />
+															</cell>
+														</row>
+														<row>
+															<cell
+																colspan="9">
+																<textbox
+																	id="tbxOtros_y_observaciones" hflex="1" rows="4"
+																	style="text-transform:uppercase" />
+															</cell>
+														</row>
+
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+
+									<row id="rowPerinatales">
+										<cell colspan="4">
+											<groupbox mold="3d"
+												closable="false">
+												<caption
+													label="PERINATALES" />
+												<grid
+													sclass="GridSinBorde" style="border:none">
+													<rows>
+														<row>
+															<cell>
+																<groupbox>
+																	<grid
+																		sclass="GridSinBorde" style="border:none">
+																		<columns>
+																			<column
+																				label="" width="5px" />
+																			<column
+																				label="" />
+																			<column
+																				label="" />
+																			<column
+																				label="" />
+																			<column
+																				label="" />
+																			<column
+																				label="" />
+																		</columns>
+																		<rows>
+																			<row>
+																				<cell />
+																				<cell
+																					align="center">
+																					<label
+																						value="Número de embarazos" style="color:red" />
+																				</cell>
+
+																				<cell
+																					align="center">
+																					<label
+																						value="Número de partos" style="color:red" />
+																				</cell>
+
+																				<cell
+																					align="center">
+																					<label
+																						value="Número de abortos" style="color:red" />
+																				</cell>
+
+																				<cell
+																					align="center">
+																					<label
+																						value="Número de cesareas" style="color:red" />
+																				</cell>
+																				<cell
+																					align="center">
+																					<label
+																						value="Número de nac. vivos" style="color:red"
+																						tooltiptext="Número de nacidos vivos" />
+																				</cell>
+																			</row>
+																			<row>
+																				<cell />
+																				<cell
+																					align="center">
+																					<label
+																						id="lbNum_embarazos_g" value="G: "
+																						style="color:red" />
+																					<intbox
+																						constraint="no negative:Este valor no puede ser negativo"
+																						id="ibxPerinatales_g" width="50px"
+																						style="text-transform:uppercase" />
+																				</cell>
+																				<cell
+																					align="center">
+																					<label
+																						id="lbNum_partos_p" value="P: " style="color:red" />
+																					<intbox
+																						constraint="no negative:Este valor no puede ser negativo"
+																						id="ibxPerinatales_p" width="50px"
+																						style="text-transform:uppercase" />
+																				</cell>
+																				<cell
+																					align="center">
+																					<label
+																						id="lbNum_abortos_a" value="A: "
+																						style="color:red" />
+																					<intbox
+																						constraint="no negative:Este valor no puede ser negativo"
+																						id="ibxPerinatales_a" width="50px"
+																						style="text-transform:uppercase" />
+																				</cell>
+																				<cell
+																					align="center">
+																					<label
+																						id="lbNum_cesarias_c" value="C: "
+																						style="color:red" />
+																					<intbox
+																						constraint="no negative:Este valor no puede ser negativo"
+																						id="ibxPerinatales_c" width="50px"
+																						style="text-transform:uppercase" />
+																				</cell>
+																				<cell
+																					align="center">
+																					<label
+																						id="lbNum_mortinatos_v" value="V: "
+																						style="color:red" />
+																					<intbox
+																						constraint="no negative:Este valor no puede ser negativo"
+																						id="ibxPerinatales_v" width="50px"
+																						style="text-transform:uppercase" />
+																				</cell>
+																			</row>
+																		</rows>
+																	</grid>
+																</groupbox>
+															</cell>
+														</row>
+
+														<row>
+															<cell>
+																<groupbox>
+																	<grid
+																		sclass="GridSinBorde" style="border:none">
+																		<columns>
+																			<column
+																				label="" />
+																			<column
+																				label="" width="130px" />
+																			<column
+																				label="" width="80px" />
+																			<column
+																				label="" width="110px" />
+																			<column
+																				label="" width="150px" />
+																			<column
+																				label="" width="100px" />
+																			<column
+																				label="" width="150px" />
+																			<column
+																				label="" width="100px" />
+																			<column
+																				label="" />
+																		</columns>
+																		<rows>
+																			<row>
+																				<cell />
+																				<cell>
+																					<label
+																						id="lbRiesgo" value="Riesgo: " />
+																					<radiogroup
+																						id="rdbRiesgo_bajo_alt" />
+																				</cell>
+																				<cell>
+																					<radio
+																						id="rdRiesgo1" label="Alto" checked="true"
+																						value="1" radiogroup="rdbRiesgo_bajo_alt" />
+																				</cell>
+																				<cell
+																					colspan="5">
+																					<radio
+																						id="rdRiesgo2" label="Bajo" value="2"
+																						radiogroup="rdbRiesgo_bajo_alt" />
+																				</cell>
+																				<cell />
+																			</row>
+																			<row>
+																				<cell />
+																				<cell>
+																					<label
+																						id="lbControl_prenatal"
+																						value="Control prenatal: " />
+																					<radiogroup
+																						id="rdbControl_prenatal" />
+																				</cell>
+																				<cell>
+																					<radio
+																						id="rdControl_prenatal1" checked="true" label="Sí"
+																						value="1" radiogroup="rdbControl_prenatal" />
+																				</cell>
+																				<cell>
+																					<radio
+																						id="rdControl_prenatal2" label="No" value="2"
+																						radiogroup="rdbControl_prenatal" />
+																				</cell>
+
+																				<cell>
+																					<label
+																						id="lbSem_gestacion" value="Semanas Gestación: " />
+																				</cell>
+																				<cell>
+																					<intbox
+																						constraint="no negative:Este valor no puede ser negativo"
+																						id="ibxSem_gestacion" width="40px"
+																						style="text-transform:uppercase" />
+																				</cell>
+
+																				<cell>
+																					<label
+																						id="lbEdad_madre_al_nacimiento"
+																						value="Edad de la madre al nacimiento: " />
+																				</cell>
+																				<cell>
+																					<intbox
+																						constraint="no negative:Este valor no puede ser negativo"
+																						id="ibxEdad_de_la_madre_al_nacer" width="40px"
+																						style="text-transform:uppercase" />
+																				</cell>
+																				<cell />
+																			</row>
+																			<row>
+																				<cell />
+																				<cell>
+																					<label
+																						id="lbParto" value="Parto: " />
+																					<radiogroup
+																						id="rdbParto_cst" />
+																				</cell>
+																				<cell>
+																					<radio
+																						id="rdParto1" checked="true" value="1"
+																						label="Vaginal" radiogroup="rdbParto_cst" />
+																				</cell>
+																				<cell>
+																					<radio
+																						id="rdParto2" value="2" label="Cesárea"
+																						radiogroup="rdbParto_cst" />
+																				</cell>
+																				<cell
+																					colspan="2">
+																					<radiogroup
+																						id="rdbUnico_multiple">
+																						<radio
+																							id="rdUnico_multiple1" checked="true" value="1"
+																							label="Único" />
+																						<space />
+																						<radio
+																							id="rdUnico_multiple2" value="2"
+																							label="Múltiple" />
+																					</radiogroup>
+																				</cell>
+																				<cell>
+																					<label
+																						id="lbInstitucional" value="Institucional: " />
+																				</cell>
+																				<cell>
+																					<radiogroup
+																						id="rdbIntitucional">
+																						<radio
+																							id="rdInstitucional1" checked="true" value="1"
+																							label="Sí" />
+																						<space />
+																						<radio
+																							id="rdInstitucional2" value="2" label="No" />
+																					</radiogroup>
+																				</cell>
+																				<cell />
+																			</row>
+																			<row>
+																				<cell />
+																				<cell
+																					colspan="3">
+																					<label
+																						id="lbHemoclasificacion"
+																						value="Hemoclasificación: " />
+																					<space />
+																					<listbox
+																						id="lbxHemoclasificacion" mold="select" name="rh"
+																						width="100px" sclass="combobox" />
+																				</cell>
+																				<cell>
+																					<label
+																						id="lbVdrl_materno" value="VDRL materno: " />
+																				</cell>
+																				<cell>
+																					<listbox
+																						id="lbxVdlr" mold="select" name="vdrl" hflex="1"
+																						sclass="combobox" />
+																				</cell>
+																				<cell>
+																					<label
+																						id="lbTsh" value="TSH: " />
+																				</cell>
+																				<cell>
+																					<doublebox
+																						id="dbxTsh" width="80px" locale="en" />
+																				</cell>
+																				<cell />
+																			</row>
+																		</rows>
+																	</grid>
+																</groupbox>
+															</cell>
+														</row>
+
+														<row>
+															<cell>
+																<label
+																	id="lbComplicaciones_embarazo_parto"
+																	value="Complicaciones en el embarazo y el parto: " />
+															</cell>
+														</row>
+														<row>
+															<cell>
+																<textbox
+																	id="tbxComplicaciones_embarazo_parto" width="99%"
+																	rows="4" style="text-transform:uppercase" />
+															</cell>
+														</row>
+
+														<row>
+															<cell>
+																<groupbox>
+																	<grid
+																		sclass="GridSinBorde" style="border:none">
+																		<columns>
+																			<column
+																				label="" width="30px" />
+																			<column
+																				label="" />
+																			<column
+																				label="" />
+																			<column
+																				label="" />
+																			<column
+																				label="" />
+																		</columns>
+																		<rows>
+																			<row>
+																				<cell></cell>
+																				<cell>
+																					<label
+																						id="lbPeso_al_nacer_grs"
+																						value="Peso al nacer (kg): " />
+																					<space />
+																					<doublebox
+																						id="dbxExamen_fisico_peso_al_nacer" width="60px"
+																						locale="en" />
+																				</cell>
+																				<cell>
+																					<label
+																						id="lbTalla_al_nacer_cms"
+																						value="Talla al nacer (cm): " />
+																					<space />
+																					<doublebox
+																						id="dbxExamen_fisico_talla_al_nacer" width="60px"
+																						locale="en" />
+																				</cell>
+																				<cell>
+																					<label
+																						id="lbApgar_al_minuto" value="Apgar al minuto: " />
+																					<space />
+																					<doublebox
+																						id="dbxApgar_minutos" width="60px" locale="en" />
+																				</cell>
+																				<cell>
+																					<label
+																						id="lbApgar_5minutos" value="Apgar 5 minutos: " />
+																					<space />
+																					<doublebox
+																						id="dbxApgar_5_minutos" width="60px" locale="en" />
+																				</cell>
+																			</row>
+																		</rows>
+																	</grid>
+																</groupbox>
+															</cell>
+														</row>
+
+														<row>
+															<cell>
+																<groupbox>
+																	<grid
+																		sclass="GridSinBorde" style="border:none">
+																		<columns>
+																			<column
+																				label="" width="30px" />
+																		</columns>
+																		<rows>
+																			<row>
+																				<cell />
+																				<cell>
+																					<label
+																						id="lbReanimacion" value="Reanimación: " />
+																					<radiogroup
+																						id="rdbReanimacion">
+																						<radio
+																							id="rdReanimacion1" checked="true" value="1"
+																							label="Sí" />
+																						<radio
+																							id="rdReanimacion2" value="2" label="No" />
+																					</radiogroup>
+																				</cell>
+																				<cell>
+																					<label
+																						id="lbHospitalizacion_neonatal"
+																						value="Hospitalización neonatal: " />
+																					<radiogroup
+																						id="rdbHospitalizacion_neonatal">
+																						<radio
+																							id="rdHospitalizacion_neonatal1" checked="true"
+																							value="1" label="Sí" />
+																						<radio
+																							id="rdHospitalizacion_neonatal2" value="2"
+																							label="No" />
+																					</radiogroup>
+																				</cell>
+																			</row>
+																		</rows>
+																	</grid>
+																</groupbox>
+															</cell>
+														</row>
+
+														<row>
+															<cell>
+																<label
+																	id="lbObservaciones_4_1" value="Observaciones: " />
+															</cell>
+														</row>
+														<row>
+															<cell>
+																<textbox
+																	id="tbxObservaciones1" width="99%" rows="4"
+																	style="text-transform:uppercase" />
+															</cell>
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+
+									<row id="rowPatologicos">
+										<cell colspan="4">
+											<groupbox mold="3d"
+												closable="false">
+												<caption
+													label="PATOLÓGICOS" />
+												<grid
+													sclass="GridSinBorde" style="border:none">
+													<columns>
+														<column
+															label="" />
+													</columns>
+													<rows>
+														<row>
+															<cell>
+																<label
+																	value="* " style="color: red"
+																	tooltiptext="Campo obligatorio" />
+																<label
+																	id="lbPatologicos_medicos" value="Médicos:" />
+															</cell>
+														</row>
+														<row>
+															<cell>
+																<textbox
+																	id="tbxPatologicos_medicos" hflex="1" rows="4"
+																	style="text-transform:uppercase" />
+															</cell>
+														</row>
+														<row>
+															<cell>
+																<label
+																	value="* " style="color: red"
+																	tooltiptext="Campo obligatorio" />
+																<label
+																	id="lbPatologicos_quirurgicos" value="Quirúrgicos:" />
+															</cell>
+														</row>
+														<row>
+															<cell>
+																<textbox
+																	id="tbxPatologicos_quirurgicos" hflex="1" rows="4"
+																	style="text-transform:uppercase" />
+															</cell>
+														</row>
+														<row>
+															<cell>
+																<label
+																	value="* " style="color: red"
+																	tooltiptext="Campo obligatorio" />
+																<label
+																	id="lbPatologicos_alergicos" value="Alérgicos:" />
+															</cell>
+														</row>
+														<row>
+															<cell>
+																<textbox
+																	id="tbxPatologicos_alergicos" hflex="1" rows="4"
+																	style="text-transform:uppercase" maxlength="-1" />
+															</cell>
+														</row>
+														<row>
+															<cell>
+																<label
+																	value="* " style="color: red"
+																	tooltiptext="Campo obligatorio" />
+																<label
+																	id="lbPatologicos_hospitalizaciones"
+																	value="Hospitalizaciones:" />
+															</cell>
+														</row>
+														<row>
+															<cell>
+																<textbox
+																	id="tbxPatologicos_hospitalizaciones" hflex="1"
+																	rows="4" style="text-transform:uppercase" />
+															</cell>
+														</row>
+														<row>
+															<cell>
+																<label
+																	value="* " style="color: red"
+																	tooltiptext="Campo obligatorio" />
+																<label
+																	id="lbPatologicos_medicacion" value="Medicación:" />
+															</cell>
+														</row>
+														<row>
+															<cell>
+																<textbox
+																	id="tbxPatologicos_medicacion" hflex="1" rows="4"
+																	style="text-transform:uppercase" />
+															</cell>
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+
+
+									<row>
+										<cell colspan="4">
+											<groupbox mold="3d"
+												closable="false">
+												<caption
+													label="HÁBITOS ALIMENTARIOS" />
+												<grid
+													sclass="GridSinBorde" style="border:none">
+													<columns>
+														<column label=""
+															width="50px" />
+														<column
+															label="" />
+														<column
+															label="SI" width="30px" />
+														<column
+															label="NO" width="30px" />
+														<column
+															label="" />
+														<column
+															label="SI" width="30px" />
+														<column
+															label="NO" width="30px" />
+														<column label=""
+															width="50px" />
+													</columns>
+													<rows>
+														<row>
+															<cell></cell>
+															<cell>
+																<label
+																	id="lbRecibido_hierro_ultimos_6meses"
+																	value="Ha recibido hierro en los últimos 6 meses: " />
+																<radiogroup
+																	id="rdbRecibido_hierro_ultimos_6meses" />
+															</cell>
+															<cell>
+																<radio
+																	id="recibido_hierro_ultimos_6meses1" label="" value="1"
+																	radiogroup="rdbRecibido_hierro_ultimos_6meses" />
+															</cell>
+															<cell>
+																<radio
+																	id="recibido_hierro_ultimos_6meses2" label="" value="2"
+																	checked="true"
+																	radiogroup="rdbRecibido_hierro_ultimos_6meses" />
+															</cell>
+															<cell>
+																<label
+																	id="lbIntolerancia_alimentarias"
+																	value="Intolerancia alimentarias: " />
+															</cell>
+															<cell>
+																<radiogroup
+																	id="rdbIntolerancia_alimentarias" />
+																<radio
+																	id="intolerancia_alimentarias1" label="" value="1"
+																	radiogroup="rdbIntolerancia_alimentarias" />
+															</cell>
+															<cell>
+																<radio
+																	id="intolerancia_alimentarias2" label="" value="2"
+																	radiogroup="rdbIntolerancia_alimentarias"
+																	checked="true" />
+															</cell>
+															<cell />
+														</row>
+														<row>
+															<cell></cell>
+															<cell>
+																<label
+																	id="lbRecibido_vitamina_a_ultimos_6meses"
+																	value="Ha recibido recibido vitamina A en los últimos 6 meses: " />
+																<radiogroup
+																	id="rdbRecibido_vitamina_a_ultimos_6meses" />
+															</cell>
+															<cell>
+
+																<radio
+																	id="Recibido_vitamina_a_ultimos_6meses1" label=""
+																	value="1"
+																	radiogroup="rdbRecibido_vitamina_a_ultimos_6meses" />
+															</cell>
+															<cell>
+																<radio
+																	id="Recibido_vitamina_a_ultimos_6meses2" label=""
+																	value="2" checked="true"
+																	radiogroup="rdbRecibido_vitamina_a_ultimos_6meses" />
+															</cell>
+															<cell>
+																<hlayout
+																	visible="true">
+																	<label
+																		id="lbRecibido_albendazol_ultimos_6meses"
+																		value="Ha recibido Albendazol en los últimos 6 meses: " />
+																	<radiogroup
+																		id="rdbRecibido_albendazol_ultimos_6meses" />
+																</hlayout>
+															</cell>
+															<cell>
+																<hlayout
+																	visible="true">
+																	<radio
+																		id="recibido_albendazol_ultimos_6meses1" label=""
+																		value="1"
+																		radiogroup="rdbRecibido_albendazol_ultimos_6meses" />
+																</hlayout>
+															</cell>
+															<cell>
+																<hlayout
+																	visible="true">
+																	<radio
+																		id="recibido_albendazol_ultimos_6meses2" label=""
+																		value="2" checked="true"
+																		radiogroup="rdbRecibido_albendazol_ultimos_6meses" />
+																</hlayout>
+															</cell>
+
+															<cell />
+														</row>
+														<row>
+															<cell
+																colspan="8">
+																<label
+																	id="lbObservaciones_hab_aliment"
+																	value="Observaciones: " />
+															</cell>
+														</row>
+														<row>
+															<cell
+																colspan="8">
+																<label
+																	value="-Describa N° comidas y meriendas, tamaño, distribución ( origen animal, lácteos, legumbres, verduras , frutas),suplementos: " />
+															</cell>
+														</row>
+														<row>
+															<cell
+																colspan="8">
+																<textbox
+																	id="tbxObservaciones_hab_aliment" hflex="1" rows="4"
+																	style="text-transform:uppercase" />
+															</cell>
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+
+									<row>
+										<cell colspan="4">
+											<groupbox mold="3d"
+												closable="false">
+												<caption
+													label="SALUD ORAL" />
+												<grid
+													sclass="GridSinBorde" style="border:none">
+													<columns>
+														<column
+															label="" />
+														<column
+															label="SI" width="28px" />
+														<column
+															label="NO" width="28px" />
+
+														<column
+															label="" />
+														<column
+															label="SI" width="28px" />
+														<column
+															label="NO" width="28px" />
+
+														<column
+															label="" />
+														<column
+															label="SI" width="28px" />
+														<column
+															label="NO" width="28px" />
+
+													</columns>
+													<rows>
+														<row>
+															<cell
+																height="30px">
+																<label
+																	id="lbDolor_masticar" value="Dolor al masticar: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbDolor_masticar">
+																	<radio
+																		id="dolor_masticar1" label="" value="1" />
+																	<radio
+																		id="dolor_masticar2" checked="true" label=""
+																		value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbLimpieza_boca_mediodia"
+																	value="Limpieza boca mediodía: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbLimpieza_boca_mediodia">
+																	<radio
+																		id="limpieza_boca_mediodia1" label="" value="1" />
+																	<radio
+																		id="limpieza_boca_mediodia2" checked="true" label=""
+																		value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbUtiliza_crema" value="Utiliza crema fluorada: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbUtiliza_crema">
+																	<radio
+																		id="utiliza_crema1" label="" value="1" />
+																	<radio
+																		id="utiliza_crema2" label="" checked="true" value="2" />
+																</radiogroup>
+															</cell>
+														</row>
+
+														<row>
+															<cell
+																height="30px">
+																<label
+																	id="lbDolor_diente" value="Dolor en diente: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbDolor_diente">
+																	<radio
+																		id="dolor_diente1" label="" value="1" />
+																	<radio
+																		id="dolor_diente2" checked="true" label="" value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbLiempieza_boca_noche"
+																	value="Limpieza boca noche: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbLiempieza_boca_noche">
+																	<radio
+																		id="liempieza_boca_noche1" label="" value="1" />
+																	<radio
+																		id="liempieza_boca_noche2" checked="true" label=""
+																		value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbUtiliza_chupo_biberon"
+																	value="Utiliza chupo o biberón: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbUtiliza_chupo_biberon">
+																	<radio
+																		id="utiliza_chupo_biberon1" label="" value="1" />
+																	<radio
+																		id="utiliza_chupo_biberon2" checked="true" label=""
+																		value="2" />
+																</radiogroup>
+															</cell>
+														</row>
+
+														<row>
+															<cell
+																height="30px">
+																<label
+																	id="lbPadre_hnos_con_caries"
+																	value="Padre hermanos con caries: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbPadre_hnos_con_caries">
+																	<radio
+																		id="padre_hnos_con_caries1" label="" value="1" />
+																	<radio
+																		id="padre_hnos_con_caries2" checked="true" label=""
+																		value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbLimpia_los_dientes"
+																	value="Le limpia los dientes: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbLimpia_los_dientes">
+																	<radio
+																		id="limpia_los_dientes1" label="" value="1" />
+																	<radio
+																		id="limpia_los_dientes2" checked="true" label=""
+																		value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbAsiste_a_odontologia"
+																	value="Asiste a odontología: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbAsiste_a_odontologia">
+																	<radio
+																		id="asiste_a_odontologia1" label="" value="1" />
+																	<radio
+																		id="asiste_a_odontologia2" checked="true" label=""
+																		value="2" />
+																</radiogroup>
+															</cell>
+														</row>
+														<row>
+															<cell
+																height="30px">
+																<label
+																	id="lbLimpieza_boca_manana"
+																	value="Limpieza boca mañana: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbLimpieza_boca_manana">
+																	<radio
+																		id="limpieza_boca_manana1" label="" value="1" />
+																	<radio
+																		id="limpieza_boca_manana2" checked="true" label=""
+																		value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbUtiliza_cepillo" value="Utiliza cepillo: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbUtiliza_cepillo">
+																	<radio
+																		id="utiliza_cepillo1" label="" checked="true"
+																		value="1" />
+																	<radio
+																		id="utiliza_cepillo2" checked="true" label=""
+																		value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																colspan="3">
+															</cell>
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+
+									<row>
+										<cell colspan="4">
+											<groupbox mold="3d"
+												closable="false">
+												<caption
+													label="VACUNACIÓN" />
+												<grid
+													sclass="GridSinBorde" style="border:none">
+
+													<columns>
+														<column
+															label="" />
+														<column
+															label="SI" width="32px" align="center" />
+														<column
+															label="NO" width="32px" align="center" />
+														<column
+															label="" />
+														<column
+															label="SI" width="32px" align="center" />
+														<column
+															label="NO" width="32px" align="center" />
+														<column
+															label="" />
+														<column
+															label="SI" width="32px" align="center" />
+														<column
+															label="NO" width="32px" align="center" />
+														<column
+															label="" />
+														<column
+															label="SI" width="32px" align="center" />
+														<column
+															label="NO" width="32px" align="center" />
+													</columns>
+
+													<rows>
+														<row>
+															<cell>
+																<label
+																	id="lbBcg" value="BCG: " />
+																<radiogroup
+																	id="rdbBcg" />
+															</cell>
+															<cell>
+																<radio
+																	id="bcg1" value="1" checked="true" radiogroup="rdbBcg" />
+															</cell>
+															<cell>
+																<radio
+																	id="bcg2" value="2" radiogroup="rdbBcg" />
+															</cell>
+
+															<cell>
+																<label
+																	id="lbVop_2" value="VOP 2: " />
+																<radiogroup
+																	id="rdbVop_2" />
+															</cell>
+															<cell>
+																<radio
+																	id="vop_21" value="1" checked="true" radiogroup="rdbVop_2" />
+															</cell>
+															<cell>
+																<radio
+																	id="vop_22" value="2"
+																	radiogroup="rdbVop_2" />
+															</cell>
+
+															<cell>
+																<label
+																	id="lbVop_3" value="VOP 3: " />
+																<radiogroup
+																	id="rdbVop_3" />
+															</cell>
+															<cell>
+																<radio
+																	id="vop_31" value="1" checked="true" radiogroup="rdbVop_3" />
+															</cell>
+															<cell>
+																<radio
+																	id="vop_32" value="2"
+																	radiogroup="rdbVop_3" />
+															</cell>
+
+															<cell>
+																<label
+																	id="lbNeumococo_3" value="NEUMOCOCO 3: " />
+																<radiogroup
+																	id="rdbNeumococo_3" />
+															</cell>
+															<cell>
+																<radio
+																	id="neumococo_31" value="1" checked="true"
+																	radiogroup="rdbNeumococo_3" />
+															</cell>
+															<cell>
+																<radio
+																	id="neumococo_32" value="2"
+																	radiogroup="rdbNeumococo_3" />
+															</cell>
+														</row>
+														<row>
+															<cell>
+																<label
+																	id="lbHepatitis_b_rn" value="HEPATITIS B RN: " />
+																<radiogroup
+																	id="rdbHepatitis_b_rn" />
+															</cell>
+															<cell>
+																<radio
+																	id="hepatitis_b_rn1" value="1" checked="true"
+																	radiogroup="rdbHepatitis_b_rn" />
+															</cell>
+															<cell>
+																<radio
+																	id="hepatitis_b_rn2" value="2"
+																	radiogroup="rdbHepatitis_b_rn" />
+															</cell>
+															<cell>
+																<label
+																	id="lbPenta_2" value="PENTA 2: " />
+																<radiogroup
+																	id="rdbPenta_2" />
+															</cell>
+															<cell>
+																<radio
+																	id="penta_21" value="1" checked="true" radiogroup="rdbPenta_2" />
+															</cell>
+															<cell>
+																<radio
+																	id="penta_22" value="2"
+																	radiogroup="rdbPenta_2" />
+															</cell>
+															<cell>
+																<label
+																	id="lbPenta_3" value="PENTA 3: " />
+																<radiogroup
+																	id="rdbPenta_3" />
+															</cell>
+															<cell>
+																<radio
+																	id="penta_31" value="1" checked="true" radiogroup="rdbPenta_3" />
+															</cell>
+															<cell>
+																<radio
+																	id="penta_32" value="2"
+																	radiogroup="rdbPenta_3" />
+															</cell>
+															<cell>
+																<label
+																	id="lbTriple_viral" value="TRIPLE VIRAL: " />
+																<radiogroup
+																	id="rdbTriple_viral" />
+															</cell>
+															<cell>
+																<radio
+																	id="triple_viral1" value="1" checked="true"
+																	radiogroup="rdbTriple_viral" />
+															</cell>
+															<cell>
+																<radio
+																	id="triple_viral2" value="2"
+																	radiogroup="rdbTriple_viral" />
+															</cell>
+														</row>
+														<row>
+															<cell>
+																<label
+																	id="lbVop_1" value="VOP 1: " />
+																<radiogroup
+																	id="rdbVop_1" />
+															</cell>
+															<cell>
+																<radio
+																	id="vop_11" value="1" checked="true" radiogroup="rdbVop_1" />
+															</cell>
+															<cell>
+																<radio
+																	id="vop_12" value="2"
+																	radiogroup="rdbVop_1" />
+															</cell>
+															<cell>
+																<label
+																	id="lbNeumococo_2" value="NEUMOCOCO 2: " />
+																<radiogroup
+																	id="rdbNeumococo_2" />
+															</cell>
+															<cell>
+																<radio
+																	id="neumococo_21" value="1" checked="true"
+																	radiogroup="rdbNeumococo_2" />
+															</cell>
+															<cell>
+																<radio
+																	id="neumococo_22" value="2"
+																	radiogroup="rdbNeumococo_2" />
+															</cell>
+															<cell>
+																<label
+																	id="lbInfluenza_1" value="INFLUENZA 1: " />
+																<radiogroup
+																	id="rdbInfluenza_1" />
+															</cell>
+															<cell>
+																<radio
+																	id="influenza_11" value="1" checked="true"
+																	radiogroup="rdbInfluenza_1" />
+															</cell>
+															<cell>
+																<radio
+																	id="influenza_12" value="2"
+																	radiogroup="rdbInfluenza_1" />
+															</cell>
+															<cell>
+																<label
+																	id="lbFiebre_amarilla" value="FIEBRE AMARILLA: " />
+																<radiogroup
+																	id="rdbFiebre_amarilla" />
+															</cell>
+															<cell>
+																<radio
+																	id="fiebre_amarilla1" value="1" checked="true"
+																	radiogroup="rdbFiebre_amarilla" />
+															</cell>
+															<cell>
+																<radio
+																	id="fiebre_amarilla2" value="2"
+																	radiogroup="rdbFiebre_amarilla" />
+															</cell>
+														</row>
+														<row>
+															<cell>
+																<label
+																	id="lbPenta_1" value="PENTA 1: " />
+																<radiogroup
+																	id="rdbPenta_1" />
+															</cell>
+															<cell>
+																<radio
+																	id="penta_11" value="1" checked="true" radiogroup="rdbPenta_1" />
+															</cell>
+															<cell>
+																<radio
+																	id="penta_12" value="2"
+																	radiogroup="rdbPenta_1" />
+															</cell>
+															<cell>
+																<label
+																	id="lbRotavirus_2" value="ROTAVIRUS 2: " />
+																<radiogroup
+																	id="rdbRotavirus_2" />
+															</cell>
+															<cell>
+																<radio
+																	id="rotavirus_21" value="1" checked="true"
+																	radiogroup="rdbRotavirus_2" />
+															</cell>
+															<cell>
+																<radio
+																	id="rotavirus_22" value="2"
+																	radiogroup="rdbRotavirus_2" />
+															</cell>
+															<cell>
+																<label
+																	id="lbInfluenxa_2" value="INFLUENZA 2: " />
+																<radiogroup
+																	id="rdbInfluenza_2" />
+															</cell>
+															<cell>
+																<radio
+																	id="influenza_21" value="1" checked="true"
+																	radiogroup="rdbInfluenza_2" />
+															</cell>
+															<cell>
+																<radio
+																	id="influenza_22" value="2"
+																	radiogroup="rdbInfluenza_2" />
+															</cell>
+															<cell>
+																<label
+																	id="lbHepatitis_a" value="HEPATITIS A: " />
+																<radiogroup
+																	id="rdbHepatitis_a" />
+															</cell>
+															<cell>
+																<radio
+																	id="hepatitis_a1" value="1" checked="true"
+																	radiogroup="rdbHepatitis_a" />
+															</cell>
+															<cell>
+																<radio
+																	id="hepatitis_a2" value="2"
+																	radiogroup="rdbHepatitis_a" />
+															</cell>
+														</row>
+
+														<row>
+															<cell>
+																<label
+																	id="lbNeumococo_1" value="NEUMOCOCO 1: " />
+																<radiogroup
+																	id="rdbNeumococo_1" />
+															</cell>
+															<cell>
+																<radio
+																	id="neumococo_11" value="1" checked="true"
+																	radiogroup="rdbNeumococo_1" />
+															</cell>
+															<cell>
+																<radio
+																	id="neumococo_12" value="2"
+																	radiogroup="rdbNeumococo_1" />
+															</cell>
+															<cell />
+															<cell />
+															<cell />
+															<cell />
+															<cell />
+															<cell />
+															<cell>
+																<label
+																	id="lbDpt_r1" value="DPT R1: " />
+																<radiogroup
+																	id="rdbDpt_r1" />
+															</cell>
+															<cell>
+																<radio
+																	id="dpt_r11" value="1" checked="true" radiogroup="rdbDpt_r1" />
+															</cell>
+															<cell>
+																<radio
+																	id="dpt_r12" value="2"
+																	radiogroup="rdbDpt_r1" />
+															</cell>
+														</row>
+														<row>
+															<cell>
+																<label
+																	id="lbRotavirus_1" value="ROTAVIRUS 1: " />
+																<radiogroup
+																	id="rdbRotavirus_1" />
+															</cell>
+															<cell>
+																<radio
+																	id="rotavirus_11" value="1" checked="true"
+																	radiogroup="rdbRotavirus_1" />
+															</cell>
+															<cell>
+																<radio
+																	id="rotavirus_12" value="2"
+																	radiogroup="rdbRotavirus_1" />
+															</cell>
+															<cell />
+															<cell />
+															<cell />
+															<cell />
+															<cell />
+															<cell />
+															<cell>
+																<label
+																	id="lbVop_r1" value="VOP R1: " />
+																<radiogroup
+																	id="rdbVop_r1" />
+															</cell>
+															<cell>
+																<radio
+																	id="vop_r11" value="1" checked="true" radiogroup="rdbVop_r1" />
+															</cell>
+															<cell>
+																<radio
+																	id="vop_r12" value="2"
+																	radiogroup="rdbVop_r1" />
+															</cell>
+
+														</row>
+														<row>
+															<cell />
+															<cell />
+															<cell />
+															<cell />
+															<cell />
+															<cell />
+															<cell />
+															<cell />
+															<cell />
+															<cell>
+																<label
+																	id="lbVop2_2" value="VOP 2: " />
+																<radiogroup
+																	id="rdbVop2_2" />
+															</cell>
+															<cell>
+																<radio
+																	id="vop2_21" value="1" checked="true" radiogroup="rdbVop2_2" />
+															</cell>
+															<cell>
+																<radio
+																	id="vop2_22" value="2"
+																	radiogroup="rdbVop2_2" />
+															</cell>
+
+														</row>
+														<row>
+															<cell />
+															<cell />
+															<cell />
+															<cell />
+															<cell />
+															<cell />
+															<cell />
+															<cell />
+															<cell />
+															<cell>
+																<label
+																	id="lbDpt_2" value="DPT 2: " />
+																<radiogroup
+																	id="rdbDpt_2" />
+															</cell>
+															<cell>
+																<radio
+																	id="dpt_21" value="1" checked="true" radiogroup="rdbDpt_2" />
+															</cell>
+															<cell>
+																<radio
+																	id="dpt_22" value="2"
+																	radiogroup="rdbDpt_2" />
+															</cell>
+														</row>
+														<row>
+															<cell />
+															<cell />
+															<cell />
+															<cell />
+															<cell />
+															<cell />
+															<cell />
+															<cell />
+															<cell />
+															<cell>
+																<label
+																	id="lbTriple_viral_refuerzo"
+																	value="TRIPLE VIRAL REFUERZO: " />
+																<radiogroup
+																	id="rdbTriple_viral_refuerzo" />
+															</cell>
+															<cell>
+																<radio
+																	id="triple_viral_refuerzo1" value="1" checked="true"
+																	radiogroup="rdbTriple_viral_refuerzo" />
+															</cell>
+															<cell>
+																<radio
+																	id="triple_viral_refuerzo2" value="2"
+																	radiogroup="rdbTriple_viral_refuerzo" />
+															</cell>
+
+														</row>
+														<row>
+															<cell
+																colspan="12">
+																<label
+																	id="lblObservaciones_vacunales" value="Observaciones" />
+															</cell>
+														</row>
+														<row>
+															<cell
+																colspan="12">
+																<textbox
+																	id="tbxObservaciones_vacunales" rows="4"
+																	style="text-transform:uppercase" hflex="1" />
+															</cell>
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+
+									<row
+										id="rowAntecedentes_familiares">
+										<cell colspan="4">
+											<groupbox mold="3d"
+												closable="false">
+												<caption
+													label="ANTECEDENTES FAMILIARES" />
+												<grid
+													sclass="GridSinBorde" style="border:none">
+													<columns>
+														<column label=""
+															width="80px" />
+														<column label=""
+															width="220px" />
+														<column
+															label="" />
+														<column label=""
+															width="90px" />
+														<column
+															label="" />
+														<column
+															label="" />
+													</columns>
+													<rows>
+														<row>
+															<cell />
+															<cell
+																height="30px">
+																<label
+																	id="lbNum_hermanos_vivos" value="N° hermanos vivos: " />
+															</cell>
+															<cell>
+																<intbox
+																	constraint="no negative:Este valor no puede ser negativo"
+																	id="ibxHermanos_vivos" width="70px"
+																	style="text-transform:uppercase" />
+															</cell>
+															<cell
+																height="30px" colspan="2">
+																<label
+																	id="lbNum_hermanos_desnutridos_menor_5anos"
+																	value="N° hermanos desnutridos &lt; a 5 años: " />
+															</cell>
+															<cell>
+																<intbox
+																	constraint="no negative:Este valor no puede ser negativo"
+																	id="ibxHermanos_desnutridos" width="70px"
+																	style="text-transform:uppercase" />
+															</cell>
+														</row>
+
+														<row>
+															<cell />
+															<cell
+																height="30px">
+																<label
+																	id="lbNum_hermanos_muertos_menor_5anos"
+																	value="N° hermanos muertos &lt; a 5 años: " />
+															</cell>
+															<cell>
+																<intbox
+																	constraint="no negative:Este valor no puede ser negativo"
+																	id="ibxHermanos_muertos" width="70px"
+																	style="text-transform:uppercase" />
+															</cell>
+
+															<cell
+																height="30px">
+																<label
+																	id="lbCausa" value="Causa: " />
+															</cell>
+															<cell
+																colspan="2">
+																<textbox
+																	id="tbxCausa" width="225px"
+																	style="text-transform:uppercase" />
+															</cell>
+
+														</row>
+
+														<row>
+															<cell />
+															<cell
+																height="30px">
+																<label
+																	id="lbSon_parientes_los_padres"
+																	value="Son parientes los padres: " />
+															</cell>
+															<cell>
+																<radiogroup
+																	id="rdbSon_parientes_los_padre">
+																	<radio
+																		id="rdSon_parientes_los_padres1" checked="true"
+																		value="1" label="Sí" />
+																	<radio
+																		id="rdSon_parientes_los_padres2" value="2" label="No" />
+																</radiogroup>
+															</cell>
+
+															<cell
+																height="30px" colspan="2">
+																<label
+																	id="lbFamilia_con_problema_mental_o_fisico"
+																	value="Familia con problema mental o físico: " />
+															</cell>
+															<cell>
+																<radiogroup
+																	id="rdbFamiliar_con_problema">
+																	<radio
+																		id="rdFamilia_con_problema_mental_o_fisico1" value="1"
+																		label="Sí" />
+																	<radio
+																		id="rdFamilia_con_problema_mental_o_fisico2" value="2"
+																		label="No" checked="true" />
+																</radiogroup>
+															</cell>
+														</row>
+
+														<row>
+															<cell
+																colspan="6">
+																<groupbox
+																	mold="3d" closable="false">
+																	<caption
+																		label="Paterno" />
+																	<grid
+																		sclass="GridSinBorde" style="border:none">
+																		<columns>
+																			<column
+																				width="60px" />
+																			<column />
+																			<column
+																				width="70px" />
+																			<column
+																				width="80px" />
+																		</columns>
+																		<rows>
+																			<row>
+																				<cell
+																					colspan="4">
+																					<label
+																						id="lbPaternos_medicos" value="Paterno médicos: " />
+																				</cell>
+																			</row>
+																			<row>
+																				<cell
+																					colspan="4">
+																					<textbox
+																						id="tbxPaternos_medicos" hflex="1" rows="4"
+																						style="text-transform:uppercase" />
+																				</cell>
+																			</row>
+																			<row>
+																				<cell>
+																					<label
+																						id="lbPaternos_alergico" value="Alérgico: " />
+																				</cell>
+																				<cell>
+																					<textbox
+																						id="tbxPaternos_alergicos" hflex="1"
+																						style="text-transform:uppercase" />
+																				</cell>
+																				<cell>
+																					<label
+																						id="lbPaternos_talla" value="Talla(cm): " />
+																				</cell>
+																				<cell>
+																					<doublebox
+																						id="dbxPaternos_talla" hflex="1" />
+																				</cell>
+																			</row>
+																		</rows>
+																	</grid>
+																</groupbox>
+															</cell>
+														</row>
+
+														<row>
+															<cell
+																colspan="6">
+																<groupbox
+																	mold="3d" closable="false">
+																	<caption
+																		label="Materno" />
+																	<grid
+																		sclass="GridSinBorde" style="border:none">
+																		<columns>
+																			<column
+																				width="60px" />
+																			<column />
+																			<column
+																				width="70px" />
+																			<column
+																				width="80px" />
+																		</columns>
+																		<rows>
+																			<row>
+																				<cell
+																					colspan="4">
+																					<label
+																						id="lbMaternos_medicos" value="Materno médicos: " />
+																				</cell>
+																			</row>
+																			<row>
+																				<cell
+																					colspan="4">
+																					<textbox
+																						id="tbxMaternos_medicos" hflex="1" rows="4"
+																						style="text-transform:uppercase" />
+																				</cell>
+																			</row>
+																			<row>
+																				<cell>
+																					<label
+																						id="lbMaternos_alergicos" value="Alérgico: " />
+																				</cell>
+																				<cell>
+																					<textbox
+																						id="tbxMaternos_alergicos" hflex="1"
+																						style="text-transform:uppercase" />
+																				</cell>
+																				<cell>
+																					<label
+																						id="lbMaternos_talla" value="Talla(cm): " />
+																				</cell>
+																				<cell>
+
+																					<doublebox
+																						id="dbxMaternos_talla" hflex="1" />
+																				</cell>
+																			</row>
+																		</rows>
+																	</grid>
+																</groupbox>
+															</cell>
+														</row>
+
+														<row>
+															<cell
+																height="30px" colspan="6">
+																<label
+																	id="lbOtros" value="Otros: " />
+															</cell>
+														</row>
+														<row>
+															<cell
+																colspan="6">
+																<textbox
+																	id="tbxOtros" width="99%" rows="4"
+																	style="text-transform:uppercase" />
+															</cell>
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+
+									<row>
+										<cell colspan="4">
+											<groupbox mold="3d"
+												closable="false">
+												<caption
+													label="EVALUACIÓN MALTRATO" />
+												<grid
+													sclass="GridSinBorde" style="border:none">
+													<columns>
+														<column
+															label="" />
+														<column
+															label="SI" width="28px" />
+														<column
+															label="NO" width="28px" />
+														<column
+															label="" />
+														<column
+															label="SI" width="28px" />
+														<column
+															label="NO" width="28px" />
+
+													</columns>
+													<rows>
+														<row>
+															<cell
+																height="30px">
+																<label
+																	id="lbTestigo_relata_maltrato"
+																	value="Testigo relata maltrato: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbTestigo_relata_maltrato">
+																	<radio
+																		id="testigo_relata_maltrato1" label="" value="1" />
+																	<radio
+																		id="testigo_relata_maltrato2" checked="true" label=""
+																		value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbEsta_descuidado_nino_en_salud"
+																	value="Esta descuidado niño(a) en salud: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbEsta_descuidado_nino_en_salud">
+																	<radio
+																		id="esta_descuidado_nino_en_salud1" label=""
+																		value="1" />
+																	<radio
+																		id="esta_descuidado_nino_en_salud2" checked="true"
+																		label="" value="2" />
+																</radiogroup>
+															</cell>
+
+														</row>
+
+														<row>
+															<cell
+																height="30px">
+																<label
+																	id="lbComportamiento_anormal_de_padres"
+																	value="Comportamiento anormal de los padres: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbComportamiento_anormal_de_padres">
+																	<radio
+																		id="comportamiento_anormal_de_padres1" label=""
+																		value="1" />
+																	<radio
+																		id="comportamiento_anormal_de_padres2" checked="true"
+																		label="" value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbEsta_descuidado_el_nino_higiene"
+																	value="Esta descuidado el niño(a) en higiene: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbEsta_descuidado_el_nino_higiene">
+																	<radio
+																		id="esta_descuidado_el_nino_higiene1" label=""
+																		value="1" />
+																	<radio
+																		id="esta_descuidado_el_nino_higiene2" checked="true"
+																		label="" value="2" />
+																</radiogroup>
+															</cell>
+														</row>
+
+														<row>
+															<cell
+																height="30px">
+																<label
+																	id="lbActitud_anormal_del_nino"
+																	value="Actitud anormal del niño(a): " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbActitud_anormal_del_nino">
+																	<radio
+																		id="actitud_anormal_del_nino1" label="" value="1" />
+																	<radio
+																		id="actitud_anormal_del_nino2" checked="true" label=""
+																		value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbSe_le_pega_al_nino"
+																	value="Se le pega al niño(a): " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbSe_le_pega_al_nino">
+																	<radio
+																		label="" value="1" />
+																	<radio
+																		checked="true" label="" value="2" />
+																</radiogroup>
+															</cell>
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+
+									<row>
+										<cell colspan="4">
+											<groupbox mold="3d"
+												closable="false">
+												<caption
+													label="EXAMEN FISICO">
+													<toolbarbutton
+														id="toolbarbuttonCargar_signos"
+														image="/images/refresh_m.png"
+														label="Cargar signos vitales"
+														onClick="formHis_atencion_crecimiento_menor2_5.cargarSignosVitalesEnfermera()" />
+												</caption>
+												<grid
+													sclass="GridSinBorde" style="border:none">
+													<columns>
+														<column
+															label="" />
+														<column label=""
+															width="155px" />
+														<column label=""
+															width="100px" />
+														<column label=""
+															width="85px" />
+														<column label=""
+															width="100px" />
+														<column label=""
+															width="120px" />
+														<column label=""
+															width="100px" />
+														<column label=""
+															width="100px" />
+														<column label=""
+															width="100px" />
+														<column
+															label="" />
+													</columns>
+													<rows>
+														<row>
+															<cell />
+															<cell>
+																<label
+																	value="* " style="color: red"
+																	tooltiptext="Campo obligatorio" />
+																<label
+																	id="lbPeso_1" value="Peso (kg): " />
+															</cell>
+															<cell>
+																<doublebox
+																	id="dbxExamen_fisico_peso" width="70px" locale="en"
+																	format="##0.###"
+																	onChange="formHis_atencion_crecimiento_menor2_5.calcularIMC(dbxExamen_fisico_peso,dbxExamen_fisico_talla,dbxImc)" />
+															</cell>
+															<cell>
+																<label
+																	value="* " style="color: red"
+																	tooltiptext="Campo obligatorio" />
+																<label
+																	id="lbTalla" value="Talla (cm): " />
+															</cell>
+															<cell>
+																<doublebox
+																	id="dbxExamen_fisico_talla" width="70px" locale="en"
+																	format="##0.###"
+																	onChange="formHis_atencion_crecimiento_menor2_5.calcularIMC(dbxExamen_fisico_peso,dbxExamen_fisico_talla,dbxImc)" />
+															</cell>
+															<cell>
+																<label
+																	id="lblPerimetro_cefalico_obligatorio" value="* "
+																	style="color: red" tooltiptext="Campo obligatorio" />
+																<label
+																	id="lbPerimetro_cefalico" value="P.C. (cm): "
+																	tooltiptext="Perímetro Cefálico" />
+															</cell>
+															<cell>
+																<doublebox
+																	id="dbxExamen_fisico_perimetro_cflico" width="70px"
+																	locale="en" format="##0.###" />
+															</cell>
+															<cell>
+																<label
+																	value="* " style="color: red"
+																	tooltiptext="Campo obligatorio" />
+																<label
+																	id="lbImc" value="I.M.C. (kg/m&#178;): "
+																	tooltiptext="Indice de masa corporal" />
+															</cell>
+															<cell>
+																<doublebox
+																	id="dbxImc" width="70px" locale="en" format="##0.###"
+																	readonly="true" />
+															</cell>
+															<cell />
+														</row>
+
+														<row>
+															<cell />
+															<cell>
+																<label
+																	value="* " style="color: red"
+																	tooltiptext="Campo obligatorio" />
+																<label
+																	id="lbFrec_cardiaca" value="F.C. (min): "
+																	tooltiptext="Frecuencia Cardiaca" />
+															</cell>
+															<cell>
+																<doublebox
+																	id="dbxExamen_fisico_fc" width="70px" locale="en"
+																	format="##0.###"
+																	onChange="formHis_atencion_crecimiento_menor2_5.alarmaExamenFisicoFc()" />
+															</cell>
+															<cell>
+																<label
+																	value="*" style="color: red"
+																	tooltiptext="Campo obligatorio" />
+																<label
+																	id="lbFrec_respiratoria" value="F.R. (min): "
+																	tooltiptext="Frecuencia Respiratoria" />
+															</cell>
+															<cell>
+																<doublebox
+																	id="dbxExamen_fisico_fr" width="70px" locale="en"
+																	format="##0.###"
+																	onChange="formHis_atencion_crecimiento_menor2_5.alarmaExamenFisicoRespiracion()" />
+															</cell>
+															<cell>
+																<label
+																	value="* " style="color: red"
+																	tooltiptext="Campo obligatorio" />
+																<label
+																	id="lbTemperatura" value="Temperatura (°C): " />
+															</cell>
+															<cell>
+																<doublebox
+																	id="dbxExamen_fisico_temp" width="70px" locale="en"
+																	format="##0.###"
+																	onChange="formHis_atencion_crecimiento_menor2_5.alarmaExamenFisicoTemperatura()" />
+															</cell>
+															<cell />
+															<cell />
+															<cell />
+														</row>
+														<row>
+															<cell />
+															<cell>
+																<label
+																	id="lbSintomaticos_respiratorio"
+																	value="Sintomáticos respiratorio: " />
+															</cell>
+															<cell
+																colspan="3">
+																<radiogroup
+																	id="rdbSintomaticos_respiratorio">
+																	<radio
+																		id="Sintomaticos_respiratorio1" label="SÍ" value="1" />
+																	<space />
+																	<radio
+																		id="Sintomaticos_respiratorio2" label="NO"
+																		selected="true" value="2" />
+																	<space />
+																	<radio
+																		id="Sintomaticos_respiratorio21"
+																		label="Riesgo no evaluado" selected="true" value="21" />
+																</radiogroup>
+															</cell>
+															<cell>
+																<label
+																	id="lbSintomaticos_piel" value="Sintomáticos piel: " />
+															</cell>
+															<cell
+																colspan="3">
+																<radiogroup
+																	id="rdbSintomaticos_piel">
+																	<radio
+																		id="Sintomaticos_piel1" label="SÍ" value="1" />
+																	<space />
+																	<radio
+																		id="Sintomaticos_piel2" label="NO" selected="true"
+																		value="2" />
+																</radiogroup>
+															</cell>
+															<cell />
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+									<row>
+										<cell colspan="4">
+											<groupbox mold="3d"
+												closable="false">
+												<caption
+													label="CURVAS Y TABLAS DE CRECIMIENTO (OMS)" />
+												<grid
+													sclass="GridSinBorde" style="border:none">
+													<columns>
+														<column label=""
+															width="14px" />
+														<column
+															label="" />
+														<column
+															label="" />
+														<column
+															label="" />
+														<column
+															label="" />
+													</columns>
+
+													<rows>
+														<row>
+															<cell></cell>
+															<cell>
+																<button
+																	label="Calcular Talla/Edad"
+																	onClick="formHis_atencion_crecimiento_menor2_5.calcularTallaEdad(true)"
+																	width="180px" />
+															</cell>
+															<cell>
+																<button
+																	label="Calcular Peso/Talla"
+																	onClick="formHis_atencion_crecimiento_menor2_5.calcularPesoTalla(true)"
+																	width="180px" />
+															</cell>
+															<cell>
+																<button
+																	label="Calcular IMC/Edad"
+																	onClick="formHis_atencion_crecimiento_menor2_5.calcularImcEdad(true)"
+																	width="180px" />
+															</cell>
+															<cell>
+																<button
+																	id="btnCalcularPcEdad"
+																	label="Calcular P. Cefálico/Edad"
+																	onClick="formHis_atencion_crecimiento_menor2_5.calcularPerimetroCefalicoEdad(true)"
+																	width="180px" />
+															</cell>
+														</row>
+														<row>
+															<cell></cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbT_e_de" value="T/E DE: " />
+																<space />
+																<doublebox
+																	id="dbxT_e_de" width="170px" readonly="true"
+																	format="##0" style="text-align:center;" />
+															</cell>
+
+															<cell
+																height="30px">
+																<label
+																	id="lbP_t_de" value="P/T DE: " />
+																<space />
+																<doublebox
+																	id="dbxP_t_de" width="170px" readonly="true"
+																	format="##0" style="text-align:center;" />
+															</cell>
+
+															<cell
+																height="30px">
+																<label
+																	id="lbI_e_de" value="IMC/E DE: " />
+																<space />
+																<doublebox
+																	id="dbxImc_e_de" width="170px" readonly="true"
+																	format="##0" style="text-align:center;" />
+															</cell>
+
+															<cell
+																height="30px">
+																<label
+																	id="lbPC_e_de" value="PC/E DE: " />
+																<space />
+																<doublebox
+																	id="dbxPC_e_de" width="170px" readonly="true"
+																	format="##0" style="text-align:center;" />
+															</cell>
+														</row>
+														<row>
+															<cell></cell>
+															<cell>
+																<button
+																	label="Gráfica Talla/Edad (2-5)"
+																	id="btnCalcularTallaEdad"
+																	onClick="formHis_atencion_crecimiento_menor2_5.graficarTallaEdad()"
+																	disabled="true" width="180px" />
+															</cell>
+															<cell>
+																<button
+																	label="Gráfica Peso/Talla (2-5)"
+																	id="btnCalcularPesoTalla"
+																	onClick="formHis_atencion_crecimiento_menor2_5.graficarPesoTalla()"
+																	disabled="true" width="180px" />
+															</cell>
+															<cell>
+																<button
+																	label="Gráfica IMC/Edad (2-5)" id="btnCalcularImcEdad"
+																	onClick="formHis_atencion_crecimiento_menor2_5.graficarIMCEdad()"
+																	disabled="true" width="180px" />
+															</cell>
+															<cell>
+																<button
+																	label="Gf. Cefálico/Edad (0-5)"
+																	id="btnCalcularPerimetroCefalicoEdad"
+																	onClick="formHis_atencion_crecimiento_menor2_5.graficarPcEdad()"
+																	disabled="true" width="180px" />
+															</cell>
+														</row>
+														<row>
+															<cell></cell>
+															<cell>
+																<button
+																	label="Tabla Talla/Edad (2-5)"
+																	id="btnMostrarTablaTallaEdad"
+																	onClick="formHis_atencion_crecimiento_menor2_5.mostrarTablaTallaEdad()"
+																	width="180px" />
+															</cell>
+															<cell>
+																<button
+																	label="Tabla Peso/Talla (2-5)"
+																	id="btnMostrarTablaPesoTalla"
+																	onClick="formHis_atencion_crecimiento_menor2_5.mostrarTablaPesoTalla()"
+																	width="180px" />
+															</cell>
+															<cell>
+																<button
+																	label="Tabla IMC/Edad (2-5)"
+																	id="btnMostrarTablaImcEdad"
+																	onClick="formHis_atencion_crecimiento_menor2_5.mostrarTablaIMCEdad()"
+																	width="180px" />
+															</cell>
+															<cell>
+																<button
+																	label="Tabla Cefálico/Edad (0-5)"
+																	id="btnMostrarTablaPerimetroCefalicoEdad"
+																	onClick="formHis_atencion_crecimiento_menor2_5.mostrarTablaPcEdad()"
+																	width="180px" />
+															</cell>
+														</row>
+														<row>
+															<cell></cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbEmaciacion_visible" value="Emaciación visible: " />
+															</cell>
+															<cell>
+																<radiogroup
+																	id="rdbEmaciacion_visible">
+																	<radio
+																		id="rdEmaciacion_visible1" value="1" label="Sí"
+																		onCheck="formHis_atencion_crecimiento_menor2_5.notificarAlerta(self);" />
+																	<space />
+																	<radio
+																		id="rdEmaciacion_visible2" value="2" label="No"
+																		checked="true" />
+																	<space />
+																</radiogroup>
+															</cell>
+															<cell
+																colspan="2" />
+														</row>
+														<row>
+															<cell></cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbEdema_ambos_pies" value="Edema en ambos pies: " />
+															</cell>
+															<cell>
+																<radiogroup
+																	id="rdbEdema_ambos_pies">
+																	<radio
+																		id="rdEdema_ambos_pies1" label="Sí" value="1"
+																		onCheck="formHis_atencion_crecimiento_menor2_5.notificarAlerta(self);" />
+																	<space />
+																	<radio
+																		id="rdEdema_ambos_pies2" label="No" value="2"
+																		checked="true" />
+																	<space />
+																</radiogroup>
+															</cell>
+															<cell
+																colspan="2" />
+														</row>
+														<row
+															visible="true">
+															<cell></cell>
+															<cell
+																height="30px">
+
+																<label
+																	id="lbTendencia_peso" value="Tendencia peso: " />
+																<radiogroup
+																	id="rdbTendencia_peso" />
+															</cell>
+															<cell>
+																<radio
+																	id="rdTendencia_peso1" checked="true" value="1"
+																	label="Ascendente" radiogroup="rdbTendencia_peso" />
+															</cell>
+															<cell>
+																<radio
+																	id="rdTendencia_peso2" value="2" label="Horizontal"
+																	radiogroup="rdbTendencia_peso" />
+															</cell>
+															<cell>
+																<radio
+																	id="rdTendencia_peso3" value="3" label="Descendente"
+																	radiogroup="rdbTendencia_peso" />
+															</cell>
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+									<row>
+										<cell colspan="4">
+											<groupbox mold="3d"
+												closable="false">
+												<caption
+													label="EXAMEN FISICO POR SISTEMA" />
+												<grid
+													sclass="GridSinBorde" style="border:none">
+													<columns>
+														<column
+															label="" />
+														<column
+															label="SI" width="28px" />
+														<column
+															label="NO" width="28px" />
+
+														<column
+															label="" />
+														<column
+															label="SI" width="28px" />
+														<column
+															label="NO" width="28px" />
+
+														<column
+															label="" />
+														<column
+															label="SI" width="28px" />
+														<column
+															label="NO" width="28px" />
+
+													</columns>
+													<rows>
+														<row>
+															<cell
+																height="30px">
+																<label
+																	id="lbLetargico" value="Letárgico: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbLetargico">
+																	<radio
+																		id="letargico1" label="" value="1" />
+																	<radio
+																		id="letargico2" label="" checked="true" value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbBebe_avidamente" value="Bebe ávidamente: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbBebe_avidamente">
+																	<radio
+																		id="bebe_avidamente1" label="" value="1" />
+																	<radio
+																		id="bebe_avidamente2" checked="true" label=""
+																		value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbTimpano_rojo_abombado"
+																	value="Tímpano rojo abombado: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbTimpano_rojo_abombado">
+																	<radio
+																		id="timpano_rojo_abombado1" label="" value="1" />
+																	<radio
+																		id="timpano_rojo_abombado2" checked="true" label=""
+																		value="2" />
+																</radiogroup>
+															</cell>
+														</row>
+
+														<row>
+															<cell
+																height="30px">
+																<label
+																	id="lbSomnoliento" value="Somnoliento: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbSomnoliento">
+																	<radio
+																		id="somnoliento1" label="" value="1" />
+																	<radio
+																		id="somnoliento2" label="" checked="true" value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbOjos_hundios" value="Ojos hundidos: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbOjos_hundios">
+																	<radio
+																		id="ojos_hundios1" label="" value="1" />
+																	<radio
+																		id="ojos_hundios2" label="" checked="true" value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbSuparacion_oido" value="Supuración oído: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbSuparacion_oido">
+																	<radio
+																		id="suparacion_oido1" label="" value="1" />
+																	<radio
+																		id="suparacion_oido2" checked="true" label=""
+																		value="2" />
+																</radiogroup>
+															</cell>
+														</row>
+
+														<row>
+															<cell
+																height="30px">
+																<label
+																	id="lbConfuso" value="Confuso: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbConfuso">
+																	<radio
+																		id="confuso1" label="" value="1" />
+																	<radio
+																		id="confuso2" label="" checked="true" value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbSigno_pliegue_cutaneo"
+																	value="Signo del pliegue cutáneo: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbSigno_pliegue_cutaneo">
+																	<radio
+																		id="signo_pliegue_cutaneo1" label="" value="1" />
+																	<radio
+																		id="signo_pliegue_cutaneo2" checked="true" label=""
+																		value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbGnaglio_cuello_doloroso"
+																	value="Ganglio cuello doloroso: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbGnaglio_cuello_doloroso">
+																	<radio
+																		id="gnaglio_cuello_doloroso1" label="" value="1" />
+																	<radio
+																		id="gnaglio_cuello_doloroso2" label="" checked="true"
+																		value="2" />
+																</radiogroup>
+															</cell>
+														</row>
+
+														<row>
+															<cell
+																height="30px">
+																<label
+																	id="lbAgitado_irritable" value="Agitado irritable: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbAgitado_irritable">
+																	<radio
+																		id="agitado_irritable1" label="" value="1" />
+																	<radio
+																		id="agitado_irritable2" checked="true" label=""
+																		value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbManifestaciones_sangrado"
+																	value="Manifestaciones sangrado: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbManifestaciones_sangrado">
+																	<radio
+																		id="manifestaciones_sangrado1" label="" value="1" />
+																	<radio
+																		id="manifestaciones_sangrado2" checked="true" label=""
+																		value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbAmigdalas_etirematosas"
+																	value="Amígdalas eritematosas" />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbAmigdalas_etirematosas">
+																	<radio
+																		id="amigdalas_etirematosas1" label="" value="1" />
+																	<radio
+																		id="amigdalas_etirematosas2" checked="true" label=""
+																		value="2" />
+																</radiogroup>
+															</cell>
+														</row>
+
+														<row>
+															<cell
+																height="30px">
+																<label
+																	id="lbRigidez_nuca" value="Rigidez de nuca: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbRigidez_nuca">
+																	<radio
+																		id="rigidez_nuca1" label="" value="1" />
+																	<radio
+																		id="eigidez_nuca2" checked="true" label="" value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbErupcion_cutanea_generalizada"
+																	value="Erupción cutánea generalizada: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbErupcion_cutanea_generalizada">
+																	<radio
+																		id="erupcion_cutanea_generalizada1" label=""
+																		value="1" />
+																	<radio
+																		id="erupcion_cutanea_generalizada2" checked="true"
+																		label="" value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbExudado_amigdalas"
+																	value="Exudado en amígdalas: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbExudado_amigdalas">
+																	<radio
+																		id="exudado_amigdalas1" label="" value="1" />
+																	<radio
+																		id="exudado_amigdalas2" checked="true" label=""
+																		value="2" />
+																</radiogroup>
+															</cell>
+														</row>
+
+														<row>
+															<cell
+																height="30px">
+																<label
+																	id="lbTiraje_subcostal" value="Tiraje subcostal: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbTiraje_subcostal">
+																	<radio
+																		id="tiraje_subcostal1" label="" value="1" />
+																	<radio
+																		id="tiraje_subcostal2" checked="true" label=""
+																		value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbPrueba_tornique_positiva"
+																	value="Prueba torniquete positiva: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbPrueba_tornique_positiva">
+																	<radio
+																		id="rueba_tornique_positiva1" label="" value="1" />
+																	<radio
+																		id="rueba_tornique_positiva2" checked="true" label=""
+																		value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbPalidez_palmar" value="Palidez palmar: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbPalidez_palmar">
+																	<radio
+																		id="palidez_palmar1" label="" value="1" />
+																	<radio
+																		id="palidez_palmar2" checked="true" label=""
+																		value="2" />
+																</radiogroup>
+															</cell>
+														</row>
+
+														<row>
+															<cell
+																height="30px">
+																<label
+																	id="lbTiraje_supraclavicular"
+																	value="Tiraje supraclavicular: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbTiraje_supraclavicular">
+																	<radio
+																		id="tiraje_supraclavicular1" label="" value="1" />
+																	<radio
+																		id="tiraje_supraclavicular2" checked="true" label=""
+																		value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbHepatomegalia" value="Hepatomegalia: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbHepatomegalia">
+																	<radio
+																		id="hepatomegalia1" label="" value="1" />
+																	<radio
+																		id="hepatomegalia2" checked="true" label="" value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbPalidez_conjuntival"
+																	value="Palidez conjuntival: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbPalidez_conjuntival">
+																	<radio
+																		id="palidez_conjuntival1" label="" value="1" />
+																	<radio
+																		id="palidez_conjuntival2" checked="true" label=""
+																		value="2" />
+																</radiogroup>
+															</cell>
+														</row>
+
+														<row>
+															<cell
+																height="30px">
+																<label
+																	id="lbEstridor" value="Estridor: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbEstridor">
+																	<radio
+																		id="estridor1" label="" value="1" />
+																	<radio
+																		id="estridor2" checked="true" label="" value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbPulso_rapido_fino" value="Pulso rápido fino: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbPulso_rapido_fino">
+																	<radio
+																		id="pulso_rapido_fino1" label="" value="1" />
+																	<radio
+																		id="pulso_rapido_fino2" checked="true" label=""
+																		value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbQuemaduras" value="Quemaduras: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbQuemaduras">
+																	<radio
+																		id="quemaduras1" label="" value="1" />
+																	<radio
+																		id="quemaduras2" checked="true" label="" value="2" />
+																</radiogroup>
+															</cell>
+														</row>
+
+														<row>
+															<cell
+																height="30px">
+																<label
+																	id="lbSibilancia" value="Sibilancia: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbSibilancia">
+																	<radio
+																		id="sibilancia1" label="" value="1" />
+																	<radio
+																		id="sibilancia2" checked="true" label="" value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbLlenado_capilar_mayo2"
+																	value="Llenado capilar &gt; a 2 seg: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbLlenado_capilar_mayo2">
+																	<radio
+																		id="llenado_capilar_mayo21" label="" value="1" />
+																	<radio
+																		id="llenado_capilar_mayo22" checked="true" label=""
+																		value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbLaceraciones" value="Laceraciones: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbLaceraciones">
+																	<radio
+																		id="laceraciones1" label="" value="1" />
+																	<radio
+																		id="laceraciones2" checked="true" label="" value="2" />
+																</radiogroup>
+															</cell>
+														</row>
+
+														<row>
+															<cell
+																height="30px">
+																<label
+																	id="lbApnea" value="Apnea: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbApnea">
+																	<radio
+																		id="apnea1" label="" value="1" />
+																	<radio
+																		id="apnea2" label="" checked="true" value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbAscitis" value="Ascitis: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbAscitis">
+																	<radio
+																		id="ascitis1" label="" value="1" />
+																	<radio
+																		id="ascitis2" label="" checked="true" value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbMordiscos" value="Mordiscos: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbMordiscos">
+																	<radio
+																		id="mordiscos1" label="" value="1" />
+																	<radio
+																		id="mordiscos2" label="" checked="true" value="2" />
+																</radiogroup>
+															</cell>
+														</row>
+
+														<row>
+															<cell
+																height="30px">
+																<label
+																	id="lbBebe_mal_no_puede" value="Bebe mal o no puede: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbBebe_mal_no_puede">
+																	<radio
+																		id="bebe_mal_no_puede1" label="" value="1" />
+																	<radio
+																		id="bebe_mal_no_puede2" checked="true" label=""
+																		value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbTumefaccion_retroauricular"
+																	value="Tumefacción retroauricular: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbTumefaccion_retroauricular">
+																	<radio
+																		id="tumefaccion_retroauricular1" label="" value="1" />
+																	<radio
+																		id="tumefaccion_retroauricular2" checked="true"
+																		label="" value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbCicatrices" value="Cicatrices: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbCicatrices">
+																	<radio
+																		id="cicatrices1" label="" value="1" />
+																	<radio
+																		id="cicatrices2" checked="true" label="" value="2" />
+																</radiogroup>
+															</cell>
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+
+
+									<row>
+										<cell colspan="4">
+											<groupbox mold="3d"
+												closable="false">
+												<caption
+													label="Marque (N)ormal o (A)normal" />
+												<grid
+													sclass="GridSinBorde" style="border:none">
+													<columns>
+														<column
+															label="" />
+														<column
+															label="N" width="28px" />
+														<column
+															label="A" width="28px" />
+														<column
+															label="" />
+														<column
+															label="N" width="28px" />
+														<column
+															label="A" width="28px" />
+														<column
+															label="" />
+														<column
+															label="N" width="28px" />
+														<column
+															label="A" width="28px" />
+													</columns>
+													<rows>
+														<row>
+															<cell
+																height="30px">
+																<label
+																	id="lbCabeza_cara" value="Cabeza cara: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbCabeza_cara"
+																	onCheck='com.framework.util.FormularioUtil.mostrarObservaciones(rdbCabeza_cara,"2",tbxObservaciones_cabeza,row1);'>
+																	<radio
+																		id="cabeza_cara1" checked="true" label="" value="1" />
+																	<radio
+																		id="cabeza_cara2" label="" value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbCuello" value="Cuello: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbCuello"
+																	onCheck='com.framework.util.FormularioUtil.mostrarObservaciones(rdbCuello,"2",tbxObservaciones_cuello,row1);'>
+																	<radio
+																		id="cuello1" checked="true" label="" value="1" />
+																	<radio
+																		id="cuello2" label="" value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbAbdomen" value="Abdomen: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbAbdomen"
+																	onCheck='com.framework.util.FormularioUtil.mostrarObservaciones(rdbAbdomen,"2",tbxObservaciones_abdomen,row1);'>
+																	<radio
+																		id="abdomen1" checked="true" label="" value="1" />
+																	<radio
+																		id="abdomen2" label="" value="2" />
+																</radiogroup>
+															</cell>
+														</row>
+														
+														<row id="row1" visible="false">
+															<cell colspan="3"><textbox id="tbxObservaciones_cabeza" rows="2" width="98%" style="text-transform:uppercase" maxlength="-1" visible="false"/></cell>
+															<cell colspan="3"><textbox id="tbxObservaciones_cuello" rows="2" width="98%" style="text-transform:uppercase" maxlength="-1" visible="false"/></cell>
+															<cell colspan="3"><textbox id="tbxObservaciones_abdomen" rows="2" width="98%" style="text-transform:uppercase" maxlength="-1" visible="false"/></cell>
+														</row >
+
+														<row>
+															<cell
+																height="30px">
+																<label
+																	id="lbOrgano_de_sentidos"
+																	value="Órgano de los sentidos: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbOrgano_de_sentidos"
+																	onCheck='com.framework.util.FormularioUtil.mostrarObservaciones(rdbOrgano_de_sentidos,"2",tbxObservaciones_sentidos,row2);'>
+																	<radio
+																		id="organo_de_sentidos1" checked="true" label=""
+																		value="1" />
+																	<radio
+																		id="organo_de_sentidos2" label="" value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbTorax_cardiopulmonar"
+																	value="Tórax y cardiopulmonar: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbTorax_cardiopulmonar"
+																	onCheck='com.framework.util.FormularioUtil.mostrarObservaciones(rdbTorax_cardiopulmonar,"2",tbxObservaciones_torax,row2);'>
+																	<radio
+																		id="torax_cardiopulmonar1" checked="true" label=""
+																		value="1" />
+																	<radio
+																		id="torax_cardiopulmonar2" label="" value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbMasa" value="Masas: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbMasa"
+																	onCheck='com.framework.util.FormularioUtil.mostrarObservaciones(rdbMasa,"2",tbxObservaciones_masas,row2);'>
+																	<radio
+																		id="masa1" checked="true" label="" value="1" />
+																	<radio
+																		id="masa2" label="" value="2" />
+																</radiogroup>
+															</cell>
+														</row>
+														<row id="row2" visible="false" >
+															<cell colspan="3"><textbox id="tbxObservaciones_sentidos" width="98%" style="text-transform:uppercase" maxlength="-1" rows="2" visible="false"/></cell>
+															<cell colspan="3"><textbox id="tbxObservaciones_torax" width="98%" style="text-transform:uppercase" maxlength="-1" rows="2" visible="false"/></cell>
+															<cell colspan="3"><textbox id="tbxObservaciones_masas" width="98%" style="text-transform:uppercase" maxlength="-1" rows="2" visible="false"/></cell>
+														</row >
+
+														<row>
+															<cell
+																height="30px">
+																<label
+																	id="lbFijacion_seguimiento"
+																	value="Fijación y seguimiento (visual): " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbFijacion_seguimiento"
+																	onCheck='com.framework.util.FormularioUtil.mostrarObservaciones(rdbFijacion_seguimiento,"2",tbxObservaciones_fijacion,row3);'>
+																	<radio
+																		id="fijacion_seguimiento1" checked="true" label=""
+																		value="1" />
+																	<radio
+																		id="fijacion_seguimiento2" label="" value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbTirmo_cardiaco" value="Ritmo cardiaco: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbTirmo_cardiaco"
+																	onCheck='com.framework.util.FormularioUtil.mostrarObservaciones(rdbTirmo_cardiaco,"2",tbxObservaciones_cardiaco,row3);'>
+																	<radio
+																		id="tirmo_cardiaco1" checked="true" label=""
+																		value="1" />
+																	<radio
+																		id="tirmo_cardiaco2" label="" value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbMegalias" value="Megalias: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbMegalias"
+																	onCheck='com.framework.util.FormularioUtil.mostrarObservaciones(rdbMegalias,"2",tbxObservaciones_megalias,row3);'>
+																	<radio
+																		id="megalias1" checked="true" label="" value="1" />
+																	<radio
+																		id="megalias2" label="" value="2" />
+																</radiogroup>
+															</cell>
+														</row>
+
+														<row  id="row3" visible="false">
+															<cell colspan="3"><textbox id="tbxObservaciones_fijacion" width="98%" style="text-transform:uppercase" maxlength="-1" rows="2" visible="false"/></cell>
+															<cell colspan="3"><textbox id="tbxObservaciones_cardiaco" width="98%" style="text-transform:uppercase" maxlength="-1" rows="2" visible="false"/></cell>
+															<cell colspan="3"><textbox id="tbxObservaciones_megalias" width="98%" style="text-transform:uppercase" maxlength="-1" rows="2" visible="false"/></cell>
+														</row >
+
+														<row>
+															<cell
+																height="30px">
+																<label
+																	id="lbOclusion_alternante"
+																	value="Oclusión alternante (visual): " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbOclusion_alternante"
+																	onCheck='com.framework.util.FormularioUtil.mostrarObservaciones(rdbOclusion_alternante,"2",tbxObservaciones_oclusion,row4);'>
+																	<radio
+																		id="oclusion_alternante1" checked="true" label=""
+																		value="1" />
+																	<radio
+																		id="oclusion_alternante2" label="" value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbSoplo" value="Soplo: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbSoplo"
+																	onCheck='com.framework.util.FormularioUtil.mostrarObservaciones(rdbSoplo,"2",tbxObservaciones_soplo,row4);'>
+																	<radio
+																		id="soplo1" checked="true" label="" value="1" />
+																	<radio
+																		id="soplo2" label="" value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbCover_uncover_test"
+																	value="Cover uncover test (visual): " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbCover_uncover_test"
+																	onCheck='com.framework.util.FormularioUtil.mostrarObservaciones(rdbCover_uncover_test,"2",tbxObservaciones_cover,row4);'>
+																	<radio
+																		id="cover_uncover_test1" checked="true" label=""
+																		value="1" />
+																	<radio
+																		id="cover_uncover_test2" label="" value="2" />
+																</radiogroup>
+															</cell>
+														</row>
+														
+														<row id="row4" visible="false">
+															<cell colspan="3"><textbox id="tbxObservaciones_oclusion" width="98%" style="text-transform:uppercase" maxlength="-1" rows="2" visible="false"/></cell>
+															<cell colspan="3"><textbox id="tbxObservaciones_soplo" width="98%" style="text-transform:uppercase" maxlength="-1" rows="2" visible="false"/></cell>
+															<cell colspan="3"><textbox id="tbxObservaciones_cover" width="98%" style="text-transform:uppercase" maxlength="-1" rows="2" visible="false"/></cell>
+														</row >
+														
+
+														<row>
+															<cell
+																height="30px">
+																<label
+																	id="lbColumna_vertebral" value="Columna vertebral: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbColumna_vertebral"
+																	onCheck='com.framework.util.FormularioUtil.mostrarObservaciones(rdbColumna_vertebral,"2",tbxObservaciones_columna,row5);'>
+																	<radio
+																		id="columna_vertebral1" checked="true" label=""
+																		value="1" />
+																	<radio
+																		id="columna_vertebral2" label="" value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbNeurologico_a_n" value="Neurológico: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbNeurologico_a_n"
+																	onCheck='com.framework.util.FormularioUtil.mostrarObservaciones(rdbNeurologico_a_n,"2",tbxObservaciones_neurologico,row5);'>
+																	<radio
+																		id="neurologico_a_n1" checked="true" label=""
+																		value="1" />
+																	<radio
+																		id="neurologico_a_n2" label="" value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbBoca" value="Boca: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbBoca"
+																	onCheck='com.framework.util.FormularioUtil.mostrarObservaciones(rdbBoca,"2",tbxObservaciones_boca,row5);'>
+																	<radio
+																		id="boca1" checked="true" label="" value="1" />
+																	<radio
+																		id="boca2" label="" value="2" />
+																</radiogroup>
+															</cell>
+														</row>
+														
+														<row  id="row5" visible="false">
+															<cell colspan="3"><textbox id="tbxObservaciones_columna" width="98%" style="text-transform:uppercase" maxlength="-1" rows="2" visible="false"/></cell>
+															<cell colspan="3"><textbox id="tbxObservaciones_neurologico" width="98%" style="text-transform:uppercase" maxlength="-1" rows="2" visible="false"/></cell>
+															<cell colspan="3"><textbox id="tbxObservaciones_boca" width="98%" style="text-transform:uppercase" maxlength="-1" rows="2" visible="false"/></cell>
+														</row >
+
+														<row>
+															<cell
+																height="30px">
+																<label
+																	id="lbExtremidades" value="Extremidades: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbExtremidades"
+																	onCheck='com.framework.util.FormularioUtil.mostrarObservaciones(rdbExtremidades,"2",tbxObservaciones_extremidades,row6);'>
+																	<radio
+																		id="extremidades1" checked="true" label="" value="1" />
+																	<radio
+																		id="extremidades2" label="" value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbPiel_y_anexos" value="Piel y anexos: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbPiel_y_anexos"
+																	onCheck='com.framework.util.FormularioUtil.mostrarObservaciones(rdbPiel_y_anexos,"2",tbxObservaciones_piel,row6);'>
+																	<radio
+																		id="piel_y_anexos1" checked="true" label="" value="1" />
+																	<radio
+																		id="piel_y_anexos2" label="" value="2" />
+																</radiogroup>
+															</cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbGenito_urinario" value="Genitourinario: " />
+															</cell>
+															<cell
+																colspan="2">
+																<radiogroup
+																	id="rdbGenito_urinario"
+																	onCheck='com.framework.util.FormularioUtil.mostrarObservaciones(rdbGenito_urinario,"2",tbxObservaciones_genito,row6);'>
+																	<radio
+																		id="genito_urinario1" checked="true" label=""
+																		value="1" />
+																	<radio
+																		id="genito_urinario2" label="" value="2" />
+																</radiogroup>
+															</cell>
+
+														</row>
+														<row id="row6" visible="false" >
+															<cell colspan="3"><textbox id="tbxObservaciones_extremidades" width="98%" style="text-transform:uppercase" maxlength="-1" rows="2" visible="false"/></cell>
+															<cell colspan="3"><textbox id="tbxObservaciones_piel" width="98%" style="text-transform:uppercase" maxlength="-1" rows="2" visible="false"/></cell>
+															<cell colspan="3"><textbox id="tbxObservaciones_genito" width="98%" style="text-transform:uppercase" maxlength="-1" rows="2" visible="false"/></cell>
+														</row >
+														<row>
+															<cell
+																height="30px" colspan="9">
+
+																<label
+																	id="lbObservacioness" value="Observaciones: " />
+															</cell>
+														</row>
+														<row>
+															<cell
+																colspan="9">
+																<textbox
+																	id="tbxObservacioness" width="99%" rows="4"
+																	style="text-transform:uppercase" />
+															</cell>
+															<cell></cell>
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+									<row>
+										<cell colspan="4">
+											<groupbox mold="3d"
+												closable="false">
+												<caption
+													label="EVALUACIÓN DEL DESARROLLO" />
+												<grid
+													sclass="GridSinBorde" style="border:none">
+													<columns>
+														<column label=""
+															width="20%" />
+														<column label=""
+															width="80%" />
+													</columns>
+													<rows>
+														<row>
+															<cell
+																colspan="2">
+																<groupbox
+																	closable="false" mold="3d">
+																	<caption
+																		label="ESCALA ABREVIADA DE DESARROLLO EAD-1 " />
+																	<escalaDesarrollo
+																		id="macroEscalaDesarrollo" />
+																</groupbox>
+															</cell>
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+
+									<row>
+										<cell colspan="4">
+											<groupbox mold="3d"
+												closable="false">
+												<caption
+													label="DIAGNÓSTICO DEL CRECIMIENTO" />
+												<grid
+													sclass="GridSinBorde" style="border:none">
+													<columns>
+														<column label=""
+															width="130px" />
+														<column label=""
+															width="249px" />
+														<column label=""
+															width="30px" />
+														<column label=""
+															width="15px" />
+														<column label=""
+															width="15px" />
+														<column label=""
+															width="240px" />
+														<column label=""
+															width="30px" />
+														<column label=""
+															width="5px" />
+														<column label=""
+															width="5px" />
+														<column label=""
+															width="100px" />
+													</columns>
+													<rows>
+
+														<row>
+															<cell></cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbDesnutricion_sev_pes_bajo"
+																	value="Desnutrición severa(peso bajo): " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbDesnutricion_sev_pes_bajo"
+																	onCheck="formHis_atencion_crecimiento_menor2_5.alarmaCrecimiento(chbDesnutricion_sev_pes_bajo)" />
+															</cell>
+															<cell></cell>
+															<cell></cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbObesidad_crecimiento"
+																	value="Obesidad crecimiento: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbObesidad_crecimiento"
+																	onCheck="formHis_atencion_crecimiento_menor2_5.alarmaCrecimiento(chbObesidad_crecimiento)" />
+															</cell>
+															<cell
+																colspan="6">
+															</cell>
+														</row>
+
+														<row>
+															<cell></cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbDesnutricion_crecimiento"
+																	value="Desnutrición(peso bajo): " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbDesnutricion_crecimiento"
+																	onCheck="formHis_atencion_crecimiento_menor2_5.alarmaCrecimiento(chbDesnutricion_crecimiento)" />
+															</cell>
+															<cell></cell>
+															<cell></cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbSobrepeso_crecimiento"
+																	value="Sobrepeso crecimiento: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbSobrepeso_crecimiento"
+																	onCheck="formHis_atencion_crecimiento_menor2_5.alarmaCrecimiento(chbSobrepeso_crecimiento)" />
+															</cell>
+															<cell
+																colspan="6">
+															</cell>
+
+														</row>
+														<row>
+															<cell></cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbRiesgo_desnutricion_ccrecimiento"
+																	value="Riesgo desnutrición(riesgo de peso bajo) : " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbRiesgo_desnutricion_crecimiento"
+																	onCheck="formHis_atencion_crecimiento_menor2_5.alarmaCrecimiento(chbRiesgo_desnutricion_crecimiento)" />
+															</cell>
+															<cell></cell>
+															<cell></cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbCrecimiento_adecuado_crecimiento"
+																	value="Crecimiento adecuado crecimiento: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbCrecimiento_adecuado_crecimiento" />
+															</cell>
+															<cell
+																colspan="6">
+															</cell>
+														</row>
+
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+									<row>
+										<cell colspan="4">
+											<groupbox mold="3d"
+												closable="false">
+												<caption
+													label="Diagnóstico del Desarrollo" />
+												<grid
+													sclass="GridSinBorde" style="border:none">
+													<columns>
+														<column label=""
+															width="130px" />
+														<column label=""
+															width="249px" />
+														<column label=""
+															width="30px" />
+														<column label=""
+															width="15px" />
+														<column label=""
+															width="15px" />
+														<column label=""
+															width="240px" />
+														<column label=""
+															width="30px" />
+														<column label=""
+															width="5px" />
+														<column label=""
+															width="5px" />
+														<column label=""
+															width="100px" />
+
+													</columns>
+													<rows>
+														<row>
+															<cell></cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbSosp_retras_desarrollo2"
+																	value="Sospecha de retraso del desarrollo: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbSosp_retras_desarrollo2"
+																	onCheck="formHis_atencion_crecimiento_menor2_5.alarmaCrecimiento(chbSosp_retras_desarrollo2)" />
+															</cell>
+															<cell></cell>
+															<cell></cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbDesarrollo_normal_fac_riesgo22"
+																	value="Desarrollo normal con factores de riesgo: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbDesarrollo_normal_fac_riesgo22"
+																	onCheck="formHis_atencion_crecimiento_menor2_5.alarmaCrecimiento(chbDesarrollo_normal_fac_riesgo22)" />
+															</cell>
+															<cell
+																colspan="6">
+															</cell>
+														</row>
+
+														<row>
+															<cell></cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbRiesgo_problema_desarrollo2"
+																	value="Riesgo de problema en el desarrollo: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbRiesgo_problema_desarrollo2"
+																	onCheck="formHis_atencion_crecimiento_menor2_5.alarmaCrecimiento(chbRiesgo_problema_desarrollo2)" />
+															</cell>
+															<cell></cell>
+															<cell></cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbDesarrollo_normal2" value="Desarrollo normal: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbDesarrollo_normal2" />
+															</cell>
+															<cell
+																colspan="6">
+															</cell>
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+
+
+									<row>
+										<cell colspan="4">
+											<groupbox mold="3d"
+												closable="false">
+												<caption
+													label="DIAGNÓSTICO MALTRATO" />
+												<grid
+													sclass="GridSinBorde" style="border:none">
+													<columns>
+														<column label=""
+															width="130px" />
+														<column label=""
+															width="249px" />
+														<column label=""
+															width="30px" />
+														<column label=""
+															width="15px" />
+														<column label=""
+															width="15px" />
+														<column label=""
+															width="240px" />
+														<column label=""
+															width="30px" />
+														<column label=""
+															width="5px" />
+														<column label=""
+															width="5px" />
+														<column label=""
+															width="100px" />
+
+													</columns>
+													<rows>
+
+														<row>
+															<cell></cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbMaltrato_fisico"
+																	value="Sospecha de maltrato físico: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbMaltrato_fisico"
+																	onCheck="formHis_atencion_crecimiento_menor2_5.alarmaCrecimiento(chbMaltrato_fisico)" />
+															</cell>
+															<cell></cell>
+															<cell></cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbMaltrato_emocional"
+																	value="Sospecha de maltrato emocional: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbMaltrato_emocional"
+																	onCheck="formHis_atencion_crecimiento_menor2_5.alarmaCrecimiento(chbMaltrato_emocional)" />
+															</cell>
+															<cell
+																colspan="6">
+															</cell>
+														</row>
+
+														<row>
+															<cell></cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbSospechas_abuso_sexual"
+																	value="Sospechas abuso sexual: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbSospechas_abuso_sexual"
+																	onCheck="formHis_atencion_crecimiento_menor2_5.alarmaCrecimiento(chbSospechas_abuso_sexual)" />
+															</cell>
+															<cell></cell>
+															<cell></cell>
+															<cell
+																height="30px">
+																<label
+																	id="lbNo_hay_sospechas_maltrato"
+																	value="No hay sospechas maltrato: " />
+															</cell>
+															<cell>
+																<checkbox
+																	id="chbNo_hay_sospechas_maltrato" />
+															</cell>
+															<cell
+																colspan="6">
+															</cell>
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+									<row>
+										<cell colspan="4">
+											<groupbox mold="3d"
+												closable="false">
+												<grid
+													sclass="GridSinBorde" style="border:none">
+													<columns>
+														<column />
+													</columns>
+													<rows>
+														<row>
+															<impresionDiagnostica
+																id="macroImpresion_diagnostica" />
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+									<row>
+										<cell colspan="4">
+											<groupbox mold="3d"
+												closable="false">
+												<div style=""
+													id="divModuloFarmacologico" visible="true">
+												</div>
+
+												<separator
+													height="10px" />
+
+												<div style=""
+													id="divModuloOrdenamiento" visible="true">
+												</div>
+												<autorizaciones
+													id="divModuloAutorizacion" widthW="900px" heightW="360px"
+													modo="1" idDiv="divModuloOrdenamiento" visibleM="false" />
+											</groupbox>
+										</cell>
+									</row>
+									<row id="rowAnalisis">
+										<cell colspan="4">
+											<groupbox mold="3d"
+												closable="false">
+												<caption
+													label="ANÁLISIS" />
+												<grid
+													sclass="GridSinBorde" style="border:none">
+													<columns>
+														<column label=""
+															width="10px" />
+														<column label=""
+															width="130px" />
+														<column label=""
+															width="120px" />
+														<column label=""
+															width="100px" />
+														<column label=""
+															width="110px" />
+														<column label=""
+															width="105px" />
+														<column label=""
+															width="105px" />
+														<column label=""
+															width="120px" />
+
+													</columns>
+													<rows>
+														<row>
+															<cell>
+																<label
+																	value="* " style="color: red"
+																	tooltiptext="Campo obligatorio" />
+															</cell>
+															<cell
+																height="30px" colspan="16">
+
+																<label
+																	id="lbAnalisis" value="Análisis: " />
+															</cell>
+														</row>
+														<row>
+															<cell
+																colspan="17">
+																<textbox
+																	id="tbxAnalisis" width="99%" rows="4"
+																	style="text-transform:uppercase" />
+															</cell>
+														</row>
+
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+
+									<row id="rowPlan_terapeutico">
+										<cell colspan="4">
+											<groupbox mold="3d"
+												closable="false">
+												<caption
+													label="PLAN TERAPÉUTICO" />
+												<grid>
+													<columns />
+													<rows>
+														<row>
+															<cell>
+																<groupbox
+																	closable="false">
+																	<grid
+																		sclass="GridSinBorde" style="border:none">
+																		<columns>
+																			<column
+																				label="" width="33px" />
+																			<column
+																				label="" width="210px" />
+																			<column
+																				label="" width="30px" />
+																			<column
+																				label="" width="15px" />
+																			<column
+																				label="" width="26" />
+																			<column
+																				label="" width="200px" />
+																			<column
+																				label="" width="30px" />
+																			<column
+																				label="" width="20px" />
+																			<column
+																				label="" width="20px" />
+																			<column
+																				label="" width="200px" />
+																			<column
+																				label="" width="30px" />
+																		</columns>
+																		<rows>
+																			<row>
+																				<cell></cell>
+																				<cell
+																					height="30px">
+																					<label
+																						id="lbEstimulo_factores_protectores"
+																						value="Estimulo factores protectores: " />
+																				</cell>
+																				<cell>
+																					<checkbox
+																						id="chbEstimulo_factores_protectores" />
+																				</cell>
+																				<cell></cell>
+																				<cell></cell>
+																				<cell
+																					height="30px">
+																					<label
+																						id="lbRecomendaciones_de_buentrato"
+																						value="Recomendaciones de buen trato: " />
+																				</cell>
+																				<cell>
+																					<checkbox
+																						id="chbRecomendaciones_de_buentrato" />
+																				</cell>
+																				<cell></cell>
+																				<cell></cell>
+																				<cell
+																					height="30px">
+																					<label
+																						id="lbOrientacion_vacunacion"
+																						value="Orientación vacunación: " />
+																				</cell>
+																				<cell>
+																					<checkbox
+																						id="chbOrientacion_vacunacion" />
+																				</cell>
+																				<cell></cell>
+																			</row>
+
+																			<row>
+																				<cell></cell>
+																				<cell
+																					height="30px">
+																					<label
+																						id="lbRecomendaciones_nutricionales"
+																						value="Recomendaciones nutricionales: " />
+																				</cell>
+																				<cell>
+																					<checkbox
+																						id="chbRecomendaciones_nutricionales" />
+																				</cell>
+																				<cell></cell>
+																				<cell></cell>
+																				<cell
+																					height="30px">
+																					<label
+																						id="lbImportancia_asistencia_controles"
+																						value="Importancia asistencia controles: " />
+																				</cell>
+																				<cell>
+																					<checkbox
+																						id="chbImportancia_asistencia_controles" />
+																				</cell>
+																				<cell></cell>
+																				<cell></cell>
+																				<cell
+																					height="30px">
+																					<label
+																						id="lbRecomendaciones_higienicas"
+																						value="Recomendaciones higiénicas: " />
+																				</cell>
+																				<cell>
+																					<checkbox
+																						id="chbRecomendaciones_higienicas" />
+																				</cell>
+																				<cell></cell>
+																			</row>
+
+																			<row>
+																				<cell></cell>
+																				<cell
+																					height="30px">
+																					<label
+																						id="lbRecomendaciones_pra_desarrollo"
+																						value="Recomendaciones para desarrollo: " />
+																				</cell>
+																				<cell>
+																					<checkbox
+																						id="chbRecomendaciones_pra_desarrollo" />
+																				</cell>
+																				<cell></cell>
+																				<cell></cell>
+																				<cell
+																					height="30px">
+																					<label
+																						id="lbRecomendaciones_en_salud_oral"
+																						value="Recomendaciones en salud oral: " />
+																				</cell>
+																				<cell>
+																					<checkbox
+																						id="chbRecomendaciones_en_salud_oral" />
+																				</cell>
+																				<cell
+																					colspan="5">
+																				</cell>
+																			</row>
+																		</rows>
+																	</grid>
+																</groupbox>
+															</cell>
+														</row>
+														<row>
+															<cell>
+																<groupbox
+																	closable="false">
+																	<grid
+																		sclass="GridSinBorde" style="border:none">
+																		<columns>
+																			<column
+																				label="" width="140px" height="30px" />
+																			<column
+																				label="" />
+																			<column
+																				label="" width="35px" />
+																			<column
+																				label="" width="50px" />
+																			<column
+																				label="" />
+																			<column
+																				label="" width="35px" />
+																			<column
+																				label="" />
+																		</columns>
+																		<rows>
+																			<row>
+																				<cell></cell>
+																				<cell>
+																					<label
+																						id="lbNecesita_prescripcion_vitamina_a"
+																						value="Necesita Prescripción vitamina a: " />
+																				</cell>
+																				<cell>
+																					<checkbox
+																						id="chbNecesita_prescripcion_vitamina_a" />
+																				</cell>
+																				<cell></cell>
+																				<cell>
+																					<label
+																						id="lbNecesita_prescripcion_albendazol"
+																						value="Necesita Prescripción albendazol: " />
+																				</cell>
+																				<cell>
+																					<checkbox
+																						id="chbNecesita_prescripcion_albendazol" />
+																				</cell>
+																				<cell></cell>
+																			</row>
+
+																			<row>
+																				<cell></cell>
+																				<cell>
+																					<label
+																						id="lbNecesita_prescripcion_hierro"
+																						value="Necesita Prescripción hierro: " />
+																				</cell>
+																				<cell>
+																					<checkbox
+																						id="chbNecesita_prescripcion_hierro" />
+																				</cell>
+																				<cell></cell>
+																				<cell>
+																					<label
+																						id="lbNecesita_prescripcion_zinc"
+																						value="Necesita Prescripción zinc: " />
+																				</cell>
+																				<cell>
+																					<checkbox
+																						id="chbNecesita_prescripcion_zinc" />
+																				</cell>
+																				<cell>
+																					<space />
+																				</cell>
+																			</row>
+																			<row>
+																				<cell
+																					colspan="7">
+																					<label
+																						value="* " style="color: red"
+																						tooltiptext="Campo obligatorio" />
+																					<label
+																						id="lbDescripciones_recomend_medi"
+																						value="Describa recomendaciones, medicamentos prescritos y remisiones : " />
+																				</cell>
+																			</row>
+																			<row>
+																				<cell
+																					colspan="7">
+																					<textbox
+																						id="tbxDescripciones_recomend_medi" width="99%"
+																						rows="4" style="text-transform:uppercase" />
+																				</cell>
+																			</row>
+																		</rows>
+																	</grid>
+																</groupbox>
+															</cell>
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+									<row id="rowAgudeza_visual"
+										visible="false">
+										<cell colspan="4">
+											<agudeza_visual
+												id="macroAgudeza_visual" />
+										</cell>
+									</row>
+
+									<row>
+										<cell colspan="4">
+
+											<groupbox closable="false"
+												mold="3d">
+												<caption
+													label="INTERCONSULTAS Y REMISIONES" />
+												<grid>
+													<rows>
+														<row>
+															<cell
+																colspan="7">
+																<remision_interna
+																	id="macroRemision_interna" />
+															</cell>
+														</row>
+
+														<row>
+															<cell
+																colspan="7">
+																<groupbox
+																	mold="3d" closable="false" visible="true"
+																	id="gbxRemisiones">
+																	<caption
+																		label="REMISIONES EXTERNAS" />
+																	<div
+																		style="" id="divModuloRemisiones_externas"
+																		visible="true">
+																	</div>
+																</groupbox>
+															</cell>
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+					</div>
+				</center>
+			</borderlayout>
+		</groupbox>
+	</window>
+</zk>

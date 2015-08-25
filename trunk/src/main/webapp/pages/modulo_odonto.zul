@@ -1,0 +1,235 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+
+	<window id="formModulo_odonto" width="100%" height="99%"
+		use="healthmanager.controller.Modulo_odontoAction" onCreate="">
+		<style src="estilo.css" />
+		<style>
+			body ,table{ margin:0; padding:0;
+
+			} .z-fieldset{ -moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; }
+
+			tr.z-row .z-cell{ background-image:none; }
+
+			tr.z-row td.z-row-inner{ background-image:none; }
+		</style>
+		<!-- <borderlayout>
+			<center autoscroll="true" border="none"> -->
+
+		<borderlayout width="100%" height="90%">
+
+			<west title="Informacion del Pacinete" flex="true" autoscroll="true"
+				collapsible="true" width="200px" style="color: black;font-weight: bold;">
+
+				<vlayout>
+					<label id="lbNro_ingreso" value="Ingreso: " style="color: black;font-weight: bold;"/>
+					<bandbox id="tbxNro_ingreso" autodrop="true"
+						readonly="true" width="200px"
+						onOpen='formModulo_odonto.buscarAdmision(tbxValueAdmision.getValue(),lbxEstado.getSelectedItem().getValue().toString(),lbxAdmision);'>
+						<bandpopup>
+							<vbox>
+								<toolbar>
+									<label value="Estado: " />
+									<listbox id="lbxEstado"
+										mold="select" width="145px" sclass="combobox"
+										onSelect='formModulo_odonto.buscarAdmision(tbxValueAdmision.getValue(),self.getSelectedItem().getValue().toString(),lbxAdmision);'>
+										<listitem value="1"
+											label="Activo" selected="true" />
+										<listitem value="2"
+											label="Terminada" />
+										<listitem value=""
+											label="Todas" />
+									</listbox>
+									<label value="Buscar: " />
+									<textbox id="tbxValueAdmision"
+										onChanging='formModulo_odonto.buscarAdmision(event.getValue(),lbxEstado.getSelectedItem().getValue().toString(),lbxAdmision);'
+										style="text-transform:uppercase;" />
+									<toolbarbutton
+										image="/images/borrar.gif" tooltiptext="Quitar"
+										onClick='formModulo_odonto.selectedAdmision(new Listitem());' />
+								</toolbar>
+								<listbox height="300px" width="600px"
+									mold="paging" pageSize="8" id="lbxAdmision"
+									onSelect='formModulo_odonto.selectedAdmision(self.getSelectedItem());'>
+									<listhead>
+										<listheader label="Ingreso"
+											width="62px" />
+										<listheader
+											label="Identificación" width="97px" />
+										<listheader label="Apellidos" />
+										<listheader label="Nombres" />
+										<listheader
+											label="Fecha Ingreso" width="110px" />
+										<listheader label="Estado"
+											width="65px" />
+									</listhead>
+								</listbox>
+							</vbox>
+						</bandpopup>
+					</bandbox>
+
+
+					<groupbox closable="false" mold="3d" id="group_paciente" open="false"  >
+						<caption label="Paciente" style="color: black;font-weight: bold;"/>
+						<grid sclass="GridSinBorde" width="100%"
+							style="border:0px">
+
+							<columns>
+								<column label="" width="100%" />
+							</columns>
+
+							<rows>
+								<!-- fila 1 -->
+								<row>
+									<cell>
+										<label id="lbNro_identificacion"
+											value="Nro Identificacion: " />
+									</cell>
+								</row>
+								<row>
+									<cell>
+										<textbox
+											id="tbxNro_identificacion" width="170px"
+											style="text-transform:uppercase" readonly="true" />
+									</cell>
+								</row>
+								<row>
+									<cell>
+										<label id="lbNombre"
+											value="Nombre: " />
+									</cell>
+								</row>
+								<row>
+									<cell>
+										<textbox id="tbxNomPaciente"
+											width="289px" style="text-transform:uppercase"
+											readonly="true" />
+									</cell>
+								</row>
+								
+								<row>
+									<cell>
+										<label value="Fecha Ingreso: " />
+									</cell>
+								</row>
+								
+								
+								<row>
+									<cell>
+										<label id="lbFechaIngreso"
+											value="" />
+									</cell>
+								</row>
+
+								<row>
+									<cell>
+										<label value="Aseguradora:" />
+									</cell>
+								</row>
+
+								<row>
+									<cell>
+										<hlayout>
+											<textbox
+												id="tbxAdministradora" width="252px"
+												style="text-transform:uppercase" readonly="true" />
+										</hlayout>
+									</cell>
+								</row>
+
+								<row>
+									<cell>
+										<label value="Contrato:" />
+									</cell>
+								</row>
+
+								<row>
+									<cell>
+										<textbox id="tbxContrato"
+											width="125px" style="text-transform:uppercase"
+											readonly="true" />
+									</cell>
+								</row>
+
+								<row>
+									<cell>
+										<label id="lbTipo_doc"
+											value="Tipo Doc: " />
+									</cell>
+								</row>
+
+
+								<!-- fila 3 -->
+								<row>
+									<cell>
+										<textbox id="tbxTipo_doc"
+											width="145px" style="text-transform:uppercase"
+											readonly="true" />
+									</cell>
+								</row>
+							</rows>
+
+						</grid>
+
+					</groupbox>
+
+					<button label="Ver Registros" mold="trendy" width="100%"
+						onClick="formModulo_odonto.verRegistros()"  />
+					<button mold="trendy" label="Atras" width="100%"
+						 onClick="formModulo_odonto.onClose()" />
+
+				</vlayout>
+			</west>
+			<center border="none" autoscroll="true">
+
+				<groupbox id="groupboxConsulta" visible="true"
+					closable="false" height="100%" mold="3d">
+
+					<textbox id="tbxEstado" value="" visible="false" />
+					<textbox id="tbxCodigo_administradora" value=""
+						visible="false" />
+					<textbox id="tbxId_plan" value="" visible="false" />
+					<textbox id="tbxSexo_pct" value="" visible="false" />
+					<textbox id="tbxFecha_nac" value="" visible="false" />
+					<textbox id="tbxTipo_hc" value="" visible="false" />
+
+					<toolbar width="100%" align="start" id="toolbar">
+						<hlayout>
+							<label value="Estado :" id="lbEstado" />
+							<listbox id="lbxAtendida" mold="select"
+								sclass="combobox" width="150px" />
+							<space />
+							<button label="Actualizar" mold="trendy"
+								onClick="formModulo_odonto.guardarDatos()" id="btActualizar" />
+
+						</hlayout>
+					</toolbar>
+
+					<tabbox id="tabboxHCUci" width="100%" vflex="1">
+						<tabs>
+							<tab label="HISTORIA ODONTOLOGICA"
+								id="tabHistoria" />
+							<tab label="EVOLUCION ODONTOLOGICA"
+								id="tabEvolucionOdontologia" visible="false"/>
+							<tab label="NOTAS ODONTOLOGIA"
+								id="tabNotasOdontologia"/>
+							<tab label="REG CLINICO DE HIGIENE"
+								id="tabRegClinicoHigiene" visible="false"/>
+						</tabs>
+						<tabpanels>
+							<tabpanel id="tabpanelHistoria"/>
+							<tabpanel id="tabpanelEvolucionOdonotlogia"/>
+							<tabpanel id="tabpanelNotasOdonotlogia"/>
+							<tabpanel id="tabpanelRegClinicoHigiene"/>
+						</tabpanels>
+					</tabbox>
+				</groupbox>
+			</center>
+
+		</borderlayout>
+		<!--</center>
+			</borderlayout>-->
+	</window>
+</zk>

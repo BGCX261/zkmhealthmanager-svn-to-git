@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.Estancias_issDao">
+
+	
+
+	<resultMap id="estancias_issMap" type="estancias_iss">
+		<result column="estancia" property="estancia" />
+		<result column="nivel" property="nivel" />
+		<result column="nro_camas" property="nro_camas" />
+		<result column="codigo" property="codigo" />
+		<result column="descripcion" property="descripcion" />
+		<result column="valor" property="valor" />
+	</resultMap>
+
+	<insert id="crear" parameterType="estancias_iss">
+		insert into public.estancias_iss (estancia,nivel,
+		nro_camas,codigo,descripcion,
+		valor)
+
+		values (#{estancia},#{nivel},
+		#{nro_camas},#{codigo},#{descripcion},
+		#{valor})
+	</insert>
+
+	<update id="actualizar" parameterType="estancias_iss">
+		update public.estancias_iss set estancia = #{estancia},
+		nivel = #{nivel},nro_camas = #{nro_camas},
+		codigo = #{codigo},descripcion = #{descripcion},
+		valor = #{valor}
+		where 		estancia = #{estancia}
+		and nivel = #{nivel}
+		and nro_camas = #{nro_camas}
+		and codigo = #{codigo}
+	</update>
+
+	<select id="consultar" resultMap="estancias_issMap" parameterType="estancias_iss">
+		select estancia,nivel,
+		nro_camas,codigo,descripcion,valor
+		from public.estancias_iss where estancia = #{estancia}
+		and nivel = #{nivel} and nro_camas = #{nro_camas}
+		and codigo = #{codigo}
+	</select>
+	
+	<select id="consultarEstancia" resultMap="estancias_issMap" parameterType="estancias_iss">
+		select estancia,nivel,
+		nro_camas,codigo,descripcion,valor
+		from public.estancias_iss where estancia = #{estancia}
+		and (nivel = #{nivel} or nivel = 0) 
+		
+		<if test="nro_camas == 1 or nro_camas == 2 or nro_camas == 3">
+		and (nro_camas = #{nro_camas} or nro_camas = 0)
+		</if>
+		
+		<if test="nro_camas >= 4">
+		and (nro_camas >= 4)
+		</if>
+		limit 1 offset 0
+	</select>
+
+	<delete id="eliminar" parameterType="estancias_iss">
+		delete from public.estancias_iss
+		where estancia = #{estancia}
+		and nivel = #{nivel} and nro_camas = #{nro_camas}
+		and codigo = #{codigo}
+	</delete>
+
+	<select id="listar" resultMap="estancias_issMap" parameterType="java.util.Map">
+		select estancia,nivel,
+		nro_camas,codigo,descripcion,valor
+		from public.estancias_iss 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="parameter != null">AND ${parameter} like '${value}'</if>
+			<if test="nivel_orden != null">
+				AND nivel = #{nivel_orden}
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean" parameterType="estancias_iss">
+		select count(1) != 0 AS exist 		from public.estancias_iss 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="parameter != null">AND ${parameter} like '${value}'</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

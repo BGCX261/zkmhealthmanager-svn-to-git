@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.negacionSQLReport">
+	<select id="select" resultType="java.util.HashMap" parameterType="java.util.Map">
+		select n.codigo_empresa,
+		n.codigo_sucursal,
+		getzerofill(n.codigo,4) as numero_informe,
+		n.nro_solicitud,
+		n.fecha::varchar,
+		n.fecha_diligenciamiento::varchar,
+		n.codigo_servicio,
+		n.nombre descripcion_servicio,
+		j.descripcion as justificacion,
+		n.fundamento_legal,
+		n.alternativa1,
+		n.alternativa2,
+		n.alternativa3,
+		n.alternativa4,
+		n.leido,
+		p.tipo_usuario,
+		p.tipo_identificacion,p.apellido1,p.apellido2,p.nombre1 || ' ' || p.nombre2 AS nombres,p.nro_identificacion,
+		p.fecha_nacimiento::varchar,p.direccion,p.tel_res,p.codigo_dpto,dp.nombre
+		as dpto,
+		p.codigo_municipio,mp.nombre as municipio,'xxx' as descripcion_servicio, pl.nro_contrato as
+		id_plan, p.estado_afiliacion
+		from public.negacion n
+		left join justificacion_negacion j
+		on(j.codigo_empresa = n.codigo_empresa
+		and j.codigo_sucursal = n.codigo_sucursal
+		and j.codigo = n.justificacion)
+		left join anexo3_entidad a3
+		on(a3.codigo_empresa =n.codigo_empresa
+		and a3.codigo_sucursal=n.codigo_sucursal
+		and a3.numero_solicitud=n.nro_solicitud)
+		left join paciente p
+		on(p.codigo_empresa = a3.codigo_empresa
+		and p.codigo_sucursal = a3.codigo_sucursal
+		and p.nro_identificacion = a3.codigo_paciente)
+		left join departamentos dp
+		on(dp.codigo=p.codigo_dpto)
+		left join municipios mp on(mp.codigo = p.codigo_municipio and mp.coddep =
+		p.codigo_dpto)
+		LEFT JOIN contratos pl
+		on(pl.codigo_empresa = p.codigo_empresa and pl.codigo_sucursal = p.codigo_sucursal and
+		pl.id_plan = p.id_plan)
+		where n.codigo_empresa = #{codigo_empresa}
+		and
+		n.codigo_sucursal = #{codigo_sucursal}
+		<if test="codigo != null">
+		  n.codigo = #{codigo}
+		</if>
+	</select>
+
+</mapper>

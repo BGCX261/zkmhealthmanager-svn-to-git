@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Control_convivientes_seguimientoDao">
+
+	<resultMap id="control_convivientes_seguimientoMap" type="control_convivientes_seguimiento">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="codigo_ficha" property="codigo_ficha" />
+		<result column="codigo_conviviente" property="codigo_conviviente" />
+		<result column="nombre" property="nombre" />
+		<result column="apellido" property="apellido" />
+		<result column="identificacion" property="identificacion" />
+		<result column="tipo_id" property="tipo_id" />
+		<result column="sexo" property="sexo" />
+		<result column="fecha_incripcion" property="fecha_incripcion" />
+		<result column="fecha_revision" property="fecha_revision" />
+		<result column="bcg" property="bcg" />
+		<result column="resultado_clinico" property="resultado_clinico" />
+		<result column="diagnostico_confirmado" property="diagnostico_confirmado" />
+		<result column="clasificacion" property="clasificacion" />
+		<result column="fecha_nacimiento" property="fecha_nacimiento" />
+	</resultMap>
+
+	<insert id="crear" parameterType="control_convivientes_seguimiento">
+		insert into public.control_convivientes_seguimiento (codigo_empresa,codigo_sucursal,
+		codigo_ficha,codigo_conviviente,nombre,
+		apellido,identificacion,tipo_id,
+		sexo,fecha_incripcion,fecha_revision,
+		bcg,resultado_clinico,diagnostico_confirmado,
+		clasificacion,fecha_nacimiento)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{codigo_ficha},#{codigo_conviviente},#{nombre},
+		#{apellido},#{identificacion},#{tipo_id},
+		#{sexo},#{fecha_incripcion},#{fecha_revision},
+		#{bcg},#{resultado_clinico},#{diagnostico_confirmado},
+		#{clasificacion},#{fecha_nacimiento})
+	</insert>
+
+	<update id="actualizar" parameterType="control_convivientes_seguimiento">
+		update public.control_convivientes_seguimiento set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},codigo_ficha = #{codigo_ficha},
+		codigo_conviviente = #{codigo_conviviente},nombre = #{nombre},
+		apellido = #{apellido},identificacion = #{identificacion},
+		tipo_id = #{tipo_id},sexo = #{sexo},
+		fecha_incripcion = #{fecha_incripcion},fecha_revision = #{fecha_revision},
+		bcg = #{bcg},resultado_clinico = #{resultado_clinico},
+		diagnostico_confirmado = #{diagnostico_confirmado},clasificacion = #{clasificacion},
+		fecha_nacimiento = #{fecha_nacimiento}
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and codigo_ficha = #{codigo_ficha}
+		and codigo_conviviente = #{codigo_conviviente}
+	</update>
+
+	<select id="consultar" parameterType="control_convivientes_seguimiento" resultMap="control_convivientes_seguimientoMap">
+		select codigo_empresa,codigo_sucursal,
+		codigo_ficha,codigo_conviviente,nombre,apellido,identificacion,tipo_id,
+		sexo,fecha_incripcion,
+		fecha_revision,bcg,resultado_clinico,diagnostico_confirmado,
+		clasificacion,fecha_nacimiento
+		from public.control_convivientes_seguimiento where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_ficha = #{codigo_ficha}
+		<if test="identificacion!=null">
+			and identificacion = #{identificacion}
+		</if>
+		
+	</select>
+
+	<delete id="eliminar" parameterType="control_convivientes_seguimiento">
+		delete from public.control_convivientes_seguimiento
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_ficha = #{codigo_ficha}
+		<if test="codigo_conviviente != null">
+			and codigo_conviviente = #{codigo_conviviente}
+		</if>
+		
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="control_convivientes_seguimientoMap">
+		select codigo_empresa,codigo_sucursal,
+		codigo_ficha,codigo_conviviente,nombre,apellido,identificacion,tipo_id,
+		sexo,fecha_incripcion,
+		fecha_revision,bcg,resultado_clinico,diagnostico_confirmado,
+		clasificacion,fecha_nacimiento
+		from public.control_convivientes_seguimiento 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="codigo_ficha != null">
+			AND codigo_ficha = #{codigo_ficha}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from public.control_convivientes_seguimiento 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

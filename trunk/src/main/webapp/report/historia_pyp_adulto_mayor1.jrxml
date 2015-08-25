@@ -1,0 +1,840 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="historia_pyp_planificacion_familiar1" pageWidth="630" pageHeight="792" columnWidth="590" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="aa4be66a-fa4a-43c9-a4f2-a022cdcb086b">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="616"/>
+	<parameter name="empresa" class="java.lang.String"/>
+	<parameter name="direccion" class="java.lang.String"/>
+	<parameter name="telefono" class="java.lang.String"/>
+	<parameter name="codigo_empresa" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="codigo_sucursal" class="java.lang.String"/>
+	<parameter name="nro_historia" class="java.lang.String"/>
+	<parameter name="imagen" class="java.io.InputStream" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="nombre_antecedente1" class="java.lang.String"/>
+	<parameter name="nombre_antecedente2" class="java.lang.String"/>
+	<parameter name="valor_antecedente1" class="java.lang.String"/>
+	<parameter name="valor_antecedente2" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+		get_edad(paciente.fecha_nacimiento,CURRENT_DATE,'1') AS edad,
+		adulto_mayor.codigo_empresa,adulto_mayor.codigo_sucursal,
+		adulto_mayor.codigo_historia,adulto_mayor.identificacion,adulto_mayor.fecha_inicial,
+		adulto_mayor.nro_ingreso,
+		adulto_mayor.nro_inscripcion,adulto_mayor.enfremedad_actual,
+		adulto_mayor.motivo_consulta,adulto_mayor.diabetes,
+		adulto_mayor.hipertension,
+		adulto_mayor.dislipidemia,adulto_mayor.enf_cerebrovascular,
+		adulto_mayor.enf_coronario,adulto_mayor.enf_arterial,
+		adulto_mayor.cardio_mas,adulto_mayor.cardio_fem,
+		adulto_mayor.ca_cuello,adulto_mayor.ca_mama,
+		adulto_mayor.ca_gastrico,adulto_mayor.ca_colorrectal,
+		adulto_mayor.ca_prostata,adulto_mayor.diagnostico,
+		paciente."tipo_identificacion" AS paciente_tipo_identificacion,
+		paciente."nro_identificacion" AS paciente_nro_identificacion,
+		paciente."codigo_administradora" AS paciente_codigo_administradora,
+		paciente."tipo_usuario" AS paciente_tipo_usuario,
+		paciente."apellido1" AS paciente_apellido1,
+		paciente."apellido2" AS paciente_apellido2,
+		paciente."nombre1" AS paciente_nombre1,
+		paciente."nombre2" AS paciente_nombre2,
+		paciente."unidad_medidad" AS paciente_unidad_medidad,
+		paciente."sexo" AS paciente_sexo,
+		paciente."profesion" AS paciente_profesion,
+		paciente."tel_oficina" AS paciente_tel_oficina,
+		paciente."tel_res" AS paciente_tel_res,
+		paciente."direccion" AS paciente_direccion,
+		paciente."nivel_sisben" AS paciente_nivel_sisben,
+		paciente."edad" AS paciente_edad,
+		pertenencia_etnica."nombre" AS pert_etnica,
+		departamentos."nombre" AS departamento,
+		municipios."nombre" AS municipios,
+		administradora."codigo" AS administradora,
+		ocupaciones."nombre" AS ocupacion,
+		barrio."barrio" AS barrio,
+		elemento."descripcion" AS estado_civil,
+		elemento1."descripcion" AS regimen,
+		nivel_educativo."nombre" AS nivel_educativo,
+		localidad."localidad" AS localidad,
+		paciente."login" AS paciente_login,
+		paciente."fecha_nacimiento" AS paciente_fecha_nacimiento,
+		paciente."codigo_dpto" AS paciente_codigo_dpto,
+		paciente."codigo_municipio" AS paciente_codigo_municipio,
+		u.nombres || ' ' || u.apellidos as medico,
+		adulto_mayor.creacion_user,
+		elemento2."descripcion" AS elemento2,
+		elemento3."descripcion" AS elemento3,
+		elemento4."descripcion" AS elemento4,
+		elemento5."descripcion" AS elemento5,
+		elemento6."descripcion" AS elemento6,
+		elemento7."descripcion" AS elemento7,
+		elemento8."descripcion" AS elemento8,
+		elemento9."descripcion" AS elemento9,
+		elemento10."descripcion" AS elemento10,
+		elemento11."descripcion" AS elemento11,
+		elemento12."descripcion" AS elemento12
+
+		FROM
+		"public"."adulto_mayor"
+		adulto_mayor INNER JOIN "public"."admision" admision ON
+		adulto_mayor."codigo_empresa" = adulto_mayor."codigo_empresa" AND
+		adulto_mayor."identificacion" = admision."nro_identificacion" AND
+		adulto_mayor."codigo_sucursal" = admision."codigo_sucursal" AND
+		adulto_mayor."nro_ingreso" = admision."nro_ingreso"
+
+		INNER
+		JOIN "public"."paciente" paciente ON
+		paciente."codigo_empresa" = admision."codigo_empresa"
+		AND paciente."nro_identificacion" = admision."nro_identificacion"
+		AND paciente.codigo_sucursal = admision.codigo_sucursal
+		AND paciente."codigo_sucursal" = admision."codigo_sucursal"
+
+		INNER JOIN
+		"public"."impresion_diagnostica" impresion_diagnostica ON
+		adulto_mayor."codigo_empresa" = impresion_diagnostica."codigo_empresa" AND
+		adulto_mayor."codigo_sucursal"=impresion_diagnostica."codigo_sucursal" AND
+		adulto_mayor."codigo_historia" = impresion_diagnostica."codigo_historia"
+
+		LEFT JOIN
+		"public".pertenencia_etnica pertenencia_etnica on
+		pertenencia_etnica."id" = paciente."pertenencia_etnica"
+
+		LEFT JOIN
+		"public".municipios municipios on
+		municipios.codigo = paciente.codigo_municipio
+
+		INNER JOIN
+		"public".departamentos departamentos on
+		departamentos.codigo = paciente.codigo_dpto AND
+		municipios.coddep = paciente."codigo_dpto"
+
+		LEFT JOIN
+		"public".administradora administradora on
+		administradora.codigo = paciente.codigo_administradora
+
+		LEFT JOIN
+		"public".ocupaciones ocupaciones on
+		ocupaciones."id" = paciente.codigo_ocupacion
+
+		LEFT JOIN
+		"public".adicional_paciente adicional_paciente on
+		adicional_paciente.codigo_empresa = paciente.codigo_empresa AND
+		adicional_paciente.codigo_sucursal = paciente.codigo_sucursal AND
+		adicional_paciente.nro_identificacion = paciente.nro_identificacion
+
+		LEFT JOIN
+		"public".barrio barrio on
+		barrio.codigo_barrio = adicional_paciente.codigo_barrio
+
+		LEFT JOIN
+		"public".elemento elemento on
+		elemento.codigo = paciente.estado_civil AND
+		elemento.tipo ='estado_civil'
+
+		LEFT JOIN
+		"public".elemento elemento2 on
+		elemento2.codigo = adulto_mayor.diabetes AND
+		elemento2.tipo ='ante_familiares'
+
+		LEFT JOIN
+		"public".elemento elemento3 on
+		elemento3.codigo = adulto_mayor.hipertension AND
+		elemento3.tipo ='ante_familiares'
+
+		LEFT JOIN
+		"public".elemento elemento4 on
+		elemento4.codigo = adulto_mayor.dislipidemia AND
+		elemento4.tipo ='ante_familiares'
+
+		LEFT JOIN
+		"public".elemento elemento5 on
+		elemento5.codigo = adulto_mayor.enf_cerebrovascular AND
+		elemento5.tipo ='ante_familiares'
+
+		LEFT JOIN
+		"public".elemento elemento6 on
+		elemento6.codigo = adulto_mayor.enf_coronario AND
+		elemento6.tipo ='ante_familiares'
+
+		LEFT JOIN
+		"public".elemento elemento7 on
+		elemento7.codigo = adulto_mayor.enf_arterial AND
+		elemento7.tipo ='ante_familiares'
+
+		LEFT JOIN
+		"public".elemento elemento8 on
+		elemento8.codigo = adulto_mayor.ca_cuello AND
+		elemento8.tipo ='ante_familiares'
+
+		LEFT JOIN
+		"public".elemento elemento9 on
+		elemento9.codigo = adulto_mayor.ca_mama AND
+		elemento9.tipo ='ante_familiares'
+
+		LEFT JOIN
+		"public".elemento elemento10 on
+		elemento10.codigo = adulto_mayor.ca_gastrico AND
+		elemento10.tipo ='ante_familiares'
+
+		LEFT JOIN
+		"public".elemento elemento11 on
+		elemento11.codigo = adulto_mayor.ca_colorrectal AND
+		elemento11.tipo ='ante_familiares'
+
+		LEFT JOIN
+		"public".elemento elemento12 on
+		elemento12.codigo = adulto_mayor.ca_prostata AND
+		elemento12.tipo ='ante_familiares'
+
+		LEFT JOIN
+		"public".usuarios u on
+		u.codigo_empresa = adulto_mayor.codigo_empresa
+		and u.codigo_sucursal = adulto_mayor.codigo_sucursal
+		and u.codigo = adulto_mayor.creacion_user
+
+		LEFT JOIN
+		"public".elemento elemento1 on
+		elemento1.codigo = paciente.tipo_usuario
+		and elemento1.tipo = 'tipo_usuario'
+
+		LEFT JOIN
+		"public".nivel_educativo nivel_educativo on
+		nivel_educativo."id" = paciente.codigo_educativo
+
+		LEFT JOIN
+		"public".localidad localidad on
+		localidad.codigo_localidad = barrio.codigo_localidad]]>
+	</queryString>
+	<field name="edad" class="java.lang.String"/>
+	<field name="codigo_empresa" class="java.lang.String"/>
+	<field name="codigo_sucursal" class="java.lang.String"/>
+	<field name="codigo_historia" class="java.lang.String"/>
+	<field name="identificacion" class="java.lang.String"/>
+	<field name="fecha_inicial" class="java.sql.Timestamp"/>
+	<field name="nro_ingreso" class="java.lang.String"/>
+	<field name="nro_inscripcion" class="java.lang.String"/>
+	<field name="enfremedad_actual" class="java.lang.String"/>
+	<field name="motivo_consulta" class="java.lang.String"/>
+	<field name="diabetes" class="java.lang.String"/>
+	<field name="hipertension" class="java.lang.String"/>
+	<field name="dislipidemia" class="java.lang.String"/>
+	<field name="enf_cerebrovascular" class="java.lang.String"/>
+	<field name="enf_coronario" class="java.lang.String"/>
+	<field name="enf_arterial" class="java.lang.String"/>
+	<field name="cardio_mas" class="java.lang.String"/>
+	<field name="cardio_fem" class="java.lang.String"/>
+	<field name="ca_cuello" class="java.lang.String"/>
+	<field name="ca_mama" class="java.lang.String"/>
+	<field name="ca_gastrico" class="java.lang.String"/>
+	<field name="ca_colorrectal" class="java.lang.String"/>
+	<field name="ca_prostata" class="java.lang.String"/>
+	<field name="diagnostico" class="java.lang.String"/>
+	<field name="paciente_tipo_identificacion" class="java.lang.String"/>
+	<field name="paciente_nro_identificacion" class="java.lang.String"/>
+	<field name="paciente_codigo_administradora" class="java.lang.String"/>
+	<field name="paciente_tipo_usuario" class="java.lang.String"/>
+	<field name="paciente_apellido1" class="java.lang.String"/>
+	<field name="paciente_apellido2" class="java.lang.String"/>
+	<field name="paciente_nombre1" class="java.lang.String"/>
+	<field name="paciente_nombre2" class="java.lang.String"/>
+	<field name="paciente_unidad_medidad" class="java.lang.String"/>
+	<field name="paciente_sexo" class="java.lang.String"/>
+	<field name="paciente_profesion" class="java.lang.String"/>
+	<field name="paciente_tel_oficina" class="java.lang.String"/>
+	<field name="paciente_tel_res" class="java.lang.String"/>
+	<field name="paciente_direccion" class="java.lang.String"/>
+	<field name="paciente_nivel_sisben" class="java.lang.String"/>
+	<field name="paciente_edad" class="java.lang.String"/>
+	<field name="pert_etnica" class="java.lang.String"/>
+	<field name="departamento" class="java.lang.String"/>
+	<field name="municipios" class="java.lang.String"/>
+	<field name="administradora" class="java.lang.String"/>
+	<field name="ocupacion" class="java.lang.String"/>
+	<field name="barrio" class="java.lang.String"/>
+	<field name="estado_civil" class="java.lang.String"/>
+	<field name="regimen" class="java.lang.String">
+		<fieldDescription><![CDATA[Esto es para la resolucion 4505
+C:CONTRIBUTIVO
+S:SUBSIDIADO
+E:EXCEPCION
+P:ESPECIAL]]></fieldDescription>
+	</field>
+	<field name="nivel_educativo" class="java.lang.String"/>
+	<field name="localidad" class="java.lang.String"/>
+	<field name="paciente_login" class="java.lang.String"/>
+	<field name="paciente_fecha_nacimiento" class="java.sql.Timestamp"/>
+	<field name="paciente_codigo_dpto" class="java.lang.String"/>
+	<field name="paciente_codigo_municipio" class="java.lang.String"/>
+	<field name="medico" class="java.lang.String"/>
+	<field name="creacion_user" class="java.lang.String"/>
+	<field name="elemento2" class="java.lang.String"/>
+	<field name="elemento3" class="java.lang.String"/>
+	<field name="elemento4" class="java.lang.String"/>
+	<field name="elemento5" class="java.lang.String"/>
+	<field name="elemento6" class="java.lang.String"/>
+	<field name="elemento7" class="java.lang.String"/>
+	<field name="elemento8" class="java.lang.String"/>
+	<field name="elemento9" class="java.lang.String"/>
+	<field name="elemento10" class="java.lang.String"/>
+	<field name="elemento11" class="java.lang.String"/>
+	<field name="elemento12" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="77" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="33d59fe6-9020-4683-9d06-929f0e5c4aee" x="280" y="0" width="292" height="14"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{empresa}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="39a6ea85-d674-4423-8261-7db06fa1c116" x="280" y="14" width="292" height="14"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{direccion}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="ded4fc5b-4f70-4e8d-9b90-3433f97de3ac" x="146" y="0" width="134" height="14"/>
+				<textElement/>
+				<text><![CDATA[                              Empresa]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="7cd49800-0036-444d-bcbb-a3cffe53545a" x="146" y="14" width="134" height="14"/>
+				<textElement/>
+				<text><![CDATA[                              Dirección]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="78e05b1c-4d6f-4afe-a823-8e5e0132c396" x="146" y="28" width="134" height="13"/>
+				<textElement/>
+				<text><![CDATA[                              Teléfono]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="18d9dbea-cc6f-41f4-8743-344aae6f850b" x="280" y="28" width="292" height="13"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{telefono}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="eea0441c-9e6a-42c0-9f1e-d61cf9f12070" x="80" y="57" width="492" height="20"/>
+				<textElement/>
+				<text><![CDATA[	                                       HISTORIA CLINICA ADULTO MAYOR]]></text>
+			</staticText>
+			<image scaleImage="FillFrame" isUsingCache="true" onErrorType="Icon">
+				<reportElement uuid="9945025d-1f30-4a64-88ba-f5c856d82d3b" x="10" y="0" width="101" height="57"/>
+				<imageExpression><![CDATA[$P{imagen}]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<detail>
+		<band height="630" splitType="Stretch">
+			<rectangle>
+				<reportElement uuid="12aa084a-be31-4f9a-949b-f2981fa65514" x="0" y="431" width="570" height="175"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="e50ce5f7-ebbd-4496-9f8a-e8faf062a533" x="0" y="563" width="570" height="42"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="03397efc-8cca-415e-9085-5c773a84c3aa" x="0" y="10" width="574" height="184"/>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="831abcf7-0397-4e49-90c4-1db1bb4943db" x="2" y="27" width="78" height="15"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha de inicio]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="8a385e2d-b83e-41bf-8005-356f15172906" x="86" y="27" width="102" height="15"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{fecha_inicial}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="e8467896-0647-49f6-be20-bc6b86358b4d" x="0" y="42" width="80" height="15"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Paciente]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="04712005-f260-4cf5-9cfb-77ffa422cf5c" x="87" y="42" width="64" height="15"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{identificacion}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="68260d17-aa50-447e-9d14-1e8b9363f02e" x="166" y="42" width="241" height="15"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{paciente_nombre1}+""+$F{paciente_nombre2}+""+$F{paciente_apellido1}+""+$F{paciente_apellido2}+""]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="e8b07970-0a39-4fa5-b9ad-1f844628e0a7" x="412" y="42" width="69" height="15"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Genero]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="1859e2dd-48dd-4f13-9637-af1af5d69099" x="498" y="42" width="73" height="15"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{paciente_sexo}.equals("M")?"Masculino":"Femenino"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="8e3e763f-84ab-4b7e-8f7d-dbba27c6299d" x="0" y="57" width="80" height="14"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha ncto]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="97f7c45e-ad6d-4a8d-8079-08a4544a2541" x="87" y="57" width="99" height="14"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{paciente_fecha_nacimiento}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="dc1cfccb-94f0-4c49-8813-14f9eed3a39d" x="196" y="57" width="31" height="14"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Edad]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="e79e14f6-0573-41e8-b713-1eee7c7bf546" x="411" y="57" width="56" height="14"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Estado civil]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="12d4becd-a302-4f90-86a8-78008977d782" x="0" y="71" width="86" height="14"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Pertenecia etnica]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="66d899c6-7436-4024-9b8f-f3fd18d9f514" x="196" y="71" width="73" height="14"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Lugar de nac.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ff2a2cab-584c-4523-8dd8-25d29fb2b4a1" x="387" y="44" width="0" height="14"/>
+				<textElement/>
+				<text><![CDATA[-]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="bd0762b2-31fd-415a-9b04-4490f18bed7b" x="2" y="85" width="78" height="13"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Barrio]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="900f0786-4438-4650-bf07-0b389b53720b" x="196" y="85" width="62" height="13"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Dirección]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="bce067a2-4424-4788-9034-5006516aff6d" x="286" y="84" width="121" height="13"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{paciente_direccion}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="71c35890-8ac9-4000-b261-34d851ae2696" x="412" y="85" width="69" height="13"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Localidad]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f705a559-b1b7-4934-888d-3d58415bcf78" x="2" y="98" width="78" height="14"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Teléfono]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="af57846e-b3cd-49da-8564-7a0b0e6142e1" x="88" y="98" width="98" height="14"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{paciente_tel_res}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="327678a6-8f4e-4b53-bada-93a9a56c32ef" x="196" y="98" width="62" height="14"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ocupación]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="65664108-d9ea-42fe-bdd0-2dd8119b2056" x="412" y="98" width="80" height="14"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nivel educativo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ddb614f8-8858-49b3-9b6a-85780b77f4f1" x="2" y="112" width="78" height="14"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Regimen]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="d677a438-f3a1-4ff7-80e2-1551657f47ae" x="196" y="112" width="62" height="14"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Aseguradora]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement uuid="d9ca69f2-a274-48de-8445-75c71f13c547" x="0" y="152" width="574" height="42"/>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="b64a6f62-9cd4-42a5-b120-e5850ee4b21b" x="2" y="126" width="78" height="13"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Prestador]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f517556c-cdfd-4611-a0ea-0ed3943ae1ea" x="2" y="166" width="144" height="13"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Número de Inscripción]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="6a37d121-12cd-4822-8df0-bee974604845" x="153" y="165" width="219" height="13"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{nro_inscripcion}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="ddb5c630-779c-4b98-b5c7-92a6f3f269f3" mode="Opaque" x="1" y="11" width="572" height="17" backcolor="#CCCCCC"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[DATOS DEL PACIENTE]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement uuid="d45a8465-c248-486a-bb32-eb609c73501c" x="0" y="200" width="572" height="151"/>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="3cd2796a-1074-49a1-9791-738100dad811" mode="Opaque" x="1" y="201" width="570" height="15" backcolor="#CCCCCC"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[MOTIVO DE CONSULTA Y ENFERMEDAD ACTUAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="220288b0-12d1-4df5-b050-1136500586ac" x="10" y="215" width="100" height="14"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Motivo de consulta]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="a5251643-9266-43ea-839f-b6d475d10ab0" x="10" y="229" width="552" height="39"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{motivo_consulta}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="46b7c1be-312e-4a01-aee0-0435337d94db" x="10" y="268" width="552" height="28"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[ Enfermedad actual: (diligenciar fecha de inicio, presentación inicial o repetida, manera de inicio, relacionado con evolución, síntomas asociados, tratamientos recibidos que presenta actualmente.)]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="21ff3e87-b723-45c3-8b5c-be38bc4ba109" x="10" y="296" width="552" height="55"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{enfremedad_actual}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="c58776d3-8951-4a9e-bb41-bd542a0bbd8c" mode="Opaque" x="1" y="432" width="568" height="16" backcolor="#CCCCCC"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[ANTECEDENTES FAMILIARES]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="15037261-f6eb-4da6-ac78-6922f7b3a3c1" x="411" y="28" width="70" height="13"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nro historia:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="3b7f0f95-9aad-4d74-b226-0f967397e607" x="498" y="28" width="73" height="13"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{codigo_historia}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="d8f650d6-e2a1-48f5-9909-fbfd29e940e5" x="87" y="74" width="99" height="13"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{pert_etnica}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="061a9a65-61ed-4db4-b7ff-2d6f7f7aa944" x="243" y="56" width="73" height="13"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{edad}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="b2784f60-dcc6-45a1-8b01-db4baf1f1afb" x="378" y="72" width="100" height="13"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{departamento}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="c72265bc-01dd-4e9d-817d-189436f87a81" x="286" y="71" width="74" height="13"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{municipios}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="e40104f6-181c-48d7-9e21-d8027bfcb6f8" x="362" y="72" width="12" height="13"/>
+				<textElement/>
+				<text><![CDATA[-]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="7845b581-6ab8-43a9-b5c6-1caf4d32fd6b" x="286" y="113" width="223" height="13"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{administradora}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="3b15e746-e358-432b-962a-5db51253d4cc" x="286" y="100" width="121" height="13"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{ocupacion}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="c443a7b2-2d58-4db8-b818-56986ce4e1e0" x="88" y="87" width="98" height="13"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{barrio}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="c31c8102-4b1f-4908-9526-8195acec0351" x="498" y="58" width="73" height="13"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{estado_civil}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="c8e158f5-0d51-4cac-8e57-92650970aa62" x="196" y="125" width="313" height="13"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{medico}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="76dc1a7f-98db-416d-ae57-8e49dbf3849e" x="88" y="113" width="98" height="13"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{regimen}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="4a892cab-aab4-4d8c-a8f9-b748db1f6421" x="498" y="98" width="73" height="13"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{nivel_educativo}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="998b8d0c-5487-480e-83e9-62c103698048" x="498" y="84" width="76" height="13"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{localidad}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="869c59ea-75d5-4792-9858-b60720290a5c" x="88" y="126" width="98" height="13"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{creacion_user}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement uuid="6f3d3f48-e8f4-496e-8cc0-2f519ec8d474" x="0" y="28" width="574" height="1"/>
+			</line>
+			<line>
+				<reportElement uuid="8da521ea-87d9-4983-8b41-b75e9acf12aa" x="0" y="216" width="573" height="1"/>
+			</line>
+			<line>
+				<reportElement uuid="916a81d3-34c1-458c-ab63-22286f713ecc" x="1" y="448" width="569" height="1"/>
+			</line>
+			<line>
+				<reportElement uuid="d52429a8-3395-4c7e-8a14-831f8d1a670a" x="0" y="268" width="573" height="1"/>
+			</line>
+			<staticText>
+				<reportElement uuid="7bd348f4-076c-4654-b7a6-f64a324e9c0f" x="10" y="456" width="100" height="14"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Diabetes Mellitus]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="edc8e61b-10ed-4e90-ab70-4350c0581d72" x="10" y="474" width="100" height="14"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Dislipidemia]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="8e7890b8-70fb-4a78-96ff-6ce7b1b9c53f" x="11" y="509" width="100" height="14"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ca Cuello Uterino]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="0d81a092-037e-4a2b-a667-fb845d6bd968" x="11" y="492" width="100" height="14"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Enfermedad Coronario]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="7f6cf4b5-b06d-40e4-8ca4-6bfe23d46597" x="288" y="585" width="100" height="13"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Femenino(< 65 años)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="eabf1d89-4f42-48f3-add8-912313c1dbaf" x="7" y="585" width="144" height="13"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Masculino(< 55 años)]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="ba77dff6-8213-401b-9387-1f7feb5b6e0a" x="412" y="584" width="141" height="13"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{cardio_fem}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="772ce444-3871-48d3-ad05-b8268a36158e" x="151" y="584" width="125" height="13"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{cardio_mas}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="087ee102-7394-439b-af7b-0ae338b77003" x="136" y="457" width="140" height="13"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{elemento2}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="57c5b07c-bd07-4f27-ae2b-0d7758bf3b03" x="136" y="475" width="140" height="13"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{elemento4}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="54c7d783-bbe6-43c2-ae0a-acba609ebdbb" x="136" y="493" width="140" height="13"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{elemento6}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="d385dc99-2d58-4807-8012-3b5af208eb0f" x="136" y="509" width="140" height="13"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{elemento8}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="8fe2f4ab-5791-4b31-93c0-29e79846abcf" x="287" y="475" width="120" height="14"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Enf. Cerebro-vascular]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="a72b11e2-0533-46d5-aadf-f8f82031f485" x="288" y="493" width="100" height="14"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Enfermedad Arterial Periférica]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="b6da170d-1850-4390-8da6-1b5277182777" x="413" y="458" width="140" height="13"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{elemento3}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="ee6c5571-02b3-42e0-9acf-9802da6a40d4" x="413" y="476" width="140" height="13"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{elemento5}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="c48aced0-a355-452b-b88e-1f94df616ea0" x="413" y="494" width="140" height="13"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{elemento7}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="d4ccf455-4fe7-4764-9f86-adf71e458224" x="287" y="457" width="100" height="14"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Hipertensión Arterial]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b63e814b-e224-4aca-b70c-183a40c70ad2" x="8" y="565" width="144" height="13"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Muerte Cardiovascular]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement uuid="79bcd1aa-500b-40d6-a67a-9f288398ea4b" x="1" y="360" width="572" height="65"/>
+			</rectangle>
+			<line>
+				<reportElement uuid="9c09b78e-7e8b-4737-bf19-68b250a8229b" x="0" y="375" width="573" height="1"/>
+			</line>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="376587d9-61b1-4489-92e6-3b660212eca6" x="8" y="381" width="552" height="39"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{diagnostico}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="348f6baf-cb53-416c-af5b-c9b86d730c33" mode="Opaque" x="2" y="360" width="570" height="15" backcolor="#CCCCCC"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[DIAGNOSTICO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="17422724-9190-433a-8e40-505caed06e3d" x="11" y="526" width="100" height="14"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ca Gástrico]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="d980e741-18d2-498e-b0b7-26fb7cb04470" x="11" y="543" width="100" height="14"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ca Próstata]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="307e5d7a-21a5-4bb0-83d4-990e1b1ac12c" x="136" y="527" width="140" height="13"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{elemento10}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="7d3225aa-0229-4a03-a6e9-d7e52c3655df" x="413" y="510" width="140" height="13"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{elemento9}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="277672e1-8271-49e8-b3e3-cfb9443eba2d" x="136" y="543" width="140" height="13"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{elemento12}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="8001075c-9d05-44ad-baed-c7ab15f467a1" x="413" y="528" width="140" height="13"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{elemento11}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="464debf2-73c4-4110-a0a3-6a1cca64fa67" x="288" y="527" width="100" height="14"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ca Colorrectal]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="24ee6905-bcba-407e-95ee-0bc94e3bd2cc" x="287" y="509" width="100" height="14"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ca Mama]]></text>
+			</staticText>
+		</band>
+	</detail>
+</jasperReport>

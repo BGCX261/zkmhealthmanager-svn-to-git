@@ -1,0 +1,379 @@
+<?page title="Datos_procedimiento_multiple" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formDatos_procedimiento_quirurgicos" width="700px"
+		height="470px" title="PROCEDIMIENTOS QUIRURGICOS" closable="true"
+		use="healthmanager.controller.complemento.QuirurgicoAction">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+		<borderlayout width="100%" height="100%" id="groupboxEditar"
+			visible="true">
+			<north border="none">
+				<toolbar width="100%" align="start">
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Cerrar(Esc)"
+						onClick='formDatos_procedimiento_quirurgicos.detach()'
+						id="btCancel" />
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center">
+					<radiogroup id="rdbTipo_intervencion"
+						onCheck="formDatos_procedimiento_quirurgicos.selectedTipo_intervension(self.getSelectedItem().getValue().toString());" />
+					<groupbox closable="false" width="690px"
+						id="groupboxForm">
+						<grid sclass="GridSinBorde">
+							<columns>
+								<column value="" width="121px" />
+								<column value="" width="121px" />
+								<column value="" width="110px" />
+								<column value="" width="100px" />
+								<column value="" />
+								<column value="" width="30px" />
+							</columns>
+							<rows>
+
+								<row>
+									<cell align="left">
+										<label value="Fecha: " />
+									</cell>
+									<cell align="left" colspan="2">
+										<label value="Ambito: " />
+									</cell>
+									<cell align="left" colspan="3">
+										<radio
+											id="radioTipo_intervencion1" label="Una sola intervención"
+											checked="true" value="1" radiogroup="rdbTipo_intervencion" />
+									</cell>
+								</row>
+
+								<row>
+									<cell align="left">
+										<datebox
+											id="dtbxFecha_procedimiento" format="dd/MM/yyyy" hflex="1"
+											readonly="true" buttonVisible="false" />
+									</cell>
+									<cell align="left" colspan="2">
+										<listbox
+											id="lbxAmbito_procedimiento" name="ambito_procedimiento"
+											mold="select" hflex="1" sclass="combobox" />
+									</cell>
+									<cell colspan="3">
+										<radio
+											id="radioTipo_intervencion2" label="Bilateral" value="2"
+											radiogroup="rdbTipo_intervencion" />
+									</cell>
+									<cell />
+								</row>
+
+								<row>
+									<cell align="left">
+										<label
+											value="Forma realización: " />
+									</cell>
+									<cell align="left" colspan="2">
+										<label
+											value="Finalidad  procedimiento: " />
+									</cell>
+									<cell colspan="3">
+										<radio
+											id="radioTipo_intervencion3"
+											label="Intervención multiple igual vía" value="3"
+											radiogroup="rdbTipo_intervencion" />
+									</cell>
+									<cell />
+								</row>
+
+								<row>
+									<cell align="left">
+										<listbox
+											id="lbxForma_realizacion" name="forma_realizacion"
+											mold="select" hflex="1" sclass="combobox" disabled="false" />
+									</cell>
+									<cell align="left" colspan="2">
+										<listbox
+											id="lbxFinalidad_procedimiento" name="finalidad_proc"
+											mold="select" hflex="1" sclass="combobox" />
+									</cell>
+									<cell colspan="3">
+										<radio
+											id="radioTipo_intervencion5"
+											label="Intervención multiple diferente vía" value="5"
+											radiogroup="rdbTipo_intervencion" />
+									</cell>
+									<cell />
+								</row>
+
+								<row>
+									<cell align="left">
+										<label
+											value="Personal atiende: " />
+									</cell>
+									<cell align="left" colspan="2">
+										<label
+											value="No. Autorización:: " />
+									</cell>
+									<cell colspan="3">
+										<radio
+											id="radioTipo_intervencion4"
+											label="Intervención multiple dos o más cirujano" value="6"
+											disabled="true" radiogroup="rdbTipo_intervencion" />
+									</cell>
+									<cell />
+								</row>
+
+								<row>
+									<cell align="left">
+										<listbox
+											id="lbxPersonal_atiende" name="personal_atiende"
+											mold="select" hflex="1" sclass="combobox" />
+									</cell>
+									<cell align="left" colspan="2">
+										<textbox
+											id="tbxNumero_autorizacion" hflex="1"
+											style="text-transform:uppercase" maxlength="20" />
+									</cell>
+									<cell align="left" colspan="3">
+										<checkbox id="chbIncruento"
+											label="Proced. Incruento"
+											onCheck="formDatos_procedimiento_quirurgicos.selectedIncruento(self.isChecked())" />
+									</cell>
+									<cell />
+								</row>
+								<row>
+									<cell align="left">
+										<checkbox id="chbCobra_cirujano"
+											label="Cirujano"
+											onClick='formDatos_procedimiento_quirurgicos.calcularValorServicio("1",self.isChecked(),dbxValor_cirujano,dbxAuxValor_cirujano);' />
+									</cell>
+									<cell align="left">
+										<doublebox
+											id="dbxValor_cirujano" format="#,##0.00"
+											style="text-align:right" hflex="1" value="0.00"
+											readonly="true" />
+										<doublebox
+											id="dbxAuxValor_cirujano" format="#,##0.00" visible="false" />
+									</cell>
+									<cell>
+										<bandboxRegistros
+											id="tbxCodigo_prestador" widthBandbox="105px"
+											widthListbox="600px" heightListbox="300px"
+											columnas="Identificación#65px|Nombre|Apellidos|Especialidad" />
+									</cell>
+									<cell align="left" colspan="2">
+										<textbox id="tbxNomMedico"
+											readonly="true" hflex="1" style="text-transform:uppercase" />
+									</cell>
+									<cell align="left">
+										<toolbarbutton
+											id="imgQuitar_med" image="/images/borrar.gif" />
+									</cell>
+								</row>
+
+								<row>
+									<cell align="left">
+										<checkbox
+											id="chbCobra_anestesiologo" label="Anestesiologo"
+											onClick='formDatos_procedimiento_quirurgicos.calcularValorServicio("2",self.isChecked(),dbxValor_anestesiologo,dbxAuxValor_anestesiologo);' />
+									</cell>
+									<cell align="left">
+										<doublebox
+											id="dbxValor_anestesiologo" format="#,##0.00"
+											style="text-align:right" hflex="1" value="0.00"
+											readonly="true" />
+										<doublebox
+											id="dbxAuxValor_anestesiologo" format="#,##0.00"
+											visible="false" />
+									</cell>
+									<cell>
+										<bandboxRegistros
+											id="tbxCodigo_anestesiologo" widthBandbox="105px"
+											widthListbox="600px" heightListbox="300px"
+											columnas="Identificación#65px|Nombre|Apellidos|Especialidad" />
+									</cell>
+									<cell align="left" colspan="2">
+										<textbox
+											id="tbxNomAnestesiologo" readonly="true" hflex="1"
+											style="text-transform:uppercase" />
+									</cell>
+									<cell align="left">
+										<toolbarbutton
+											id="imgQuitar_ana" image="/images/borrar.gif" />
+									</cell>
+								</row>
+
+								<row>
+									<cell align="left">
+										<checkbox id="chbCobra_ayudante"
+											label="Ayudante quirurgico" style="font-size:9px"
+											onClick='formDatos_procedimiento_quirurgicos.calcularValorServicio("3",self.isChecked(),dbxValor_ayudante,dbxAuxValor_ayudante);' />
+									</cell>
+									<cell align="left">
+										<doublebox
+											id="dbxValor_ayudante" format="#,##0.00"
+											style="text-align:right" hflex="1" value="0.00"
+											readonly="true" />
+										<doublebox
+											id="dbxAuxValor_ayudante" format="#,##0.00" visible="false" />
+									</cell>
+									<cell>
+										<bandboxRegistros
+											id="tbxCodigo_ayudante" widthBandbox="105px"
+											widthListbox="600px" heightListbox="300px"
+											columnas="Identificación#65px|Nombre|Apellidos|Especialidad" />
+									</cell>
+									<cell align="left" colspan="2">
+										<textbox id="tbxNomAyudante"
+											readonly="true" hflex="1" style="text-transform:uppercase" />
+									</cell>
+									<cell align="left">
+										<toolbarbutton
+											id="imgQuitar_ayu" image="/images/borrar.gif" />
+									</cell>
+								</row>
+
+								<row>
+									<cell align="left">
+										<checkbox id="chbCobra_sala"
+											label="Sala de cirugía"
+											onClick='formDatos_procedimiento_quirurgicos.calcularValorServicio("4",self.isChecked(),dbxValor_sala,dbxAuxValor_sala);' />
+									</cell>
+									<cell align="left">
+										<doublebox id="dbxValor_sala"
+											format="#,##0.00" hflex="1" value="0.00"
+											style="text-align:right" readonly="true" />
+										<doublebox id="dbxAuxValor_sala"
+											format="#,##0.00" visible="false" />
+									</cell>
+									<cell align="left">
+										<label value="Diag. Previo:" />
+									</cell>
+									<cell>
+										<bandboxRegistros
+											id="tbxCodigo_diagnostico_principal" widthBandbox="90px"
+											widthListbox="600px" heightListbox="300px"
+											columnas="Código#65px|Nombre|Sexo#65px|Limite inf#75px|Limite sup#75px" />
+									</cell>
+									<cell align="left">
+										<textbox id="tbxNomDxpp"
+											readonly="true" hflex="1" style="text-transform:uppercase" />
+									</cell>
+									<cell align="left">
+										<toolbarbutton
+											id="btnLimpiarDxpp" image="/images/borrar.gif" />
+									</cell>
+								</row>
+
+								<row>
+									<cell align="left">
+										<checkbox
+											id="chbCobra_materiales" label="Materiales e insumos"
+											style="font-size:9px"
+											onClick='formDatos_procedimiento_quirurgicos.calcularValorServicio("5",self.isChecked(),dbxValor_materiales,dbxAuxValor_materiales);' />
+									</cell>
+									<cell align="left">
+										<doublebox
+											id="dbxValor_materiales" format="#,##0.00"
+											style="text-align:right" hflex="1" value="0.00"
+											readonly="true"
+											onChange="formDatos_procedimiento_quirurgicos.calcularSubtotal();" />
+										<doublebox
+											id="dbxAuxValor_materiales" format="#,##0.00"
+											visible="false" />
+									</cell>
+									<cell align="left">
+										<label value="Diag. Posterior:" />
+									</cell>
+									<cell>
+										<bandboxRegistros
+											id="tbxCodigo_diagnostico_relacionado" widthBandbox="90px"
+											widthListbox="600px" heightListbox="300px"
+											columnas="Código#65px|Nombre|Sexo#65px|Limite inf#75px|Limite sup#75px" />
+									</cell>
+									<cell align="left">
+										<textbox id="tbxNomDx1"
+											readonly="true" hflex="1" style="text-transform:uppercase" />
+									</cell>
+									<cell align="left">
+										<toolbarbutton
+											id="imgQuitar_dx1" image="/images/borrar.gif" />
+									</cell>
+								</row>
+
+								<row>
+									<cell align="left">
+										<checkbox
+											id="chbCobra_perfusionista" label="Perfusionista"
+											onClick='formDatos_procedimiento_quirurgicos.calcularValorServicio("6",self.isChecked(),dbxValor_perfusionista,dbxAuxValor_perfusionista);' />
+									</cell>
+									<cell align="left">
+										<doublebox
+											id="dbxValor_perfusionista" format="#,##0.00"
+											style="text-align:right" hflex="1" value="0.00"
+											readonly="true" />
+										<doublebox
+											id="dbxAuxValor_perfusionista" format="#,##0.00"
+											visible="false" />
+									</cell>
+									<cell align="left">
+										<label value="Complicación:" />
+									</cell>
+									<cell>
+										<bandboxRegistros
+											id="tbxComplicacion" widthBandbox="90px" widthListbox="600px"
+											heightListbox="300px"
+											columnas="Código#65px|Nombre|Sexo#65px|Limite inf#75px|Limite sup#75px" />
+									</cell>
+									<cell align="left">
+										<textbox id="tbxNomDx2"
+											readonly="true" hflex="1" style="text-transform:uppercase" />
+									</cell>
+									<cell align="left">
+										<toolbarbutton
+											id="imgQuitar_dx2" image="/images/borrar.gif" />
+									</cell>
+								</row>
+								<row>
+									<cell align="right">
+										<label value="Total: " />
+										<space />
+									</cell>
+									<cell>
+										<doublebox id="dbxValor_neto2"
+											format="#,##0.00" style="text-align:right" hflex="1"
+											value="0.00" readonly="true" />
+										<doublebox
+											id="dbxAuxValor_neto2" format="#,##0.00" value="0.00"
+											visible="false" />
+									</cell>
+									<cell>
+										<label id="lbTipo_sala"
+											value="Tipo de sala: " />
+									</cell>
+									<cell colspan="3">
+										<listbox id="lbxTipo_sala"
+											name="tipo_sala" mold="select" width="170px"
+											sclass="combobox" />
+										<checkbox
+											id="chbCirugia_conjunto" label="Cirugía en conjunto"
+											onCheck="formDatos_procedimiento_quirurgicos.selectedCirugia_conjunto(self.isChecked())" />
+
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+				</div>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

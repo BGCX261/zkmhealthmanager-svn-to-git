@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Test_puntuacion_figura_humanaDao">
+
+	<!--<typeAlias alias="test_puntuacion_figura_humana" type="healthmanager.modelo.bean.Test_puntuacion_figura_humana" />-->
+
+	<!--<mapper resource="healthmanager/modelo/dao/xml/test_puntuacion_figura_humanaSQL.xml" />-->
+
+	<resultMap id="test_puntuacion_figura_humanaMap" type="test_puntuacion_figura_humana">
+		<result column="codigo_criterio" property="codigo_criterio" />
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="nro_identificacion" property="nro_identificacion" />
+		<result column="puntuacion" property="puntuacion" />
+		<result column="historia" property="historia" />
+		<result column="via_ingreso" property="via_ingreso" />
+		<result column="fecha" property="fecha" />
+	</resultMap>
+
+	<insert id="crear" parameterType="test_puntuacion_figura_humana">
+		insert into public.test_puntuacion_figura_humana (codigo_criterio,codigo_empresa,
+		codigo_sucursal,nro_identificacion,puntuacion,
+		historia,via_ingreso,fecha)
+
+		values (#{codigo_criterio},#{codigo_empresa},
+		#{codigo_sucursal},#{nro_identificacion},#{puntuacion},
+		#{historia},#{via_ingreso},#{fecha})
+	</insert>
+
+	<update id="actualizar" parameterType="test_puntuacion_figura_humana">
+		update public.test_puntuacion_figura_humana set 
+		codigo_empresa = #{codigo_empresa},codigo_sucursal = #{codigo_sucursal},
+		nro_identificacion = #{nro_identificacion},puntuacion = #{puntuacion},
+		via_ingreso = #{via_ingreso},fecha = #{fecha}
+		where codigo_criterio = #{codigo_criterio}
+		and nro_identificacion = #{nro_identificacion}
+		and historia = #{historia}
+	</update>
+
+	<select id="consultar" parameterType="test_puntuacion_figura_humana" resultMap="test_puntuacion_figura_humanaMap">
+		select codigo_criterio,codigo_empresa,
+		codigo_sucursal,nro_identificacion,puntuacion,historia,
+		via_ingreso,fecha
+		from public.test_puntuacion_figura_humana where codigo_criterio = #{codigo_criterio}
+		and nro_identificacion = #{nro_identificacion} and historia = #{historia}
+	</select>
+
+	<delete id="eliminar" parameterType="test_puntuacion_figura_humana">
+		delete from public.test_puntuacion_figura_humana
+		where codigo_criterio = #{codigo_criterio}
+		and nro_identificacion = #{nro_identificacion} and historia = #{historia}
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="test_puntuacion_figura_humanaMap">
+		select codigo_criterio,codigo_empresa,
+		codigo_sucursal,nro_identificacion,puntuacion,historia,
+		via_ingreso,fecha
+		from public.test_puntuacion_figura_humana 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+			<if test="historia != null">
+			AND historia = #{historia}
+			</if>
+			<if test="via_ingreso != null">
+			AND via_ingreso = #{via_ingreso}
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+	<select id="listarHistorial" parameterType="java.util.Map" resultMap="test_puntuacion_figura_humanaMap">
+		SELECT COUNT(*) AS puntuacion,codigo_empresa,
+		codigo_sucursal,nro_identificacion,historia,via_ingreso,fecha
+		FROM public.test_puntuacion_figura_humana
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="nro_identificacion != null">
+			AND nro_identificacion = #{nro_identificacion}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+			AND puntuacion LIKE 'true'
+		</trim>
+		GROUP BY historia, via_ingreso, codigo_empresa, codigo_sucursal,nro_identificacion,fecha ORDER BY fecha
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from public.test_puntuacion_figura_humana 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

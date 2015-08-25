@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="contaweb.modelo.dao.report.nota_contableModel">
+    <select id="select" resultType="java.util.HashMap" parameterType="java.util.Map">
+    select n.codigo_comprobante,n.codigo_documento,cp.nombre as fuente,n.fecha,b.nro_identificacion as codigo_tercero,n.concepto,
+	b.nombre1||' '||b.nombre2||' '||b.apellido1||' '||b.apellido2 as bnf,
+	t.nombre1||' '||t.nombre2||' '||t.apellido1||' '||t.apellido2 as tercero,
+	u.nombres||' '||u.apellidos as elaboro,
+	p.nombre as cuenta,d.codigo_cuenta,d.concepto as detalle,cast(d.debito as double precision) as debito,
+	cast(d.credito as double precision) as credito,d.cheque,n.delete_date,cc.nombre as c_costo,
+	n.creacion_user
+	from contaweb.nota_contable n
+	inner join contaweb.detalle_nota d
+	on(n.codigo_empresa = d.codigo_empresa
+	and n.codigo_sucursal = d.codigo_sucursal
+	and n.codigo_comprobante = d.codigo_comprobante
+	and n.codigo_documento = d.codigo_documento)
+	left join contaweb.tercero b
+	on(b.codigo_empresa = n.codigo_empresa
+	and b.codigo_sucursal = n.codigo_sucursal
+	and b.nro_identificacion = n.codigo_tercero)
+	left join contaweb.tercero e
+	on(e.codigo_empresa = n.codigo_empresa
+	and e.codigo_sucursal = n.codigo_sucursal
+	and e.nro_identificacion = n.elaboro)
+	left join contaweb.tercero t
+	on(t.codigo_empresa = d.codigo_empresa
+	and t.codigo_sucursal = d.codigo_sucursal
+	and t.nro_identificacion = d.tercero)
+	left join contaweb.centro_costo cc
+	on(cc.codigo_empresa = d.codigo_empresa
+	and cc.codigo_sucursal = d.codigo_sucursal
+	and cc.codigo = d.c_costo)
+	left join contaweb.puc p
+	on(p.codigo_empresa = d.codigo_empresa
+	and p.codigo_sucursal = d.codigo_sucursal
+	and p.codigo_cuenta = d.codigo_cuenta)
+	left join contaweb.comprobante cp
+	on(cp.codigo_empresa = n.codigo_empresa
+	and cp.codigo_sucursal = n.codigo_sucursal
+	and cp.codigo = n.codigo_comprobante)
+	left join contaweb.usuarios u on
+	u.codigo_empresa = n.codigo_empresa
+	and u.codigo = n.creacion_user
+	where n.codigo_empresa = #{codigo_empresa}
+	and n.codigo_sucursal = #{codigo_sucursal}
+	and n.codigo_documento = #{codigo_documento}
+	and n.codigo_comprobante = #{codigo_comprobante}
+	order by d.debito desc,d.codigo_cuenta
+	
+    </select>
+   
+</mapper>

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Registro_medicamentosDao">
+
+	<resultMap id="registro_medicamentosMap" type="registro_medicamentos">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="codigo_registro" property="codigo_registro" />
+		<result column="codigo_receta" property="codigo_receta" />
+		<result column="consecutivo" property="consecutivo" />
+		<result column="fecha_registro" property="fecha_registro" />
+		<result column="codigo_enfermera" property="codigo_enfermera" />
+		<result column="creacion_date" property="creacion_date" />
+		<result column="creacion_user" property="creacion_user" />
+		<result column="nro_documento" property="nro_documento" />
+		<result column="nro_ingreso" property="nro_ingreso" />
+		<result column="fecha_aplicacion" property="fecha_aplicacion" />
+		<result column="descripcion" property="descripcion" />
+	</resultMap>
+
+	<insert id="crear" parameterType="registro_medicamentos">
+		insert into public.registro_medicamentos (codigo_empresa,codigo_sucursal,
+		codigo_registro,codigo_receta,consecutivo,
+		fecha_registro,codigo_enfermera,
+		creacion_date,creacion_user,nro_documento,
+		nro_ingreso,fecha_aplicacion,descripcion)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{codigo_registro},#{codigo_receta},#{consecutivo},
+		#{fecha_registro},#{codigo_enfermera},
+		#{creacion_date},#{creacion_user},#{nro_documento},
+		#{nro_ingreso},#{fecha_aplicacion},#{descripcion})
+	</insert>
+
+	<update id="actualizar" parameterType="registro_medicamentos">
+		update public.registro_medicamentos set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},codigo_registro = #{codigo_registro},
+		codigo_receta = #{codigo_receta},consecutivo = #{consecutivo},
+		fecha_registro = #{fecha_registro},
+		codigo_enfermera = #{codigo_enfermera},creacion_date = #{creacion_date},
+		creacion_user = #{creacion_user},nro_documento = #{nro_documento},
+		nro_ingreso = #{nro_ingreso}, fecha_aplicacion = #{fecha_aplicacion},
+		descripcion = #{descripcion}
+		where 		codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and codigo_registro = #{codigo_registro}
+	</update>
+
+	<select id="consultar" parameterType="registro_medicamentos" resultMap="registro_medicamentosMap">
+		select codigo_empresa,codigo_sucursal,
+		codigo_registro,codigo_receta,consecutivo,fecha_registro,
+		codigo_enfermera,creacion_date,creacion_user,
+		nro_documento,nro_ingreso, fecha_aplicacion,descripcion
+		from public.registro_medicamentos where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_registro = #{codigo_registro}
+	</select>
+
+	<delete id="eliminar" parameterType="registro_medicamentos">
+		delete from public.registro_medicamentos
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_registro = #{codigo_registro}
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="registro_medicamentosMap">
+		select codigo_empresa,codigo_sucursal,
+		codigo_registro,codigo_receta,consecutivo,fecha_registro,
+		codigo_enfermera,creacion_date,creacion_user,
+		nro_documento,nro_ingreso,fecha_aplicacion,descripcion
+		from public.registro_medicamentos 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="codigo_receta != null">
+			AND codigo_receta = #{codigo_receta}
+			</if>
+			<if test="consecutivo != null">
+			AND consecutivo = #{consecutivo}
+			</if>
+			<if test="nro_documento != null">
+			AND nro_documento = #{nro_documento}
+			</if>
+			<if test="nro_ingreso != null">
+				AND nro_ingreso = #{nro_ingreso}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from public.registro_medicamentos 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

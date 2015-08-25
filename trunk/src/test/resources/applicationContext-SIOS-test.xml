@@ -1,0 +1,56 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:jee="http://www.springframework.org/schema/jee" xmlns:jms="http://www.springframework.org/schema/jms"
+       xmlns:tx="http://www.springframework.org/schema/tx" xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+		http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+		http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms-3.0.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+	
+	<util:properties id="propsSios"
+		location="classpath:database_sqlserver.properties" />
+	
+	<bean id="dataSourceSios" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="#{propsSios.dataSourceDriver}" />
+		<property name="url" value="#{propsSios.dataSourceUrl}" />
+		<property name="username" value="#{propsSios.dataSourceUsername}" />
+		<property name="password" value="#{propsSios.dataSourcePassword}" />
+		<property name="maxActive" value="20" />
+		<property name="minIdle" value="10" />
+		<property name="validationQuery" value="select 1" />
+		<property name="testOnReturn" value="true" />
+	</bean>   
+    	
+    <bean id="transactionManagerSios"
+          class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSourceSios" />
+    </bean>
+
+    <bean id="sqlSessionFactorySios" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSourceSios" />
+        <property name="configLocation">
+            <value>classpath:myibatis-configuration_sios.xml</value>
+        </property>
+    </bean>
+
+    <bean id="sqlSessionSios" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg index="0" ref="sqlSessionFactorySios" />
+    </bean>
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="sios.modelo.dao" />
+        <property name="sqlSessionTemplate" ref="sqlSessionSios" />
+    </bean>
+   
+    <bean id="querySQLServerDAO" class="sios.modelo.dao.impl.QuerySQLServerDAOImpl">
+        <property name="dataSource" ref="dataSourceSios"/>
+    </bean>
+        
+    <bean id="hisc_historialSiosService" 
+          class="sios.modelo.service.impl.Hisc_historialSiosServiceImpl">
+        <property name="querySQLServerDAO" ref="querySQLServerDAO"/>
+    </bean>
+</beans>

@@ -1,0 +1,308 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<?link rel="stylesheet" type="text/css" href="/calendar.css.dsp?v=${desktop.webApp.build}"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<?component name="divarrow" macro-uri="divarrow.zul" inline="true"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formHorarios_medico" width="100%" height="97%"
+		use="healthmanager.controller.HorariosAction" border="none">
+		<style src="estilo.css" />
+
+		<groupbox id="groupboxConsulta" visible="true" closable="false"
+			height="100%" mold="3d">
+			<caption
+				label="Consultar listado de horarios de los prestadores creados"
+				style="color: black;font-weight: bold;color:blue" />
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" mold="paging" pageSize="20"
+				vflex="1">
+				<auxhead>
+					<auxheader colspan="4">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<space />
+							<textbox id="tbxValue" width="200px"
+								onOK="formHorarios_medico.buscarDatos();"
+								style="text-transform:uppercase" />
+							<space />
+							<label value="Centro de atención:"
+								visible="false" />
+							<listbox id="lbxCentro_atencion"
+								mold="select" width="200px" visible="false" />
+							<space />
+							<toolbarbutton image="/images/Magnifier.gif"
+								onClick="formHorarios_medico.buscarDatos();"
+								label="Consultar Horario" tooltiptext="Consultar Horario" />
+							<space />
+							<toolbarbutton image="/images/New16.gif"
+								onClick='formHorarios_medico.accionForm(true,"registrar");'
+								label="Nuevo Horario" tooltiptext="Nuevo Horario" />
+						</hbox>
+					</auxheader>
+
+				</auxhead>
+
+				<columns sizable="true">
+					<column label="Identificacion" width="170px" />
+					<column label="Nombre del medico" />
+					<column label="Acciones" width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<!-- *************************** -->
+		<!-- *** Insertar/Actualizar *** -->
+		<!-- *************************** -->
+		<groupbox id="groupboxEditar" closable="false" mold="3d"
+			visible="false" height="100%">
+			<textbox id="tbxAccion" value="registrar" visible="false" />
+			<borderlayout height="100%">
+				<north>
+					<toolbar width="100%" align="start">
+						<toolbarbutton image="/images/Save16.gif"
+							label="Guardar Horario"
+							onClick="formHorarios_medico.guardarDatos();" id="btGuardar" />
+						<space />
+
+						<toolbarbutton image="/images/New16.gif"
+							label="Nueva Horario"
+							onClick='formHorarios_medico.accionForm(true,"registrar");'
+							id="btNew" />
+						<space />
+						<toolbarbutton image="/images/trasladar.gif"
+							label="Regresar"
+							onClick='formHorarios_medico.accionForm(false,tbxAccion.getText());'
+							id="btCancel" />
+						<space />
+						<toolbarbutton label="Filtrar"
+							image="/images/filtro1.png" popup="popupFiltros" visible="false" />
+						<space />
+						<toolbarbutton image="/images/add.png"
+							label="Agregar secuencia"
+							onClick='formHorarios_medico.crearSecuenciaHorario();'
+							id="btAgregarHorarioFecha" />
+						<space />
+						<toolbarbutton image="/images/estado_error.gif"
+							label="Eliminar seleccionadas"
+							onClick='formHorarios_medico.eliminarDetallesSeleccionados()'
+							id="btBorrarHorarioFecha" />
+						<space />
+						<toolbarbutton image="/images/devolucion.gif"
+							label="Transladar Horario" visible="true"
+							onClick='formHorarios_medico.trasladarHorario()'
+							id="btTransladarHorario" />
+						<checkbox id="chkTodos_centros" label="Filtrar por centro actual" checked="true" onCheck="formHorarios_medico.filtrarCentros(chkTodos_centros.isChecked())" />
+					</toolbar>
+				</north>
+				<west title="Información Horario" flex="true"
+					splittable="true" collapsible="true" width="320px">
+					<vbox hflex="1" vflex="1" >
+						<groupbox closable="false" mold="3d">
+							<grid hflex="1">
+								<columns>
+									<column width="50px" />
+									<column />
+								</columns>
+								<rows>
+									<row>
+										<cell>
+											<label
+												value="Código: " />
+										</cell>
+										<cell>
+											<bandboxRegistros
+												id="tbxCodigo_prestador" widthBandbox="180px"
+												widthListbox="600px" heightListbox="300px"
+												columnas="Identificación|Nombres|Apellidos|Tipo#90px" />
+											<toolbarbutton
+												id="btnLimpiarPrestador" image="/images/borrar.gif" />
+										</cell>
+									</row>
+	
+									<row>
+										<cell>
+											<label
+												value="Medico: " />
+										</cell>
+										<cell>
+											<textbox
+												id="tbxNombrePrestador" hflex="1"
+												style="text-transform:uppercase" readonly="true" />
+										</cell>
+									</row>
+	
+									<row>
+										<cell colspan="2">
+											<label
+												value="Ultima secuencia: " />
+										</cell>
+									</row>
+									<row>
+										<cell colspan="2">
+											<textbox
+												id="tbxUltimaSecuencia" hflex="1"
+												style="text-transform:uppercase" readonly="true" />
+										</cell>
+									</row>
+									</rows>
+									</grid>
+							</groupbox>
+							<groupbox closable="false" mold="3d" vflex="1">
+								<caption label="Parámetros de consulta"/>
+								<grid hflex="1" vflex="1">
+									<columns>
+										<column />
+									</columns>
+									<rows>
+										<row visible="false">
+											<cell>
+												<label
+													value="Tiempo/cita"
+													tooltiptext="Tiempo inicial que se tiene entre una cita y otra" />
+												<space />
+												<spinner step="5"
+													width="70px" constraint="min 0" value="15"
+													id="spinnerTiempo_cita"
+													tooltiptext="Tiempo inicial que se tiene entre una cita y otra" />
+												<space />
+												<label
+													value="Minutos" />
+											</cell>
+										</row>
+										<row>
+											<cell>
+												<label value="Año: " />
+												<space/>
+												<listbox
+													id="lbxAnios" mold="select" sclass="combobox"
+													width="180px"
+													onSelect="formHorarios_medico.onSeleccionarAnio()" />
+											</cell>
+										</row>
+										<row>
+											<cell>
+												<label value="Mes: " />
+												<space/>
+												<listbox id="listboxMeses"
+												mold="select" sclass="combobox" hflex="1"
+													onSelect="formHorarios_medico.onSeleccionarMes()" />
+											</cell>
+										</row>
+										<row>
+										<cell>
+											<listbox id="lbxRoles"
+												multiple="true" checkmark="true"
+												onSelect="formHorarios_medico.onSeleccionarRolMedico()">
+												<listhead>
+													<listheader label=" Roles del prestador" />
+												</listhead>
+											</listbox>
+										</cell>
+										</row>
+									</rows>
+								</grid>
+							</groupbox>
+					</vbox>
+				</west>
+				<center id="centerCalendars">
+					<listbox id="listboxCalendar" vflex="1"
+						multiple="true" checkmark="true" mold="paging" pageSize="25"
+						onSelect="formHorarios_medico.verificarSeleccion()">
+						<custom-attributes
+							org.zkoss.zul.listbox.rod="true" />
+						<listhead>
+							<listheader width="35px">
+								<checkbox id="chkSeleccionar_todos"
+									style="cursor:pointer"
+									onCheck="formHorarios_medico.seleccionarTodos(chkSeleccionar_todos.isChecked())" />
+							</listheader>
+							<listheader label="Estado" width="80px" />
+							<listheader label="Hora Inicio"
+								width="140px" />
+							<listheader label="Hora Final"
+								width="140px" />
+							<listheader label="Consultorio" />
+							<listheader label="Servicio" />
+							<listheader label="Centro" />
+						</listhead>
+					</listbox>
+				</center>
+			</borderlayout>
+
+			<popup id="popupFiltros">
+				<grid width="360px">
+					<columns>
+						<column label="Filtros de consultas" />
+					</columns>
+					<rows>
+<!-- 						<row> -->
+<!-- 							<cell> -->
+<!-- 								<label value="Hora inicio" /> -->
+<!-- 								<space width="10px" /> -->
+<!-- 								<timebox format="hh:mm a" -->
+<!-- 									id="tmbxFecha_inicio" width="100px" /> -->
+<!-- 								<space /> -->
+<!-- 								<label value="Fecha final" /> -->
+<!-- 								<space width="7px" /> -->
+<!-- 								<timebox format="hh:mm a" -->
+<!-- 									id="tmbxFecha_final" width="100px" /> -->
+<!-- 							</cell> -->
+<!-- 						</row> -->
+<!-- 						<row> -->
+<!-- 							<cell valign="middle"> -->
+<!-- 								<checkbox label="Dom" value="1" -->
+<!-- 									checked="true" id="chkDomingo" /> -->
+<!-- 								<space width="7px" /> -->
+<!-- 								<checkbox label="Lun" value="2" -->
+<!-- 									checked="true" id="chkLunes" /> -->
+<!-- 								<space width="7px" /> -->
+<!-- 								<checkbox label="Mar" value="3" -->
+<!-- 									checked="true" id="chkMartes" /> -->
+<!-- 								<space width="7px" /> -->
+<!-- 								<checkbox label="Mie" value="4" -->
+<!-- 									checked="true" id="chkMiercoles" /> -->
+<!-- 								<space width="7px" /> -->
+<!-- 								<checkbox label="Jue" value="5" -->
+<!-- 									checked="true" id="chkJueves" /> -->
+<!-- 								<space width="7px" /> -->
+<!-- 								<checkbox label="Vie" value="6" -->
+<!-- 									checked="true" id="chkViernes" /> -->
+<!-- 								<space width="7px" /> -->
+<!-- 								<checkbox label="Sab" value="7" -->
+<!-- 									checked="true" id="chkSabado" /> -->
+<!-- 							</cell> -->
+<!-- 						</row> -->
+
+<!-- 						<row> -->
+<!-- 							<cell> -->
+<!-- 								<label value="Servicios" /> -->
+<!-- 								<space width="20px" /> -->
+<!-- 								<listbox mold="select" id="lbxServicios" -->
+<!-- 									width="170px" /> -->
+<!-- 							</cell> -->
+<!-- 						</row> -->
+
+						<row>
+							<cell>
+								<toolbarbutton label="Filtrar"
+									image="/images/filtro1.png"
+									onClick="formHorarios_medico.filtrarCalendario();popupFiltros.close()" />
+								<space width="180px" />
+								<toolbarbutton label="Quitar filtro"
+									image="/images/filtro.png"
+									onClick="formHorarios_medico.quitarFiltroCalendario();popupFiltros.close()" />
+							</cell>
+						</row>
+					</rows>
+				</grid>
+			</popup>
+
+		</groupbox>
+	</window>
+</zk>

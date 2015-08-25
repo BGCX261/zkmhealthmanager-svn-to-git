@@ -1,0 +1,215 @@
+<?page title="Turnos" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formTurnos" width="100%" height="97%"
+		use="healthmanager.controller.TurnosAction">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="true" closable="false"
+			mold="3d" height="100%">
+			<caption
+				label="Consultar listado de turnos de apoyo diagnostico "
+				style="color: blue;font-weight: bold" />
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" height="100%" mold="paging"
+				pageSize="20" vflex="1">
+				<auxhead>
+					<auxheader colspan="2">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<separator />
+							<textbox id="tbxValue" width="200px"
+								onOK="formTurnos.buscarDatos();"
+								style="text-transform:uppercase" />
+							<separator />
+							<toolbarbutton label="Consultar turnos"
+								image="/images/Magnifier.gif"
+								onClick="formTurnos.buscarDatos();"
+								tooltiptext="Consultar Turnos" />
+							<separator />
+							<toolbarbutton label="Nuevo turno"
+								image="/images/New16.gif"
+								onClick='formTurnos.accionForm(true,"registrar");'
+								tooltiptext="Nuevo Turnos" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Centro atención" />
+					<column label="Acciones" align="center"
+						width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<borderlayout width="100%" height="90%" id="groupboxEditar"
+			visible="false">
+			<north border="none">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<toolbarbutton image="/images/Save16.gif"
+						label="Guardar Turnos" onClick="formTurnos.guardarDatos();"
+						id="btGuardar" />
+					<toolbarbutton image="/images/New16.gif"
+						label="Nueva Turnos"
+						onClick='formTurnos.accionForm(true,"registrar");' id="btNew" />
+					<space />
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Cancelar"
+						onClick='formTurnos.accionForm(false,tbxAccion.getText());'
+						id="btCancel" />
+					<toolbarbutton image="/images/print_ico.gif"
+						label="Imprimir Turnos" onClick="formTurnos.imprimir();"
+						id="btImprimir" visible="false" />
+					<space />
+					<label value="Formato impresión: " visible="false" />
+					<listbox id="lbxFormato" mold="select" width="150px"
+						visible="false" sclass="combobox">
+						<listitem value="pdf" label="PDF"
+							selected="true" />
+						<listitem value="rtf" label="WORD" />
+					</listbox>
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center">
+					<space />
+					<!-- *************************** -->
+					<!-- *** Insertar/Actualizar *** -->
+					<!-- *************************** -->
+					<groupbox closable="false" width="650px" mold="3d"
+						id="groupApoyo">
+						<caption label="REGISTRAR APOYO DIAGNOSTICO" />
+						<grid sclass="GridSinBorde" hflex="1">
+							<columns>
+								<column label="" width="5px" />
+								<column label="" width="130px"
+									align="left" />
+								<column label="" width="182px"
+									align="left" />
+								<column label="" width="130px"
+									align="left" />
+								<column label="" width="182px"
+									align="left" />
+								<column label="" width="5px"
+									align="left" />
+							</columns>
+							<rows>
+
+								<!-- fila 2 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label
+											id="lbCodigo_centro_atencion" value="Centro atención: " />
+									</cell>
+									<cell>
+										<bandboxRegistros
+											id="tbxCodigo_centro_atencion" widthBandbox="175px"
+											widthListbox="600px" heightListbox="300px"
+											columnas="Codigo#65px|Nombre" />
+									</cell>
+									<cell colspan="2">
+										<textbox
+											id="tbxDescripcionCentroAtencion" hflex="1"
+											style="text-transform:uppercase" readonly="true" />
+									</cell>
+									<cell>
+										<toolbarbutton
+											id="btnLimpiarCentro" image="/images/borrar.gif" />
+									</cell>
+								</row>
+								<!-- listado de detalle de turnos -->
+							</rows>
+						</grid>
+					</groupbox>
+
+					<space height="5px" />
+
+					<groupbox id="groupCreacionMultiple" width="650px"
+						mold="3d" open="false">
+
+						<caption label="CREACION MULTIPLE" />
+
+						<listbox height="200px" multiple="true"
+							checkmark="true" id="lbxCapMultiple">
+							<listhead>
+								<listheader label="Código"
+									width="100px" />
+								<listheader label="Nombre" />
+							</listhead>
+						</listbox>
+					</groupbox>
+
+					<space height="5px" />
+
+					<groupbox closable="false" width="650px"
+						mold="3d">
+						<caption label="INICIALIZAR POR DEFECTO"/>
+						<hbox>
+						  <checkbox id="chDomingo" label="Domingo"/>
+						  <checkbox id="chLunes" label="Lunes"/>
+						  <checkbox id="chMartes" label="Martes"/>
+						  <checkbox id="chMiercoles" label="Miércoles"/>
+						  <checkbox id="chJueves" label="Jueves"/>
+						  <checkbox id="chViernes" label="Viernes"/>
+						  <checkbox id="chSabado" label="Sábado"/>
+						</hbox>
+					</groupbox>
+
+					<space height="5px" />
+
+					<groupbox closable="false" width="650px" mold="3d"
+						id="grbAgrupado">
+
+						<caption label="TOPES" />
+
+						<grid height="200px" id="gridRegistros">
+							<columns>
+								<column label="Tope maximo"
+									width="100px" />
+								<column label="Apoyo diagnostico" />
+								<column label="Turno" visible="false" />
+								<column label="Días" />
+								<column label="Hora inicio"
+									width="100px" />
+								<column label="Hora final"
+									width="100px" />
+								<column width="35px" />
+							</columns>
+							<rows id="rowTopeTurnos" />
+						</grid>
+					</groupbox>
+
+					<!-- En esta parte me permite, agregar el mismo turno a varios caps -->
+
+
+				</div>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

@@ -1,0 +1,631 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.Detalles_horariosDao">
+
+
+
+	<resultMap id="detalles_horariosMap" type="detalles_horarios">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="codigo_medico" property="codigo_medico" />
+		<result column="creacion_date" property="creacion_date" />
+		<result column="creacion_user" property="creacion_user" />
+		<result column="consecutivo" property="consecutivo" />
+		<result column="fecha_inicial" property="fecha_inicial" />
+		<result column="fecha_final" property="fecha_final" />
+		<result column="dia_semana" property="dia_semana" />
+		<result column="cita" property="cita" />
+		<result column="descripcion" property="descripcion" />
+		<result column="motivo_consulta" property="motivo_consulta" />
+		<result column="codigo_centro" property="codigo_centro" />
+		<result column="codigo_consultorio" property="codigo_consultorio" />
+		<result column="codigo_rol" property="codigo_rol" />
+		<result column="codigo_programa_excepcion" property="codigo_programa_excepcion" />
+	</resultMap>
+
+	<insert id="crear" parameterType="detalles_horarios"
+		useGeneratedKeys="true">
+		insert into public.detalles_horarios
+		(codigo_empresa,codigo_sucursal,
+		codigo_medico,creacion_date,creacion_user,
+		fecha_inicial,fecha_final,
+		dia_semana,cita,descripcion,
+		motivo_consulta,codigo_centro,codigo_consultorio,
+		codigo_rol,codigo_programa_excepcion)
+
+		values
+		(#{codigo_empresa},#{codigo_sucursal},
+		#{codigo_medico},#{creacion_date},#{creacion_user},
+		#{fecha_inicial},#{fecha_final},
+		#{dia_semana},#{cita},#{descripcion},
+		#{motivo_consulta},#{codigo_centro},#{codigo_consultorio},
+		#{codigo_rol},#{codigo_programa_excepcion});
+		
+		<selectKey keyProperty="consecutivo" resultType="java.lang.Integer" >
+			select last_value as consecutivo from detalles_horarios_consecutivo_seq
+		</selectKey>
+		
+	</insert>
+
+	<update id="actualizar" parameterType="detalles_horarios">
+		update
+		public.detalles_horarios set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},codigo_medico = #{codigo_medico},
+		creacion_date = #{creacion_date},creacion_user = #{creacion_user},
+		consecutivo = #{consecutivo},fecha_inicial = #{fecha_inicial},
+		fecha_final = #{fecha_final},dia_semana = #{dia_semana},
+		cita =
+		#{cita},descripcion = #{descripcion},
+		motivo_consulta = #{motivo_consulta},
+		codigo_centro =
+		#{codigo_centro},codigo_consultorio = #{codigo_consultorio},
+		codigo_rol = #{codigo_rol},codigo_programa_excepcion =
+		#{codigo_programa_excepcion}
+		where consecutivo = #{consecutivo}
+	</update>
+
+	<select id="consultar" resultMap="detalles_horariosMap"
+		parameterType="detalles_horarios">
+		select codigo_empresa,codigo_sucursal,
+		codigo_medico,creacion_date,creacion_user,consecutivo,
+		fecha_inicial,fecha_final,dia_semana,cita,
+		descripcion,
+		motivo_consulta,codigo_centro,codigo_consultorio,codigo_rol,
+		codigo_programa_excepcion
+		from public.detalles_horarios where
+		consecutivo = #{consecutivo}
+	</select>
+
+	<delete id="eliminar" parameterType="detalles_horarios">
+		delete from
+		public.detalles_horarios
+		where consecutivo = #{consecutivo}
+	</delete>
+
+	<delete id="eliminar_horario" parameterType="detalles_horarios">
+		delete from public.detalles_horarios
+		where codigo_empresa =
+		#{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and
+		codigo_medico = #{codigo_medico}
+		<if test="codigo_rol">
+			and codigo_rol = #{codigo_rol}
+		</if>
+	</delete>
+
+	<select id="listar_normal" resultMap="detalles_horariosMap"
+		parameterType="java.util.Map">
+		SELECT
+		dtt_h.codigo_empresa,
+		dtt_h.codigo_sucursal,
+		dtt_h.codigo_medico,
+		dtt_h.creacion_date,
+		dtt_h.creacion_user,
+		dtt_h.consecutivo,
+		dtt_h.fecha_inicial,
+		dtt_h.fecha_final,
+		dtt_h.dia_semana,
+		dtt_h.cita,
+		dtt_h.descripcion,
+		dtt_h.motivo_consulta,
+		dtt_h.codigo_centro,
+		dtt_h.codigo_consultorio,
+		dtt_h.codigo_rol,
+		dtt_h.codigo_programa_excepcion
+		FROM
+		public.detalles_horarios AS dtt_h
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">AND dtt_h.codigo_empresa = #{codigo_empresa}</if>
+			<if test="codigo_sucursal != null">AND dtt_h.codigo_sucursal = #{codigo_sucursal}</if>
+			<if test="codigo_medico != null"> AND dtt_h.codigo_medico = #{codigo_medico}</if>
+			<if test="codigo_centro != null"> AND dtt_h.codigo_centro = #{codigo_centro}</if>
+
+			<if test="anio != null">
+				and (extract(month from dtt_h.fecha_inicial)::int) = #{mes}
+				and	(extract(YEAR from dtt_h.fecha_inicial)::int) = #{anio}
+			</if>
+			<if test="disponibles_desde_fecha != null">
+				AND dtt_h.fecha_inicial <![CDATA[>]]>
+				CURRENT_TIMESTAMP
+			</if>
+
+			<if test="fecha_solicitada != null">
+				AND cast(dtt_h.fecha_inicial as date) <![CDATA[ >= ]]>
+				#{fecha_solicitada}
+			</if>
+
+			<if test="fecha_final_busqueda != null">
+				AND cast(dtt_h.fecha_inicial as date) <![CDATA[ <= ]]>
+				#{fecha_final_busqueda}
+			</if>
+
+			<if test="codigo_rols != null">
+				AND dtt_h.codigo_rol IN
+				<foreach collection="codigo_rols" item="i" open="("
+					separator="," close=")">
+					#{i}
+				</foreach>
+			</if>
+
+			<if test="fecha_inicio != null">
+				<![CDATA[
+				and cast(dtt_h.fecha_inicial as date) >= #{fecha_inicio}
+				]]>
+			</if>
+
+			<if test="fecha_final != null">
+				<![CDATA[
+				and cast(dtt_h.fecha_inicial as date) <= #{fecha_final}
+				]]>
+			</if>
+			
+			
+			
+		</trim>
+		order by dtt_h.fecha_inicial asc
+		<if test="limit != null">
+			${limit}
+		</if>
+	</select>
+
+	<select id="listar_estados" resultMap="detalles_horariosMap"
+		parameterType="java.util.Map">
+		SELECT
+		dtt_h.codigo_empresa,
+		dtt_h.codigo_sucursal,
+		dtt_h.codigo_medico,
+		dtt_h.creacion_date,
+		dtt_h.creacion_user,
+		dtt_h.consecutivo,
+		dtt_h.fecha_inicial,
+		dtt_h.fecha_final,
+		dtt_h.dia_semana,
+		dtt_h.cita,
+		dtt_h.descripcion,
+		dtt_h.motivo_consulta,
+		dtt_h.codigo_centro,
+		dtt_h.codigo_consultorio,
+		dtt_h.codigo_rol,
+		dtt_h.codigo_programa_excepcion
+		FROM
+		public.detalles_horarios AS dtt_h
+		INNER JOIN prestadores pr
+		ON (dtt_h.codigo_empresa = pr.codigo_empresa
+		AND
+		dtt_h.codigo_sucursal = pr.codigo_sucursal AND
+		dtt_h.codigo_medico =
+		pr.nro_identificacion)
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">AND dtt_h.codigo_empresa = #{codigo_empresa}</if>
+			<if test="codigo_sucursal != null">AND dtt_h.codigo_sucursal = #{codigo_sucursal}</if>
+			<if test="codigo_medico != null"> AND dtt_h.codigo_medico = #{codigo_medico}</if>
+			<if test="codigo_centro != null"> AND dtt_h.codigo_centro = #{codigo_centro}</if>
+
+			<if test="anio != null">
+				and (extract(month from dtt_h.fecha_inicial)::int) =
+				#{mes}
+				and
+				(extract(YEAR from dtt_h.fecha_inicial)::int) = #{anio}
+			</if>
+			<if test="parameter != null">AND ${parameter} like '${value}'</if>
+
+			<if test="solo_disponibles">
+				AND NOT EXISTS (SELECT citas.codigo_detalle_horario FROM
+				public.citas
+				AS citas WHERE citas.codigo_empresa = dtt_h
+				.codigo_empresa
+				AND citas.codigo_sucursal = dtt_h.codigo_sucursal
+				AND
+				citas.codigo_detalle_horario = dtt_h.consecutivo
+				AND
+				citas.codigo_prestador = dtt_h.codigo_medico)
+			</if>
+			<if test="disponibles_desde_fecha != null">
+				AND dtt_h.fecha_inicial <![CDATA[>]]>
+				CURRENT_TIMESTAMP
+			</if>
+
+			<if test="fecha_solicitada != null">
+				AND cast(dtt_h.fecha_inicial as date) <![CDATA[ >= ]]>
+				#{fecha_solicitada}
+			</if>
+
+			<if test="fecha_final_busqueda != null">
+				AND cast(dtt_h.fecha_inicial as date) <![CDATA[ <= ]]>
+				#{fecha_final_busqueda}
+			</if>
+
+			<if test="codigo_rols != null">
+				AND dtt_h.codigo_rol IN
+				<foreach collection="codigo_rols" item="i" open="("
+					separator="," close=")">
+					#{i}
+				</foreach>
+			</if>
+
+			<if test="tipo_prestador != null">
+				AND pr.tipo_prestador = #{tipo_prestador}
+			</if>
+
+			<if test="fecha_inicio != null">
+				<![CDATA[
+				and cast(fecha_inicial as date) >= #{fecha_inicio}
+				]]>
+			</if>
+
+			<if test="fecha_final != null">
+				<![CDATA[
+				and cast(fecha_inicial as date) <= #{fecha_final}
+				]]>
+			</if>
+
+
+		</trim>
+		order by dtt_h.fecha_inicial asc
+		<if test="limit != null">
+			${limit}
+		</if>
+	</select>
+
+	<select id="listar" resultMap="detalles_horariosMap"
+		parameterType="java.util.Map">
+		SELECT
+		dtt_h.codigo_empresa,
+		dtt_h.codigo_sucursal,
+		dtt_h.codigo_medico,
+		dtt_h.creacion_date,
+		dtt_h.creacion_user,
+		dtt_h.consecutivo,
+		dtt_h.fecha_inicial,
+		dtt_h.fecha_final,
+		dtt_h.dia_semana,
+		dtt_h.cita,
+		dtt_h.descripcion,
+		dtt_h.motivo_consulta,
+		dtt_h.codigo_centro,
+		dtt_h.codigo_consultorio,
+		dtt_h.codigo_rol,
+		dtt_h.codigo_programa_excepcion
+		FROM
+		public.detalles_horarios AS dtt_h
+		INNER JOIN prestadores pr
+		ON (dtt_h.codigo_empresa = pr.codigo_empresa
+		AND
+		dtt_h.codigo_sucursal = pr.codigo_sucursal AND
+		dtt_h.codigo_medico =
+		pr.nro_identificacion)
+
+		<if test="inner_citas != null">
+			INNER JOIN citas AS citas ON (citas.codigo_empresa = dtt_h
+			.codigo_empresa
+			AND citas.codigo_sucursal = dtt_h.codigo_sucursal
+			AND
+			citas.codigo_detalle_horario = dtt_h.consecutivo
+			AND
+			citas.codigo_prestador = dtt_h.codigo_medico)
+		</if>
+		<if test="inner_citas_estados != null">
+			INNER JOIN citas AS citas ON (citas.codigo_empresa = dtt_h.codigo_empresa
+			AND citas.codigo_sucursal = dtt_h.codigo_sucursal
+			AND	citas.codigo_detalle_horario = dtt_h.consecutivo
+			AND	citas.codigo_prestador = dtt_h.codigo_medico		    
+		    AND citas.estado IN
+			<foreach collection="inner_citas_estados" item="i" open="(" separator="," close=")">
+				#{i}
+			</foreach>
+			)
+		</if>
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">AND dtt_h.codigo_empresa = #{codigo_empresa}</if>
+			<if test="codigo_sucursal != null">AND dtt_h.codigo_sucursal = #{codigo_sucursal}</if>
+			<if test="codigo_medico != null"> AND dtt_h.codigo_medico = #{codigo_medico}</if>
+			<if test="codigo_centro != null"> AND dtt_h.codigo_centro = #{codigo_centro}</if>
+			<if test="codigo_rol != null"> AND dtt_h.codigo_rol = #{codigo_rol}</if>
+			
+			<if test="anio != null">
+				and (extract(month from dtt_h.fecha_inicial)::int) =
+				#{mes}
+				and
+				(extract(YEAR from dtt_h.fecha_inicial)::int) = #{anio}
+			</if>
+			<if test="parameter != null">AND ${parameter} like '${value}'</if>
+
+			<if test="solo_disponibles">
+				AND NOT EXISTS (SELECT citas.codigo_detalle_horario FROM
+				public.citas
+				AS citas WHERE citas.codigo_empresa = dtt_h
+				.codigo_empresa
+				AND citas.codigo_sucursal = dtt_h.codigo_sucursal
+				AND
+				citas.codigo_detalle_horario = dtt_h.consecutivo
+				AND
+				citas.codigo_prestador = dtt_h.codigo_medico)
+			</if>
+			<if test="disponibles_desde_fecha != null">
+				AND dtt_h.fecha_inicial <![CDATA[>]]>
+				CURRENT_TIMESTAMP
+			</if>
+			<if test="fecha_solicitada != null">
+				AND cast(dtt_h.fecha_inicial as date) <![CDATA[ >= ]]>
+				#{fecha_solicitada}
+			</if>
+
+			<if test="fecha_final_busqueda != null">
+				AND cast(dtt_h.fecha_inicial as date) <![CDATA[ <= ]]>
+				#{fecha_final_busqueda}
+			</if>
+
+			<if test="codigo_rols != null">
+				AND dtt_h.codigo_rol IN
+				<foreach collection="codigo_rols" item="i" open="("
+					separator="," close=")">
+					#{i.codigo_rol}
+				</foreach>
+			</if>
+
+            <if test="fecha_ini != null and fecha_fin != null">
+                AND (fecha_inicial BETWEEN #{fecha_ini} AND
+                #{fecha_fin})
+            </if>
+			
+			<if test="tipo_prestador != null">
+				AND pr.tipo_prestador = #{tipo_prestador}
+			</if>
+
+			<if test="fecha_inicio != null">
+				<![CDATA[
+				and cast(fecha_inicial as date) >= #{fecha_inicio}
+				]]>
+			</if>
+
+			<if test="fecha_final != null">
+				<![CDATA[
+				and cast(fecha_inicial as date) <= #{fecha_final}
+				]]>
+			</if>
+		</trim>
+		order by dtt_h.fecha_inicial asc
+		<if test="limit != null">
+			${limit}
+		</if>
+	</select>
+	
+	<!-- Este listar es el que se utiiza para buscar todas las citas desde el detalle de horarios sin hacerle join con la tabla prestadores -->
+	<select id="listar_registros" resultMap="detalles_horariosMap"
+		parameterType="java.util.Map">
+		SELECT
+		dtt_h.codigo_empresa,
+		dtt_h.codigo_sucursal,
+		dtt_h.codigo_medico,
+		dtt_h.creacion_date,
+		dtt_h.creacion_user,
+		dtt_h.consecutivo,
+		dtt_h.fecha_inicial,
+		dtt_h.fecha_final,
+		dtt_h.dia_semana,
+		dtt_h.cita,
+		dtt_h.descripcion,
+		dtt_h.motivo_consulta,
+		dtt_h.codigo_centro,
+		dtt_h.codigo_consultorio,
+		dtt_h.codigo_rol,
+		dtt_h.codigo_programa_excepcion
+		FROM
+		public.detalles_horarios AS dtt_h
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">AND dtt_h.codigo_empresa = #{codigo_empresa}</if>
+			<if test="codigo_sucursal != null">AND dtt_h.codigo_sucursal = #{codigo_sucursal}</if>
+			<if test="codigo_medico != null"> AND dtt_h.codigo_medico = #{codigo_medico}</if>
+			<if test="codigo_centro != null"> AND dtt_h.codigo_centro = #{codigo_centro}</if>
+			<if test="codigo_rol != null"> AND dtt_h.codigo_rol = #{codigo_rol}</if>
+			
+			<if test="anio != null">
+				and (extract(month from dtt_h.fecha_inicial)::int) =
+				#{mes}
+				and
+				(extract(YEAR from dtt_h.fecha_inicial)::int) = #{anio}
+			</if>
+
+			<if test="solo_disponibles">
+				AND NOT EXISTS (SELECT citas.codigo_detalle_horario FROM
+				public.citas
+				AS citas WHERE citas.codigo_empresa = dtt_h
+				.codigo_empresa
+				AND citas.codigo_sucursal = dtt_h.codigo_sucursal
+				AND
+				citas.codigo_detalle_horario = dtt_h.consecutivo
+				AND
+				citas.codigo_prestador = dtt_h.codigo_medico)
+			</if>
+			<if test="disponibles_desde_fecha != null">
+				AND dtt_h.fecha_inicial <![CDATA[>]]>
+				CURRENT_TIMESTAMP
+			</if>
+			<if test="fecha_solicitada != null">
+				AND cast(dtt_h.fecha_inicial as date) <![CDATA[ >= ]]>
+				#{fecha_solicitada}
+			</if>
+
+			<if test="fecha_final_busqueda != null">
+				AND cast(dtt_h.fecha_inicial as date) <![CDATA[ <= ]]>
+				#{fecha_final_busqueda}
+			</if>
+
+			<if test="codigo_rols != null">
+				AND dtt_h.codigo_rol IN
+				<foreach collection="codigo_rols" item="i" open="("
+					separator="," close=")">
+					#{i.codigo_rol}
+				</foreach>
+			</if>
+
+            <if test="fecha_ini != null and fecha_fin != null">
+                AND (dtt_h.fecha_inicial BETWEEN #{fecha_ini} AND
+                #{fecha_fin})
+            </if>
+
+			<if test="fecha_inicio != null">
+				<![CDATA[
+				and cast(dtt_h.fecha_inicial as date) >= #{fecha_inicio}
+				]]>
+			</if>
+
+			<if test="fecha_final != null">
+				<![CDATA[
+				and cast(dtt_h.fecha_inicial as date) <= #{fecha_final}
+				]]>
+			</if>
+		</trim>
+		order by dtt_h.fecha_inicial asc
+		<if test="limit != null">
+			${limit}
+		</if>
+	</select>
+	
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist from public.detalles_horarios
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+				AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+				AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="codigo_medico != null">
+				AND codigo_medico = #{codigo_medico}
+			</if>
+
+			<if test="fecha_hora != null">
+				<![CDATA[
+					AND (#{fecha_hora} >= fecha_inicial AND  #{fecha_hora} < #{fecha_inicio})
+				]]>
+			</if>
+
+			<if test="parameter != null">
+				AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+			${limit}
+		</if>
+	</select>
+
+	<select id="listar_por_hora" resultMap="detalles_horariosMap"
+		parameterType="java.util.Map">
+		SELECT
+		dtt_h.codigo_empresa,
+		dtt_h.codigo_sucursal,
+		dtt_h.codigo_medico,
+		dtt_h.creacion_date,
+		dtt_h.creacion_user,
+		dtt_h.consecutivo,
+		dtt_h.fecha_inicial,
+		dtt_h.fecha_final,
+		dtt_h.dia_semana,
+		dtt_h.cita,
+		dtt_h.descripcion,
+		dtt_h.motivo_consulta,
+		dtt_h.codigo_centro,
+		dtt_h.codigo_consultorio,
+		dtt_h.codigo_rol,
+		dtt_h.codigo_programa_excepcion
+		FROM
+		public.detalles_horarios AS dtt_h
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+				AND dtt_h.codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+				AND dtt_h.codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="codigo_medico != null">
+				AND dtt_h.codigo_medico = #{codigo_medico}
+			</if>
+
+			<if test="fecha_hora != null">
+				<![CDATA[
+					AND (#{fecha_hora} >= dtt_h.fecha_inicial AND  #{fecha_hora} < dtt_h.fecha_final)
+				]]>
+			</if>
+
+			<if test="parameter != null">
+				AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+			${limit}
+		</if>
+	</select>
+
+	<select id="getViasIngresoAsignadas" parameterType="java.util.Map"
+		resultType="java.util.Map">
+		SELECT DISTINCT ON (codigo_programa_excepcion)
+		codigo_programa_excepcion AS
+		via_ingreso
+		FROM detalles_horarios
+		WHERE
+		codigo_programa_excepcion != '' AND codigo_empresa =
+		#{codigo_empresa}
+		AND codigo_sucursal = #{codigo_sucursal} AND codigo_medico =
+		#{codigo_medico}
+		AND codigo_rol = #{codigo_rol}
+	</select>
+
+	<select id="consultarUltimoDisponible" resultMap="detalles_horariosMap"
+		parameterType="java.util.Map">
+		SELECT
+		dh.codigo_empresa,
+		dh.codigo_sucursal,
+		dh.codigo_medico,
+		dh.creacion_date,
+		dh.creacion_user,
+		dh.consecutivo,
+		dh.fecha_inicial,
+		dh.fecha_final,
+		dh.dia_semana,
+		dh.cita,
+		dh.descripcion,
+		dh.motivo_consulta,
+		dh.codigo_centro,
+		dh.codigo_consultorio,
+		dh.codigo_rol,
+		dh.codigo_programa_excepcion
+		FROM
+		detalles_horarios dh
+		left JOIN citas ct on (dh.codigo_empresa = ct.codigo_empresa and
+		dh.codigo_sucursal = ct.codigo_sucursal and
+		dh.consecutivo = ct.codigo_detalle_horario)
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+				AND dh.codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+				AND dh.codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="codigo_medico != null">
+				AND dh.codigo_medico = #{codigo_medico}
+			</if>
+			<if test="codigo_centro != null">
+				AND dh.codigo_centro = #{codigo_centro}
+			</if>
+			<if test="codigos_roles != null">
+				AND dh.codigo_rol in
+				<foreach collection="codigos_roles" item="i" open="("
+					separator="," close=")">
+					#{i}
+				</foreach>
+			</if>
+			<if test="fecha_busqueda != null">
+				AND cast(dh.fecha_inicial as date) >= #{fecha_busqueda}
+			</if>
+			<if test="estado_cita != null">
+				AND (ct.estado is null OR ct.estado != '1' OR ct.estado != '3')
+			</if>			
+		</trim>		
+		ORDER BY dh.fecha_inicial 
+		limit 1 offset 1
+		</select>
+
+</mapper>

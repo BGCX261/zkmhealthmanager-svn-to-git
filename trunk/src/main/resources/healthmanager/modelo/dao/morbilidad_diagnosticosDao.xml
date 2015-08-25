@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Morbilidad_diagnosticosDao">
+
+	<resultMap id="morbilidad_diagnosticosMap" type="morbilidad_diagnosticos">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="codigo_tercero" property="codigo_tercero" />
+		<result column="codigo_diagnostico" property="codigo_diagnostico" />
+		<result column="tipo_morbilidad" property="tipo_morbilidad" />
+		<result column="nro_identificacion" property="nro_identificacion" />
+		<result column="creacion_date" property="creacion_date" />
+		<result column="creacion_user" property="creacion_user" />
+		<result column="ultimo_user" property="ultimo_user" />
+	</resultMap>
+
+	<insert id="crear" parameterType="morbilidad_diagnosticos">
+		insert into public.morbilidad_diagnosticos (codigo_empresa,codigo_sucursal,
+		codigo_tercero,codigo_diagnostico,tipo_morbilidad,
+		nro_identificacion,creacion_date,creacion_user,
+		ultimo_user)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{codigo_tercero},#{codigo_diagnostico},#{tipo_morbilidad},
+		#{nro_identificacion},#{creacion_date},#{creacion_user},
+		#{ultimo_user})
+	</insert>
+
+	<update id="actualizar" parameterType="morbilidad_diagnosticos">
+		update public.morbilidad_diagnosticos set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},codigo_tercero = #{codigo_tercero},
+		codigo_diagnostico = #{codigo_diagnostico},tipo_morbilidad = #{tipo_morbilidad},
+		nro_identificacion = #{nro_identificacion},creacion_date = #{creacion_date},
+		creacion_user = #{creacion_user},ultimo_user = #{ultimo_user}
+		where 	</update>
+
+	<select id="consultar" parameterType="morbilidad_diagnosticos" resultMap="morbilidad_diagnosticosMap">
+		select codigo_empresa,codigo_sucursal,
+		codigo_tercero,codigo_diagnostico,tipo_morbilidad,nro_identificacion,
+		creacion_date,creacion_user,ultimo_user
+		from public.morbilidad_diagnosticos where 	</select>
+
+	<delete id="eliminar" parameterType="morbilidad_diagnosticos">
+		delete from public.morbilidad_diagnosticos
+		where 	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="morbilidad_diagnosticosMap">
+		select codigo_empresa,codigo_sucursal,
+		codigo_tercero,codigo_diagnostico,tipo_morbilidad,nro_identificacion,
+		creacion_date,creacion_user,ultimo_user
+		from public.morbilidad_diagnosticos 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from public.morbilidad_diagnosticos 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

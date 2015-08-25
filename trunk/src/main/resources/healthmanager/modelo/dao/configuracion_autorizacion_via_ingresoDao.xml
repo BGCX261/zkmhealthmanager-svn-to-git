@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Configuracion_autorizacion_via_ingresoDao">
+
+	<resultMap id="configuracion_autorizacion_via_ingresoMap" type="configuracion_autorizacion_via_ingreso">
+		<result column="id_configuracion" property="id_configuracion" />
+		<result column="codigo_via_ingreso" property="codigo_via_ingreso" />
+	</resultMap>
+
+	<insert id="crear" parameterType="configuracion_autorizacion_via_ingreso">
+		insert into public.configuracion_autorizacion_via_ingreso (id_configuracion,codigo_via_ingreso)
+
+		values (#{id_configuracion},#{codigo_via_ingreso})
+	</insert>
+
+	<update id="actualizar" parameterType="configuracion_autorizacion_via_ingreso">
+		update public.configuracion_autorizacion_via_ingreso set id_configuracion = #{id_configuracion},
+		codigo_via_ingreso = #{codigo_via_ingreso}
+		where 		id_configuracion = #{id_configuracion}
+		and codigo_via_ingreso = #{codigo_via_ingreso}
+	</update>
+
+	<select id="consultar" parameterType="configuracion_autorizacion_via_ingreso" resultMap="configuracion_autorizacion_via_ingresoMap">
+		select id_configuracion,codigo_via_ingreso
+		from public.configuracion_autorizacion_via_ingreso where id_configuracion = #{id_configuracion}
+		and codigo_via_ingreso = #{codigo_via_ingreso}
+	</select>
+
+	<delete id="eliminar" parameterType="configuracion_autorizacion_via_ingreso">
+		delete from public.configuracion_autorizacion_via_ingreso
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_via_ingreso != null">
+			   AND codigo_via_ingreso = #{codigo_via_ingreso}
+			</if>
+			<if test="id_configuracion != null">
+			   AND id_configuracion = #{id_configuracion}
+			</if>
+		</trim>
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="configuracion_autorizacion_via_ingresoMap">
+		select id_configuracion,codigo_via_ingreso
+		from public.configuracion_autorizacion_via_ingreso 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="parameter != null">
+				AND ${parameter} like '${value}'
+			</if>
+			<if test="id_configuracion != null">
+				AND id_configuracion = #{id_configuracion}
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from public.configuracion_autorizacion_via_ingreso 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

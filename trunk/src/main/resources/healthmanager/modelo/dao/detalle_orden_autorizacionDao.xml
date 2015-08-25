@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Detalle_orden_autorizacionDao">
+
+	<resultMap id="detalle_orden_autorizacionMap" type="detalle_orden_autorizacion">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="codigo_orden" property="codigo_orden" />
+		<result column="consecutivo" property="consecutivo" />
+		<result column="codigo_procedimiento" property="codigo_procedimiento" />
+		<result column="valor_procedimiento" property="valor_procedimiento" />
+		<result column="unidades" property="unidades" />
+		<result column="valor_real" property="valor_real" />
+		<result column="descuento" property="descuento" />
+		<result column="incremento" property="incremento" />
+		<result column="codigo_cups" property="codigo_cups" />
+		<result column="tipo_servicio" property="tipo_servicio" />
+		<result column="estado_cobro" property="estado_cobro" />
+		<result column="manual_tarifario" property="manual_tarifario" />
+		<result column="nombre_procedimiento" property="nombre_procedimiento" />
+		<result column="autorizado" property="autorizado" />
+<result column="tipo_quirurgico" property="tipo_quirurgico" />
+		<result column="observaciones" property="observaciones" />
+	</resultMap>
+
+	<insert id="crear" parameterType="detalle_orden_autorizacion">
+		insert into public.detalle_orden_autorizacion (codigo_empresa,codigo_sucursal,
+		codigo_orden,consecutivo,codigo_procedimiento,
+		valor_procedimiento,unidades,valor_real,
+		descuento,incremento,codigo_cups,
+		tipo_servicio,nombre_procedimiento,autorizado,
+		estado_cobro,manual_tarifario,tipo_quirurgico,
+		observaciones)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{codigo_orden},#{consecutivo},#{codigo_procedimiento},
+		#{valor_procedimiento},#{unidades},#{valor_real},
+		#{descuento},#{incremento},#{codigo_cups},
+		#{tipo_servicio},#{nombre_procedimiento},#{autorizado},
+		#{estado_cobro},#{manual_tarifario},#{tipo_quirurgico},
+		#{observaciones})
+	</insert>
+
+	<update id="actualizar" parameterType="detalle_orden_autorizacion">
+		update public.detalle_orden_autorizacion set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},codigo_orden = #{codigo_orden},
+		consecutivo = #{consecutivo},codigo_procedimiento = #{codigo_procedimiento},
+		valor_procedimiento = #{valor_procedimiento},unidades = #{unidades},
+		valor_real = #{valor_real},descuento = #{descuento},
+		incremento = #{incremento},codigo_cups = #{codigo_cups},
+		tipo_servicio = #{tipo_servicio},nombre_procedimiento = #{nombre_procedimiento},
+		autorizado = #{autorizado},estado_cobro = #{estado_cobro},
+		manual_tarifario = #{manual_tarifario},tipo_quirurgico = #{tipo_quirurgico},
+		observaciones = #{observaciones}
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and codigo_orden = #{codigo_orden}
+		and consecutivo = #{consecutivo}
+	</update>
+
+	<select id="consultar" parameterType="detalle_orden_autorizacion" resultMap="detalle_orden_autorizacionMap">
+		select codigo_empresa,codigo_sucursal,
+		codigo_orden,consecutivo,codigo_procedimiento,valor_procedimiento,
+		unidades,valor_real,descuento,incremento,
+		codigo_cups,tipo_servicio,nombre_procedimiento,autorizado,
+		estado_cobro,manual_tarifario,tipo_quirurgico,observaciones
+		from public.detalle_orden_autorizacion where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_orden = #{codigo_orden}
+		and consecutivo = #{consecutivo}
+	</select>
+
+	<delete id="eliminar" parameterType="detalle_orden_autorizacion">
+		delete from public.detalle_orden_autorizacion
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_orden = #{codigo_orden}
+		<if test="consecutivo != null">
+		    and consecutivo = #{consecutivo}
+		</if>
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="detalle_orden_autorizacionMap">
+		select codigo_empresa,codigo_sucursal,
+		codigo_orden,consecutivo,codigo_procedimiento,valor_procedimiento,
+		unidades,valor_real,descuento,incremento,
+		codigo_cups,tipo_servicio,nombre_procedimiento,autorizado,
+		estado_cobro,manual_tarifario,tipo_quirurgico,observaciones
+		from public.detalle_orden_autorizacion 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="codigo_orden != null">AND codigo_orden = #{codigo_orden}</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="order_by != null">ORDER BY ${order_by}</if>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from public.detalle_orden_autorizacion 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

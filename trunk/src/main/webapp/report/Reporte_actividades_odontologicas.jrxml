@@ -1,0 +1,477 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Reporte_actividades_odontologicas" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="46"/>
+	<parameter name="codigo_empresa" class="java.lang.String">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="codigo_sucursal" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="empresa" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="id" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="direccion" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="telefono" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="imagen" class="java.io.InputStream" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="codigo_historia" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select count(*) as num_pacientes,act.codigo_historia,usu.codigo,usu.nombres as nombres, usu.apellidos as apellidos, act.tipo_actividad as tipo_actividad_pct
+
+  from activ_pacient_atendidos act
+	left join usuarios usu on (act.codigo_empresa = usu.codigo_empresa
+	and act.codigo_sucursal = usu.codigo_sucursal and act.codigo_medico = usu.codigo)
+  left join paciente pct
+	on(pct.codigo_empresa = act.codigo_empresa and pct.codigo_sucursal = act.codigo_sucursal
+	and act.nro_id_paciente = pct.nro_identificacion)
+	where act.codigo_empresa = #{codigo_empresa}
+	and act.codigo_sucursal = #{codigo_sucursal}
+    and act.codigo_historia = $P{codigo_historia}
+    group by usu.codigo, usu.nombres, usu.apellidos,act.tipo_actividad, act.codigo_historia]]>
+	</queryString>
+	<field name="num_pacientes" class="java.lang.Long"/>
+	<field name="codigo" class="java.lang.String"/>
+	<field name="nombres" class="java.lang.String"/>
+	<field name="apellidos" class="java.lang.String"/>
+	<field name="tipo_actividad_pct" class="java.lang.String"/>
+	<variable name="count_remisiones" class="java.lang.Integer" resetType="Group" calculation="DistinctCount">
+		<variableExpression><![CDATA[$V{count_remisiones}.equals("REMISIONES")? 1 : 0]]></variableExpression>
+	</variable>
+	<variable name="count_cons_cntrol" class="java.lang.Integer" resetType="Group" calculation="DistinctCount">
+		<variableExpression><![CDATA[$V{count_cons_cntrol}.equals("CONSULTA_CONTROL")? 1 : 0]]></variableExpression>
+	</variable>
+	<variable name="count_operatoria" class="java.lang.Integer" resetType="Group" calculation="DistinctCount">
+		<variableExpression><![CDATA[$V{count_operatoria}.equals("OPERATORIA")? 1 : 0]]></variableExpression>
+	</variable>
+	<variable name="count_amalgama_plt" class="java.lang.Integer" resetType="Group" calculation="DistinctCount">
+		<variableExpression><![CDATA[$V{count_amalgama_plt}.equals("AMALGAMA_PLANTA")? 1 : 0]]></variableExpression>
+	</variable>
+	<variable name="count_resinas_foto" class="java.lang.Integer" resetType="Group" calculation="DistinctCount">
+		<variableExpression><![CDATA[$V{count_resinas_foto}.equals("RESINAS_FOTOCURADO")? 1 : 0]]></variableExpression>
+	</variable>
+	<variable name="count_otras_act_op" class="java.lang.Integer" resetType="Group" calculation="DistinctCount">
+		<variableExpression><![CDATA[$V{count_otras_act_op}.equals("OTRAS_ACT_OP")? 1 : 0]]></variableExpression>
+	</variable>
+	<variable name="count_cirugia" class="java.lang.Integer" resetType="Group" calculation="DistinctCount">
+		<variableExpression><![CDATA[$V{count_cirugia}.equals("CIRUGIA")? 1 : 0]]></variableExpression>
+	</variable>
+	<variable name="count_exod_dientes_uni" class="java.lang.Integer" resetType="Group" calculation="DistinctCount">
+		<variableExpression><![CDATA[$V{count_exod_dientes_uni}.equals("EXOD_DIENTES_UNI")? 1 : 0]]></variableExpression>
+	</variable>
+	<variable name="count_exodoncias_temp" class="java.lang.Integer" resetType="Group" calculation="DistinctCount">
+		<variableExpression><![CDATA[$V{count_exodoncias_temp}.equals("EXODONCIAS_TEMP")? 1 : 0]]></variableExpression>
+	</variable>
+	<variable name="count_drenajes_absc" class="java.lang.Integer" resetType="Group" calculation="DistinctCount">
+		<variableExpression><![CDATA[$V{count_drenajes_absc}.equals("DRENAJES_ABSC")? 1 : 0]]></variableExpression>
+	</variable>
+	<variable name="count_prevencion" class="java.lang.Integer" resetType="Group" calculation="DistinctCount">
+		<variableExpression><![CDATA[$V{count_prevencion}.equals("PREVENCION")? 1 : 0]]></variableExpression>
+	</variable>
+	<variable name="count_detartrajes" class="java.lang.Integer" resetType="Group" calculation="DistinctCount">
+		<variableExpression><![CDATA[$V{count_detartrajes}.equals("DETARTRAJES")? 1 : 0]]></variableExpression>
+	</variable>
+	<variable name="variable1" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="92" splitType="Stretch">
+			<textField>
+				<reportElement x="227" y="48" width="358" height="14"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Telefono: "+$P{telefono}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="227" y="0" width="358" height="20"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{empresa}]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame" isUsingCache="true" onErrorType="Icon">
+				<reportElement x="126" y="0" width="101" height="62"/>
+				<imageExpression class="java.io.InputStream"><![CDATA[$P{imagen}]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="227" y="34" width="358" height="14"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Dirección: "+$P{direccion}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="227" y="20" width="358" height="14"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{id}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="227" y="72" width="358" height="15"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["ACTIVIDADES ODONTOLÓGICAS"]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="14" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="28" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="111" y="6" width="105" height="12"/>
+				<box leftPadding="1">
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{codigo_historia}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="10" y="6" width="101" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Historia Clinica No.:"]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="306" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="373" y="14" width="214" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{nombres}!=null?+" "+$F{apellidos}" ")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="257" y="14" width="90" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Médico:"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="505" y="36" width="80" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{num_pacientes}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="257" y="36" width="144" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Número de pacientes atenendidos:"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="329" y="78" width="176" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Realizándole las siguientes actividades:"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="3" y="138" width="69" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Operatoría:"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="3" y="150" width="160" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Obturaciones en amalgama de plata:"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="181" y="150" width="62" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{tipo_actividad_pct}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="181" y="162" width="62" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{tipo_actividad_pct}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="3" y="162" width="160" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Obturaciones en resinas de fotocurado:"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="181" y="174" width="62" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{tipo_actividad_pct}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="3" y="174" width="160" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Otras actividades de operatoria:"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="460" y="150" width="63" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{tipo_actividad_pct}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="276" y="174" width="167" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Drenajes de absceso :"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="276" y="162" width="167" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Exodoncias temporales:"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="460" y="174" width="63" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{tipo_actividad_pct}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="460" y="162" width="63" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{tipo_actividad_pct}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="276" y="150" width="167" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Exodoncias en dientes unirradiculares:"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="548" y="138" width="247" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Prevención:"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="548" y="162" width="160" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Controles de Placa bacteriana:"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="548" y="150" width="160" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Detartrajes:"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="738" y="174" width="57" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{tipo_actividad_pct}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="738" y="150" width="57" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{tipo_actividad_pct}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="548" y="174" width="160" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Educación en salud oral:"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="738" y="162" width="57" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{tipo_actividad_pct}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="276" y="275" width="158" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Total de actividades realizadas ="]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="443" y="275" width="80" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{tipo_actividad_pct}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="3" y="231" width="144" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Total número de operatorías:"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="163" y="231" width="80" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{tipo_actividad_pct}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="276" y="231" width="144" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Total número de cirugías:"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="443" y="231" width="80" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{tipo_actividad_pct}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="738" y="186" width="57" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{tipo_actividad_pct}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="548" y="187" width="180" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Sellantes de fosas y fisuras de fotocurado:"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="548" y="199" width="160" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Número de pacientes atenendidos:"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="738" y="198" width="57" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{tipo_actividad_pct}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="708" y="231" width="80" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{tipo_actividad_pct}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="548" y="231" width="144" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Total número de prevenciones:"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="152" y="105" width="105" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Consultas de control:"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="266" y="105" width="62" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$V{count_cons_cntrol}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="505" y="105" width="105" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Remisiones:"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="620" y="105" width="62" height="12"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$V{count_remisiones}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="27" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="28" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="29" splitType="Stretch"/>
+	</summary>
+</jasperReport>

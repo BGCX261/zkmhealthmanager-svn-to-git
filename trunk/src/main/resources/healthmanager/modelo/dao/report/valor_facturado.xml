@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.reporte_valorFacturadoModel">
+	<select id="select" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+		SELECT
+		<if test="grupo_1 != null and grupo_1 != ''">
+			upper(${grupo_1}) AS grupo_1,
+		</if>
+
+		<if test="grupo_2 != null and grupo_2 != ''">
+			upper(${grupo_2}) AS grupo_2,
+		</if>
+
+		<if test="grupo_3 != null and grupo_3 != ''">
+			upper(${grupo_3}) AS grupo_3,
+		</if>
+
+		<if test="grupo_4 != null and grupo_4 != ''">
+			upper(${grupo_4}) AS grupo_4,
+		</if>
+
+		eps.nombre AS nombre_administradora,
+		eps.nit,
+		contrato.id_plan,
+		contrato.nro_contrato,
+		contrato.nombre AS nombre_contrato,
+		upper(elm.descripcion) AS servicio,
+		'XXXXXX' AS nro_factura,
+		'XXXX-XX-XX' AS fecha_fact,
+		CAST(0 AS double precision) AS valor_factura,
+		CAST(0 AS double precision) AS valor_recuperado,
+
+		upper(${descipcion_grupo1}) AS descipcion_grupo1,
+		upper(${descipcion_grupo2}) AS descipcion_grupo2,
+		upper(${descipcion_grupo3}) AS descipcion_grupo3,
+		upper(${descipcion_grupo4}) AS descipcion_grupo4,
+
+		ads.nro_ingreso,
+		ads.nro_identificacion,
+		ads.codigo_empresa,
+		ads.codigo_sucursal
+
+		FROM
+		public.admision AS ads
+		INNER JOIN public.elemento AS elm ON elm.codigo = ads.via_ingreso AND
+		elm.tipo = 'via_ingreso'
+		INNER JOIN public.administradora AS eps ON ads.codigo_administradora =
+		eps.codigo
+		INNER JOIN public.contratos AS contrato ON ads.codigo_empresa =
+		contrato.codigo_empresa AND ads.codigo_sucursal =
+		contrato.codigo_sucursal AND ads.codigo_administradora =
+		contrato.codigo_administradora AND ads.id_plan = contrato.id_plan
+		INNER JOIN public.centro_atencion AS centro ON centro.codigo_empresa =
+		ads.codigo_empresa AND centro.codigo_sucursal = ads.codigo_sucursal
+		AND centro.codigo_centro = ads.codigo_centro
+		WHERE
+		ads.estado = '2'
+		AND ads.codigo_empresa = #{codigo_empresa}
+		AND ads.codigo_sucursal = #{codigo_sucursal}
+		AND ads.fecha_ingreso BETWEEN CAST(#{fecha_inicio} AS DATE) AND CAST(#{fecha_final} AS DATE)
+		<if test="contratos != null">
+			<foreach collection="contratos" item="item"
+				open="AND contrato.id_plan IN(" close=")" separator=",">
+				#{item.id_plan}
+			</foreach>
+		</if>
+
+		<if test="eps != null">
+			<foreach collection="eps" item="item" open="AND eps.codigo IN("
+				close=")" separator=",">
+				#{item.codigo}
+			</foreach>
+		</if>
+		<if test="servicios != null">
+			<foreach collection="servicios" item="item"
+				open="AND ads.via_ingreso IN(" close=")" separator=",">
+				#{item.codigo}
+			</foreach>
+		</if>
+		<if test="centros_salud != null">
+			AND centro.codigo_centro
+			<foreach collection="centros_salud" item="item" open="IN("
+				close=")" separator=",">
+				#{item.codigo_centro}
+			</foreach>
+		</if>
+		<if test="grupo4 != null and grupo4 != ''">
+			ORDER BY grupo_4 ASC
+		</if>
+		<if test="grupo3 != null and grupo3 != ''">
+			,grupo_3 ASC
+		</if>
+		<if test="grupo2 != null and grupo2 != ''">
+			,grupo_2 ASC
+		</if>
+		<if test="grupo1 != null and grupo1 != ''">
+			,grupo_1 ASC
+		</if>
+	</select>
+
+</mapper>

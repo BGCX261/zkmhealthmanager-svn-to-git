@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.Config_carnetsDao">
+
+	
+
+	<resultMap id="config_carnetsMap" type="config_carnets">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="logo" property="logo" />
+		<result column="fondo" property="fondo" />
+		<result column="imagen_atras" property="imagen_atras" />
+		<result column="tipo" property="tipo" />
+	</resultMap>
+
+	<insert id="crear" parameterType="config_carnets">
+		insert into public.config_carnets (codigo_empresa,codigo_sucursal,
+		logo,fondo,imagen_atras,
+		tipo)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{logo},#{fondo},#{imagen_atras},
+		#{tipo})
+	</insert>
+
+	<update id="actualizar" parameterType="config_carnets">
+		update public.config_carnets set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},logo = #{logo},
+		fondo = #{fondo},imagen_atras = #{imagen_atras},
+		tipo = #{tipo}
+		where 		codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and tipo = #{tipo}
+	</update>
+
+	<select id="consultar" resultMap="config_carnetsMap" parameterType="config_carnets">
+		select codigo_empresa,codigo_sucursal,
+		logo,fondo,imagen_atras,tipo
+		from public.config_carnets where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and tipo = #{tipo}
+	</select>
+
+	<delete id="eliminar" parameterType="config_carnets">
+		delete from public.config_carnets
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and tipo = #{tipo}
+	</delete>
+
+	<select id="listar" resultMap="config_carnetsMap" parameterType="java.util.Map">
+		select codigo_empresa,codigo_sucursal,
+		logo,fondo,imagen_atras,tipo
+		from public.config_carnets 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">AND codigo_empresa = #{codigo_empresa}</if>
+			<if test="codigo_sucursal != null">AND codigo_sucursal = #{codigo_sucursal}</if>
+			<if test="parameter != null">AND ${parameter} like '${value}'</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean" parameterType="config_carnets">
+		select count(1) != 0 AS exist 		from public.config_carnets 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">AND codigo_empresa = #{codigo_empresa}</if>
+			<if test="codigo_sucursal != null">AND codigo_sucursal = #{codigo_sucursal}</if>
+			<if test="parameter != null">AND ${parameter} like '${value}'</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

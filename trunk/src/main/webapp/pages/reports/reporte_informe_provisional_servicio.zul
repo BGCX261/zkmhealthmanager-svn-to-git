@@ -1,0 +1,423 @@
+<?page title="Informe provisional de Servicio" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<zk>
+	<window width="100%" height="100%" id="formInformeProvisional"
+		use="healthmanager.controller.reportes.ReporteInformeProvisionalServicioAction">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+		<borderlayout width="100%" height="95%" id="groupboxEditar">
+			<north border="none" height="30px">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<toolbarbutton image="/images/multiple.png"
+						label="Generar reporte" id="btGenerarReporte"
+						onClick="formInformeProvisional.onGenerarReporte()" />
+
+					<toolbarbutton image="/images/limpiar_mini.png"
+						label="Limpiar" onClick="formInformeProvisional.onLimpiar()"/> 
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center">
+					<space />
+					<groupbox closable="false" width="700px" mold="3d"
+						id="groupInicial">
+						<caption
+							label="INFORME PROVISIONAL DE SERVICIOS">
+							<toolbarbutton
+								id="btnConfiguracionTipoFactura" label="Filtros"
+								image="/images/configuracion_mini.png">
+								<attribute name="onClick">
+	popupTipoFact.open(btnConfiguracionTipoFactura);
+</attribute>
+							</toolbarbutton>
+							<popup id="popupTipoFact">
+								<groupbox mold="3d" closable="false">
+									<caption
+										label="Filtros tipo de Facturación">
+										<toolbarbutton label="X"
+											onClick="popupTipoFact.close()" />
+									</caption>
+									<vlayout>
+										<checkbox
+											id="chkConfigFacturasEventos" label="Eventos" checked="true"
+											value="02" />
+										<checkbox
+											id="chkConfigFacturasCapitadas" label="Atenciones Capitadas"
+											checked="true" value="01" />
+										<checkbox
+											id="chkConfigFacturasAgrupada" label="Atenciones Agrupadas"
+											checked="true" value="03" />
+									</vlayout>
+								</groupbox>
+								<separator />
+								<groupbox mold="3d" closable="false">
+									<caption label="Estado admision" />
+									<vlayout>
+										<checkbox id="chkEstadoActivo"
+											label="Activa" checked="true" value="1" />
+										<checkbox
+											id="chkEstadoFacturado" label="Facturada" checked="true"
+											value="2" />
+										<checkbox
+											id="chkEstadoCancelado" label="Cancelada" checked="false"
+											value="3" />
+									</vlayout>
+								</groupbox>
+							</popup>
+						</caption>
+						<grid sclass="GridSinBorde" hflex="1">
+							<columns visible="false">
+								<column label="" width="10px" />
+								<column label="" width="130px"
+									align="left" />
+								<column label="" width="182px"
+									align="left" />
+								<column label="" width="130px"
+									align="left" />
+								<column label="" width="182px"
+									align="left" />
+								<column label="" align="left" />
+							</columns>
+							<rows>
+								<row>
+									<cell />
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label value="Fecha inicial: " />
+									</cell>
+									<cell>
+										<datebox id="dtbxFechaIncio"
+											format="dd-MM-yyyy" width="170px" />
+									</cell>
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label value="Fecha final: " />
+									</cell>
+									<cell>
+										<datebox id="dtbxFechaFinal"
+											format="dd-MM-yyyy" width="170px" />
+									</cell>
+									<cell />
+								</row>
+								<row id="rowGruposEtarios"
+									visible="false">
+									<cell />
+									<cell height="30px">
+										<space width="8px" />
+										<label value="Grupo etareo: " />
+									</cell>
+									<cell colspan="3">
+										<bandboxRegistros
+											id="tbxGrupoEtario" widthBandbox="482px" widthListbox="800px"
+											heightListbox="300px" columnas="ID#65px|Nombre" />
+									</cell>
+									<cell>
+										<toolbarbutton
+											id="btnLimpiarGrupoEtario" image="/images/borrar.gif" />
+									</cell>
+								</row>
+								<row>
+									<cell />
+									<cell colspan="4" align="center">
+										<hbox>
+											<radiogroup
+												id="rgFiltros">
+												<radio
+													label="Filtrar por fecha de servicio" value="01"
+													selected="true" />
+												<radio
+													label="Filtrar por fecha de creación" value="02" />
+											</radiogroup>
+										</hbox>
+									</cell>
+									<cell />
+								</row>
+								<row>
+									<cell />
+									<cell colspan="4" align="center">
+										<hbox>
+											<checkbox id="chkConsultas"
+												label="Consultas" style="font-size:11px" />
+											<checkbox
+												id="chkProcedimiento" label="Procedimiento"
+												style="font-size:11px" />
+											<checkbox
+												id="chkMedicamentosInsumos" label="Medícamentos e Insumos"
+												style="font-size:11px" />
+											<checkbox id="chkEstancias"
+												label="Estancias" style="font-size:11px" />
+											<checkbox id="chkUrgencia"
+												label="Urgencia" style="font-size:11px"
+												onCheck="formInformeProvisional.onSeleccionarUrgencia()" />
+										</hbox>
+									</cell>
+									<cell />
+								</row>
+							</rows>
+							<foot id="fotSeccionTriage"
+								visible="false">
+								<footer span="6" align="center">
+									<hbox>
+										<label value="Triage: " />
+										<checkbox id="chkTriageI"
+											label="I" value="1" />
+										<checkbox id="chkTriageII"
+											label="II" value="2" />
+										<checkbox id="chkTriageIII"
+											label="III" value="3" />
+										<checkbox id="chkTriageIV"
+											label="IV" value="4" />
+										<checkbox
+											id="chkUrgSinTriage" style="color:red" label="Sin triage"
+											value="0" />
+									</hbox>
+								</footer>
+							</foot>
+						</grid>
+					</groupbox>
+					<space height="2px" />
+					<groupbox id="grbCentro" open="false" width="700px" mold="3d"
+						onOpen='chk_centro_salud.setChecked(self.isOpen());chk_centro_salud.setStyle(self.isOpen() ? "color:red" : "")'>
+						<caption label="CENTRO DE ATENCIÓN">
+							<checkbox id="chk_centro_salud"
+								label="Filtrar" />
+						</caption>
+						<toolbar>
+							<toolbarbutton image="/images/agregar.png"
+								label="Agregar Registro"
+								onClick="formInformeProvisional.abrirWindowCentrosSalud()" />
+
+							<toolbarbutton
+								image="/images/limpiar_mini.png" label="Limpiar"
+								onClick="rowCentroSalud.getChildren().clear()" />
+						</toolbar>
+						<grid height="150px">
+							<columns>
+								<column label="Código" width="100px" />
+								<column label="Nombre" />
+								<column width="35px" />
+							</columns>
+							<rows id="rowCentroSalud" />
+						</grid>
+					</groupbox>
+
+
+					<space height="2px" />
+					<groupbox id="grbViaIngreso" open="false" width="700px" mold="3d"
+						onOpen='chk_via_ingreso.setChecked(self.isOpen());chk_via_ingreso.setStyle(self.isOpen() ? "color:red" : "")'>
+						<caption label="VIA DE INGRESO">
+							<checkbox id="chk_via_ingreso"
+								label="Filtrar" />
+						</caption>
+
+						<toolbar>
+							<toolbarbutton image="/images/agregar.png"
+								label="Agregar Registro"
+								onClick="formInformeProvisional.abrirWindowViaIngreso()" />
+
+							<toolbarbutton
+								image="/images/limpiar_mini.png" label="Limpiar"
+								onClick="rowVia_ingreso.getChildren().clear()" />
+						</toolbar>
+						<grid height="150px">
+							<columns>
+								<column label="Nombre" />
+								<column width="35px" />
+							</columns>
+							<rows id="rowVia_ingreso" />
+						</grid>
+					</groupbox>
+
+
+					<space height="2px" />
+					<groupbox  open="false" width="700px" mold="3d"
+						id="grbEntidades"
+						onOpen='chk_entidad_eps.setChecked(self.isOpen());chk_entidad_eps.setStyle(self.isOpen() ? "color:red" : "")'>
+						<caption
+							label="ENTIDADES PROMOTORAS DE SALUD">
+							<checkbox id="chk_entidad_eps"
+								label="Filtrar" />
+						</caption>
+
+						<toolbar>
+							<toolbarbutton image="/images/agregar.png"
+								label="Agregar Registro"
+								onClick="formInformeProvisional.abrirWindowEps()" />
+
+							<toolbarbutton
+								image="/images/limpiar_mini.png" label="Limpiar"
+								onClick="rowEps.getChildren().clear()" />
+						</toolbar>
+						<grid height="150px">
+							<columns>
+								<column label="" width="40px" />
+								<column label="Código EPS"
+									width="150px" />
+								<column label="Nombre" />
+								<column width="35px" />
+							</columns>
+							<rows id="rowEps" />
+						</grid>
+					</groupbox>
+
+					<space height="2px" id="space_entidad" />
+
+					<groupbox id="grdMedicos" open="false" width="700px"
+						mold="3d"
+						onOpen='chk_medicos.setChecked(self.isOpen());chk_medicos.setStyle(self.isOpen() ? "color:red" : "")'>
+						<caption label="MÉDICO">
+							<checkbox id="chk_medicos" label="Filtrar" />
+						</caption>
+						<toolbar>
+							<toolbarbutton image="/images/agregar.png"
+								label="Agregar Registro"
+								onClick="formInformeProvisional.abrirWindowMedicos()" />
+
+							<toolbarbutton
+								image="/images/limpiar_mini.png" label="Limpiar"
+								onClick="rowMedicos.getChildren().clear()" />
+						</toolbar>
+						<grid height="150px">
+							<columns>
+								<column label="Código" />
+								<column label="Nombre" />
+								<column width="35px" />
+							</columns>
+							<rows id="rowMedicos" />
+						</grid>
+					</groupbox>
+					<space height="2px" />
+					<groupbox open="false" width="700px" mold="3d"
+						id="grbConsultas"
+						onOpen='chk_diagnosticos.setChecked(self.isOpen());chk_diagnosticos.setStyle(self.isOpen() ? "color:red" : "")'>
+						<caption label="DIAGNOSTICOS">
+							<checkbox id="chk_diagnosticos"
+								label="Filtrar" />
+						</caption>
+						<toolbar>
+							<toolbarbutton image="/images/agregar.png"
+								label="Agregar Registro"
+								onClick="formInformeProvisional.abrirWindowDiagnosticos()" />
+
+							<toolbarbutton
+								image="/images/limpiar_mini.png" label="Limpiar"
+								onClick="rowDiagnosticos.getChildren().clear()" />
+						</toolbar>
+						<grid height="150px">
+							<columns>
+								<column label="Código" width="150px" />
+								<column label="Nombre" />
+								<column width="35px" />
+							</columns>
+							<rows id="rowDiagnosticos" />
+						</grid>
+					</groupbox>
+					<space height="2px" />
+					<groupbox id="grbServicios" open="false" width="700px" mold="3d"
+						onOpen='chk_servicios.setChecked(self.isOpen());chk_servicios.setStyle(self.isOpen() ? "color:red" : "")'>
+						<caption
+							label="SERVICIOS(COSULTAS, PROCEDIMIENTOS, MEDICAMENTOS, ETC.)">
+							<checkbox id="chk_servicios"
+								label="Filtrar" />
+						</caption>
+						<toolbar>
+							<hbox>
+								<toolbarbutton
+									image="/images/agregar.png" label="Agregar Servicio"
+									onClick="formInformeProvisional.abrirWindowServiciosPcd()" />
+								<toolbarbutton
+									image="/images/agregar.png" label="Agregar Articulo"
+									onClick="formInformeProvisional.abrirWindowServiciosArt()" />
+
+								<separator />
+								<toolbarbutton
+									image="/images/limpiar_mini.png" label="Limpiar"
+									onClick="rowServicios.getChildren().clear()" />
+							</hbox>
+						</toolbar>
+						<grid height="150px">
+							<columns>
+								<column label="Código" width="100px" />
+								<column label="Nombre del servicio" />
+								<column label="Tipo" width="100px" />
+								<column width="35px" />
+							</columns>
+							<rows id="rowServicios" />
+						</grid>
+					</groupbox>
+					<space height="2px" />
+					<groupbox open="false" width="700px" mold="3d"
+						id="grbFacturador"
+						onOpen='chk_facturador.setChecked(self.isOpen());chk_facturador.setStyle(self.isOpen() ? "color:red" : "")'>
+						<caption
+							label="USUARIO CREADOR O MODIFICADOR DE ADMISIÓN">
+							<checkbox id="chk_facturador"
+								label="Filtrar" />
+						</caption>
+						<toolbar>
+							<hbox>
+								<toolbarbutton
+									image="/images/agregar.png" label="Agregar Registro"
+									onClick="formInformeProvisional.abrirWindowUsuario()" />
+								<separator />
+								<toolbarbutton
+									image="/images/limpiar_mini.png" label="Limpiar"
+									onClick="rowFacturador.getChildren().clear()" />
+							</hbox>
+						</toolbar>
+						<grid height="150px">
+							<columns>
+								<column label="Código" width="150px" />
+								<column label="Nombre" />
+								<column width="35px" />
+							</columns>
+							<rows id="rowFacturador" />
+						</grid>
+					</groupbox>
+					<space height="2px" />
+					<groupbox open="false" width="700px" mold="3d"
+						id="grbPaciente"
+						onOpen='chk_paciente.setChecked(self.isOpen());chk_paciente.setStyle(self.isOpen() ? "color:red" : "")'>
+						<caption label="PACIENTES">
+							<checkbox id="chk_paciente" label="Filtrar" />
+						</caption>
+						<toolbar>
+							<hbox>
+								<toolbarbutton
+									image="/images/agregar.png" label="Agregar Registro"
+									onClick="formInformeProvisional.abrirWindowPaciente()" />
+								<separator />
+								<toolbarbutton
+									image="/images/limpiar_mini.png" label="Limpiar"
+									onClick="rowPacientes.getChildren().clear()" />
+							</hbox>
+						</toolbar>
+						<grid height="150px">
+							<columns>
+								<column label="Tipo Doc" width="150px" />
+								<column label="Documento" width="150px" />
+								<column label="Apellidos" />
+								<column label="Nombres" />
+								<column width="35px" />
+							</columns>
+							<rows id="rowPacientes" />
+						</grid>
+					</groupbox>
+				</div>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

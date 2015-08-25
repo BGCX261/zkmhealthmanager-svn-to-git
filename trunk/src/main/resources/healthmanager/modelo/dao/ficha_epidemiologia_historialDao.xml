@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Ficha_epidemiologia_historialDao">
+
+	<resultMap id="ficha_epidemiologia_historialMap" type="ficha_epidemiologia_historial">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="consecutivo" property="consecutivo" />
+		<result column="codigo_ficha" property="codigo_ficha" />
+		<result column="identificacion" property="identificacion" />
+		<result column="fecha_creacion" property="fecha_creacion" />
+		<result column="codigo_diagnostico" property="codigo_diagnostico" />
+		<result column="codigo_medico" property="codigo_medico" />
+		<result column="via_ingreso" property="via_ingreso" />
+		<result column="codigo_historia" property="codigo_historia" />
+	</resultMap>
+
+	<insert id="crear" parameterType="ficha_epidemiologia_historial">
+		insert into public.ficha_epidemiologia_historial (codigo_empresa,codigo_sucursal,
+		consecutivo,codigo_ficha,identificacion,
+		fecha_creacion,codigo_diagnostico,codigo_medico,
+		via_ingreso,codigo_historia)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{consecutivo},#{codigo_ficha},#{identificacion},
+		#{fecha_creacion},#{codigo_diagnostico},#{codigo_medico},
+		#{via_ingreso},#{codigo_historia})
+	</insert>
+
+	<update id="actualizar" parameterType="ficha_epidemiologia_historial">
+		update public.ficha_epidemiologia_historial set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},consecutivo = #{consecutivo},
+		codigo_ficha = #{codigo_ficha},identificacion = #{identificacion},
+		fecha_creacion = #{fecha_creacion},codigo_diagnostico = #{codigo_diagnostico},
+		codigo_medico = #{codigo_medico},via_ingreso = #{via_ingreso},
+		codigo_historia = #{codigo_historia}
+		where 		codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and consecutivo = #{consecutivo}
+	</update>
+
+	<select id="consultar" parameterType="ficha_epidemiologia_historial" resultMap="ficha_epidemiologia_historialMap">
+		select codigo_empresa,codigo_sucursal,
+		consecutivo,codigo_ficha,identificacion,fecha_creacion,
+		codigo_diagnostico,codigo_medico,via_ingreso,codigo_historia
+		from public.ficha_epidemiologia_historial where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and consecutivo = #{consecutivo}
+	</select>
+
+	<delete id="eliminar" parameterType="ficha_epidemiologia_historial">
+		delete from public.ficha_epidemiologia_historial
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and consecutivo = #{consecutivo}
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="ficha_epidemiologia_historialMap">
+		select ficha_epidemiologia_historial.codigo_empresa,ficha_epidemiologia_historial.codigo_sucursal,
+		ficha_epidemiologia_historial.consecutivo,ficha_epidemiologia_historial.codigo_ficha,
+		ficha_epidemiologia_historial.identificacion,ficha_epidemiologia_historial.fecha_creacion,
+		ficha_epidemiologia_historial.codigo_diagnostico,ficha_epidemiologia_historial.codigo_medico,
+		ficha_epidemiologia_historial.via_ingreso,ficha_epidemiologia_historial.codigo_historia,
+		pac.nro_identificacion
+		as pnro_identificacion,
+		pac.nombre1 as pnombre1,
+		pac.nombre2 as pnombre2,
+		pac.apellido1 as papellido1,
+		pac.apellido2 as papellido2,
+		pac.tipo_identificacion as ptipo_identificacion,
+		pac.codigo_educativo as
+		pcodigo_educativo,
+		pac.pertenencia_etnica as ppertenencia_etnica,
+		pac.sexo as psexo,
+		pac.direccion as pdireccion,
+		pac.tel_res as ptel_res,
+		pac.tel_oficina as ptel_oficina,
+		pac.fecha_nacimiento as
+		pfecha_nacimiento,
+		pac.estado_civil as pestado_civil,
+		pac.codigo_ocupacion as pcodigo_ocupacion,
+		pac.codigo_dpto as
+		pcodigo_dpto,
+		pac.codigo_municipio as pcodigo_municipio,
+		pac.tipo_usuario
+		as ptipo_usuario,
+		pac.unidad_medidad as punidad_medidad,
+		pac.identificacion_madre as pidentificacion_madre,
+		ficha.titulo as ftitulo
+		
+		
+		from public.ficha_epidemiologia_historial
+
+		left join paciente pac ON
+		(ficha_epidemiologia_historial.codigo_empresa=pac.codigo_empresa
+		and
+		ficha_epidemiologia_historial.codigo_sucursal=pac.codigo_sucursal
+		and
+		ficha_epidemiologia_historial.identificacion=pac.nro_identificacion)
+
+		left join ficha_epidemiologia ficha ON
+		(ficha_epidemiologia_historial.codigo_empresa=ficha.codigo_empresa
+		and
+		ficha_epidemiologia_historial.codigo_sucursal=ficha.codigo_sucursal
+		and
+		ficha_epidemiologia_historial.codigo_ficha=ficha.codigo)
+		
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND ficha_epidemiologia_historial.codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND ficha_epidemiologia_historial.codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="codigo_medico != null">
+			AND (ficha_epidemiologia_historial.codigo_medico = #{codigo_medico})
+			</if>
+			<if test="vias_ingreso != null">
+				AND ficha.codigo IN
+				<foreach collection="vias_ingreso" item="i" open="("
+					separator="," close=")">
+					#{i}
+				</foreach>
+			</if>
+			<if test="fecha_inicial_p != null">
+				<![CDATA[
+				AND (to_char(ficha_epidemiologia_historial.fecha_creacion, 'yyyy-MM-dd') >= to_char(to_date('${fecha_inicial_p}','yyyy-MM-dd'),'yyyy-MM-dd'))
+				]]>
+			</if>
+
+			<if test="fecha_final_p != null">
+				<![CDATA[
+				AND (to_char(ficha_epidemiologia_historial.fecha_creacion, 'yyyy-MM-dd') <= to_char(to_date('${fecha_final_p}', 'yyyy-MM-dd'),'yyyy-MM-dd'))
+				]]>
+			</if>
+
+			<if test="rango_fecha != null">
+				and cast(ficha_epidemiologia_historial.fecha_creacion as date) between cast(#{fecha_inicial_p} as date)
+				and cast(#{fecha_final_p} as date)
+			</if>
+			<if test="paramTodo != null">AND (pac.nro_identificacion like '%${value}%' or
+				pac.nombre1||' '||pac.nombre2 like '%${value}%'
+				or pac.apellido1||' '||pac.apellido2 like '%${value}%' or ficha_epidemiologia_historial.codigo_diagnostico
+				like '%${value}%' or ficha.titulo like '%${value}%'
+				or cast(ficha_epidemiologia_historial.fecha_creacion as varchar) like '${value}%')</if>
+			
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from public.ficha_epidemiologia_historial 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

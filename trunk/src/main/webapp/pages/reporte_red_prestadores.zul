@@ -1,0 +1,151 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk>
+	<window height="90%" border="none" id="formReporte">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+		<borderlayout width="100%" height="90%" id="groupboxEditar"
+			visible="true">
+			<north border="none">
+				<toolbar width="100%" align="start">
+					<toolbarbutton image="/images/print_ico.gif"
+						label="Imprimir por Contrato" id="btImprimir">
+						<attribute name="onClick">
+						  <![CDATA[
+	Map paramRequest = new HashMap();
+	paramRequest.put("name_report", "RedPrestadores");
+	paramRequest.put("fech_init", init(dtbFechaInicio.getValue()));
+	paramRequest.put("fech_end", end(dtbFechaFinal.getValue()));
+	paramRequest.put("cerrado", getEstadoCerrado(lbxEstadoContrato.getSelectedItem().getValue().toString()));
+	paramRequest.put("rango", chRango.isChecked() ? "_look" : null);
+	Component componente = Executions.createComponents(
+			"/pages/printInformes.zul", formReporte, paramRequest);
+	Window window = (Window) componente;
+	window.setWidth("100%");
+	window.setHeight("100%");
+	window.doModal();
+]]>
+</attribute>
+					</toolbarbutton>
+					<space bar="true" />
+					<toolbarbutton image="/images/print_ico.gif"
+						label="Imprimir solo Prestadores">
+						<attribute name="onClick">
+					     <![CDATA[
+Map paramRequest = new HashMap();
+paramRequest.put("name_report", "RedPrestadores2");
+Component componente = Executions.createComponents(
+		"/pages/printInformes.zul", formReporte, paramRequest);
+Window window = (Window) componente;
+window.setWidth("100%");
+window.setHeight("100%");
+window.doModal();
+					     ]]>
+					   </attribute>
+					</toolbarbutton>
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center">
+					<space />
+
+					<!-- *************************** -->
+					<!-- *** Insertar/Actualizar *** -->
+					<!-- *************************** -->
+					<groupbox closable="false" width="590px"
+						mold="3d">
+						<caption label="RED DE PRESTADORES" />
+						<grid sclass="GridSinBorde" hflex="1">
+							<columns>
+								<column label="" width="5px" />
+								<column label="" width="100px"
+									align="left" />
+								<column label="" width="182px"
+									align="left" />
+								<column label="" width="100px"
+									align="left" />
+								<column label="" width="182px"
+									align="left" />
+								<column label="" width="5px" />
+							</columns>
+							<rows>
+								<row>
+									<cell></cell>
+									<cell colspan="4" align="center">
+										<checkbox id="chRango"
+											label="Rango de Fechas"
+											onCheck="rowRangoFecha.setVisible(self.isChecked())" />
+										<space width="30px"/>
+										<label value="Estado: " />
+										<listbox id="lbxEstadoContrato"
+											mold="select">
+											<listitem
+												label="Activos" value="true" selected="true" />
+											<listitem label="Cerrados"
+												value="false" />
+											<listitem label="Todos" value="" />
+										</listbox>
+									</cell>
+									<cell></cell>
+								</row>
+								<!-- fila 1 -->
+								<row id="rowRangoFecha"
+									visible="false">
+									<cell></cell>
+									<cell height="30px">
+										<label value="Fecha Inicio: " />
+									</cell>
+									<cell>
+										<datebox id="dtbFechaInicio"
+											width="170px"
+											onCreate="self.value = init(new java.util.Date())"
+											format="dd/MM/yyyy" />
+									</cell>
+
+									<cell height="30px">
+										<label value="Fecha Final: " />
+									</cell>
+									<cell>
+										<datebox id="dtbFechaFinal"
+											width="170px"
+											onCreate="self.value = end(new java.util.Date())"
+											format="dd/MM/yyyy" />
+									</cell>
+									<cell></cell>
+								</row>
+
+							</rows>
+						</grid>
+
+					</groupbox>
+				</div>
+			</center>
+		</borderlayout>
+	</window>
+	<zscript>
+	<![CDATA[
+	java.sql.Timestamp init(Date dt) {
+		return new java.sql.Timestamp(healthmanager.res.L2HContraintDate
+				.getAsInitOfMonth(dt).getTime());
+	}
+	java.sql.Timestamp end(Date dt) {
+		return new java.sql.Timestamp(healthmanager.res.L2HContraintDate
+				.getAsEndOfMonth(dt).getTime());
+	}
+	String getEstadoCerrado(String estado) {
+		if(!estado.trim().isEmpty()){
+			return estado;
+		}
+		return null;
+	}
+]]>
+</zscript>
+</zk>

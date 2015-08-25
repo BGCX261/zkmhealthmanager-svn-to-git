@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="healthmanager.modelo.dao.report.historia_pyp_adulto_mayor4Model">
+	<select id="select" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+
+		select adulto_mayor.codigo_empresa,adulto_mayor.codigo_sucursal,
+	adulto_mayor.codigo_historia,adulto_mayor.identificacion,
+	adulto_mayor.fecha_inicial,adulto_mayor.nro_ingreso,
+        adulto_mayor.plan_intervencion,adulto_mayor.codigo_historia_anterior,
+        adulto_mayor.tipo_historia,adulto_mayor.creacion_date,
+        adulto_mayor.ultimo_update,adulto_mayor.creacion_user,
+        adulto_mayor.delete_date,adulto_mayor.ultimo_user,
+        adulto_mayor.delete_user,adulto_mayor.colesterol_hdl,
+        adulto_mayor.colesterol_ldl,
+        adulto_mayor.colesterol_total,adulto_mayor.trigliceridos,
+        adulto_mayor.creatinina,adulto_mayor.urianalisis,
+        adulto_mayor. hemograma,adulto_mayor.glicemia,
+        adulto_mayor.citologia,adulto_mayor.diagnostico,
+        adulto_mayor.obstetricos_v,adulto_mayor.cir_cadera,adulto_mayor.exc_mama,
+        adulto_mayor.sintomaticos_respiratorio,adulto_mayor.sintomaticos_piel,
+        adulto_mayor.activoPasivo,adulto_mayor.inferiores_esfuerzo,
+        adulto_mayor.precordial_esfuerzo,adulto_mayor.tamizaje_cuello,
+        
+		impresion_diagnostica."cie_principal" AS impresion_diagnostica_cie_principal,
+		impresion_diagnostica."tipo_principal" AS
+		impresion_diagnostica_tipo_principal,
+		impresion_diagnostica."cie_relacionado1" AS
+		impresion_diagnostica_cie_relacionado1,
+		impresion_diagnostica."tipo_relacionado1" AS
+		impresion_diagnostica_tipo_relacionado1,
+		impresion_diagnostica."cie_relacionado2" AS
+		impresion_diagnostica_cie_relacionado2,
+		impresion_diagnostica."tipo_relacionado2" AS
+		impresion_diagnostica_tipo_relacionado2,
+		impresion_diagnostica."cie_relacionado3" AS
+		impresion_diagnostica_cie_relacionado3,
+		impresion_diagnostica."tipo_relacionado3" AS
+		impresion_diagnostica_tipo_relacionado3,
+		impresion_diagnostica."finalidad_consulta" AS
+		impresion_diagnostica_finalidad_consulta,
+		impresion_diagnostica."causas_externas" AS
+		impresion_diagnostica_causas_externas,
+		impresion_diagnostica."cie_relacionado4" AS
+		impresion_diagnostica_cie_relacionado4,
+		impresion_diagnostica."tipo_relacionado4" AS
+		impresion_diagnostica_tipo_relacionado4,
+		elemento.descripcion AS finalidad_consulta,
+		cie."nombre" AS principal,
+		cie1."nombre" AS relacionado1,
+		cie2."nombre" AS relacionado2,
+		cie3."nombre" AS relacionado3,
+		elemento1.descripcion AS causas_externa,
+		med.nombres,med.apellidos,med.firma,med.registro_medico,
+		paciente.sexo
+		from public.adulto_mayor adulto_mayor
+
+		INNER JOIN "public"."impresion_diagnostica"
+		impresion_diagnostica ON 
+		adulto_mayor."codigo_historia" = impresion_diagnostica."codigo_historia"
+
+		INNER JOIN "public"."cie" cie ON 
+		impresion_diagnostica."cie_principal" = cie."codigo"
+
+		LEFT JOIN "public".elemento elemento on elemento.codigo =
+		impresion_diagnostica.finalidad_consulta
+		AND elemento.tipo = 'finalidad_cons'
+
+		LEFT JOIN "public".elemento elemento1 on elemento1.codigo =
+		impresion_diagnostica.causas_externas
+		AND elemento1.tipo='causa_externa'
+
+		INNER
+		JOIN "public"."paciente" paciente ON 
+		paciente."codigo_empresa" = adulto_mayor."codigo_empresa"
+		AND paciente."nro_identificacion" = adulto_mayor."identificacion"
+		AND paciente.codigo_sucursal = adulto_mayor.codigo_sucursal
+		AND paciente."codigo_sucursal" = adulto_mayor."codigo_sucursal"
+
+		
+		LEFT JOIN "public"."cie" AS cie1 ON
+		impresion_diagnostica."cie_relacionado1" = cie1."codigo"
+		LEFT JOIN "public"."cie" AS cie2 ON
+		impresion_diagnostica."cie_relacionado2" = cie2."codigo"
+		LEFT JOIN "public"."cie" AS cie3 ON
+		impresion_diagnostica."cie_relacionado3" = cie3."codigo"
+
+		LEFT JOIN usuarios med on (med.codigo_empresa =
+		adulto_mayor.codigo_empresa
+		and med.codigo_sucursal = adulto_mayor.codigo_sucursal
+		and med.codigo = adulto_mayor.creacion_user)
+
+		where
+		adulto_mayor.codigo_empresa = #{codigo_empresa}
+		and
+		adulto_mayor.codigo_sucursal = #{codigo_sucursal}
+		and
+		adulto_mayor.codigo_historia = #{nro_historia}
+		
+	</select>
+
+</mapper>

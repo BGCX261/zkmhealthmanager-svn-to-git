@@ -1,0 +1,136 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+
+	<window id="formPaciente" width="100%" height="100%"
+		use="healthmanager.controller.AuditoriaPacientesAction">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="true" closable="false"
+			mold="3d" height="99%">
+			<separator />
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" height="100%" mold="paging"
+				pageSize="20" vflex="1">
+				<auxhead>
+					<auxheader colspan="7">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<textbox id="tbxValue" width="200px"
+								onOK="formPaciente.buscarDatos();"
+								style="text-transform:uppercase" />
+							<toolbarbutton image="/images/Magnifier.gif"
+								onClick="formPaciente.buscarDatos();" label="Consultar Paciente"
+								id="btConsultar" />
+							<space bar="true" />
+							<toolbarbutton id="btnConfiguracionBusqeuda"
+								image="/images/configuracion_mini.png">
+								<attribute name="onClick">
+	popup.open(btnConfiguracionBusqeuda);
+</attribute>
+							</toolbarbutton>
+							<popup id="popup">
+								<groupbox mold="3d">
+									<caption
+										label="Configuración de Búsqueda">
+										<toolbarbutton label="X"
+											onClick="popup.close()" tooltiptext="Cerrar" />
+									</caption>
+									<vlayout>
+										<listbox id="lbxSearh"
+											width="270px" multiple="true" checkmark="true">
+											<listitem
+												label="Pacientes con fecha de nacimiento mayor a la fecha actual"
+												value="filtar_fechas_mayores" selected="true" />
+											<listitem
+												label="Pacientes tipo de identificacion no valida"
+												value="filtar_por_tipo_id" selected="true" />
+										</listbox>
+										<hbox>
+											<label value="Limite: " />
+											<listbox id="lbxLimite"
+												mold="select">
+												<listitem label="50"
+													value="50" selected="true" />
+												<listitem label="100"
+													value="100" />
+												<listitem label="200"
+													value="200" />
+												<listitem label="300"
+													value="300" />
+												<listitem label="400"
+													value="400" />
+												<listitem label="500"
+													value="500" />
+											</listbox>
+										</hbox>
+									</vlayout>
+								</groupbox>
+							</popup>
+							<space bar="true" />
+							<toolbarbutton image="/images/print_ico.gif"
+								label="Imprimir" onClick="formPaciente.imprimir();"
+								id="btImprimir" />
+
+
+							<label value="Formato impresión: " />
+							<listbox id="lbxFormato" mold="select"
+								width="150px" sclass="combobox">
+								<listitem value="pdf" label="PDF"
+									selected="true" />
+								<listitem value="xls" label="EXCEL" />
+							</listbox>
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<auxhead>
+					<auxheader colspan="7">
+						<hbox>
+							<label id="lbAseguradora"
+								value="Aseguradora: " />
+							<bandboxRegistros
+								id="tbxCodigo_administradora" widthBandbox="177px"
+								widthListbox="600px" heightListbox="300px"
+								columnas="Codigo#65px|Nombres|Nit#100px" />
+
+							<textbox id="tbxInfoAseguradora"
+								width="345px" style="text-transform:uppercase" readonly="true" />
+
+							<toolbarbutton id="btnLimpiarAseguradora"
+								image="/images/borrar.gif" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Tipo Id" align="center" width="58px" />
+					<column label="Identificación" align="center"
+						width="90px" />
+					<column label="Administradora" align="center" />
+					<column label="Apellidos" align="center" />
+					<column label="Nombres" align="center" />
+					<column label="Fecha nac" align="center"
+						width="90px" />
+					<column label="Edad" align="center" width="150px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+	</window>
+</zk>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.anexo2">
+	<select id="select" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+		SELECT
+			(A .fecha :: VARCHAR) AS fecha,
+			'NI' AS tipo_id_empresa,
+			emp.nombre_empresa AS nombre_empresa,
+			emp.nro_identificacion AS id_empresa,
+			emp.codigo_habilitacion AS codigo_empresa,
+			emp.direccion AS direccion_empresa,
+			emp.telefonos AS telefonos,
+			emp.codigo_dpto AS cod_dpto_empresa,
+			de.nombre AS dpto_empresa,
+			emp.codigo_municipio AS cod_mun_empresa,
+			mp.nombre AS mun_empresa,
+			emp.nro_identificacion AS codigo_remitente,
+			'' AS dv_prestador,
+			(P .nombre1 || ' ') AS nombre1,
+			(P .nombre2 || ' ') AS nombre2,
+			(P .apellido1 || ' ') AS apellido1,
+			(P .apellido2 || ' ') AS apellido2,
+			P .tipo_identificacion AS tipo_identificacion,
+			P .nro_identificacion AS nro_identificacion,
+			(
+			P .fecha_nacimiento :: VARCHAR
+			) AS fecha_nacimiento,
+			P .direccion AS direccion,
+			dp_p.nombre AS dpto,
+			dp_p.codigo AS codigo_dpto,
+			mp_p.nombre AS municipio,
+			mp_p.codigo AS codigo_municipio,
+			P .tel_res AS tel_res,
+			ad.nombre AS aseguradora,
+			ad.codigo AS codigo_administradora,
+			A .numero_atencion,
+			A .cobertura,
+			A .origen_general,
+			A .triage,
+			(A .fecha_ingreso :: VARCHAR) AS fecha_ingreso,
+			A .remitido,
+			A .motivo_consulta,
+			A .cie_p,
+			cp.nombre AS cp,
+			A .cie_1,
+			c1.nombre AS c1,
+			A .cie_2,
+			c2.nombre AS c2,
+			A .cie_3,
+			c3.nombre AS c3,
+			A .destino_paciente,
+			A .nombre_reporta,
+			A .cargo_reporta,
+			A .tel_reporta,
+			A .cel_reporta
+		FROM
+			anexo2 A
+		LEFT JOIN empresa emp ON (
+			emp.codigo_empresa = A .codigo_empresa)
+		LEFT JOIN departamentos de ON (de.codigo = emp.codigo_dpto)
+		LEFT JOIN municipios me ON (
+		me.codigo = emp.codigo_municipio
+		AND me.coddep = emp.codigo_dpto)
+		LEFT JOIN paciente P ON (
+		P .codigo_empresa = A .codigo_empresa
+		AND P .codigo_sucursal = A .codigo_sucursal
+		AND P .nro_identificacion = A .codigo_paciente
+		)
+		LEFT JOIN administradora e2 ON (
+		e2.codigo = P .codigo_administradora
+		)
+		LEFT JOIN departamentos dp ON (dp.codigo = e2.codigo_dpto)
+		LEFT JOIN municipios mp ON (
+		mp.codigo = emp.codigo_municipio
+		AND mp.coddep = emp.codigo_dpto
+		)
+		LEFT JOIN administradora ad ON (
+		ad.codigo = A .codigo_administradora
+		)
+		LEFT JOIN departamentos dp_p ON (dp_p.codigo = P .codigo_dpto)
+		LEFT JOIN municipios mp_p ON (
+		mp_p.codigo = P .codigo_municipio
+		AND mp_p.coddep = P .codigo_dpto
+		)
+		LEFT JOIN cie cp ON (cp.codigo = A .cie_p)
+		LEFT JOIN cie c1 ON (c1.codigo = A .cie_1)
+		LEFT JOIN cie c2 ON (c2.codigo = A .cie_2)
+		LEFT JOIN cie c3 ON (c3.codigo = A .cie_3)
+		where A.nro_ingreso = #{nro_ingreso}
+		and A.nro_documento = #{nro_documento}
+		and A.codigo_empresa = #{codigo_empresa}
+		and A.codigo_sucursal = #{codigo_sucursal}
+	</select>
+</mapper>

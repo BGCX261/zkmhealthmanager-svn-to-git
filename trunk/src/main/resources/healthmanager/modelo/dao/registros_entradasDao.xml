@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.Registros_entradasDao">
+
+	<resultMap id="registros_entradasMap" type="registros_entradas">
+		<result column="id_registro" property="id_registro" />
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_usuario" property="codigo_usuario" />
+		<result column="fecha_ingreso" property="fecha_ingreso" />
+		<result column="fecha_egreso" property="fecha_egreso" />
+		<result column="estado" property="estado" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="tipo" property="tipo" />
+	</resultMap>
+
+	<insert id="crear" parameterType="registros_entradas">
+		insert into public.registros_entradas (codigo_empresa,
+		codigo_usuario,fecha_ingreso,fecha_egreso,
+		estado,codigo_sucursal,tipo)
+
+		values
+		(#{codigo_empresa},
+		#{codigo_usuario},#{fecha_ingreso},#{fecha_egreso},
+		#{estado}, #{codigo_sucursal}, #{tipo});
+		<selectKey keyProperty="id_registro" resultType="java.lang.Long">
+			select last_value as id_registro from
+			registros_entradas_id_registro_seq
+		</selectKey>
+	</insert>
+
+	<update id="actualizar" parameterType="registros_entradas">
+		update
+		public.registros_entradas set id_registro = #{id_registro},
+		codigo_empresa = #{codigo_empresa},
+		codigo_usuario =
+		#{codigo_usuario},fecha_ingreso = #{fecha_ingreso},fecha_egreso =
+		#{fecha_egreso},
+		estado = #{estado}, 
+		codigo_sucursal = #{codigo_sucursal},
+		tipo = #{tipo} 
+		where id_registro = #{id_registro}
+	</update>
+
+	<select id="consultar" parameterType="registros_entradas"
+		resultMap="registros_entradasMap">
+		select id_registro,codigo_empresa,
+		codigo_usuario,fecha_ingreso,fecha_egreso,
+		estado,codigo_sucursal,tipo 
+		from public.registros_entradas where id_registro = #{id_registro}
+	</select>
+
+	<delete id="eliminar" parameterType="registros_entradas">
+		delete from
+		public.registros_entradas
+		where id_registro = #{id_registro}
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="registros_entradasMap">
+		select id_registro,codigo_empresa,
+		codigo_usuario,fecha_ingreso,fecha_egreso,
+		estado,codigo_sucursal,tipo 
+		from public.registros_entradas
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="fecha_inicio != null">
+				AND fecha_ingreso >= #{fecha_inicio}
+			</if>
+			<if test="fecha_final != null">
+				<![CDATA[
+				AND fecha_ingreso <= #{fecha_final}
+				]]>
+			</if>
+			<if test="codigo_usuario != null">
+				AND codigo_usuario = #{codigo_usuario}
+			</if>
+			<if test="codigo_empresa != null">
+				AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+				AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="tipo != null">
+				AND tipo = #{tipo}
+			</if>
+			<if test="salidas_incorrectas != null">
+				AND (fecha_egreso is null OR estado = '1')
+			</if>
+			<if test="fecha_concurrencia != null">
+				<![CDATA[
+					AND (fecha_ingreso <= #{fecha_concurrencia} AND fecha_egreso >= #{fecha_concurrencia})
+				]]>
+			</if>
+			<if test="parameter != null">AND ${parameter} like '${value}'</if>
+		</trim>
+	</select>
+	
+	<select id="listarIds" parameterType="java.util.Map" resultType="java.lang.Long">
+		select id_registro 
+		from public.registros_entradas
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="fecha_inicio != null">
+				AND fecha_ingreso >= #{fecha_inicio}
+			</if>
+			<if test="fecha_final != null">
+				<![CDATA[
+				AND fecha_ingreso <= #{fecha_final}
+				]]>
+			</if>
+			<if test="codigo_usuario != null">
+				AND codigo_usuario = #{codigo_usuario}
+			</if>
+			<if test="codigo_empresa != null">
+				AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+				AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="tipo != null">
+				AND tipo = #{tipo}
+			</if>
+			<if test="salidas_incorrectas != null">
+				AND (fecha_egreso is null OR estado = '1')
+			</if>
+			<if test="fecha_concurrencia != null">
+				<![CDATA[
+					AND (fecha_ingreso <= #{fecha_concurrencia} AND fecha_egreso >= #{fecha_concurrencia})
+				]]>
+			</if>
+			<if test="parameter != null">AND ${parameter} like '${value}'</if>
+		</trim>
+		<if test="limit != null">
+			${limit}
+		</if>
+	</select>
+	
+	<select id="cantidad_entradas" parameterType="java.util.Map" resultType="java.lang.Long">
+		select count(1)  
+		from public.registros_entradas
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="fecha_inicio != null">
+				AND fecha_ingreso >= #{fecha_inicio}
+			</if>
+			<if test="fecha_final != null">
+				<![CDATA[
+				AND fecha_ingreso <= #{fecha_final}
+				]]>
+			</if>
+			<if test="codigo_usuario != null">
+				AND codigo_usuario = #{codigo_usuario}
+			</if>
+			<if test="codigo_empresa != null">
+				AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+				AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="tipo != null">
+				AND tipo = #{tipo}
+			</if>
+			<if test="salidas_incorrectas != null">
+				AND (fecha_egreso is null OR estado = '1')
+			</if>
+			<if test="fecha_concurrencia != null">
+				<![CDATA[
+					AND (fecha_ingreso <= #{fecha_concurrencia} AND fecha_egreso >= #{fecha_concurrencia})
+				]]>
+			</if>
+			<if test="parameter != null">AND ${parameter} like '${value}'</if>
+		</trim>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist from public.registros_entradas
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="parameter != null">
+				AND ${parameter} like '${value}'
+			</if>
+		</trim>
+	</select>
+
+</mapper>

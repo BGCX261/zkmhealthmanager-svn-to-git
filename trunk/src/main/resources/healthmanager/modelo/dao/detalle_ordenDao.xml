@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.Detalle_ordenDao">
+
+	
+
+	<resultMap id="detalle_ordenMap" type="detalle_orden">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="codigo_orden" property="codigo_orden" />
+		<result column="consecutivo" property="consecutivo" />
+		<result column="codigo_procedimiento" property="codigo_procedimiento" />
+		<result column="valor_procedimiento" property="valor_procedimiento" />
+		<result column="unidades" property="unidades" />
+		<result column="valor_real" property="valor_real" />
+		<result column="descuento" property="descuento" />
+		<result column="incremento" property="incremento" />
+		<result column="codigo_cups" property="codigo_cups" />
+		<result column="realizado" property="realizado" />
+		<result column="unidades_realizadas" property="unidades_realizadas" />
+		<result column="tipo_procedimiento" property="tipo_procedimiento" />
+		<result column="codigo_diagnostico" property="codigo_diagnostico" />
+		<result column="codigo_diagnostico_relacionado" property="codigo_diagnostico_relacionado" />
+	</resultMap>
+
+	<insert id="crear" parameterType="detalle_orden">
+		insert into public.detalle_orden (codigo_empresa,codigo_sucursal,
+		codigo_orden,consecutivo,codigo_procedimiento,
+		valor_procedimiento,unidades,valor_real,
+		descuento,incremento,codigo_cups,
+		realizado,unidades_realizadas,tipo_procedimiento)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{codigo_orden},#{consecutivo},#{codigo_procedimiento},
+		#{valor_procedimiento},#{unidades},#{valor_real},
+		#{descuento},#{incremento},#{codigo_cups},
+		#{realizado},#{unidades_realizadas},#{tipo_procedimiento})
+	</insert>
+
+	<update id="actualizar" parameterType="detalle_orden">
+		update public.detalle_orden set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},codigo_orden = #{codigo_orden},
+		consecutivo = #{consecutivo},codigo_procedimiento = #{codigo_procedimiento},
+		valor_procedimiento = #{valor_procedimiento},unidades = #{unidades},
+		valor_real = #{valor_real},descuento = #{descuento},
+		incremento = #{incremento},codigo_cups = #{codigo_cups},
+		realizado = #{realizado},unidades_realizadas = #{unidades_realizadas},
+		tipo_procedimiento = #{tipo_procedimiento}
+		where 		codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and codigo_orden = #{codigo_orden}
+		and consecutivo = #{consecutivo}
+	</update>
+
+	<select id="consultar" resultMap="detalle_ordenMap" parameterType="detalle_orden">
+		select codigo_empresa,codigo_sucursal,
+		codigo_orden,consecutivo,codigo_procedimiento,valor_procedimiento,
+		unidades,valor_real,descuento,incremento,
+		codigo_cups,realizado,unidades_realizadas,tipo_procedimiento
+		from public.detalle_orden where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_orden = #{codigo_orden}
+		and consecutivo = #{consecutivo}
+	</select>
+
+	<delete id="eliminar" parameterType="detalle_orden">
+		delete from public.detalle_orden
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">AND codigo_empresa = #{codigo_empresa}</if>
+			<if test="codigo_sucursal != null">AND codigo_sucursal = #{codigo_sucursal}</if>
+			<if test="codigo_orden != null">AND codigo_orden = #{codigo_orden}</if>
+			<if test="consecutivo != null">AND consecutivo = #{consecutivo}</if>
+		</trim>
+	</delete>
+
+	<select id="listar" resultMap="detalle_ordenMap" parameterType="java.util.Map">
+		select dtt_orden.codigo_empresa,dtt_orden.codigo_sucursal,
+		dtt_orden.codigo_orden,dtt_orden.consecutivo,dtt_orden.codigo_procedimiento,dtt_orden.valor_procedimiento,
+		dtt_orden.unidades,dtt_orden.valor_real,dtt_orden.descuento,dtt_orden.incremento,
+		dtt_orden.codigo_cups,dtt_orden.realizado, dtt_orden.unidades_realizadas,tipo_procedimiento
+		from public.detalle_orden  AS dtt_orden
+		INNER JOIN public.orden_servicio AS orden ON orden.id = dtt_orden.codigo_orden
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">AND dtt_orden.codigo_empresa = #{codigo_empresa}</if>
+			<if test="codigo_sucursal != null">AND dtt_orden.codigo_sucursal = #{codigo_sucursal}</if>
+			<if test="codigo_orden != null">AND dtt_orden.codigo_orden = #{codigo_orden}</if>
+			<if test="codigo_paciente != null">AND orden.codigo_paciente = #{codigo_paciente}</if> 
+			<if test="nro_ingreso != null">AND orden.nro_ingreso = #{nro_ingreso}</if> 
+			<if test="cumplida != null">AND orden.cumplida = #{cumplida}</if>
+			<if test="tipo_orden != null">AND orden.tipo_orden = #{tipo_orden}</if>
+			<if test="tipo_procedimiento != null">AND dtt_orden.tipo_procedimiento = #{tipo_procedimiento}</if>
+			
+			<if test="tipo_procedimiento_in != null">
+			    AND dtt_orden.tipo_procedimiento IN 
+			    <foreach collection="tipo_procedimiento_in" item="i" open="(" separator="," close=")">
+			        #{i} 
+			    </foreach>
+			</if>
+			
+			<if test="parameter != null">AND ${parameter} like '${value}'</if>
+			<if test="detalles_faltantes != null">AND dtt_orden.unidades > dtt_orden.unidades_realizadas </if>
+			<if test="realizado != null">AND dtt_orden.realizado = #{realizado}</if> 
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+	
+	<select id="listarLaboratoriosRegistrado" resultType="java.util.Map" parameterType="java.util.Map">
+		SELECT
+		dtt_orden.codigo_empresa,
+		dtt_orden.codigo_sucursal, 
+		dtt_orden.codigo_orden,
+		dtt_orden.consecutivo,
+		dtt_orden.codigo_procedimiento,
+		dtt_orden.valor_procedimiento,
+		dtt_orden.unidades,
+		dtt_orden.valor_real,
+		dtt_orden.descuento,
+		dtt_orden.incremento,
+		dtt_orden.codigo_cups,
+		dtt_orden.tipo_procedimiento,
+	    us.codigo AS codigo_medico,
+	    us.nombres AS nombres_medico,
+	    pac.nro_identificacion,
+	    orden.fecha_orden,
+	    (pac.apellido1 || ' ' || pac.apellido2 || ' ' || pac.nombre1 || ' ' || pac.nombre2) AS nombre_paciente,
+	    orden.codigo_dx,
+	    admin.codigo AS codigo_administradora,
+	    admin.nombre AS nombre_administradora,
+        dtt_orden.realizado,
+        dtt_orden.unidades_realizadas 
+		FROM
+		public.detalle_orden AS dtt_orden
+		INNER JOIN public.laboratorios AS lab ON lab.codigo_empresa = dtt_orden.codigo_empresa AND lab.codigo_sucursal = dtt_orden.codigo_sucursal AND lab.codigo_cups = dtt_orden.codigo_cups
+		INNER JOIN public.orden_servicio AS orden ON orden.id = dtt_orden.codigo_orden
+		INNER JOIN public.usuarios AS us ON us.codigo_empresa = orden.codigo_empresa AND us.codigo_sucursal = orden.codigo_sucursal AND us.codigo = orden.id_prestador
+		INNER JOIN public.paciente AS pac ON pac.codigo_empresa = orden.codigo_empresa AND pac.codigo_sucursal = orden.codigo_sucursal AND pac.nro_identificacion = orden.codigo_paciente
+		INNER JOIN public.administradora AS admin ON pac.codigo_empresa = admin.codigo_empresa AND pac.codigo_sucursal = admin.codigo_sucursal AND pac.codigo_administradora = admin.codigo
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">AND dtt_orden.codigo_empresa = #{codigo_empresa}</if>
+			<if test="codigo_sucursal != null">AND dtt_orden.codigo_sucursal = #{codigo_sucursal}</if>
+			<if test="codigo_orden != null">AND dtt_orden.codigo_orden = #{codigo_orden}</if>
+			<if test="nro_identificacion != null">AND orden.nro_identificacion = #{nro_identificacion}</if> 
+			<if test="cumplida != null">AND orden.cumplida = #{cumplida}</if>
+			<if test="tipo_orden != null">AND orden.tipo_orden = #{tipo_orden}</if>
+			<if test="parameter != null">AND ${parameter} like '${value}'</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+	
+	<update id="actualizarPorProcedimiento" parameterType="detalle_orden">
+		update public.detalle_orden set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},codigo_orden = #{codigo_orden},
+		consecutivo = #{consecutivo},codigo_procedimiento = #{codigo_procedimiento},
+		valor_procedimiento = #{valor_procedimiento},unidades = #{unidades},
+		valor_real = #{valor_real},descuento = #{descuento},
+		incremento = #{incremento},codigo_cups = #{codigo_cups},
+		realizado = #{realizado}, unidades_realizadas = #{unidades_realizadas} 
+		where 		codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and codigo_orden = #{codigo_orden}
+		and codigo_procedimiento = #{codigo_procedimiento}
+	</update>
+	
+	
+	<select id="listarParametrizado" resultMap="detalle_ordenMap" parameterType="java.util.Map">
+		select dtt_orden.codigo_empresa,dtt_orden.codigo_sucursal,
+		dtt_orden.codigo_orden,dtt_orden.consecutivo,dtt_orden.codigo_procedimiento,dtt_orden.valor_procedimiento,
+		dtt_orden.unidades,dtt_orden.valor_real,dtt_orden.descuento,dtt_orden.incremento,
+		dtt_orden.codigo_cups,dtt_orden.realizado, dtt_orden.unidades_realizadas,tipo_procedimiento,
+		orden.codigo_dx AS codigo_diagnostico, impre_dx.cie_relacionado1 AS codigo_diagnostico_relacionado
+		from public.detalle_orden  AS dtt_orden
+		INNER JOIN public.orden_servicio AS orden ON orden.id = dtt_orden.codigo_orden
+		INNER JOIN public.admision AS ads ON ads.codigo_empresa = orden.codigo_empresa AND ads.codigo_sucursal = orden.codigo_sucursal AND ads.nro_ingreso = orden.nro_ingreso AND ads.nro_identificacion = orden.codigo_paciente
+		LEFT JOIN public.historia_clinica AS hisct ON hisct.codigo_empresa = ads.codigo_empresa AND hisct.codigo_sucursal = ads.codigo_sucursal AND hisct.nro_identificacion = ads.nro_identificacion AND hisct.nro_ingreso = ads.nro_ingreso
+        LEFT JOIN public.impresion_diagnostica AS impre_dx ON impre_dx.codigo_empresa = hisct.codigo_empresa AND impre_dx.codigo_sucursal = hisct.codigo_sucursal AND impre_dx.codigo_historia = hisct.codigo_historia
+          <trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">AND dtt_orden.codigo_empresa = #{codigo_empresa}</if>
+			<if test="codigo_sucursal != null">AND dtt_orden.codigo_sucursal = #{codigo_sucursal}</if>
+			<if test="codigo_orden != null">AND dtt_orden.codigo_orden = #{codigo_orden}</if>
+			<if test="codigo_paciente != null">AND orden.codigo_paciente = #{codigo_paciente}</if> 
+			<if test="nro_ingreso != null">AND orden.nro_ingreso = #{nro_ingreso}</if> 
+			<if test="cumplida != null">AND orden.cumplida = #{cumplida}</if>
+			<if test="tipo_orden != null">AND orden.tipo_orden = #{tipo_orden}</if>
+			<if test="tipo_procedimiento != null">AND dtt_orden.tipo_procedimiento = #{tipo_procedimiento}</if>
+			<if test="parameter != null">AND ${parameter} like '${value}'</if>
+			<if test="detalles_faltantes != null">AND dtt_orden.unidades > dtt_orden.unidades_realizadas </if>
+			<if test="realizado != null">AND dtt_orden.realizado = #{realizado}</if>
+			<if test="tipo_procedimiento_in != null">
+			   AND dtt_orden.tipo_procedimiento IN 
+			    <foreach collection="tipo_procedimiento_in" item="i" open="(" separator="," close=")">
+			        #{i}
+			    </foreach>
+			</if> 
+			<if test="vias_ingreso != null">
+			    AND ads.via_ingreso IN 
+			    <foreach collection="vias_ingreso" item="i" open="(" separator="," close=")">
+			        #{i}
+			    </foreach>
+			</if> 
+			<if test="no_vias_ingreso != null">
+			    AND ads.via_ingreso NOT IN 
+			    <foreach collection="no_vias_ingreso" item="i" open="(" separator="," close=")">
+			        #{i}
+			    </foreach>
+			</if> 
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+</mapper>

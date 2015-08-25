@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.orden_servicioModel">
+    <select id="select" resultType="java.util.HashMap" parameterType="java.util.Map">
+    select distinct os.codigo_orden,os.codigo_paciente,p.apellido1 as apellido1_paciente,
+	p.apellido2 as apellido2_paciente,p.nombre1 as nombre1_paciente,
+	p.nombre2 as nombre2_paciente,p.fecha_nacimiento,p.lugar_exp,p.estrato,os.codigo_dx,
+	c.nombre as dx,ta.descripcion as tipo_afiliado,os.id_plan,os.codigo_administradora,a.nombre as administradora,
+	pl.nro_contrato,os.codigo_ordenador,pr.nombres as nombre_ordenador,
+	pr.apellidos as apellido_ordenador,os.nro_ingreso,ds.codigo_procedimiento,ds.valor_procedimiento,
+	os.id_prestador,a2.nombre as nombre_prestador,a2.direccion as direccion_prestador,
+	a2.telefono as tel_prestador,dpto.nombre as dpto_prestador,mun.nombre as mun_prestador,ds.unidades,
+	cast(ds.consecutivo as integer) as consecutivo, p.nro_identificacion, os.observacion AS observacion_orden
+	from orden_servicio os
+	inner join detalle_orden ds on ds.codigo_orden = os.id 
+	left join paciente p on
+	p.codigo_empresa = os.codigo_empresa
+	and p.codigo_sucursal = os.codigo_sucursal
+	and p.nro_identificacion = os.codigo_paciente
+	left join cie c on c.codigo = os.codigo_dx
+	left join elemento ta on ta.tipo = 'tipo_usuario' and ta.codigo = p.tipo_usuario
+	left join administradora a on a.codigo = os.codigo_administradora
+	left join contratos pl on pl.codigo_empresa = os.codigo_empresa
+	and pl.codigo_sucursal = os.codigo_sucursal 
+	and pl.codigo_administradora = os.codigo_administradora
+	and pl.id_plan = os.id_plan
+	left join prestadores pr on
+	pr.codigo_empresa = os.codigo_empresa
+	and pr.codigo_sucursal = os.codigo_sucursal
+	and pr.nro_identificacion = os.codigo_ordenador
+	left join administradora a2 on a2.codigo = os.id_prestador
+	left join departamentos dpto on dpto.codigo = a2.codigo_dpto
+	left join municipios mun on mun.coddep = a2.codigo_dpto
+	and mun.codigo = a2.codigo_municipio
+	where os.id = #{id}
+	order by cast(ds.consecutivo as integer)
+    </select>
+   
+</mapper>

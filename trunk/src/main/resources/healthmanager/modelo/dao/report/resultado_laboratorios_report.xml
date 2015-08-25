@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.resultado_laboratoriosModel">
+	<select id="select" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+		SELECT
+		resultado.codigo_cups,
+		pac.apellido1,
+		pac.apellido2,
+		pac.nombre1,
+		pac.nombre2,
+		pcd.descripcion,
+		resultado.codigo_item,
+		resultado.valor_resultado,
+		resultado.unidad_medida,
+		resultado.descripcion_resultado,
+		administradora.nombre,
+		administradora.nit,
+		administradora.codigo,
+		pac.nro_identificacion,
+		pac.tipo_identificacion,
+		resultado.valor_referencia_inicial,
+		resultado.valor_referencia_final,
+        resultado.fecha_resultado
+
+		FROM
+		resultado_laboratorios resultado
+
+
+		INNER JOIN paciente pac ON pac.codigo_empresa =
+		resultado.codigo_empresa
+		AND pac.codigo_sucursal =
+		resultado.codigo_sucursal AND
+		pac.nro_identificacion =
+		resultado.nro_identificacion
+		INNER JOIN public.administradora ON
+		public.administradora.codigo_empresa =
+		pac.codigo_empresa AND
+		public.administradora.codigo_sucursal =
+		pac.codigo_sucursal AND
+		public.administradora.codigo =
+		pac.codigo_administradora
+		INNER JOIN
+		procedimiento_iss01 AS pcd ON resultado.codigo_cups =
+		pcd.codigo_soat
+		<if test="lista_cap != null">
+		    INNER JOIN public.adicional_paciente AS adc_paciente ON pac.codigo_empresa = adc_paciente.codigo_empresa AND pac.codigo_sucursal = adc_paciente.codigo_sucursal AND pac.nro_identificacion = adc_paciente.nro_identificacion
+			INNER JOIN public.centro_barrio AS centro_barrio ON adc_paciente.codigo_barrio = centro_barrio.codigo_barrio AND adc_paciente.codigo_empresa = centro_barrio.codigo_empresa AND adc_paciente.codigo_sucursal = centro_barrio.codigo_sucursal
+			INNER JOIN public.centro_atencion AS ctt_salud ON ctt_salud.codigo_empresa = centro_barrio.codigo_empresa AND  ctt_salud.codigo_sucursal = centro_barrio.codigo_sucursal AND  ctt_salud.codigo_centro = centro_barrio.codigo_centro
+		</if>
+		WHERE
+		("lower"(resultado.valor_resultado) = 'positivo'
+		OR
+		CASE WHEN
+		resultado.valor_referencia_inicial IS NOT NULL
+		AND
+		resultado.valor_referencia_final IS NOT NULL
+		AND
+		resultado.valor_referencia_inicial != ''
+		AND
+		resultado.valor_referencia_final != ''
+		AND resultado.valor_resultado !=
+		'' AND resultado.valor_resultado IS NOT
+		NULL THEN
+		(CAST(resultado.valor_referencia_inicial AS DOUBLE PRECISION) >
+		CAST(resultado.valor_resultado AS DOUBLE
+		PRECISION)
+		OR
+		CAST(resultado.valor_resultado AS DOUBLE PRECISION) >
+		CAST(resultado.valor_referencia_final AS DOUBLE PRECISION))
+		ELSE FALSE
+		END)
+		AND resultado.codigo_empresa = #{codigo_empresa}
+		AND
+		resultado.codigo_sucursal = #{codigo_sucursal}
+		AND resultado.fecha_resultado BETWEEN #{fecha_inicio} AND #{fecha_final}
+		<if test="codigo_cups != null">
+			AND resultado.codigo_cups = #{codigo_cups}
+		</if>
+		<if test="codigo_orden != null">
+			AND resultado.codigo_orden = #{codigo_orden}
+		</if>
+
+		<if test="lista_cap != null">
+			<foreach collection="lista_cap" item="item"
+				open="AND ctt_salud.codigo_centro IN(" close=")" separator=",">
+				#{item.codigo_centro}
+			</foreach>
+		</if>
+
+
+		<if test="lista_eps != null">
+			<foreach collection="lista_eps" item="item"
+				open="AND pac.codigo_administradora IN(" close=")" separator=",">
+				#{item.codigo}
+			</foreach>
+		</if>
+
+
+		ORDER BY pac.nro_identificacion, resultado.codigo_cups,
+		resultado.codigo_item
+	</select>
+</mapper>

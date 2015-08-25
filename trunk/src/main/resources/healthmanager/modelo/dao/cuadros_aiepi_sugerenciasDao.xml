@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Cuadros_aiepi_sugerenciasDao">
+
+	<resultMap id="cuadros_aiepi_sugerenciasMap" type="cuadros_aiepi_sugerencias">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="id_sugerencia" property="id_sugerencia" />
+		<result column="via_ingreso" property="via_ingreso" />
+		<result column="cuadro" property="cuadro" />
+		<result column="estado" property="estado" />
+		<result column="sugerencia" property="sugerencia" />
+		<result column="enlace" property="enlace" />
+	</resultMap>
+
+	<insert id="crear" parameterType="cuadros_aiepi_sugerencias">
+		insert into
+		public.cuadros_aiepi_sugerencias (codigo_empresa,codigo_sucursal,
+		id_sugerencia,via_ingreso,cuadro,
+		estado,sugerencia,enlace)
+
+		values
+		(#{codigo_empresa},#{codigo_sucursal},
+		#{id_sugerencia},#{via_ingreso},#{cuadro},
+		#{estado},#{sugerencia},#{enlace})
+	</insert>
+
+	<update id="actualizar" parameterType="cuadros_aiepi_sugerencias">
+		update
+		public.cuadros_aiepi_sugerencias set codigo_empresa =
+		#{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},id_sugerencia =
+		#{id_sugerencia},
+		via_ingreso = #{via_ingreso},cuadro = #{cuadro},
+		estado = #{estado},sugerencia = #{sugerencia},
+		enlace = #{enlace}
+		where
+		codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal =
+		#{codigo_sucursal}
+		and id_sugerencia = #{id_sugerencia}
+		and via_ingreso
+		= #{via_ingreso}
+		and cuadro = #{cuadro}
+		and estado = #{estado}
+	</update>
+
+	<select id="consultar" parameterType="cuadros_aiepi_sugerencias"
+		resultMap="cuadros_aiepi_sugerenciasMap">
+		select codigo_empresa,codigo_sucursal,
+		id_sugerencia,via_ingreso,cuadro,estado,
+		sugerencia,enlace
+		from
+		public.cuadros_aiepi_sugerencias where codigo_empresa =
+		#{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and
+		id_sugerencia = #{id_sugerencia}
+		and via_ingreso = #{via_ingreso} and
+		cuadro = #{cuadro}
+		and estado = #{estado}
+	</select>
+
+	<delete id="eliminar" parameterType="cuadros_aiepi_sugerencias">
+		delete from
+		public.cuadros_aiepi_sugerencias
+		where codigo_empresa =
+		#{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and
+		id_sugerencia = #{id_sugerencia}
+		and via_ingreso = #{via_ingreso} and
+		cuadro = #{cuadro}
+		and estado = #{estado}
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="cuadros_aiepi_sugerenciasMap">
+		select codigo_empresa,codigo_sucursal,
+		id_sugerencia,via_ingreso,cuadro,estado,
+		sugerencia,enlace
+		from
+		public.cuadros_aiepi_sugerencias
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+				AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+				AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="estado != null">
+				AND estado = #{estado}
+			</if>
+			<if test="via_ingreso != null">
+				AND via_ingreso = #{via_ingreso}
+			</if>
+			<if test="cuadro != null">
+				AND cuadro = #{cuadro}
+			</if>
+			<if test="parameter != null">
+				AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limite_paginado != null">
+			${limite_paginado}
+		</if>
+
+		ORDER BY via_ingreso, cuadro, estado, id_sugerencia ASC
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist from public.cuadros_aiepi_sugerencias
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+				AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+				AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+				AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limite_paginado != null">
+			${limite_paginado}
+		</if>
+
+	</select>
+
+</mapper>

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Modulo_firmasDao">
+
+	<resultMap id="modulo_firmasMap" type="modulo_firmas">
+		<result column="id" property="id" />
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="nombre_firma" property="nombre_firma" />
+		<result column="firma" property="firma" />
+		<result column="nro_identificacion_frima" property="nro_identificacion_frima" />
+	</resultMap>
+
+	<insert id="crear" parameterType="modulo_firmas">
+		insert into public.modulo_firmas (codigo_empresa,
+		codigo_sucursal,nombre_firma,firma,
+		nro_identificacion_frima)
+
+		values (#{codigo_empresa},
+		#{codigo_sucursal},#{nombre_firma},#{firma},
+		#{nro_identificacion_frima})
+	</insert>
+
+	<update id="actualizar" parameterType="modulo_firmas">
+		update public.modulo_firmas set id = #{id},
+		codigo_empresa = #{codigo_empresa},codigo_sucursal = #{codigo_sucursal},
+		nombre_firma = #{nombre_firma},firma = #{firma},
+		nro_identificacion_frima = #{nro_identificacion_frima}
+		where 		id = #{id}
+	</update>
+
+	<select id="consultar" parameterType="modulo_firmas" resultMap="modulo_firmasMap">
+		select id,codigo_empresa,
+		codigo_sucursal,nombre_firma,firma,nro_identificacion_frima
+		from public.modulo_firmas where codigo_empresa = #{codigo_empresa} and
+		codigo_sucursal = #{codigo_sucursal} and nro_identificacion_frima = #{nro_identificacion_frima}
+	</select>
+	
+	<select id="consultarID" parameterType="modulo_firmas" resultMap="modulo_firmasMap">
+		select id,codigo_empresa,
+		codigo_sucursal,nombre_firma,firma,nro_identificacion_frima
+		from public.modulo_firmas where id = #{id}
+	</select>
+
+	<delete id="eliminar" parameterType="modulo_firmas">
+		delete from public.modulo_firmas
+		where id = #{id}
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="modulo_firmasMap">
+		select id,codigo_empresa,
+		codigo_sucursal,nombre_firma,firma,nro_identificacion_frima
+		from public.modulo_firmas 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from public.modulo_firmas 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+	
+	
+	<select id="consultarFirma" parameterType="java.util.Map" resultMap="modulo_firmasMap">
+		SELECT
+		mod_firmas.id,
+		mod_firmas.codigo_empresa,
+		mod_firmas.codigo_sucursal,
+		mod_firmas.nombre_firma,
+		mod_firmas.firma,
+		mod_firmas.nro_identificacion_frima,
+		mod_firm_reportes.ultimo_user
+		FROM
+		public.modulo_firmas AS mod_firmas
+		INNER JOIN public.modulo_firmas_reportes AS mod_firm_reportes ON
+		mod_firm_reportes.codigo_empresa = mod_firmas.codigo_empresa AND
+		mod_firm_reportes.codigo_sucursal = mod_firmas.codigo_sucursal AND
+		mod_firm_reportes.id_modulo_firma = mod_firmas.id
+		WHERE
+		mod_firm_reportes.codigo_reporte = #{codigo_reporte} AND mod_firmas.codigo_empresa = #{codigo_empresa} and
+		mod_firmas.codigo_sucursal = #{codigo_sucursal}
+	</select>
+	
+</mapper>

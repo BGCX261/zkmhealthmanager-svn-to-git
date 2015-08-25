@@ -1,0 +1,746 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk>
+	<window id="formAnexo9_entidad" width="100%" height="97%"
+		use="healthmanager.controller.Anexo9EntidadAction" border="none">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+		<groupbox id="groupboxConsulta" visible="true" closable="false"
+			mold="3d" height="90%">
+			<caption label="Consultar"
+				style="color: blue;font-weight: bold" />  
+
+			<separator />
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" height="90%" mold="paging"
+				pageSize="20" vflex="1">
+				<auxhead>
+					<auxheader colspan="4">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<separator />
+							<textbox id="tbxValue" width="200px"
+								onOK="formAnexo9_entidad.buscarDatos();"
+								style="text-transform:uppercase" />
+							<separator />
+							<button mold="trendy"
+								image="/images/Magnifier.gif"
+								onClick="formAnexo9_entidad.buscarDatos();"
+								tooltiptext="Consultar Administradora" />
+							<separator />
+							<button mold="trendy"
+								image="/images/New16.gif"
+								onClick='formAnexo9_entidad.crearNuevaReceta()'
+								tooltiptext="Nuevo Administradora" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Fecha" width="20%" />
+					<column label="Nombre quien solicita"  />
+					<column label="Prestador"  />
+					<column label="Acciones" align="center"
+						width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<borderlayout width="100%" height="100%" id="groupboxEditar"
+			visible="false">
+			<north id="northEditar">
+				<toolbar width="100%" align="start">
+					<toolbarbutton image="/images/Save16.gif"
+						label="Guardar Remision"
+						onClick="formAnexo9_entidad.guardarDatos();" id="btn_guardar" />
+
+					<space />
+
+					<toolbarbutton image="/images/New16.gif"
+						label="Nueva Remision"
+						onClick='formAnexo9_entidad.crearNuevaReceta()'
+						id="btn_nuevo" />
+					<space />
+					
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Cancelar" onClick='formAnexo9_entidad.cancel()'
+						id="btn_cancel" visible="false"  />
+
+					<space />
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Imprimir" onClick='formAnexo9_entidad.imprimir()'
+						visible="true" />
+					<space />
+					<toolbarbutton image="/images/trasladar.gif"
+						id="btn_imprimir_a10" label="Imprimir"
+						onClick='formAnexo9_entidad.imprimirAnexo10()' visible="false" />
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center">
+					<groupbox  visible="true"
+						closable="false" height="97%" mold="3d" width="100%">
+
+						<grid sclass="GridSinBorde" vflex="1">
+							<columns>
+								<column label="" width="100px" />
+								<column label="" width="180px" />
+								<column label="" width="100px" />
+								<column label="" width="180px" />
+								<column label="" width="11%" />
+							</columns>
+							<rows>
+								<row id="rowPrestadorServicio">
+									<cell colspan="6">
+										<groupbox visible="true"
+											closable="false" height="90%" mold="3d">
+											<caption
+												label="Datos del Prestador de servicios"
+												style="color: black;font-weight: bold" />
+											<grid sclass="GridSinBorde"
+												vflex="1" style="border:none">
+												<columns>
+													<column label=""
+														width="14%" />
+													<column label=""
+														width="25%" />
+													<column label=""
+														width="14%" />
+													<column label=""
+														width="25%" />
+													<column label=""
+														width="11%" />
+												</columns>
+												<rows>
+													<row
+														visible="false">
+														<cell
+															height="30px">
+															<label
+																id="lbNumero_solicitud" value="NUMERO SOLICITUD: "
+																visible="false" />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxNumero_solicitud" width="170px"
+																style="text-transform:uppercase" readonly="true"
+																visible="false" />
+														</cell>
+														<cell
+															height="30px">
+															<label
+																id="lbFecha" value="Fecha: " />
+														</cell>
+														<cell>
+															<datebox
+																id="dtbxFecha" onCreate="self.value = new Date();"
+																format="yyyy-MM-dd hh:mm" width="170px"
+																buttonVisible="false" readonly="true" />
+														</cell>
+														<cell></cell>
+													</row>
+													<row>
+														<cell
+															height="30px">
+															<label
+																value="* " style="color: red"
+																tooltiptext="Campo obligatorio" />
+															<label
+																id="lbCodigo_administradora" value="Prestador: " />
+														</cell>
+														<cell>
+
+															<bandbox
+																id="tbxCodigo_prestador" autodrop="true" readonly="true"
+																width="170px"
+																onOpen='formAnexo9_entidad.buscarPrestador(tbxValuePrestador.getValue(),lbxPrestador)'>
+																<bandpopup>
+																	<vbox>
+																		<toolbar>
+																			<label
+																				value="Buscar: " />
+																			<textbox
+																				id="tbxValuePrestador"
+																				onChanging='formAnexo9_entidad.buscarPrestador(event.getValue(),lbxPrestador)'
+																				style="text-transform:uppercase;" />
+																			<toolbarbutton
+																				image="/images/borrar.gif" tooltiptext="Quitar"
+																				onClick='formAnexo9_entidad.selectedPrestador(new Listitem())' />
+																		</toolbar>
+																		<listbox
+																			height="300px" width="600px" mold="paging"
+																			pageSize="8" id="lbxPrestador"
+																			onSelect='formAnexo9_entidad.selectedPrestador(self.getSelectedItem())'>
+																			<listhead>
+																				<listheader
+																					label="Codigo" width="150px" />
+																				<listheader
+																					label="Nit" width="170px" />
+																				<listheader
+																					label="Nombre" />
+																			</listhead>
+																		</listbox>
+																	</vbox>
+																</bandpopup>
+															</bandbox>
+														</cell>
+														<cell
+															colspan="2" align="left">
+															<textbox
+																id="tbxNomPrestador" width="285px"
+																style="text-transform:uppercase" readonly="true" />
+														</cell>
+														<cell></cell>
+													</row>
+													<row>
+														<cell
+															height="30px">
+															<label
+																value="Identificación " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxId" width="170px"
+																style="text-transform:uppercase" readonly="true" />
+														</cell>
+														<cell
+															height="30px">
+
+															<label
+																value="Direccion: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxdirecion" width="170px"
+																style="text-transform:uppercase" readonly="true" />
+														</cell>
+														<cell></cell>
+													</row>
+													<row>
+
+														<cell
+															height="30px">
+															<label
+																value="Departamento:  " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxDepartamento" width="170px"
+																style="text-transform:uppercase" readonly="true" />
+														</cell>
+														<cell
+															height="30px">
+															<label
+																value="Municipo: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxMunicipio" width="170px"
+																style="text-transform:uppercase" readonly="true" />
+														</cell>
+														<cell></cell>
+													</row>
+												</rows>
+											</grid>
+										</groupbox>
+									</cell>
+								</row>
+
+								<row>
+									<cell colspan="6">
+										<groupbox visible="true"
+											closable="false" height="90%" mold="3d"  id="gbxDatos_paciente" >
+											<caption
+												label="Datos del paciente"
+												style="color: black;font-weight: bold" />
+											<grid sclass="GridSinBorde"
+												vflex="1" style="border:none">
+												<columns>
+													<column label=""
+														width="1px" />
+													<column label=""
+														width="100px" />
+													<column label=""
+														width="" />
+													<column label=""
+														width="100px" />
+													<column label=""
+														width="" />
+													<column label=""
+														width="1px" />
+												</columns>
+												<rows>
+													<row>
+														<cell></cell>
+														<cell
+															height="30px">
+															<label
+																value="Identificación: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxIdentificacionPaciente" width="170px"
+																style="text-transform:uppercase" readonly="true" />
+														</cell>
+														<cell
+															height="30px">
+															<label
+																value="Tipo Id: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxTipoId" width="170px"
+																style="text-transform:uppercase" readonly="true" />
+														</cell>
+														<cell></cell>
+													</row>
+													<row>
+														<cell></cell>
+														<cell
+															height="30px">
+															<label
+																value="1er Apellido: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxapellido1Paciente" width="170px"
+																style="text-transform:uppercase" readonly="true" />
+														</cell>
+														<cell
+															height="30px">
+															<label
+																value="2do Apellido: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxapellido2paciente" width="170px"
+																style="text-transform:uppercase" readonly="true" />
+														</cell>
+														<cell></cell>
+													</row>
+													<row>
+														<cell></cell>
+														<cell
+															height="30px">
+															<label
+																value="1er Nombre: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxnombre1Paciente" width="170px"
+																style="text-transform:uppercase" readonly="true" />
+														</cell>
+														<cell
+															height="30px">
+															<label
+																value="2do Nombre: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxnombre2paciente" width="170px"
+																style="text-transform:uppercase" readonly="true" />
+														</cell>
+														<cell></cell>
+													</row>
+													<row>
+														<cell></cell>
+														<cell
+															height="30px">
+															<label
+																value="Dirección: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxdirPaciente" width="170px"
+																style="text-transform:uppercase" readonly="true" />
+														</cell>
+														<cell
+															height="30px" colspan="2">
+															<label
+																value="Tel: " />
+															<textbox
+																id="tbxtelpaciente" width="70px"
+																style="text-transform:uppercase" readonly="true" />
+															<space></space>
+															<label
+																value="Fecha Nac: " />
+															<datebox
+																id="tbxFechNacpaciente" width="113px"
+																style="text-transform:uppercase" readonly="true"
+																format="yyyy-MM-dd" buttonVisible="false" />
+														</cell>
+														<cell></cell>
+													</row>
+												</rows>
+											</grid>
+										</groupbox>
+									</cell>
+								</row>
+								<row>
+									<cell colspan="6">
+										<groupbox visible="true"
+											closable="false" height="97%" mold="3d">
+											<caption
+												label="DATOS DE LA PERSONA RESPONSABLE DEL PACIENTE"
+												style="color: black;font-weight: bold" />
+											<grid sclass="GridSinBorde"
+												vflex="1">
+												<columns>
+													<column label=""
+														width="15%" />
+													<column label=""
+														width="14%" />
+													<column label=""
+														width="25%" />
+													<column label=""
+														width="14%" />
+													<column label=""
+														width="25%" />
+													<column label=""
+														width="11%" />
+												</columns>
+												<rows>
+													<row>
+														<cell></cell>
+														<cell
+															height="30px">
+															<label
+																value="* " style="color: red"
+																tooltiptext="Campo obligatorio" />
+															<label
+																id="lbNombre_responsable" value="Nombre: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxNombre_responsable" width="170px"
+																style="text-transform:uppercase" />
+														</cell>
+
+														<cell
+															height="30px">
+															<label
+																value="* " style="color: red"
+																tooltiptext="Campo obligatorio" />
+															<label
+																id="lbApellido_responsable" value="Apellido: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxApellido_responsable" width="170px"
+																style="text-transform:uppercase" />
+														</cell>
+														<cell></cell>
+													</row>
+													<row>
+														<cell></cell>
+														<cell
+															height="30px">
+															<label
+																id="lbTipo_id_responsable" value="Tipo Identificación " />
+														</cell>
+														<cell>
+															<listbox
+																id="lbxTipo_id_responsable" name="tipo_id" mold="select"
+																width="170px" sclass="combobox" />
+														</cell>
+
+														<cell
+															height="30px">
+															<label
+																id="lbNro_id_responsable" value="Nro Identificación: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxNro_id_responsable" width="170px"
+																style="text-transform:uppercase" />
+														</cell>
+														<cell></cell>
+													</row>
+
+													<row>
+														<cell></cell>
+														<cell
+															height="30px">
+															<label
+																id="lbDir_responsable" value="Direccion: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxDir_responsable" width="170px"
+																style="text-transform:uppercase" />
+														</cell>
+
+														<cell
+															height="30px">
+															<label
+																id="lbTer_responsable" value="Teléfono: " maxlength="10"/>
+														</cell>
+														<cell>
+															<textbox
+																id="tbxTer_responsable" width="170px"
+																style="text-transform:uppercase" />
+														</cell>
+														<cell></cell>
+													</row>
+
+													<row>
+														<cell></cell>
+														<cell
+															height="30px">
+															<label
+																id="lbDep_responsable" value="Departamento: " />
+														</cell>
+														<cell>
+															<listbox
+																id="lbxDep_responsable" name="Dep_responsable"
+																mold="select" width="170px" sclass="combobox"
+																onSelect="formAnexo9_entidad.listarMunicipios(lbxMun_responsable, self)" />
+														</cell>
+
+														<cell
+															height="30px">
+															<label
+																id="lbMun_responsable" value="Municipio: " />
+														</cell>
+														<cell>
+															<listbox
+																id="lbxMun_responsable" name="Mun_responsable"
+																mold="select" width="170px" sclass="combobox" />
+														</cell>
+														<cell></cell>
+													</row>
+												</rows>
+											</grid>
+										</groupbox>
+									</cell>
+								</row>
+								<row>
+									<cell colspan="6">
+										<groupbox visible="true"
+											closable="false" height="97%" mold="3d">
+											<caption
+												label="INFORMACION DE LA PERSONA QUE SOLICITA"
+												style="color: black;font-weight: bold" />
+
+											<grid sclass="GridSinBorde"
+												vflex="1">
+												<columns>
+													<column label=""
+														width="15%" />
+													<column label=""
+														width="14%" />
+													<column label=""
+														width="25%" />
+													<column label=""
+														width="14%" />
+													<column label=""
+														width="25%" />
+													<column label=""
+														width="11%" />
+												</columns>
+												<rows>
+													<row>
+														<cell></cell>
+														<cell
+															height="30px">
+															<label
+																id="lbNombre_solicita"
+																value="Nombre de quien solicita: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxNombre_solicita" width="170px"
+																style="text-transform:uppercase" readonly="true" />
+														</cell>
+														<cell
+															height="30px">
+															<label
+																value="Teléfono: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxTelefono" width="170px"
+																style="text-transform:uppercase" readonly="true" />
+														</cell>
+														<cell></cell>
+													</row>
+													<row>
+														<cell />
+														<cell
+															height="30px">
+															<label
+																value="Celular: " />
+														</cell>
+														<cell
+															colspan="4">
+															<textbox
+																id="tbxCel" width="170px" maxlength="10"
+																style="text-transform:uppercase" readonly="true" />
+														</cell>
+													</row>
+													<row>
+														<cell></cell>
+														<cell
+															height="30px">
+															<label
+																value="Servicio que solicita: " />
+														</cell>
+														<cell
+															colspan="3">
+
+															<hbox>
+																<listbox
+																	visible="false" id="lbx_Servico1" mold="select"
+																	name="servicios_anexo9" width="150px" sclass="combobox"
+																	style="text-transform:uppercase;"
+																	onSelect="formAnexo9_entidad.seleccion_especialidad(self.getSelectedItem().getValue().toString(), hbox_servicio1)" />
+																<hbox
+																	id="hbox_servicio1" visible="true">
+																	<bandbox
+																		id="tbxServico1" autodrop="true" readonly="true"
+																		use="healthmanager.res.BandboxObject" width="90%"
+																		onOpen='formAnexo9_entidad.buscarProcediemnto(tbxValueServico1.getValue(),lbxServico1)'>
+																		<bandpopup>
+																			<vbox>
+																				<toolbar>
+																					<label
+																						value="Buscar: " />
+																					<textbox
+																						id="tbxValueServico1"
+																						onChanging='formAnexo9_entidad.buscarProcediemnto(event.getValue(),lbxServico1)'
+																						style="text-transform:uppercase;" />
+																					<toolbarbutton
+																						image="/images/borrar.gif" tooltiptext="Quitar"
+																						onClick='formAnexo9_entidad.selectedProcedimiento(new Listitem(), tbxServico1, tbxNomServicio1)' />
+																				</toolbar>
+																				<listbox
+																					height="300px" width="600px" mold="paging"
+																					pageSize="8" id="lbxServico1"
+																					onSelect='formAnexo9_entidad.selectedProcedimiento(self.getSelectedItem(), tbxServico1, tbxNomServicio1)'>
+																					<listhead>
+																						<listheader
+																							label="Codigo" width="100px" />
+																						<listheader
+																							label="Nombre" />
+																					</listhead>
+																				</listbox>
+																			</vbox>
+																		</bandpopup>
+																	</bandbox>
+																	<textbox
+																		id="tbxNomServicio1" width="200px"
+																		style="text-transform:uppercase" readonly="true" />
+																</hbox>
+															</hbox>
+														</cell>
+														<cell></cell>
+													</row>
+													<row>
+														<cell></cell>
+														<cell
+															height="30px">
+															<label
+																value="Servicio para el cual se solicita la referencia: " />
+														</cell>
+														<cell
+															colspan="3">
+															<hbox>
+																<listbox
+																	visible="false" id="lbx_Servico2" mold="select"
+																	name="servicios_anexo9" width="150px" sclass="combobox"
+																	style="text-transform:uppercase;"
+																	onSelect="formAnexo9_entidad.seleccion_especialidad(self.getSelectedItem().getValue().toString(), hbox_servicio2)" />
+																<hbox
+																	id="hbox_servicio2" visible="true">
+																	<bandbox
+																		id="tbxServico2" autodrop="true" readonly="true"
+																		use="healthmanager.res.BandboxObject" width="90%"
+																		onOpen='formAnexo9_entidad.buscarProcediemnto(tbxValueServico2.getValue(),lbxServico2)'>
+																		<bandpopup>
+																			<vbox>
+																				<toolbar>
+																					<label
+																						value="Buscar: " />
+																					<textbox
+																						id="tbxValueServico2"
+																						onChanging='formAnexo9_entidad.buscarProcediemnto(event.getValue(),lbxServico2)'
+																						style="text-transform:uppercase;" />
+																					<toolbarbutton
+																						image="/images/borrar.gif" tooltiptext="Quitar"
+																						onClick='formAnexo9_entidad.selectedProcedimiento(new Listitem(), tbxServico2, tbxNomServicio2)' />
+																				</toolbar>
+																				<listbox
+																					height="300px" width="600px" mold="paging"
+																					pageSize="8" id="lbxServico2"
+																					onSelect='formAnexo9_entidad.selectedProcedimiento(self.getSelectedItem(), tbxServico2, tbxNomServicio2)'>
+																					<listhead>
+																						<listheader
+																							label="Codigo" width="100px" />
+																						<listheader
+																							label="Nombre" />
+																					</listhead>
+																				</listbox>
+																			</vbox>
+																		</bandpopup>
+																	</bandbox>
+																	<textbox
+																		id="tbxNomServicio2" width="200px"
+																		style="text-transform:uppercase" readonly="true" />
+																</hbox>
+															</hbox>
+														</cell>
+														<cell></cell>
+													</row>
+												</rows>
+											</grid>
+
+										</groupbox>
+									</cell>
+								</row>
+								<row>
+									<cell colspan="6">
+										<groupbox visible="true"
+											closable="false" height="97%" mold="3d">
+											<caption
+												label="INFORMACIÓN CLINICA"
+												style="color: black;font-weight: bold" />
+											<label
+												value="Diligencie en orden indicando el resumen de anamnesis y de examen físico,
+												 fecha y resultados de exámenes auxiliares de diagnósticos, 
+												 resumen de la evolución, diagnóstico, complicaciones, 
+												 tratamientos aplicados y motivos de remisión.
+												  Al finalizar,el profesional tratante debe firmar la solicitud de referencia y
+												   anotar su registro profesional.">
+											</label>
+
+											<textbox
+												id="tbxInformacionClinica" width="95%"
+												style="text-transform:uppercase" rows="9" />
+										</groupbox>
+
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+				</div>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

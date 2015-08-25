@@ -1,0 +1,884 @@
+<?page title="Furtran" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formFurtran" width="100%" height="97%"
+		use="healthmanager.controller.FurtranAction"
+		onCreate="formFurtran.init();">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="false" closable="false"
+			mold="3d" height="100%">
+			<caption label="Consultar listado de Furtan"
+				style="color: blue;font-weight: bold" />
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" height="100%" mold="paging"
+				pageSize="20" vflex="1">
+				<auxhead>
+					<auxheader colspan="5">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<space />
+							<textbox id="tbxValue" width="200px"
+								onOK="formFurtran.buscarDatos();"
+								style="text-transform:uppercase" />
+							<space />
+							<toolbarbutton label="Consultar furtran"
+								image="/images/Magnifier.gif"
+								onClick="formFurtran.buscarDatos();" tooltiptext="Consultar" />
+							<space />
+							<toolbarbutton label="Nuevo furtran"
+								image="/images/New16.gif"
+								onClick='formFurtran.accionForm(true,"registrar");'
+								tooltiptext="Nuevo" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Tipo de Documento" align="center"
+						width="190px" />
+					<column label="Documento" align="center"
+						width="130px" />
+					<column label="Nombre" align="center" />
+					<column label="Fecha" align="center" width="145px" />
+					<column label="Acciones" align="center"
+						width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<borderlayout width="100%" height="100%" id="groupboxEditar"
+			visible="false">
+			<north border="none">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<toolbarbutton image="/images/Save16.gif"
+						label="Guardar furtran" onClick="formFurtran.guardarDatos();"
+						id="btGuardar" />
+					<toolbarbutton image="/images/New16.gif"
+						label="Nuevo furtran"
+						onClick='formFurtran.accionForm(true,"registrar");' id="btNew" />
+					<space />
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Atras"
+						onClick='formFurtran.accionForm(false,tbxAccion.getText());'
+						id="btCancel" />
+					<toolbarbutton image="/images/print_ico.gif"
+						label="Imprimir furtran" onClick="formFurtran.imprimir();"
+						id="btImprimir" visible="false" />
+					<space />
+					<label value="Formato impresión: " visible="false" />
+					<listbox id="lbxFormato" mold="select" width="150px"
+						visible="false" sclass="combobox">
+						<listitem value="pdf" label="PDF"
+							selected="true" />
+						<listitem value="rtf" label="WORD" />
+					</listbox>
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center">
+
+					<!-- *************************** -->
+					<!-- *** Insertar/Actualizar *** -->
+					<!-- *************************** -->
+
+
+					<groupbox mold="3d" width="890px"
+						closable="false">
+						<caption label="RADICADO" />
+						<grid>
+							<columns>
+								<column />
+								<column />
+								<column />
+								<column />
+							</columns>
+							<rows>
+
+
+								<!-- fila 1 -->
+								<row>
+									<cell>
+										<label id="lbFecha_entrega"
+											value="Fecha entrega: " />
+									</cell>
+									<cell>
+										<datebox id="dtbxFecha_entrega"
+											onCreate="self.value = new Date();" format="yyyy-MM-dd"
+											width="170px" />
+									</cell>
+									<cell></cell>
+									<cell>
+										<textbox id="tbxConsecutivo"
+											width="140px" style="text-transform:uppercase"
+											readonly="true" visible="false" value="1" />
+									</cell>
+								</row>
+
+								<row>
+									<cell colspan="4">
+										<label
+											value="Respuesta a glosa, marcar en RG" />
+									</cell>
+								</row>
+
+								<row>
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbRadicado_nuevo"
+											value="Radicado nuevo: " />
+									</cell>
+									<cell>
+										<textbox id="tbxRadicado_nuevo"
+											width="98%" style="text-transform:uppercase" />
+									</cell>
+									<cell>
+
+										<label value="RG:" />
+										<space />
+										<checkbox
+											id="chbRespuesta_glosa"
+											onCheck='tbxRadicado_anterior.setValue("");tbxRadicado_anterior.setReadonly(!self.isChecked())' />
+										<space width="15px" />
+										<label id="lbRadicado_anterior"
+											value="No. Radicado Anterior: " />
+
+									</cell>
+									<cell>
+										<textbox
+											id="tbxRadicado_anterior" width="98%"
+											style="text-transform:uppercase" readonly="true" />
+									</cell>
+
+								</row>
+
+
+
+
+							</rows>
+						</grid>
+					</groupbox>
+
+					<separator />
+
+
+					<groupbox mold="3d" width="890px"
+						closable="false">
+						<caption label="DATOS DEL TRANSPORTADOR" />
+
+						<grid>
+							<columns>
+								<column />
+								<column />
+								<column />
+								<column />
+							</columns>
+							<rows>
+								<row>
+									<cell colspan="4">
+										<groupbox width="100%"
+											closable="false">
+											<caption label="Empresa" />
+
+											<grid>
+												<columns>
+													<column />
+													<column />
+													<column />
+												</columns>
+												<rows>
+													<row>
+														<cell>
+															<label
+																id="lbNombre_empresa"
+																value="Nombre Empresa de Transporte Especial Reclamante: " />
+														</cell>
+														<cell
+															colspan="2">
+															<textbox
+																id="tbxNombre_empresa" width="98%" readonly="true"
+																style="text-transform:uppercase" maxlength="-1" />
+														</cell>
+													</row>
+													<row>
+														<cell>
+															<label
+																id="lbCodigo_habilitacion"
+																value="Codigo de habilitacion: " />
+														</cell>
+														<cell>
+															<textbox readonly="true"
+																id="tbxCodigo_habilitacion" width="98%"
+																style="text-transform:uppercase" maxlength="20" />
+														</cell>
+														<cell />
+													</row>
+													<row>
+														<cell>
+															<label
+																id="lbServicio_empresa" value="Servicio: " />
+														</cell>
+														<cell
+															colspan="2">
+															<radiogroup
+																id="rdbServicio_empresa">
+																<radio
+																	label="" value="I" checked="true" visible="false" />
+																<space
+																	width="15px" />
+																<radio
+																	label="Ambulancia Básica" value="B" />
+																<space
+																	width="15px" />
+																<radio
+																	label="Ambulancia Medicada" value="M" />
+															</radiogroup>
+														</cell>
+													</row>
+
+												</rows>
+											</grid>
+										</groupbox>
+									</cell>
+								</row>
+								<row>
+									<cell colspan="4">
+										<groupbox width="100%"
+											closable="false">
+											<caption
+												label="Persona Natural" />
+
+											<grid>
+												<columns>
+													<column />
+													<column />
+													<column />
+													<column />
+												</columns>
+												<rows>
+													<row>
+														<cell>
+															<label
+																id="lbNombre_persona1" value="Nombre: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxNombre_persona1" width="98%"
+																style="text-transform:uppercase" maxlength="100" />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxNombre_persona2" width="98%"
+																style="text-transform:uppercase" maxlength="100" />
+														</cell>
+														<cell></cell>
+													</row>
+													<row>
+														<cell>
+															<label
+																id="lbApellido_persona1" value="Apellidos: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxApellido_persona1" width="98%"
+																style="text-transform:uppercase" maxlength="100" />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxApellido_persona2" width="98%"
+																style="text-transform:uppercase" maxlength="100" />
+														</cell>
+														<cell></cell>
+													</row>
+													<row>
+														<cell>
+															<label
+																id="lbServicio_natural" value="Servicio: " />
+														</cell>
+														<cell
+															colspan="3">
+															<radiogroup
+																id="rdbServicio_natural"
+																onCheck="formFurtran.mostrar_conRadio(formFurtran,self,new AbstractComponent[]{rowOtro, lbOtroServicio, tbxOtro_servicio})">
+																<radio
+																	label="" value="I" checked="true" visible="false" />
+																<space
+																	width="15px" />
+																<radio
+																	label="Particular" value="P" />
+																<space
+																	width="15px" />
+																<radio
+																	label="Servicio Publico" value="S" />
+																<space
+																	width="15px" />
+																<radio
+																	label="Otro" value="O" />
+															</radiogroup>
+														</cell>
+													</row>
+													<row id="rowOtro"
+														visible="false">
+														<cell>
+															<label
+																id="lbOtroServicio" value="¿Cúal? " visible="false" />
+														</cell>
+														<cell
+															colspan="3">
+															<textbox
+																id="tbxOtro_servicio" width="98%"
+																style="text-transform:uppercase" maxlength="-1"
+																visible="false" />
+														</cell>
+													</row>
+												</rows>
+											</grid>
+										</groupbox>
+									</cell>
+								</row>
+
+
+								<row>
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label
+											id="lbTipo_identificacion" value="Tipo de Documento: " />
+									</cell>
+									<cell>
+										<listbox 
+											id="lbxTipo_identificacion" name="tipo_id" mold="select"
+											width="98%" sclass="combobox" disabled="true" />
+									</cell>
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbNro_identificacion"
+											value="Nro de Documento " />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxNro_identificacion" width="98%" readonly="true"
+											style="text-transform:uppercase" maxlength="20" />
+									</cell>
+								</row>
+
+								<row>
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbPlaca"
+											value="Placa: " />
+									</cell>
+									<cell>
+										<textbox id="tbxPlaca" 
+											width="98%" style="text-transform:uppercase" maxlength="10" />
+									</cell>
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbTelefono"
+											value="Telefono: " />
+									</cell>
+									<cell>
+										<intbox
+											constraint="no negative:Este valor no puede ser negativo"
+											id="ibxTelefono" width="98%" readonly="true"
+											style="text-transform:uppercase" />
+									</cell>
+								</row>
+								<row>
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbDepartamento"
+											value="Departamento: " />
+									</cell>
+									<cell>
+										<textbox id="tbxDepartamento"
+											width="98%" visible="false" />
+										<textbox readonly="true"
+											id="tbxDepartamento_nombre" width="98%" />
+									</cell>
+									<cell>
+										<label id="lbMunicipio"
+											value="Municipio: " />
+									</cell>
+									<cell>
+										<textbox id="tbxMunicipio"
+											width="98%" visible="false" />
+										<textbox readonly="true"
+											id="tbxMunicipio_nombre" width="98%" />
+									</cell>
+								</row>
+								<row>
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbDireccion"
+											value="Dirección: " />
+									</cell>
+									<cell colspan="3">
+										<textbox id="tbxDireccion" readonly="true"
+											width="98%" style="text-transform:uppercase" maxlength="-1" />
+									</cell>
+								</row>
+							</rows>
+						</grid>
+
+					</groupbox>
+
+					<separator />
+
+					<groupbox mold="3d" width="890px"
+						closable="false">
+						<caption
+							label="RELACIÓN DE LAS VICTIMAS TRASLADADAS" />
+
+						<grid>
+							<columns>
+								<column />
+								<column />
+								<column />
+								<column />
+								<column />
+								<column />
+							</columns>
+							<rows>
+
+								<!-- fila 2 -->
+								<row>
+									<cell colspan="2">
+										<label
+											id="lbTipo_identificacion_permitido"
+											value="Tipo de documento permitido: " />
+									</cell>
+									<cell colspan="4">
+										<listbox
+											id="lbxTipo_identificacion_permitido" name="tipo_id"
+											mold="select" width="170px" sclass="combobox" />
+									</cell>
+								</row>
+
+								<row>
+									<cell>
+										<label value="Tipo Doc " />
+									</cell>
+									<cell>
+										<label value="Nro. Documento " />
+									</cell>
+									<cell>
+										<label value="1er Nombre " />
+									</cell>
+									<cell>
+										<label value="2do Nombre " />
+									</cell>
+									<cell>
+										<label value="1er Apellido " />
+									</cell>
+									<cell>
+										<label value="2do Apellido " />
+									</cell>
+								</row>
+								<row>
+									<cell>
+									<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<listbox
+											id="lbxTipo_doc_victima1" name="tipo_id" mold="select"
+											width="94%" sclass="combobox" />
+									</cell>
+									<cell>
+									<toolbarbutton
+											id="btnLimpiarPaciente" image="/images/borrar.gif" />											
+										<bandboxRegistros
+											id="tbxNro_victima1" widthBandbox="107px"
+											widthListbox="600px" heightListbox="300px"
+											columnas="Tipo Ident#65px|Identificación|Nombres|Apellidos" />
+									</cell>
+									<cell>									
+										<textbox
+											id="tbxNombre1_victima1" width="98%"
+											style="text-transform:uppercase" maxlength="100" />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxNombre2_victima1" width="98%"
+											style="text-transform:uppercase" maxlength="100" />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxApellido1_victima1" width="98%"
+											style="text-transform:uppercase" maxlength="100" />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxApellido2_victima1" width="98%"
+											style="text-transform:uppercase" maxlength="100" />
+									</cell>
+								</row>
+								<row>
+									<cell>
+										<listbox
+											id="lbxTipo_doc_victima2" name="tipo_id" mold="select"
+											width="98%" sclass="combobox" />
+									</cell>
+									<cell>
+									<toolbarbutton
+											id="btnLimpiarPaciente2" image="/images/borrar.gif" />											
+									<bandboxRegistros
+											id="tbxNro_victima2" widthBandbox="107px"
+											widthListbox="600px" heightListbox="300px"
+											columnas="Tipo Ident#65px|Identificación|Nombres|Apellidos" />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxNombre1_victima2" width="98%"
+											style="text-transform:uppercase" maxlength="100" />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxNombre2_victima2" width="98%"
+											style="text-transform:uppercase" maxlength="100" />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxApellido1_victima2" width="98%"
+											style="text-transform:uppercase" maxlength="100" />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxApellido2_victima2" width="98%"
+											style="text-transform:uppercase" maxlength="100" />
+									</cell>
+								</row>
+								<row>
+									<cell>
+										<listbox
+											id="lbxTipo_doc_victima3" name="tipo_id" mold="select"
+											width="98%" sclass="combobox" />
+									</cell>
+									<cell>
+									<toolbarbutton
+											id="btnLimpiarPaciente3" image="/images/borrar.gif" />											
+									<bandboxRegistros
+											id="tbxNro_victima3" widthBandbox="107px"
+											widthListbox="600px" heightListbox="300px"
+											columnas="Tipo Ident#65px|Identificación|Nombres|Apellidos" />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxNombre1_victima3" width="98%"
+											style="text-transform:uppercase" maxlength="100" />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxNombre2_victima3" width="98%"
+											style="text-transform:uppercase" maxlength="100" />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxApellido1_victima3" width="98%"
+											style="text-transform:uppercase" maxlength="100" />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxApellido2_victima3" width="98%"
+											style="text-transform:uppercase" maxlength="100" />
+									</cell>
+								</row>
+								<row>
+									<cell>
+										<listbox
+											id="lbxTipo_doc_victima4" name="tipo_id" mold="select"
+											width="98%" sclass="combobox" />
+									</cell>
+									<cell>
+									<toolbarbutton
+											id="btnLimpiarPaciente4" image="/images/borrar.gif" />											
+									<bandboxRegistros
+											id="tbxNro_victima4" widthBandbox="107px"
+											widthListbox="600px" heightListbox="300px"
+											columnas="Tipo Ident#65px|Identificación|Nombres|Apellidos" />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxNombre1_victima4" width="98%"
+											style="text-transform:uppercase" maxlength="100" />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxNombre2_victima4" width="98%"
+											style="text-transform:uppercase" maxlength="100" />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxApellido1_victima4" width="98%"
+											style="text-transform:uppercase" maxlength="100" />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxApellido2_victima4" width="98%"
+											style="text-transform:uppercase" maxlength="100" />
+									</cell>
+								</row>
+								<row>
+									<cell>
+										<listbox
+											id="lbxTipo_doc_victima5" name="tipo_id" mold="select"
+											width="98%" sclass="combobox" />
+									</cell>
+									<cell>
+									<toolbarbutton
+											id="btnLimpiarPaciente5" image="/images/borrar.gif" />
+									<bandboxRegistros
+											id="tbxNro_victima5" widthBandbox="107px"
+											widthListbox="600px" heightListbox="300px"
+											columnas="Tipo Ident#65px|Identificación|Nombres|Apellidos" />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxNombre1_victima5" width="98%"
+											style="text-transform:uppercase" maxlength="100" />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxNombre2_victima5" width="98%"
+											style="text-transform:uppercase" maxlength="100" />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxApellido1_victima5" width="98%"
+											style="text-transform:uppercase" maxlength="100" />
+									</cell>
+									<cell>
+										<textbox
+											id="tbxApellido2_victima5" width="98%"
+											style="text-transform:uppercase" maxlength="100" />
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+
+					<separator />
+
+					<groupbox mold="3d" width="890px"
+						closable="false">
+						<caption
+							label="LUGAR EN EL QUE SE RECOGE LA VICTIMA O VICTIMAS" />
+
+						<grid>
+							<columns>
+								<column />
+								<column />
+								<column />
+								<column />
+								<column />
+								<column />
+							</columns>
+							<rows>
+								<!-- fila 3 -->
+								<row>
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbDireccion_victima"
+											value="Dirección: " />
+									</cell>
+									<cell colspan="5">
+										<textbox
+											id="tbxDireccion_victima" width="98%"
+											style="text-transform:uppercase" maxlength="-1" />
+									</cell>
+								</row>
+
+								<row>
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label
+											id="lbDepartamento_victima" value="Departamento: " />
+									</cell>
+									<cell>
+										<listbox
+											id="lbxDepartamento_victima" mold="select" width="98%"
+											sclass="combobox"
+											onSelect="formFurtran.listarMunicipios(lbxMunicipio_victima,lbxDepartamento_victima);"
+											onOK="lbxMunicipio_victima.focus();" />
+									</cell>
+									<cell>
+										<label id="lbMunicipio_victima"
+											value="Municipio: " />
+									</cell>
+									<cell>
+										<listbox
+											id="lbxMunicipio_victima" name="municipio_victima"
+											mold="select" width="98%" sclass="combobox" />
+									</cell>
+									<cell colspan="2">
+										<label id="lbZona_victima"
+											value="Zona: " />
+										<space width="15px" />
+										<radiogroup
+											id="rdbZona_victima">
+											<radio label="Urbano"
+												value="U" checked="true" />
+											<space width="15px" />
+											<radio label="Rural"
+												value="R" />
+										</radiogroup>
+									</cell>
+
+								</row>
+							</rows>
+						</grid>
+
+					</groupbox>
+
+					<separator />
+
+					<groupbox mold="3d" width="890px"
+						closable="false">
+						<caption
+							label="CERTIFICACION DE TRASLADO DE VICTIMAS" />
+
+						<grid>
+							<columns>
+								<column />
+								<column />
+								<column width="80px" />
+								<column />
+								<column />
+								<column />
+							</columns>
+							<rows>
+								<row>
+									<cell />
+									<cell colspan="2">
+										<label id="lbFecha_traslado"
+											value="Fecha: " />
+										<space />
+										<datebox id="dtbxFecha_traslado"
+											onCreate="self.value = new Date();" format="yyyy-MM-dd"
+											width="75%" />
+									</cell>
+									<cell>
+										<space width="110px" />
+										<label id="lbHora_traslado"
+											value="Hora: " />
+									</cell>
+									<cell>
+										<timebox width="100px"
+											id="tbHora_traslado" cols="7" format="medium"
+											onCreate="self.value = new Date()" readonly="true"
+											mold="rounded" />
+									</cell>
+									<cell></cell>
+
+
+								</row>
+
+								<!-- fila 4 -->
+								<row>
+									<cell colspan="6">
+										<label id="lbNombre_ips"
+											value="Nombre IPS que atendió la víctima: " />
+										<space />
+										<bandboxRegistros id="tbxCod_habilitacion_ips" widthBandbox="120px"
+												widthListbox="600px" heightListbox="300px"
+												columnas="Codigo#95px|Nombre" />
+										<space />
+										<textbox id="tbxNombre_ips"
+											width="56%" style="text-transform:uppercase" readonly="true" />
+										<toolbarbutton
+											id="btnLimpiarFurtran" image="/images/borrar.gif" />
+									</cell>
+								</row>
+								<row>
+									<cell colspan="2">
+										<label id="lbNit" value="Nit: " />
+										<space width="48px" />
+										<textbox id="tbxNit" width="60%"
+											style="text-transform:uppercase" maxlength="20"
+											readonly="true" />
+									</cell>
+									<cell colspan="4">
+
+										<label
+											id="lbDepartamento_traslado" value="Departamento: " />
+
+										<textbox
+											id="tbxDepartamento_traslado_nombre" width="35%"
+											style="text-transform:uppercase" maxlength="-1"
+											readonly="true" />
+										<textbox
+											id="tbxDepartamento_traslado" width="30%"
+											style="text-transform:uppercase" maxlength="-1"
+											readonly="true" visible="false" />
+										<space />
+										<label id="lbMunicipio_traslado"
+											value="Municipio: " />
+
+										<textbox
+											id="tbxMunicipio_traslado_nombre" width="34%"
+											style="text-transform:uppercase" maxlength="-1"
+											readonly="true" />
+										<textbox
+											id="tbxMunicipio_traslado" width="30%"
+											style="text-transform:uppercase" maxlength="-1"
+											readonly="true" visible="false" />
+
+
+									</cell>
+								</row>
+								<row>
+									<cell colspan="6">
+										<label id="lbDireccion_traslado"
+											value="Dirección: " />
+										<space />
+										<textbox
+											id="tbxDireccion_traslado" width="61%"
+											style="text-transform:uppercase" maxlength="-1"
+											readonly="true" />
+										<space />
+										<label id="lbTelefono_traslado"
+											value="Teléfono: " />
+										<intbox
+											constraint="no negative:Este valor no puede ser negativo"
+											id="ibxTelefono_traslado" width="22%"
+											style="text-transform:uppercase" readonly="true" />
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+
+				</div>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

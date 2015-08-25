@@ -1,0 +1,206 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+<window id="formEgreso_urgencias" width="100%" height="100%" use="healthmanager.controller.Egreso_urgenciasAction">
+<style src="estilo.css" />
+<style>
+body ,table{
+	margin:0;
+	padding:0;
+	
+}
+.z-fieldset{
+	-moz-border-radius:5px;
+	border-radius: 5px;
+	-webkit-border-radius: 5px;
+}
+.combobox{
+	font-size:12px;
+	border: 1px solid silver;
+}
+
+tr.z-row .z-cell{
+	background-image:none;
+}
+
+tr.z-row td.z-row-inner{
+	background-image:none;
+}
+</style>
+<borderlayout width="100%" height="100%">
+<center autoscroll="true" border="none">
+
+<!-- *********************** -->
+<!--        Principal        -->
+<!-- *********************** -->
+<groupbox id="groupboxPrincipal" style="border:0;padding:2px">
+<!-- *************************** -->
+<!-- *** Insertar/Actualizar *** -->
+<!-- *************************** -->
+<groupbox visible="true" id="groupboxEditar" closable="false" style="border:0;padding:0">
+<!-- *************************** -->
+<!-- **** Barra de Botones ***** -->
+<!-- *************************** -->
+
+<toolbar width="100%" align="start">
+
+<textbox id="tbxAccion" value="registrar" visible="false"/>
+<textbox id="tbxNro_identificacion" value="" visible="false"/>
+<textbox id="tbxSexo_pct" value="" visible="false"/>
+<textbox id="tbxFecha_nac" value="" visible="false"/>
+<textbox id="tbxCodigo_administradora" value="" visible="false"/>
+<textbox id="tbxId_plan" value="" visible="false"/>
+<textbox id="tbxNro_ingreso" value="" visible="false"/>
+<textbox id="tbxTipo_hc" value="" visible="false"/>
+
+<toolbarbutton image="/images/Save16.gif" label="Guardar Egreso" onClick="formEgreso_urgencias.guardarDatos();" id="btGuardar"/>
+<toolbarbutton image="/images/eliminar.gif" label="Eliminar Egreso" onClick='formEgreso_urgencias.eliminarDatos(tbxCodigo_egreso.getValue());' id="btEliminar"/>
+<!-- <toolbarbutton image="/images/print_ico.gif" label="Imprimir Orden" onClick="formOrden_servicio.imprimir(tbxCodigo_orden.getValue());" id="btImprimir"/> -->
+<space/>
+
+<!--  <label value="Formato impresión: "/>
+<listbox id="lbxFormato" mold="select" width="150px" sclass="combobox">
+<listitem value="pdf" label="PDF" selected="true"/>
+<listitem value="rtf" label="WORD"/>
+</listbox>-->
+
+</toolbar>
+
+
+<space/>
+
+<grid sclass="GridSinBorde" style="border:none">
+<columns>
+<column label="" width="105px"/>
+<column label="" width="165px"/>
+<column label="" width="55px"/>
+<column label="" width="175px"/>
+<column label="" width="95px"/>
+<column label="" />
+</columns>
+
+<rows>
+
+<row>
+<cell><label value="* " style="color: red" tooltiptext="Campo obligatorio"/><label id="lbCodigo_prestador" value="Prestador: "/></cell>
+<cell>
+<bandbox id="tbxCodigo_prestador" autodrop="true" readonly="true" width="155px" onOpen='formEgreso_urgencias.buscarPrestador(tbxValuePrestador.getValue(),lbxPrestador)'>
+<bandpopup>
+	<vbox>
+		<toolbar>
+			<label value="Buscar: "/>
+		    <textbox id="tbxValuePrestador" onChanging='formEgreso_urgencias.buscarPrestador(event.getValue(),lbxPrestador)' style="text-transform:uppercase;"/>
+		    <toolbarbutton image="/images/borrar.gif" tooltiptext="Quitar" onClick='formEgreso_urgencias.selectedPrestador(new Listitem())'/>
+		</toolbar>
+		<listbox height="300px" width="600px" mold="paging" pageSize="8" id="lbxPrestador"
+		    onSelect='formEgreso_urgencias.selectedPrestador(self.getSelectedItem())' >
+		    <listhead>
+		    <listheader label="Tipo Ident." width="65px"/>
+		    <listheader label="Identificación"/>
+		    <listheader label="Nombres"/>
+		    <listheader label="Apellidos"/>
+		    <listheader label="Especialidad"/>
+		    </listhead>
+		</listbox>
+	</vbox>
+  </bandpopup>
+</bandbox>
+</cell>
+<cell colspan="2"><textbox id="tbxNomPrestador" width="213px" style="text-transform:uppercase" readonly="true"/></cell>
+<cell><label id="lbCodigo_egreso" value="Codigo: "/></cell>
+<cell><textbox id="tbxCodigo_egreso" width="148px" style="text-transform:uppercase" readonly="true"/></cell>
+</row>
+
+<row>
+<cell><label value="* " style="color: red" tooltiptext="Campo obligatorio"/><label id="lbCodigo_dx" value="Diagnóstico: "/></cell>
+<cell>
+<bandbox id="tbxCodigo_dx" autodrop="true" readonly="true" width="155px" onOpen="formEgreso_urgencias.buscarDx(tbxValueDx.getValue(),lbxDx)">
+<bandpopup>
+	<vbox>
+		<toolbar>
+			<label value="Buscar: "/>
+		    <textbox id="tbxValueDx" onChanging='formEgreso_urgencias.buscarDx(event.getValue(),lbxDx)' style="text-transform:uppercase;"/>
+		    <toolbarbutton image="/images/borrar.gif" tooltiptext="Quitar" onClick='formEgreso_urgencias.selectedDx(new Listitem(),tbxCodigo_dx,tbxNomDx,tbxSexo_dx,tbxLimite_inferior_dx,tbxLimite_superior_dx)'/>
+		</toolbar>
+		<listbox height="300px" width="600px" mold="paging" pageSize="8" id="lbxDx"
+		    onSelect='formEgreso_urgencias.selectedDx(self.getSelectedItem(),tbxCodigo_dx,tbxNomDx,tbxSexo_dx,tbxLimite_inferior_dx,tbxLimite_superior_dx)' >
+		    <listhead>
+		    <listheader label="Código" width="65px"/>
+		    <listheader label="Nombre"/>
+		    <listheader label="Sexo" width="65px"/>
+		    <listheader label="Limite inf" width="75px"/>
+		    <listheader label="Limite sup" width="75px"/>
+		    </listhead>
+		</listbox>
+	</vbox>
+  </bandpopup>
+</bandbox>
+</cell>
+<cell colspan="2">
+<textbox id="tbxNomDx" width="213px" style="text-transform:uppercase" readonly="true"/>
+<textbox id="tbxSexo_dx" value="" visible="false"/>
+<textbox id="tbxLimite_inferior_dx" value="" visible="false"/>
+<textbox id="tbxLimite_superior_dx" value="" visible="false"/>
+</cell>
+<cell><label id="lbFecha_ingreso" value="Fecha ingreso: "/></cell>
+<cell><datebox id="dtbxFecha_ingreso" format="yyyy-MM-dd HH:mm" width="150px"/></cell>
+</row>
+
+<row>
+<cell><label id="lbCausa_muerte" value="Causa muerte: "/></cell>
+<cell>
+<bandbox id="tbxCausa_muerte" autodrop="true" readonly="true" width="155px" onOpen="formEgreso_urgencias.buscarDx(tbxValueCausa_muerte.getValue(),lbxCausa_muerte)">
+<bandpopup>
+	<vbox>
+		<toolbar>
+			<label value="Buscar: "/>
+		    <textbox id="tbxValueCausa_muerte" onChanging='formEgreso_urgencias.buscarDx(event.getValue(),lbxCausa_muerte)' style="text-transform:uppercase;"/>
+		    <toolbarbutton image="/images/borrar.gif" tooltiptext="Quitar" onClick='formEgreso_urgencias.selectedDx(new Listitem(),tbxCausa_muerte,tbxNomCausa_muerte,tbxSexo_dxmuerte,tbxLimite_inferior_dxmuerte,tbxLimite_superior_dxmuerte)'/>
+		</toolbar>
+		<listbox height="300px" width="600px" mold="paging" pageSize="8" id="lbxCausa_muerte"
+		    onSelect='formEgreso_urgencias.selectedDx(self.getSelectedItem(),tbxCausa_muerte,tbxNomCausa_muerte,tbxSexo_dxmuerte,tbxLimite_inferior_dxmuerte,tbxLimite_superior_dxmuerte)' >
+		    <listhead>
+		    <listheader label="Código" width="65px"/>
+		    <listheader label="Nombre"/>
+		    <listheader label="Sexo" width="65px"/>
+		    <listheader label="Limite inf" width="75px"/>
+		    <listheader label="Limite sup" width="75px"/>
+		    </listhead>
+		</listbox>
+	</vbox>
+  </bandpopup>
+</bandbox>
+</cell>
+<cell colspan="2">
+<textbox id="tbxNomCausa_muerte" width="213px" style="text-transform:uppercase" readonly="true"/>
+<textbox id="tbxSexo_dxmuerte" value="" visible="false"/>
+<textbox id="tbxLimite_inferior_dxmuerte" value="" visible="false"/>
+<textbox id="tbxLimite_superior_dxmuerte" value="" visible="false"/>
+</cell>
+<cell><label id="lbFecha_egreso" value="Fecha egreso: "/></cell>
+<cell><datebox id="dtbxFecha_egreso" format="yyyy-MM-dd HH:mm" width="150px"/></cell>
+</row>
+
+<row>
+<cell><label value="* " style="color: red" tooltiptext="Campo obligatorio"/><label id="lbDestino_salida" value="Destino salida: "/></cell>
+<cell><listbox id="lbxDestino_salida" name="destino_salida" mold="select" width="155px" sclass="combobox"/></cell>
+<cell colspan="4">
+<hlayout>
+<label value="* " style="color: red" tooltiptext="Campo obligatorio"/>
+<label id="lbEstado_salida" value="Estado a la salida: "/>
+<space/>
+<listbox id="lbxEstado_salida" name="estado_salida" mold="select" width="155px" sclass="combobox"/>
+</hlayout>
+</cell>
+</row>
+
+</rows>
+</grid>
+
+
+</groupbox>
+
+</groupbox>
+</center>
+</borderlayout>
+</window>
+</zk>

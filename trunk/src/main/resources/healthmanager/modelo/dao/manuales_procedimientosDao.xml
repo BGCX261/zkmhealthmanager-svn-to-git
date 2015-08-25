@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Manuales_procedimientosDao">
+
+	<resultMap id="manuales_procedimientosMap" type="manuales_procedimientos">
+		<result column="id_manual" property="id_manual" />
+		<result column="id_procedimiento" property="id_procedimiento" />
+		<result column="valor" property="valor" />
+		<result column="codigo_manual" property="codigo_manual" />
+		<result column="grupo_uvr" property="grupo_uvr" />
+		<result column="creacion_date" property="creacion_date" />
+		<result column="creacion_user" property="creacion_user" />
+		<result column="nro_cuenta_contable" property="nro_cuenta_contable" />
+	</resultMap>
+
+	<insert id="crear" parameterType="manuales_procedimientos">
+		insert into public.manuales_procedimientos (id_manual,id_procedimiento,
+		valor,codigo_manual,grupo_uvr,
+		creacion_date,creacion_user,nro_cuenta_contable)
+
+		values (#{id_manual},#{id_procedimiento},
+		#{valor},#{codigo_manual},#{grupo_uvr},
+		#{creacion_date},#{creacion_user},#{nro_cuenta_contable})
+	</insert>
+
+	<update id="actualizar" parameterType="manuales_procedimientos">
+		update public.manuales_procedimientos set id_manual = #{id_manual},
+		id_procedimiento = #{id_procedimiento},valor = #{valor},
+		codigo_manual = #{codigo_manual},grupo_uvr = #{grupo_uvr},
+		creacion_date = #{creacion_date},creacion_user = #{creacion_user},
+		nro_cuenta_contable = #{nro_cuenta_contable}
+		where id_manual = #{id_manual}
+		and id_procedimiento = #{id_procedimiento}
+	</update>
+
+	<select id="consultar" parameterType="manuales_procedimientos" resultMap="manuales_procedimientosMap">
+		select mpr.id_manual,mpr.id_procedimiento,
+		mpr.valor,mpr.codigo_manual,mpr.grupo_uvr,mpr.creacion_date,
+		mpr.creacion_user,mpr.nro_cuenta_contable
+		from public.manuales_procedimientos mpr where  mpr.id_manual = #{id_manual}
+		and  mpr.id_procedimiento = #{id_procedimiento}
+	</select>
+
+	<delete id="eliminar" parameterType="manuales_procedimientos">
+		delete from public.manuales_procedimientos
+		where id_manual = #{id_manual}
+		and id_procedimiento = #{id_procedimiento}
+	</delete>
+	
+	<delete id="eliminar_manual" parameterType="manuales_procedimientos">
+		delete from public.manuales_procedimientos
+		where id_manual = #{id_manual}
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="manuales_procedimientosMap">
+		select  mpr.id_manual, mpr.id_procedimiento,
+		 mpr.valor, mpr.codigo_manual, mpr.grupo_uvr, mpr.creacion_date,
+		 mpr.creacion_user,mpr.nro_cuenta_contable
+		from public.manuales_procedimientos mpr  
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="id_manual != null" >
+				and mpr.id_manual = #{id_manual}
+			</if>
+			<if test="filtro_consulta != null">
+			${filtro_consulta}
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from public.manuales_procedimientos 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

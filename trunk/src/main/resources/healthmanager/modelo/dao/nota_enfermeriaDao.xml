@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.Nota_enfermeriaDao">
+
+	
+
+	<resultMap id="nota_enfermeriaMap" type="nota_enfermeria">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="codigo_nota" property="codigo_nota" />
+		<result column="nro_identificacion" property="nro_identificacion" />
+		<result column="nro_ingreso" property="nro_ingreso" />
+		<result column="codigo_administradora" property="codigo_administradora" />
+		<result column="id_plan" property="id_plan" />
+		<result column="codigo_prestador" property="codigo_prestador" />
+		<result column="tipo_hc" property="tipo_hc" />
+		<result column="creacion_date" property="creacion_date" />
+		<result column="ultimo_update" property="ultimo_update" />
+		<result column="creacion_user" property="creacion_user" />
+		<result column="ultimo_user" property="ultimo_user" />
+		<result column="facturacion" property="facturacion" />
+		<result column="tipo" property="tipo" />
+		<association property="lista_detalle" column="{codigo_empresa=codigo_empresa,codigo_sucursal=codigo_sucursal,    codigo_nota=codigo_nota}" select="healthmanager.modelo.dao.Detalle_nota_enfDao.listar" />
+	</resultMap>
+
+	<insert id="crear" parameterType="nota_enfermeria">
+		insert into public.nota_enfermeria (codigo_empresa,codigo_sucursal,
+		codigo_nota,nro_identificacion,nro_ingreso,
+		codigo_administradora,id_plan,codigo_prestador,
+		tipo_hc,creacion_date,ultimo_update,
+		creacion_user,ultimo_user,facturacion,tipo)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{codigo_nota},#{nro_identificacion},#{nro_ingreso},
+		#{codigo_administradora},#{id_plan},#{codigo_prestador},
+		#{tipo_hc},#{creacion_date},#{ultimo_update},
+		#{creacion_user},#{ultimo_user},#{facturacion},#{tipo})
+	</insert>
+
+	<update id="actualizar" parameterType="nota_enfermeria">
+		update public.nota_enfermeria set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},codigo_nota = #{codigo_nota},
+		nro_identificacion = #{nro_identificacion},nro_ingreso = #{nro_ingreso},
+		codigo_administradora = #{codigo_administradora},id_plan = #{id_plan},
+		codigo_prestador = #{codigo_prestador},tipo_hc = #{tipo_hc},
+		creacion_date = #{creacion_date},ultimo_update = #{ultimo_update},
+		creacion_user = #{creacion_user},ultimo_user = #{ultimo_user},
+		facturacion = #{facturacion},tipo = #{tipo}
+		where 		codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and codigo_nota = #{codigo_nota}
+	</update>
+
+	<select id="consultar" resultMap="nota_enfermeriaMap" parameterType="nota_enfermeria">
+		select codigo_empresa,codigo_sucursal,
+		codigo_nota,nro_identificacion,nro_ingreso,codigo_administradora,
+		id_plan,codigo_prestador,tipo_hc,creacion_date,
+		ultimo_update,creacion_user,ultimo_user,facturacion,tipo
+		from public.nota_enfermeria 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">AND codigo_empresa = #{codigo_empresa}</if>
+			<if test="codigo_sucursal != null">AND codigo_sucursal = #{codigo_sucursal}</if>
+			<if test="codigo_nota != null">AND codigo_nota = #{codigo_nota}</if>
+			<if test="nro_ingreso != null">AND nro_ingreso = #{nro_ingreso}</if>
+			<if test="nro_identificacion != null">AND nro_identificacion = #{nro_identificacion}</if>
+			<if test="tipo_hc != null">AND tipo_hc = #{tipo_hc}</if>
+			<if test="tipo != null">AND tipo = #{tipo}</if>
+		</trim>
+	</select>
+
+	<delete id="eliminar" parameterType="nota_enfermeria">
+		delete from public.nota_enfermeria
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_nota = #{codigo_nota}
+	</delete>
+
+	<select id="listar" resultMap="nota_enfermeriaMap" parameterType="java.util.Map">
+		select codigo_empresa,codigo_sucursal,
+		codigo_nota,nro_identificacion,nro_ingreso,codigo_administradora,
+		id_plan,codigo_prestador,tipo_hc,creacion_date,
+		ultimo_update,creacion_user,ultimo_user,facturacion,tipo
+		from public.nota_enfermeria 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">AND codigo_empresa = #{codigo_empresa}</if>
+			<if test="codigo_sucursal != null">AND codigo_sucursal = #{codigo_sucursal}</if>
+			<if test="parameter != null">AND ${parameter} like '${value}'</if>
+		</trim>
+		<if test="limite_paginado != null">
+			${limite_paginado}
+		</if>
+	</select>
+
+</mapper>

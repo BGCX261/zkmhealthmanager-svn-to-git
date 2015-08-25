@@ -1,0 +1,404 @@
+<?page title="Administradora" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formFacturacionAgrupadaCapitada"
+		use="healthmanager.controller.FacturacionCapitadaAgrupadaAction"
+		width="100%" height="99%">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+		<groupbox id="groupboxConsulta" visible="false" closable="false"
+			mold="3d" height="100%">
+			<caption label="Consultar"
+				style="color: blue;font-weight: bold" />
+
+			<separator />
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" height="100%" mold="paging"
+				pageSize="20" vflex="1">
+				<auxhead>
+					<auxheader colspan="4">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<separator />
+							<textbox id="tbxValue" width="200px"
+								onOK="formFacturacionAgrupadaCapitada.buscarDatos();"
+								style="text-transform:uppercase" />
+							<separator />
+							<button mold="trendy"
+								image="/images/Magnifier.gif"
+								onClick="formFacturacionAgrupadaCapitada.buscarDatos();"
+								tooltiptext="Consultar Administradora" visible="false" />
+							<separator />
+							<button mold="trendy"
+								image="/images/New16.gif"
+								onClick='formFacturacionAgrupadaCapitada.accionForm(true,"registrar");'
+								tooltiptext="Nuevo Administradora" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Codigo" width="20%" />
+					<column label="Nit" width="20%" />
+					<column label="Nombre" />
+					<column label="Acciones" align="center"
+						width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<borderlayout width="100%" height="100%" id="groupboxEditar"
+			visible="true">
+			<north border="none">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<toolbarbutton image="/images/Save16.gif"
+						label="Guardar Factura"
+						onClick="formFacturacionAgrupadaCapitada.guardarDatos();"
+						id="btGuardar" disabled="true" />
+					<toolbarbutton image="/images/New16.gif"
+						label="Nueva"
+						onClick='formFacturacionAgrupadaCapitada.limpiarDatos()'
+						id="btNew" />
+					<space />
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Cancelar"
+						onClick='formFacturacionAgrupadaCapitada.cancelar()' id="btCancel"
+						visible="false" />
+					<toolbarbutton image="/images/print_ico.gif"
+						label="Imprimir"
+						onClick="formFacturacionAgrupadaCapitada.imprimir()"
+						id="btImprimir" disabled="true" />
+					<space />
+					<label value="Formato impresión: " />
+					<listbox id="lbxFormato" mold="select" width="150px"
+						sclass="combobox">
+						<listitem value="pdf" label="PDF"
+							selected="true" />
+						<listitem value="rtf" label="WORD" />
+						<listitem value="xls" label="EXCEL" />
+					</listbox>
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center">
+					<space />
+					<!-- *************************** -->
+					<!-- *** Insertar/Actualizar *** -->
+					<!-- *************************** -->
+					<groupbox closable="false" width="700px"
+						mold="3d">
+						<caption label="GENERACION DE FACTURAS" />
+
+						<grid sclass="GridSinBorde" hflex="1">
+							<columns>
+								<column label="" width="25px" />
+								<column label="" width="140px"
+									align="left" />
+								<column label="" width="182px"
+									align="left" />
+								<column label="" width="130px"
+									align="left" />
+								<column label="" width="182px"
+									align="left" />
+								<column label="" width="25px"
+									align="left" />
+							</columns>
+							<rows>
+								<row>
+									<cell colspan="6">
+										<listbox id="lbxContratos"
+											hflex="1" checkmark="true" multiple="true" rows="4">
+											<custom-attributes
+												org.zkoss.zul.listbox.rod="true" />
+											<auxhead>
+												<auxheader
+													colspan="4">
+													<hlayout>
+														<label
+															value="* " style="color: red"
+															tooltiptext="Campo obligatorio" />
+														<label
+															value="Administradora: " />
+														<space />
+														<bandboxRegistros
+															id="tbxCodigo_administradora" widthBandbox="120px"
+															widthListbox="600px" heightListbox="300px"
+															columnas="Codigo#65px|Nombres|Nit#100px" />
+														<space />
+														<textbox
+															id="tbxInfoAseguradora" width="370px"
+															style="text-transform:uppercase" readonly="true" />
+														<toolbarbutton
+															id="btnLimpiarAseguradora" image="/images/borrar.gif" />
+													</hlayout>
+												</auxheader>
+											</auxhead>
+											<listhead>
+												<listheader
+													width="30px" />
+												<listheader
+													label="Codigo" width="100px" />
+												<listheader
+													label="Contrato" />
+												<listheader label="Tipo"
+													width="100px" />
+											</listhead>
+										</listbox>
+									</cell>
+								</row>
+
+								<row>
+									<cell colspan="6">
+										<listbox id="listboxValores">
+											<listhead>
+												<listheader
+													label="Codigo contrato" />
+												<listheader
+													label="Cantidad usuarios" />
+												<listheader
+													label="Tarifa usuario mes" />
+												<listheader
+													label="Tarifa usuario dia" />
+											</listhead>
+										</listbox>
+									</cell>
+								</row>
+
+								<row id="rowsaccioncapitadaNroDias"
+									visible="false">
+									<cell />
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label
+											value="Número de días reportados : " style="font-size:10px" />
+									</cell>
+									<cell>
+										<intbox
+											id="ibxNroDiasReportados" hflex="1" />
+									</cell>
+									<cell colspan="3" />
+								</row>
+
+								<row>
+									<cell />
+									<cell>
+										<label value="Concepto" />
+									</cell>
+									<cell colspan="4">
+										<textbox id="tbxObservacion"
+											hflex="1" rows="3" />
+									</cell>
+								</row>
+
+								<row id="rwInfoMesPoblacion" visible="false">
+									<cell />
+									<cell>
+										<label value="Mes Facturado" />
+									</cell>
+									<cell>
+										<textbox id="tbxMesFacturado"
+											hflex="1" />
+									</cell>
+									<cell>
+										<label value="Población según base de datos: " />
+									</cell>
+									<cell>
+										<intbox id="ibxPoblacionSegunDB"
+											hflex="1" />
+									</cell>
+									<cell />
+								</row>
+								
+								<row id="rwInfoContratoServicio" visible="false"> 
+									<cell />
+									<cell>
+										<label value="Contrato No: " />
+									</cell>
+									<cell>
+										<textbox id="tbxContratoNo"
+											hflex="1" />
+									</cell>
+									<cell>
+										<label value="Tipo de servicio: " />
+									</cell>
+									<cell>
+										<textbox id="tbxTipoServicio"
+											hflex="1" />
+									</cell>
+									<cell />
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+					<space height="5px" />
+					<groupbox closable="false" width="700px"
+						mold="3d">
+						<caption label="GENERACION DE FACTURAS" />
+
+						<grid sclass="GridSinBorde" width="690px" id="gridFacturas"
+							height="380px" >
+							<auxhead>
+								<auxheader colspan="5">
+									<label value="* " style="color: red"
+										tooltiptext="Campo obligatorio" />
+									<label id="lbFecha_inicio"
+										value="Fecha inicial: " />
+
+									<datebox id="dtbxFecha_inicio"
+										format="dd/MM/yyyy" hflex="1" />
+
+									<label value="* " style="color: red"
+										tooltiptext="Campo obligatorio" />
+									<label id="lbFecha_fin"
+										value="Fecha final: " />
+
+									<datebox id="dtbxFecha_fin"
+										format="dd/MM/yyyy" hflex="1" />
+
+									<toolbarbutton
+										label="Buscar facturas" style="margin-right:10px"
+										id="tbnBuscarFacturas" image="/images/Magnifier.gif"
+										disabled="true"
+										onClick="formFacturacionAgrupadaCapitada.listarFacturas()" />
+									<space width="10px" />
+								</auxheader>
+							</auxhead>
+							<columns>
+								<column label="Fecha" width="100px"
+									align="left" />
+								<column label="Nro factura"
+									width="100px" align="left" />
+								<column label="Valor factura"
+									width="100px" align="left" />
+								<column label="Id paciente"
+									width="120px" align="left" />
+								<column label="Nombre paciente"
+									align="left" />
+							</columns>
+							<rows id="rowFacturas" />
+							<foot>
+								<footer span="5" align="center">
+									<grid>
+										<columns visible="false">
+											<column label=""
+												width="90px" />
+											<column label="" width="" />
+											<column label=""
+												width="90px" />
+											<column label="" width="" />
+											<column label=""
+												width="90px" />
+											<column label="" width="" />
+										</columns>
+										<rows id="rowContedorValores">
+											<row>
+												<cell>
+													<label
+														id="lbFecha_factura" value="Fecha Fact: " />
+												</cell>
+												<cell>
+													<datebox
+														id="dtbxFecha_factura" format="dd/MM/yyyy" hflex="1" />
+												</cell>
+												<cell>
+													<label
+														value="Total facturado" style="font-size:11px" />
+												</cell>
+
+												<cell>
+													<doublebox
+														id="dtxTotalFacturadoSum" value="0.0" hflex="1"
+														readonly="true" format="#,##0.00"
+														style="text-align:right" />
+												</cell>
+											</row>
+											<row>
+												<cell>
+													<label
+														value="Total cobrar: " style="font-size:11px" />
+												</cell>
+												<cell>
+													<doublebox
+														id="dtxTotalFactura" value="0.0" hflex="1"
+														format="#,##0.00" style="text-align:right" />
+												</cell>
+												<cell>
+													<label
+														value="Total Facturas: " style="font-size:11px" />
+												</cell>
+												<cell>
+													<intbox
+														id="ibxTotalFacturas" value="0" hflex="1" readonly="true"
+														style="text-align:right" />
+												</cell>
+												<cell>
+													<label
+														value="Retefuente: " style="font-size:11px" />
+												</cell>
+												<cell>
+													<doublebox
+														id="dtxretefuente" value="0.0" hflex="1" readonly="true"
+														format="#,##0.00" style="text-align:right" />
+												</cell>
+											</row>
+
+											<row>
+												<cell>
+													<label
+														value="Año retefuente: " style="font-size:11px" />
+												</cell>
+												<cell>
+													<listbox
+														id="lbxAnioRetefuente" mold="select" sclass="combobox"
+														hflex="1" />
+												</cell>
+												<cell>
+													<label
+														value="Base: " style="font-size:11px" />
+												</cell>
+												<cell>
+													<listbox
+														id="lbxBase" mold="select" sclass="combobox" hflex="1" />
+												</cell>
+												<cell>
+													<label
+														value="Neto pagar (Prefactura): " style="font-size:11px"
+														tooltiptext="En algunos casos segun sea el contrato con la eps este sera el valor de la prefactura enviado" />
+												</cell>
+												<cell>
+													<doublebox
+														id="dtxNetoPagar" value="0.0" hflex="1" format="#,##0.00"
+														style="text-align:right" />
+												</cell>
+											</row>
+										</rows>
+									</grid>
+								</footer>
+							</foot>
+						</grid>
+					</groupbox>
+					<space />
+				</div>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.MunicipiosDao">
+
+	
+
+	<resultMap id="municipiosMap" type="municipios">
+		<result column="codigo" property="codigo" />
+		<result column="coddep" property="coddep" />
+		<result column="nombre" property="nombre" />
+	</resultMap>
+
+	<insert id="crear" parameterType="municipios">
+		insert into public.municipios (codigo,coddep,
+		nombre)
+
+		values (#{codigo},#{coddep},
+		#{nombre})
+	</insert>
+
+	<update id="actualizar" parameterType="municipios">
+		update public.municipios set codigo = #{codigo},
+		coddep = #{coddep},nombre = #{nombre}
+		where coddep = #{coddep}
+		and codigo = #{codigo}
+	</update>
+
+	<select id="consultar" resultMap="municipiosMap" parameterType="municipios">
+		select codigo,coddep,
+		nombre
+		from public.municipios where coddep = #{coddep}
+		and codigo = #{codigo}
+	</select>
+
+	<delete id="eliminar" parameterType="municipios">
+		delete from public.municipios
+		where coddep = #{coddep}
+		and codigo = #{codigo}
+	</delete>
+
+	<select id="listar" resultMap="municipiosMap" parameterType="java.util.Map">
+		select codigo,coddep,
+		nombre
+		from public.municipios 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="coddep != null">AND coddep = #{coddep}</if>
+			<if test="parameter != null">AND ${parameter} like '${value}'</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

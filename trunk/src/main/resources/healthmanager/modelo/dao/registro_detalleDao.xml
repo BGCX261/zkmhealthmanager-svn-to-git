@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.Registro_detalleDao">
+
+	
+
+	<resultMap id="registro_detalleMap" type="registro_detalle">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="codigo_registro" property="codigo_registro" />
+		<result column="codigo_detalle" property="codigo_detalle" />
+		<result column="nro_identificacion" property="nro_identificacion" />
+	</resultMap>
+
+	<insert id="crear" parameterType="registro_detalle">
+		insert into public.registro_detalle (codigo_empresa,codigo_sucursal,
+		codigo_registro,codigo_detalle,nro_identificacion)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{codigo_registro},#{codigo_detalle},#{nro_identificacion})
+	</insert>
+
+	<update id="actualizar" parameterType="registro_detalle">
+		update public.registro_detalle set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},codigo_registro = #{codigo_registro},
+		codigo_detalle = #{codigo_detalle},nro_identificacion = #{nro_identificacion}
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and codigo_registro = #{codigo_registro}
+		and codigo_detalle = #{codigo_detalle}
+	</update>
+
+	<select id="consultar" resultMap="registro_detalleMap" parameterType="registro_detalle">
+		select codigo_empresa,codigo_sucursal,
+		codigo_registro,codigo_detalle,nro_identificacion
+		from public.registro_detalle where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_registro = #{codigo_registro}
+		and codigo_detalle = #{codigo_detalle}
+	</select>
+
+	<delete id="eliminar" parameterType="registro_detalle">
+		delete from public.registro_detalle
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_registro = #{codigo_registro}
+		and codigo_detalle = #{codigo_detalle}
+	</delete>
+
+	<select id="listar" resultMap="registro_detalleMap" parameterType="java.util.Map">
+		select codigo_empresa,codigo_sucursal,
+		codigo_registro,codigo_detalle,nro_identificacion
+		from public.registro_detalle 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">AND codigo_empresa = #{codigo_empresa}</if>
+			<if test="codigo_sucursal != null">AND codigo_sucursal = #{codigo_sucursal}</if>
+			<if test="parameter != null">AND ${parameter} like '${value}'</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

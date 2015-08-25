@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Consultorio_prestadorDao">
+
+	<!--<typeAlias alias="consultorio_prestador" type="healthmanager.modelo.bean.Consultorio_prestador" />-->
+
+	<!--<mapper resource="healthmanager/modelo/dao/xml/consultorio_prestadorSQL.xml" />-->
+
+	<resultMap id="consultorio_prestadorMap" type="consultorio_prestador">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="codigo_consultorio" property="codigo_consultorio" />
+		<result column="codigo_prestador" property="codigo_prestador" />
+	</resultMap>
+
+	<insert id="crear" parameterType="consultorio_prestador">
+		insert into public.consultorio_prestador (codigo_empresa,codigo_sucursal,
+		codigo_consultorio,codigo_prestador)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{codigo_consultorio},#{codigo_prestador})
+	</insert>
+
+	<update id="actualizar" parameterType="consultorio_prestador">
+		update public.consultorio_prestador set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},codigo_consultorio = #{codigo_consultorio},
+		codigo_prestador = #{codigo_prestador}
+		where 		codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and codigo_consultorio = #{codigo_consultorio}
+		and codigo_prestador = #{codigo_prestador}
+	</update>
+
+	<select id="consultar" parameterType="consultorio_prestador" resultMap="consultorio_prestadorMap">
+		select codigo_empresa,codigo_sucursal,
+		codigo_consultorio,codigo_prestador
+		from public.consultorio_prestador where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_consultorio = #{codigo_consultorio}
+		and codigo_prestador = #{codigo_prestador}
+	</select>
+
+	<delete id="eliminar" parameterType="consultorio_prestador">
+		delete from public.consultorio_prestador
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_consultorio = #{codigo_consultorio}
+		<if test="codigo_prestador != null">and codigo_prestador = #{codigo_prestador}</if>
+		
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="consultorio_prestadorMap">
+		select codigo_empresa,codigo_sucursal,
+		codigo_consultorio,codigo_prestador
+		from public.consultorio_prestador 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="codigo_consultorio != null">and codigo_consultorio = #{codigo_consultorio}</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from public.consultorio_prestador 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.historia_clinica4Model">
+    <select id="select" resultType="java.util.HashMap" parameterType="java.util.Map">
+    select h.nro_historia,h.nro_identificacion as id_pct,h.nota_referencia,h.impresion_diagnostica as dx,
+dx.nombre as nombre_dx,h.relacionado_1 as r1,r1.nombre as nombre_r1,h.relacionado_2 as r2,r2.nombre as nombre_r2,
+h.relacionado_3 as r3,r3.nombre as nombre_r3,h.finalidad_cons,fc.descripcion as fc, h.causas_externas,ce.descripcion as ce,
+h.codigo_consulta_pyp,pp.nombre_pcd as ccpyp, h.codigo_programa,p.nombre as nomcp,
+tp1.descripcion as tp1,tp2.descripcion as tp2,tp3.descripcion as tp3, td.descripcion as td,
+h.plan,h.codigo_prestador,pres.nombres as nom_pres,
+pres.apellidos as ape_pres,pres.registro_medico
+from historia_clinica_uci h
+left join cie dx on (dx.codigo = h.impresion_diagnostica)
+left join cie r1 on (r1.codigo = h.relacionado_1)
+left join cie r2 on (r2.codigo = h.relacionado_2)
+left join cie r3 on (r3.codigo = h.relacionado_3)
+left join elemento fc on (fc.tipo = 'finalidad_cons' and fc.codigo = h.finalidad_cons)
+left join elemento ce on (ce.tipo = 'causa_externa' and ce.codigo = h.causas_externas)
+left join elemento td on (td.tipo = 'tipo_diagnostico' and td.codigo = h.tipo_disnostico)
+left join elemento tp1 on (tp1.tipo = 'tipo_diagnostico' and tp1.codigo = h.tipo_relacionado_1)
+left join elemento tp2 on (tp2.tipo = 'tipo_diagnostico' and tp1.codigo = h.tipo_relacionado_2)
+left join elemento tp3 on (tp3.tipo = 'tipo_diagnostico' and tp1.codigo = h.tipo_relacionado_3)
+left join plantilla_pyp pp on (pp.area_intervencion = h.finalidad_cons and pp.codigo_pdc = h.codigo_consulta_pyp)
+left join pyp p on (p.codigo_empresa = h.codigo_empresa and p.codigo_sucursal = h.codigo_sucursal and p.codigo = h.codigo_programa)
+left join prestadores pres on (pres.codigo_empresa = h.codigo_empresa
+and pres.codigo_sucursal = h.codigo_sucursal and pres.nro_identificacion = h.codigo_prestador)
+	where h.codigo_empresa = #{codigo_empresa}
+    and h.codigo_sucursal = #{codigo_sucursal}
+    and h.nro_historia = #{nro_historia}
+    </select>
+   
+</mapper>

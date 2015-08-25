@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Paquetes_serviciosDao">
+
+	<resultMap id="paquetes_serviciosMap" type="paquetes_servicios">
+		<result column="id" property="id" />
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="nombre_paquete" property="nombre_paquete" />
+		<result column="codigo_cups" property="codigo_cups" />
+		<result column="id_procedimiento_principal" property="id_procedimiento_principal" />
+		<result column="valor" property="valor" />
+		<result column="via_ingreso" property="via_ingreso" />
+		<result column="creacion_date" property="creacion_date" />
+		<result column="creacion_user" property="creacion_user" />
+	</resultMap>
+
+	<insert id="crear" parameterType="paquetes_servicios">
+		<selectKey keyProperty="id" resultType="java.lang.Long" >
+			insert into public.paquetes_servicios (codigo_empresa,codigo_sucursal,
+		nombre_paquete,codigo_cups,id_procedimiento_principal,valor,
+		via_ingreso,
+		creacion_date,creacion_user)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{nombre_paquete},#{codigo_cups},#{id_procedimiento_principal},#{valor},
+		#{via_ingreso},
+		#{creacion_date},#{creacion_user}) 
+		returning id;
+		</selectKey>
+	</insert>
+
+	<update id="actualizar" parameterType="paquetes_servicios">
+		update public.paquetes_servicios set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},nombre_paquete = #{nombre_paquete},
+		codigo_cups = #{codigo_cups},
+		id_procedimiento_principal = #{id_procedimiento_principal},valor = #{valor},
+		via_ingreso = #{via_ingreso}, 
+		creacion_date = #{creacion_date},creacion_user = #{creacion_user} 
+		where 		id = #{id}
+	</update>
+
+	<select id="consultar" parameterType="paquetes_servicios" resultMap="paquetes_serviciosMap">
+		select id,
+		codigo_empresa,codigo_sucursal,
+		nombre_paquete,codigo_cups,id_procedimiento_principal,valor,
+		via_ingreso,
+		creacion_date,creacion_user    
+		from public.paquetes_servicios where id = #{id}
+	</select>
+
+	<delete id="eliminar" parameterType="paquetes_servicios">
+		delete from public.paquetes_servicios
+		where id = #{id}
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="paquetes_serviciosMap">
+		select id,
+		codigo_empresa,codigo_sucursal,
+		nombre_paquete,codigo_cups,id_procedimiento_principal,valor,
+		via_ingreso,
+		creacion_date,creacion_user 
+		from public.paquetes_servicios 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="nombre_paquete != null">
+			AND nombre_paquete ilike '%${nombre_paquete}%'
+			</if>
+			<if test="via_ingreso != null">
+			AND via_ingreso = #{via_ingreso}
+			</if>
+		</trim>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from public.paquetes_servicios 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="via_ingreso != null">
+			AND via_ingreso = #{via_ingreso}
+			</if>
+		</trim>
+	</select>
+
+</mapper>

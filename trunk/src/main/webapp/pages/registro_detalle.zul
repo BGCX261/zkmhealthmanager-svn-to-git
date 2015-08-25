@@ -1,0 +1,192 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+
+ <window id="formRegistro_detalle" width="100%" height="100%" use="healthmanager.controller.Registro_detalleAction" >
+<style src="estilo.css" />
+<style>
+body ,table{
+	margin:0;
+	padding:0;
+	
+}
+.z-fieldset{
+	-moz-border-radius:5px;
+	border-radius: 5px;
+	-webkit-border-radius: 5px;
+}
+.combobox{
+	font-size:12px;
+	border: 1px solid silver;
+}
+
+tr.z-row .z-cell{
+	background-image:none;
+}
+
+tr.z-row td.z-row-inner{
+	background-image:none;
+}
+</style>
+<borderlayout width="100%" height="100%">
+<center autoscroll="true" border="none">
+<!-- *********************** -->
+<!--        Principal        -->
+<!-- *********************** -->
+<groupbox id="groupboxPrincipal">
+
+<!-- **************** -->
+<!-- Zona de Consulta -->
+<!-- **************** -->
+<groupbox id="groupboxConsulta" visible="true" closable="false" style="border:0;padding:0">
+
+<toolbar sclass="vista">
+<label value="Criterios de B&#250;squeda :" />
+<listbox id="lbxParameter" mold="select" sclass="combobox" width="150px" visible="true"/>
+<textbox id="tbxValue" width="200px" onOK="formRegistro_detalle.buscarDatos();" style="text-transform:uppercase" visible="true"/>
+<toolbarbutton image="/images/Magnifier.gif" onClick="formRegistro_detalle.buscarDatos();" Label="Consultar" tooltiptext="Consultar Detalles" id="btConsultar"/>
+<toolbarbutton image="/images/New16.gif" onClick='formRegistro_detalle.accionForm(true,"registrar");' label="Nuevo Detalle" tooltiptext="Nuevo Detalle" id="btNew"/>
+</toolbar>
+
+<space/>
+
+<!-- ***************************** -->
+<!--  Resultado Consulta Maestros  -->
+<!-- ***************************** -->
+<grid id="gridResultado" height="300px" mold="paging" pageSize="20">
+<columns sizable="true">
+	<!-- <column label="Codigo Registro" align="center"/> -->
+	<column label="Codigo Detalle" align="center"/>
+	<column label="Nro Identificacion" align="center"/>
+	<column label="Nombre" align="center"/>
+	<column label="Acciones" align="center" width="80px"/>
+</columns>
+<rows id="rowsResultado" width="100%" />
+</grid>
+</groupbox>
+
+<!-- *************************** -->
+<!-- *** Insertar/Actualizar *** -->
+<!-- *************************** -->
+<groupbox visible="false" id="groupboxEditar" closable="false" >
+
+<!-- *************************** -->
+<!-- **** Barra de Botones ***** -->
+<!-- *************************** -->
+
+<toolbar width="100%" align="start">
+<textbox id="tbxAccion" value="registrar" visible="false"/>
+<toolbarbutton image="/images/Save16.gif" tooltiptext="Guardar Datos" label="Guardar Datos" onClick="formRegistro_detalle.guardarDatos();" id="btGuardar"/>
+<toolbarbutton image="/images/New16.gif" label="Nuevo" onClick='formRegistro_detalle.accionForm(true,"registrar");' tooltiptext="Nuevo Registro_detalle" id="btNuevo"/>
+<toolbarbutton image="/images/cancel.jpg" label="Regresar a Consulta" tooltiptext="Regresar a Consulta" onClick='formRegistro_detalle.accionForm(false,"consultar");' id="btCancelar"/>
+</toolbar>
+
+<space/>
+<grid sclass="GridSinBorde" >
+<columns>
+<column label="" width="16%"/>
+<column label="" width="34%"/>
+<column label="" width="13%"/>
+<column label="" width="37%"/>
+</columns>
+<rows>
+
+<!-- fila 1 -->
+<row>
+<cell></cell>
+<cell><textbox id="tbxDetalle" value="1" visible="false"/></cell>
+<cell><textbox id="tbxCodigo_detalle" width="170px" style="text-transform:uppercase" visible="false"/></cell>
+<cell></cell>
+</row>
+
+<!-- fila 2 -->
+
+
+<row>
+<cell><label value="* " style="color: red" tooltiptext="Campo obligatorio"/><label id="lbNro_identificacion" value="Paciente: "/></cell>
+<cell>
+<bandbox id="tbxNro_identificacion" autodrop="true" readonly="true" width="170px" onOpen='formRegistro_detalle.buscarPaciente(tbxNro_identificacion.getValue(),lbxPaciente)'>
+<bandpopup>
+	<vbox>
+		<toolbar>
+			<label value="Buscar: "/>
+		    <textbox id="tbxValuePaciente" onChanging='formRegistro_detalle.buscarPaciente(event.getValue(),lbxPaciente)' style="text-transform:uppercase;"/>
+		    <toolbarbutton image="/images/borrar.gif" tooltiptext="Quitar" onClick='formRegistro_detalle.selectedPaciente(new Listitem())'/>
+		</toolbar>
+		<listbox height="300px" width="600px" mold="paging" pageSize="8" id="lbxPaciente"
+		    onSelect='formRegistro_detalle.selectedPaciente(self.getSelectedItem())' >
+		    <listhead>
+		    <listheader label="Tipo Ident." width="65px"/>
+		    <listheader label="Identificación"/>
+		    <listheader label="Nombres"/>
+		    <listheader label="Apellidos"/>
+		    </listhead>
+		</listbox>
+	</vbox>
+  </bandpopup>
+</bandbox>
+</cell>
+<cell colspan="2">
+<label id="lbTipoIdentificacion" value="Tipo: "/><space></space>
+<textbox id="tbxTipoIdentificacion" width="40px" style="text-transform:uppercase" readonly="true"/>
+</cell>
+</row>
+
+<!-- fila 3 -->
+<row>
+<cell><label id="lbNomPaciente" value="Nombre: "/></cell>
+<cell><textbox id="tbxNomPaciente" width="320px" style="text-transform:uppercase" readonly="true"/></cell>
+<cell colspan="2">
+<hlayout>
+<label id="lbNacimiento" value="Fecha de Nacimiento: "/><space></space>
+<datebox id="dbxNacimiento" width="120px" style="text-transform:uppercase" disabled="disabled" format="yyyy-MM-dd" readonly="true"/><space></space>
+<label id="lbEdad" value="Edad: "/>
+<textbox id="tbxEdad" width="30px" style="text-transform:uppercase" readonly="true"/><space></space>
+<label id="lbSexo" value="Sexo: "/>
+<textbox id="tbxSexo" width="80px" style="text-transform:uppercase" readonly="true"/>
+</hlayout>
+</cell>
+</row>
+
+<!-- fila 4 -->
+<row>
+<cell><label id="lbOcupacion" value="Ocupación: "/></cell>
+<cell><textbox id="tbxOcupacion" width="320px" style="text-transform:uppercase" readonly="true"/></cell>
+<cell><label id="lbEducacion" value="Nivel Educativo: "/></cell>
+<cell><textbox id="tbxEducacion" width="320px" style="text-transform:uppercase" readonly="true"/></cell>
+</row>
+
+
+<!-- fila 5 -->
+<row>
+<cell><label id="lbPerEtnica" value="Pertenencia Étnica: "/></cell>
+<cell><textbox id="tbxPerEtnica" width="320px" style="text-transform:uppercase" readonly="true"/></cell>
+<cell></cell>
+<cell></cell>
+</row>
+
+
+
+</rows>
+</grid>
+
+<tabbox id="tabboxDetalles" width="100%" vflex="1">
+	<tabs>
+		<tab label="RIESGOS" id="tabRiesgo"/>
+		<tab label="INTERVENCIONES" id="tabIntervenciones"/>
+		<tab label="NOVEDADES" id="tabNovedades"/>
+		
+	</tabs>
+	<tabpanels>
+		<tabpanel id="tabpanelRiesgo" height="700px"></tabpanel>
+		<tabpanel id="tabpanelIntervenciones" height="700px"></tabpanel>
+		<tabpanel id="tabpanelNovedades" height="700px"></tabpanel>
+		
+	</tabpanels>
+</tabbox>
+
+</groupbox>
+</groupbox>
+</center>
+</borderlayout>
+</window>
+</zk>

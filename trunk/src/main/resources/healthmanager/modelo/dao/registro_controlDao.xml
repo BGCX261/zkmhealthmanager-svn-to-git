@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.Registro_controlDao">
+
+	
+
+	<resultMap id="registro_controlMap" type="registro_control">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="codigo_registro" property="codigo_registro" />
+		<result column="codigo_eps" property="codigo_eps" />
+		<result column="fecha_inicial" property="fecha_inicial" />
+		<result column="fecha_final" property="fecha_final" />
+		<result column="num_registros" property="num_registros" />
+	</resultMap>
+
+	<insert id="crear" parameterType="registro_control">
+		insert into public.registro_control (codigo_empresa,codigo_sucursal,
+		codigo_registro,codigo_eps,fecha_inicial,
+		fecha_final,num_registros)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{codigo_registro},#{codigo_eps},#{fecha_inicial},
+		#{fecha_final},#{num_registros})
+	</insert>
+
+	<update id="actualizar" parameterType="registro_control">
+		update public.registro_control set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},codigo_registro = #{codigo_registro},
+		codigo_eps = #{codigo_eps},fecha_inicial = #{fecha_inicial},
+		fecha_final = #{fecha_final},num_registros = #{num_registros}
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and codigo_registro = #{codigo_registro}
+	</update>
+
+	<select id="consultar" resultMap="registro_controlMap" parameterType="registro_control">
+		select codigo_empresa,codigo_sucursal,
+		codigo_registro,codigo_eps,fecha_inicial,fecha_final,
+		num_registros
+		from public.registro_control where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_registro = #{codigo_registro}
+	</select>
+
+	<delete id="eliminar" parameterType="registro_control">
+		delete from public.registro_control
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_registro = #{codigo_registro}
+	</delete>
+
+	<select id="listar" resultMap="registro_controlMap" parameterType="java.util.Map">
+		select codigo_empresa,codigo_sucursal,
+		codigo_registro,codigo_eps,fecha_inicial,fecha_final,
+		num_registros
+		from public.registro_control 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">AND codigo_empresa = #{codigo_empresa}</if>
+			<if test="codigo_sucursal != null">AND codigo_sucursal = #{codigo_sucursal}</if>
+			<if test="parameter != null">AND ${parameter} like '${value}'</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

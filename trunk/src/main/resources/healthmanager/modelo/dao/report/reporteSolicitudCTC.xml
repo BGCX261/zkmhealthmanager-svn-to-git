@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.reporte_solicitudCTCModel">
+    <select id="select" resultType="java.util.HashMap" parameterType="java.util.Map">
+		SELECT
+		solicitud_tecnico.codigo,
+		solicitud_tecnico.nro_identificacion,
+		solicitud_tecnico.resumen_historia,
+		solicitud_tecnico.tratamiento_actual,
+		solicitud_tecnico.justificacion,
+		solicitud_tecnico.codigo_empresa,
+		solicitud_tecnico.codigo_sucursal,
+		cie.nombre AS diasnotico,
+		paciente.nro_identificacion,
+		paciente.apellido1,
+		paciente.apellido2,
+		paciente.nombre1,
+		paciente.nombre2,
+		paciente.fecha_nacimiento,
+		afiliaciones_me.fecha_afiliacion,
+		paciente.tipo_afiliado,
+		to_char(solicitud_tecnico.creacion_date, 'dd          MM        YYYY') creacion_date,
+		to_char(round((((EXTRACT(EPOCH FROM now())-EXTRACT(EPOCH FROM paciente.fecha_nacimiento))/100)/864)/365)::real, '9     9') AS edad,
+		usuarios.nombres,
+		esp.nombre AS especialidad,
+		usuarios.registro_medico,
+		usuarios.tel_res,
+		usuarios.email,
+		dtt1.codigo_medicamento AS codigo_med1,
+		  dtt1.consecutivo AS nro1,
+			'' AS nom_medicamento1,
+			'' AS presentacion1,
+			'' AS consentracion1,
+			via_1.descripcion AS via1,
+			dtt1.dosis_diaria::varchar AS disis1,
+			dtt1.dia_tto::varchar AS dias1,
+			(dtt1.dosis_diaria * dtt1.dia_tto)::varchar AS total1,
+			dtt2.codigo_medicamento AS codigo_med2,
+		     dtt2.consecutivo AS nro2,
+			'' AS nom_medicamento2,
+			'' AS presentacion2,
+			'' AS consentracion2,
+			via_2.descripcion AS via2,
+			dtt2.dosis_diaria::varchar AS disis2,
+			dtt2.dia_tto::varchar AS dias2,
+			(dtt2.dosis_diaria * dtt2.dia_tto)::varchar AS total2,
+			dtt3.codigo_medicamento AS codigo_med3,
+		  dtt3.consecutivo AS nro3,
+			'' AS nom_medicamento3,
+			'' AS presentacion3,
+			'' AS consentracion3,
+			via_3.descripcion AS via3,
+			dtt3.dosis_diaria::varchar AS disis3,
+			dtt3.dia_tto::varchar AS dias3,
+			(dtt3.dosis_diaria * dtt3.dia_tto)::varchar AS total3,
+			usuarios.codigo AS codigo_medico
+		
+		FROM solicitud_tecnico
+		INNER JOIN paciente ON paciente.codigo_empresa = solicitud_tecnico.codigo_empresa AND paciente.codigo_sucursal = solicitud_tecnico.codigo_sucursal AND paciente.nro_identificacion = solicitud_tecnico.nro_identificacion
+		LEFT JOIN afiliaciones_me ON afiliaciones_me.codigo_empresa = paciente.codigo_empresa AND afiliaciones_me.codigo_sucursal = paciente.codigo_sucursal AND afiliaciones_me.nro_identificacion_afiliado = paciente.nro_identificacion
+		INNER JOIN cie ON cie.codigo = solicitud_tecnico.diasnotico
+		INNER JOIN usuarios ON usuarios.codigo_empresa = solicitud_tecnico.codigo_empresa AND usuarios.codigo_sucursal = solicitud_tecnico.codigo_sucursal AND usuarios.codigo = solicitud_tecnico.creacion_user
+		LEFT JOIN public.especialidad AS esp ON esp.codigo = usuarios.codigo_especialidad
+		LEFT JOIN elemento ON elemento.tipo = 'especialidad' AND elemento.codigo = usuarios.codigo_especialidad
+		
+		
+		LEFT JOIN detalle_solicitud_tecnico as dtt1 ON dtt1.codigo_empresa = solicitud_tecnico.codigo_empresa AND dtt1.codigo_sucursal = solicitud_tecnico.codigo_sucursal AND dtt1.codigo_solicitud_tecnico = solicitud_tecnico.codigo AND dtt1.consecutivo = '1'
+		LEFT JOIN elemento AS via_1 ON via_1.tipo = 'via_administracion_receta' AND via_1.codigo = dtt1.via_administracion
+		
+		LEFT JOIN detalle_solicitud_tecnico as dtt2 ON dtt2.codigo_empresa = solicitud_tecnico.codigo_empresa AND dtt2.codigo_sucursal = solicitud_tecnico.codigo_sucursal AND dtt2.codigo_solicitud_tecnico = solicitud_tecnico.codigo AND dtt2.consecutivo = '2'
+		LEFT JOIN elemento AS via_2 ON via_2.tipo = 'via_administracion_receta' AND via_2.codigo = dtt2.via_administracion
+		
+		LEFT JOIN detalle_solicitud_tecnico as dtt3 ON dtt3.codigo_empresa = solicitud_tecnico.codigo_empresa AND dtt3.codigo_sucursal = solicitud_tecnico.codigo_sucursal AND dtt3.codigo_solicitud_tecnico = solicitud_tecnico.codigo AND dtt3.consecutivo = '3'
+		LEFT JOIN elemento AS via_3 ON via_3.tipo = 'via_administracion_receta' AND via_3.codigo = dtt3.via_administracion
+   
+        WHERE solicitud_tecnico.codigo_empresa = #{codigo_empresa}
+        AND solicitud_tecnico.codigo_sucursal = #{codigo_sucursal}
+        <if test="nro_identificacion != null">
+           AND solicitud_tecnico.nro_identificacion = #{nro_identificacion}
+        </if>
+        <if test="codigo != null">
+           AND solicitud_tecnico.codigo = #{codigo}
+        </if>
+   </select>
+   
+</mapper>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.receta_rips2Model">
+    <select id="select" resultType="java.util.HashMap" parameterType="java.util.Map">
+	SELECT
+		pct.apellido1 AS apellido1_pct,
+		pct.apellido2 AS apellido2_pct,
+		pct.nombre1 AS nombre1_pct,
+		pct.nombre2 AS nombre2_pct,
+		pct.nro_identificacion,
+		pct.fecha_nacimiento,
+		'' as edad_paciente,
+		adm.nombre as nombre_administradora,
+		s.codigo_receta,
+		med.nro_identificacion as codigo_medico,
+		med.apellidos AS apellido_med,
+		med.nombres AS nombre_med,
+		med.registro_medico,
+		s.observaciones as observaciones_receta,
+		s.fecha,
+		d.codigo_articulo,
+		'' AS articulo,
+		eva.descripcion as via_administracion,
+		d.cantidad_recetada AS cantidad,
+		d.posologia,
+		d.tiempo_tto,
+		s.tipo_receta,
+		c.codigo||' - '||c.nombre as dx
+	FROM
+		receta_rips s
+	INNER JOIN detalle_receta_rips d ON (
+		d.codigo_empresa = s.codigo_empresa
+		AND d.codigo_sucursal = s.codigo_sucursal
+		AND d.codigo_receta = s.codigo_receta
+	)
+	LEFT JOIN elemento eva ON (
+		d.via_administracion = eva.codigo and 
+		eva.tipo = 'via_administracion_receta'
+	)
+	LEFT JOIN paciente pct ON (
+		pct.codigo_empresa = s.codigo_empresa
+		AND pct.codigo_sucursal = s.codigo_sucursal
+		AND pct.nro_identificacion = s.nro_identificacion
+	)
+	LEFT JOIN administradora adm ON (
+	adm.codigo = pct.codigo_administradora and 
+	adm.codigo_empresa = pct.codigo_empresa and 
+	adm.codigo_sucursal = pct.codigo_sucursal
+	)
+	LEFT JOIN prestadores med ON (
+		med.codigo_empresa = s.codigo_empresa
+		AND med.codigo_sucursal = s.codigo_sucursal
+		AND med.nro_identificacion = s.codigo_prestador
+	)
+	LEFT JOIN cie c on c.codigo = s.codigo_dx
+	where s.codigo_empresa = #{codigo_empresa}
+	and s.codigo_sucursal = #{codigo_sucursal}
+	and s.codigo_receta = #{codigo_receta}
+	order by d.consecutivo
+    </select>
+   
+</mapper>

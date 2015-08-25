@@ -1,0 +1,614 @@
+<?page title="Contratos" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formContrato" width="100%" height="99%"
+		use="healthmanager.controller.ContratosAction">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+		<groupbox id="groupboxConsulta" visible="true" closable="false"
+			mold="3d" height="100%">
+
+			<caption label="Consultar contratos registrados">
+				<toolbarbutton image="/images/configuracion_mini.png"
+					visible="false" label="Validar Contratos"
+					onClick="" />
+			</caption>
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" height="100%" vflex="1">
+				<auxhead>
+					<auxheader colspan="10">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<separator />
+							<textbox id="tbxValue" width="200px"
+								onOK="formContrato.buscarDatos();"
+								style="text-transform:uppercase" />
+							<separator />
+							<toolbarbutton image="/images/Magnifier.gif"
+								label="Consultar contratos"
+								onClick="formContrato.buscarDatos();"
+								tooltiptext="Consultar Contratos" />
+							<separator />
+							<toolbarbutton image="/images/New16.gif"
+								label="Nuevo contrato"
+								onClick='formContrato.accionForm(true,"registrar");'
+								tooltiptext="Nuevo Contrato" />
+							<space />
+							<separator />
+							<hlayout id="hlayoutManager"
+								visible="false">
+								<image tooltiptext="Anterior"
+									style="cursor:pointer" src="/images/back.png"
+									id="imageManager_back" />
+								<intbox style="text-align:center"
+									id="intboxManager_pagina" width="40px" />
+								<label id="labelManager_paginas"
+									style="font-weight:bold" value=" / 100" />
+								<image tooltiptext="Siguiente"
+									style="cursor:pointer" src="/images/next.png"
+									id="imageManager_next" />
+								<space width="10px" />
+								<label id="labelInfoPaginas" value=""
+									style="font-weight:bold" />
+							</hlayout>
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Id Contrato" width="100px" />
+					<column label="Cod Admin" width="80px" />
+					<column label="Administradora" />
+					<column label="Nro Contrato" width="100px" />
+					<column label="Nombre contrato" width="230px" />
+					<column label="Manual" width="100px" />
+					<column label="Tipo contrato" width="150px" />
+					<column label="Cerrado" width="80px" />
+					<column label="Acciones" align="center"
+						width="100px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<borderlayout width="100%" height="99%" id="groupboxEditar"
+			visible="false">
+			<north border="none">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<toolbarbutton image="/images/Save16.gif"
+						label="Guardar Contrato" onClick="formContrato.guardarDatos();"
+						id="btGuardar" />
+					<toolbarbutton image="/images/New16.gif"
+						label="Nuevo Contrato"
+						onClick='formContrato.accionForm(true,"registrar");' id="btNew" />
+					<space />
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Buscar"
+						onClick='formContrato.accionForm(false,tbxAccion.getText());'
+						id="btCancel" />
+					<space />
+
+					<toolbarbutton image="/images/Save16.gif"
+						label="Realizar copia del contrato" id="btCopiaContrato"
+						visible="false" onClick="formContrato.crearCopiaDelContrato()" />
+
+					<toolbarbutton image="/images/generar.png"
+						label="Guardar en modo Multiple"
+						onClick="formContrato.guardarMultiple()" id="btGuardarMultiple"
+						visible="false" />
+
+					<space />
+
+					<toolbarbutton image="/images/reemplazar.png"
+						label="Alimentar otros contratos"
+						onClick="formContrato.onAlimentarOtrosContratos()"
+						id="btAlimentar_otros" visible="true" />
+
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center">
+					<space />
+
+					<!-- *************************** -->
+					<!-- *** Insertar/Actualizar *** -->
+					<!-- *************************** -->
+					<groupbox closable="false" width="795px"
+						mold="3d">
+
+						<grid sclass="GridSinBorde">
+							<auxhead>
+								<auxheader label="MODULO DE CONTRATOS"
+									align="center" colspan="4" />
+							</auxhead>
+							<columns visible="false">
+								<column label="" align="left" />
+
+
+							</columns>
+
+							<rows>
+								<!-- Datos del contrato -->
+								<row>
+									<cell>
+										<groupbox closable="false"
+											mold="3d">
+											<caption
+												label="Datos del contrato">
+											</caption>
+											<grid
+												sclass="GridSinBorde">
+												<columns
+													visible="false">
+													<column label=""
+														width="120px" align="left" />
+													<column label=""
+														align="left" width="250px" />
+													<column label=""
+														width="150px" align="left" />
+													<column label=""
+														align="left" />
+
+												</columns>
+												<rows>
+
+													<!-- fila 1 -->
+													<row>
+														<cell>
+															<label
+																value="* " style="color: red"
+																tooltiptext="Campo obligatorio" />
+															<label
+																id="lbId_plan" value=" ID Contrato: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxId_plan" width="170px" readonly="true"
+																style="text-transform:uppercase" maxlength="20" />
+														</cell>
+														<cell>
+															<label
+																id="lbNro_contrato" value="Nro contrato: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxNro_contrato" width="170px"
+																style="text-transform:uppercase" maxlength="50" />
+														</cell>
+
+													</row>
+
+													<!-- fila 2 -->
+													<row>
+
+														<cell>
+															<label
+																value="* " style="color: red"
+																tooltiptext="Campo obligatorio" />
+															<label
+																id="lbNombre" value="Nombre Contrato: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxNombre" width="170px"
+																style="text-transform:uppercase" maxlength="30" />
+														</cell>
+														<cell>
+															<label
+																id="lbTipo_usuario" value="Regimen: " />
+														</cell>
+														<cell>
+															<listbox
+																id="lbxTipo_usuario" name="regimen" mold="select"
+																sclass="combobox" width="175px" />
+														</cell>
+
+													</row>
+
+													<row>
+														<cell>
+															<label
+																value="* " style="color: red"
+																tooltiptext="Campo obligatorio" />
+															<label
+																id="lbCobrar_copago" value="Cobrar copago: " />
+														</cell>
+														<cell>
+															<hlayout
+																valign="middle">
+																<checkbox
+																	id="chkCobrar_copago" />
+																<space
+																	width="5px" />
+																<label
+																	value="marcar si desea cobrar copago"
+																	style="font-size:x-small" />
+															</hlayout>
+														</cell>
+														<cell
+															colspan="2">
+															<hlayout
+																valign="middle">
+																<label
+																	value="* " style="color: red"
+																	tooltiptext="Campo obligatorio" />
+																<label
+																	id="lbSubcontratacion" value="Subcontratación: " />
+
+																<checkbox
+																	id="chkSubcontratacion"
+																	onCheck="formContrato.onCheckSubcontratacion()" />
+																<space
+																	width="5px" />
+																<label
+																	value="marcar si desea es subcontratación"
+																	style="font-size:x-small" />
+															</hlayout>
+														</cell>
+													</row>
+
+
+													<!-- fila 3 -->
+													<row>
+														<cell>
+															<label
+																value="* " style="color: red"
+																tooltiptext="Campo obligatorio" />
+															<label
+																id="lbCodigo_administradora" value="Aseguradora: " />
+														</cell>
+														<cell
+															colspan="3">
+															<hlayout>
+
+																<bandboxRegistros
+																	id="tbxCodigo_administradora" widthBandbox="177px"
+																	widthListbox="600px" heightListbox="300px"
+																	columnas="Codigo#65px|Nombres|Nit#100px" />
+																<textbox
+																	id="tbxInfoAseguradora" width="385px"
+																	style="text-transform:uppercase" readonly="true" />
+
+																<toolbarbutton
+																	id="btnLimpiarAseguradora" image="/images/borrar.gif" />
+															</hlayout>
+														</cell>
+
+
+													</row>
+
+													<row>
+														<cell>
+															<label
+																id="lbCuenta_ingreso" value="Cuenta de ingreso: " />
+														</cell>
+														<cell
+															colspan="3">
+															<hlayout>
+
+																<bandboxRegistros
+																	id="tbxCuenta_ingreso" widthBandbox="177px"
+																	widthListbox="800px" heightListbox="300px"
+																	columnas="Codigo#65px|Nombre|Sub Cta#65px|Tipo Cuenta#100px|Grupo Cuenta#100px|Oculto#65px|Inact#65px|MT#65px" />
+																<textbox
+																	id="tbxNomCuenta_ingreso" width="385px"
+																	style="text-transform:uppercase" readonly="true" />
+																<toolbarbutton
+																	id="btnLimpiarCuenta_ingreso"
+																	image="/images/borrar.gif" />
+															</hlayout>
+														</cell>
+
+
+													</row>
+
+													<!-- fila 4 -->
+													<row>
+
+														<cell>
+															<label
+																value="* " style="color: red"
+																tooltiptext="Campo obligatorio" />
+															<label
+																id="lbFecha_inicio" value="Fecha inicial: " />
+														</cell>
+														<cell>
+															<datebox
+																id="dtbxFecha_inicio" format="dd/MM/yyyy" width="177px"
+																onBlur="formContrato.calcularValorMes()" />
+														</cell>
+														<cell>
+															<label
+																value="* " style="color: red"
+																tooltiptext="Campo obligatorio" />
+															<label
+																id="lbFecha_fin" value="Fecha final: " />
+														</cell>
+														<cell>
+
+															<datebox
+																id="dtbxFecha_fin" format="dd/MM/yyyy" width="177px"
+																onBlur="formContrato.calcularValorMes()" />
+														</cell>
+
+													</row>
+
+													<row>
+														<cell>
+															<label
+																value="Tipo de contrato:" />
+														</cell>
+														<cell>
+															<listbox
+																id="lbxTipo_facturacion" name="tipo_contrato"
+																mold="select" width="177px" sclass="combobox"
+																onSelect="formContrato.validarCampoCapitados();formContrato.validarPortabilidad(lbxTipo_facturacion)" />
+														</cell>
+														<cell>
+															<label
+																id="lbValorTotal" value="Valor total:" />
+														</cell>
+														<cell>
+															<doublebox
+																id="dbxValorTotal" width="170px" format="#,##0.00"
+																style="text-align:right" value="0.0"
+																onBlur="formContrato.calcularValorMes()" />
+														</cell>
+													</row>
+
+													<row
+														id="rowCantidades">
+														<cell>
+															<label
+																value="Cantidad usuarios:" />
+														</cell>
+														<cell>
+															<intbox
+																id="ibxCantidadUsuarios" width="170px"
+																style="text-align:right" value="0"
+																onBlur="formContrato.calcularValorUPC()" />
+														</cell>
+														<cell>
+															<label
+																value="Valor mensual:" />
+														</cell>
+														<cell>
+															<doublebox
+																id="dbxValorMensual" readonly="true" width="170px"
+																format="#,##0.00" style="text-align:right" value="0.0" />
+														</cell>
+													</row>
+
+
+													<row id="rowUpc">
+														<cell
+															height="30px">
+															<label
+																id="lbUpc_mes" style="font-size:10px"
+																value="Tarifa usuario mes: " />
+														</cell>
+														<cell>
+															<doublebox
+																id="dbxUpc_mes" format="#,##0.00" width="170px"
+																value="0.00" style="text-align:right" />
+														</cell>
+
+														<cell
+															height="30px">
+															<label
+																id="lbUpc_dia" value="Tarifa usuario dia: "
+																style="font-size:10px" />
+														</cell>
+														<cell>
+															<doublebox
+																id="dbxUpc_dia" format="#,##0.00" width="170px"
+																value="0.00" style="text-align:right" />
+														</cell>
+													</row>
+
+													<row
+														id="rowValor_oxigeno">
+														<cell>
+															<label
+																value="Cups del oxigeno" />
+														</cell>
+														<cell>
+															<textbox
+																value="893801" id="tbxCups_oxigeno" readonly="true"
+																width="170PX" />
+														</cell>
+														<cell>
+															<label
+																value="Valor oxigeno X lts" style="font-size:10px" />
+														</cell>
+														<cell>
+															<doublebox
+																id="dbxValor_oxigeno" format="#,##0.00" width="170px"
+																style="text-align:right" />
+														</cell>
+													</row>
+													<row>
+														<cell
+															height="30px">
+															<label
+																id="lbNivel" value="Nivel: " />
+														</cell>
+														<cell>
+															<listbox
+																id="lbxNivel" name="nivel" mold="select" width="170px"
+																sclass="combobox" />
+														</cell>
+														<cell>
+															<label
+																value="Autorizacion obligatoria" />
+														</cell>
+														<cell>
+															<checkbox
+																id="chkAutorizacion_obligatoria" onCheck="formContrato.onCheckAutorizaciones(true)" />
+															<space />
+															<toolbarbutton id="btnInfo_vias" label="Vias" image="/images/info_icon.png" popup="popupViasIngreso" />
+														</cell>
+													</row>
+												</rows>
+												<foot id="footAccion">
+													<footer span="4">
+														<div
+															align="center">
+															<hbox>
+																<label
+																	value="Calculo de factura capitada: "
+																	style="font-size:10px" />
+																<listbox
+																	id="lbxModoFacturacion" name="modo_factura_cap"
+																	mold="select" sclass="combobox" width="150px" />
+															</hbox>
+															<checkbox
+																label="cerrar contrato" id="chbCerrado"
+																style="color:red;font-weight:bold" visible="false" />
+														</div>
+													</footer>
+												</foot>
+											</grid>
+										</groupbox>
+
+									</cell>
+
+
+								</row>
+								<!-- Fin -->
+								<row style="background-color:white">
+									<cell></cell>
+								</row>
+								<!-- Fin -->
+
+
+								<!-- Manuales tarifarios contrato -->
+
+								<row style="background-color:white">
+									<cell>
+										<groupbox
+											id="manualTarifarioAdministradorMacro"
+											use="com.framework.macros.manuales_tarifarios.ManualTarifarioAdministradorMacro" />
+									</cell>
+								</row>
+
+								<!-- fin manuales tarifarios contratos  -->
+
+
+								<row>
+									<cell>
+										<groupbox>
+											<caption
+												label="Facturación por paquetes" />
+											<listbox
+												id="listboxPaquetes_servicios">
+												<auxhead>
+													<auxheader
+														colspan="6">
+														<hlayout>
+															<toolbarbutton
+																label="Agregar paquete de servicio"
+																image="/images/add.png" tooltiptext="Agregar detalle"
+																onClick="formContrato.agregarDetallePaquetes()" />
+															<space />
+															<checkbox
+																id="chkIncluir_paquetes" checked="true"
+																label="Mostrar detalles de la facturación de paquetes"
+																style="float:right" />
+														</hlayout>
+													</auxheader>
+												</auxhead>
+												<listhead>
+													<listheader
+														label="Código paquete" width="100px" />
+													<listheader
+														label="Código cups" width="100px" />
+													<listheader
+														label="Nombre del paquete" />
+													<listheader
+														label="Via de ingreso" />
+													<listheader
+														label="Valor" />
+													<listheader
+														width="30px" />
+												</listhead>
+											</listbox>
+										</groupbox>
+									</cell>
+								</row>
+
+								<!-- Fin -->
+								<!-- Manual tarifario -->
+								<row>
+									<cell>
+										<groupbox closable="false">
+											<caption
+												label="Observaciones">
+											</caption>
+											<grid
+												sclass="GridSinBorde">
+												<columns
+													visible="false">
+													<column label=""
+														width="120px" align="left" />
+													<column label=""
+														align="left" width="200px" />
+													<column label=""
+														width="100px" align="left" />
+													<column label=""
+														align="left" />
+
+												</columns>
+												<rows>
+
+													<!-- fila 1 -->
+													<row>
+														<cell
+															colspan="4">
+															<textbox
+																id="tbxObservacion" width="97%" rows="4"
+																style="text-transform:uppercase" />
+														</cell>
+
+													</row>
+												</rows>
+											</grid>
+										</groupbox>
+
+									</cell>
+								</row>
+
+							</rows>
+
+						</grid>
+					</groupbox>
+				</div>
+			</center>
+		</borderlayout>
+		<popup id="popupViasIngreso">
+			<listbox id="lbxVias_ingreso" multiple="true"
+				checkmark="true" width="250px" name="via_ingreso" rows="8">
+				<listhead>
+					<listheader label="Vias de ingreso" />
+				</listhead>
+			</listbox>
+		</popup>
+	</window>
+</zk>

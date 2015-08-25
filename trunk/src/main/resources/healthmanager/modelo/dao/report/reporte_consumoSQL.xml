@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.reporte_consumoModel">
+    <select id="select" resultType="java.util.HashMap" parameterType="java.util.Map">
+select rec.fecha, p.codigo_empresa, p.codigo_sucursal, e.descripcion as tipo_id_pct, p.nro_identificacion as id_pct,
+      p.apellido1 as apellido1_paciente,p.apellido2 as apellido2_paciente, p.nombre1 as nombre1_paciente,
+      p.nombre2 as nombre2_paciente,get_edad(p.fecha_nacimiento,CURRENT_DATE, '1') as edad,
+      sexo.descripcion as sexo_pct,a.codigo, a.nombre as nom_admin, drr.codigo_articulo, drr.cantidad_recetada, drr.cantidad_entregada,
+      pres.nombres as nombre_prestador, pres.apellidos as apellido_prestador
+from receta_rips rec
+left join paciente p on (p.codigo_empresa = rec.codigo_empresa
+and p.codigo_sucursal = rec.codigo_sucursal and p.nro_identificacion = rec.nro_identificacion)
+left join elemento e on (e.tipo = 'tipo_id'
+and e.codigo = p.tipo_identificacion)
+left join elemento sexo on (sexo.tipo = 'sexo'
+and sexo.codigo = p.sexo)
+left join detalle_receta_rips drr on (rec.codigo_receta = drr.codigo_receta)
+inner join administradora a on (a.codigo = rec.codigo_administradora)
+left join prestadores pres on (pres.nro_identificacion=rec.codigo_prestador)
+where rec.codigo_empresa = #{codigo_empresa}
+and rec.codigo_sucursal = #{codigo_sucursal}
+and rec.nro_identificacion= #{nro_identificacion}
+and rec.fecha between #{fecha_inicial} and #{fecha_final}
+
+    </select>
+   
+</mapper>

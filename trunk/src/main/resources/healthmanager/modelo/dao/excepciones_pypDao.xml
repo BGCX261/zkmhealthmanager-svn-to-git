@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Excepciones_pypDao">
+
+	<resultMap id="excepciones_pypMap" type="excepciones_pyp">
+		<result column="codigo_pyp" property="codigo_pyp" />
+		<result column="codigo_procedimiento" property="codigo_procedimiento" />
+	</resultMap>
+
+	<insert id="crear" parameterType="excepciones_pyp">
+		insert into public.excepciones_pyp (codigo_pyp,codigo_procedimiento)
+
+		values (#{codigo_pyp},#{codigo_procedimiento})
+	</insert>
+
+	<update id="actualizar" parameterType="excepciones_pyp">
+		update public.excepciones_pyp set codigo_pyp = #{codigo_pyp},
+		codigo_procedimiento = #{codigo_procedimiento}
+		where 		codigo_pyp = #{codigo_pyp}
+		and codigo_procedimiento = #{codigo_procedimiento}
+	</update>
+
+	<select id="consultar" parameterType="excepciones_pyp" resultMap="excepciones_pypMap">
+		select codigo_pyp,codigo_procedimiento
+		from public.excepciones_pyp where codigo_pyp = #{codigo_pyp}
+		and codigo_procedimiento = #{codigo_procedimiento}
+	</select>
+
+	<delete id="eliminar" parameterType="excepciones_pyp">
+		delete from public.excepciones_pyp
+		where codigo_pyp = #{codigo_pyp}
+		and codigo_procedimiento = #{codigo_procedimiento}
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="excepciones_pypMap">
+		select ex_p.codigo_pyp, ex_p.codigo_procedimiento
+		from public.excepciones_pyp AS ex_p
+		INNER JOIN public.pyp AS pyp ON pyp.codigo = ex_p.codigo_pyp
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+		    <if test="codigo != null">
+			  AND pyp.codigo = #{codigo}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+			<if test="nro_identificacion != null and codigo_empresa != null and codigo_sucursal != null">
+			    AND (select count(1) != 0 AS exist from public.datos_procedimiento AS dp 
+			            WHERE dp.codigo_empresa = #{codigo_empresa} AND dp.codigo_sucursal = #{codigo_sucursal} 
+			                  AND dp.nro_identificacion = #{nro_identificacion}) = TRUE
+		    </if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from public.excepciones_pyp 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

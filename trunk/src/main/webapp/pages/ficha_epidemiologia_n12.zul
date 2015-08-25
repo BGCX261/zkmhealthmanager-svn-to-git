@@ -1,0 +1,697 @@
+<?page title="Ficha_epidemiologia_n12" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formFicha_epidemiologia_n12" width="890px" height="450px"
+		border="normal"
+		use="healthmanager.controller.Ficha_epidemiologia_n12Action">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="false" closable="false"
+			mold="3d" height="90%">
+			<caption label="Consultar"
+				style="color: blue;font-weight: bold" />
+
+			<separator />
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" height="90%" mold="paging"
+				pageSize="20" vflex="1">
+				<auxhead>
+					<auxheader colspan="4">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<separator />
+							<textbox id="tbxValue" width="200px"
+								onOK="formFicha_epidemiologia_n12.buscarDatos();"
+								style="text-transform:uppercase" />
+							<separator />
+							<button mold="trendy"
+								image="/images/Magnifier.gif"
+								onClick="formFicha_epidemiologia_n12.buscarDatos();"
+								tooltiptext="Consultar Ficha" />
+							<separator />
+							<button mold="trendy"
+								image="/images/New16.gif"
+								onClick='formFicha_epidemiologia_n12.accionForm(true,"registrar");'
+								tooltiptext="Nueva Ficha" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Codigo ficha" />
+					<column label="Fecha inicial" />
+					<column label="Identificacion" />
+					<column label="Acciones" align="center"
+						width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<borderlayout width="100%" height="98%" id="groupboxEditar"
+			visible="true">
+			<north border="none" visible="false">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<toolbarbutton image="/images/Save16.gif"
+						label="Guardar Ficha"
+						onClick="formFicha_epidemiologia_n12.guardarDatos();"
+						id="btGuardar" />
+					<toolbarbutton image="/images/New16.gif"
+						label="Nueva Ficha"
+						onClick='formFicha_epidemiologia_n12.accionForm(true,"registrar");'
+						id="btNew" />
+					<space />
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Cancelar"
+						onClick='formFicha_epidemiologia_n12.accionForm(false,tbxAccion.getText());'
+						id="btCancel" />
+					<toolbarbutton image="/images/print_ico.gif"
+						label="Imprimir Ficha epidemiologia n12"
+						onClick="formFicha_epidemiologia_n12.imprimir();" id="btImprimir"
+						visible="false" />
+					<space />
+					<label value="Formato impresión: " visible="false" />
+					<listbox id="lbxFormato" mold="select" width="150px"
+						visible="false" sclass="combobox">
+						<listitem value="pdf" label="PDF"
+							selected="true" />
+						<listitem value="rtf" label="WORD" />
+					</listbox>
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center">
+
+					<!-- *************************** -->
+					<!-- *** Insertar/Actualizar *** -->
+					<!-- *************************** -->
+					<groupbox closable="false" width="845px"
+						mold="3d">
+
+						<groupbox mold="3d" closable="false">
+							<caption label="DATOS DE LA FICHA"
+								style="font-weight:bold" />
+							<grid>
+								<columns>
+									<column />
+								</columns>
+								<rows>
+									<row visible="false">
+										<cell></cell>
+										<cell height="30px">
+											<label
+												id="lbCodigo_diagnostico" value="Codigo diagnostico: " />
+										</cell>
+										<cell>
+											<textbox
+												id="tbxCodigo_diagnostico" width="170px"
+												style="text-transform:uppercase" maxlength="20" />
+										</cell>
+										<cell></cell>
+									</row>
+									<row>
+									<cell>
+										<hlayout>
+											<space width="130px" />
+											<label value="* "
+												style="color: red" tooltiptext="Campo obligatorio" />
+											<label id="lbFecha_inicial"
+												value="Fecha: " />
+											<datebox
+												id="dtbxFecha_inicial" onCreate="self.value = new Date();"
+												format="dd-MM-yyyy" width="170px" readonly="true" buttonVisible="false"/>
+											<space width="70px" />
+											<label value="* "
+												style="color: red" tooltiptext="Campo obligatorio" />
+											<label id="lbCodigo_ficha"
+												value="Codigo ficha: " />
+											<textbox readonly="true"
+												id="tbxCodigo_ficha" width="170px"
+												style="text-transform:uppercase" maxlength="20" />
+										</hlayout>
+									</cell>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+
+						<groupbox mold="3d" closable="false">
+							<caption label="RELACIÓN CON DATOS BÁSICOS"
+								style="font-weight:bold" />
+							<grid>
+								<columns>
+								<column width="100px" />
+								<column />
+								<column />
+								<column />
+								<column />
+								<column width="220px" />
+								</columns>
+								<rows>
+									
+									<row>
+										<cell>
+											<label value="* " style="color: red"
+												tooltiptext="Campo obligatorio" />
+											<label value="Paciente: " />
+										</cell>
+										<cell colspan="4">
+											<textbox id="tbxIdentificacion" width="27%" readonly="true" disabled="true"/>
+												<!--  -->
+											<space width="1%" />
+											<textbox id="tbxNombres_y_apellidos" width="65%"
+												style="text-transform:uppercase" readonly="true" />
+										</cell>
+										<cell>
+											<space width="15px" />
+											<label value="Tipo: " />
+											<space width="23px" />
+											<textbox id="tbxTipo_identidad" width="135px" style="text-transform:uppercase" readonly="true"/>
+										</cell>
+											
+									</row>
+									<row>
+										<cell>
+											<label value="* " style="color: red"
+												tooltiptext="Campo obligatorio" />
+											<label value="Aseguradora: " />
+										</cell>
+										<cell colspan="4">
+											<textbox id="tbxAseguradora" width="27%" readonly="true" disabled="true"/>
+												<!--  -->
+											<space width="1%" />
+											<textbox id="tbxNombre_aseguradora" width="65%"
+												style="text-transform:uppercase" readonly="true" />
+										</cell>
+										<cell></cell>
+											
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+
+						<groupbox mold="3d" closable="false">
+							<caption label="CONDICIÓN DE INGRESO"
+								style="font-weight:bold" />
+							<grid>
+								<columns>
+									<column />
+								</columns>
+								<rows>
+									<row>
+										<cell>
+											<hlayout>
+												<space width="250px" />
+												<label
+													value="Tipo de ingreso: " />
+												<radiogroup
+													id="rdbTipo_de_ingreso" />
+												<radio label="Nuevo"
+													value="1" radiogroup="rdbTipo_de_ingreso" />
+												<space />
+												<radio label="Recidiva"
+													value="2" checked="true" radiogroup="rdbTipo_de_ingreso" />
+											</hlayout>
+										</cell>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+
+						<groupbox mold="3d" closable="false">
+							<caption
+								label="CRITERIO CLÍNICO MAS CLASIFICACIÓN DEL CASO"
+								style="font-weight:bold" />
+							<grid>
+								<columns>
+									<column width="350px"
+										label="Clasificación bacteriológica según baciloscopia" />
+									<column width="450px"
+										label="Clasificación final según resultado de la histopatología" />
+								</columns>
+								<rows>
+									<row>
+										<cell>
+											<hlayout>
+												<space width="60px" />
+												<radiogroup
+													id="rdbClasificacion_bacteriologica" />
+												<radio
+													label="Plaucibacilar" value="1" checked="true"
+													radiogroup="rdbClasificacion_bacteriologica" />
+												<space />
+												<radio
+													label="Multibacilar" value="2"
+													radiogroup="rdbClasificacion_bacteriologica"
+													 />
+											</hlayout>
+										</cell>
+										<cell>
+											<hlayout>
+												<radiogroup
+													id="rdbClasificacion_final" />
+												<radio
+													label="Paucibacilar" value="1" checked="true"
+													radiogroup="rdbClasificacion_final" />
+												<space />
+												<radio
+													label="Multibacilar" value="2"
+													radiogroup="rdbClasificacion_final" />
+												<space />
+												<radio
+													label="Otro diagnóstico" value="3"
+													radiogroup="rdbClasificacion_final" />
+												<space />
+												<radio
+													label="No se realizó" value="4"
+													radiogroup="rdbClasificacion_final" />
+
+											</hlayout>
+										</cell>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+
+						<groupbox mold="3d" closable="false">
+							<caption label="CONFIGURACIÓN DEL CASO"
+								style="font-weight:bold" />
+							<groupbox closable="false">
+								<caption label="Datos de laboratorio"
+									style="font-weight:bold" />
+								<grid>
+									<columns>
+										<column width="170px"
+											label="Baciloscopia" />
+										<column width="260px"
+											label="Fecha de toma de baciloscipia" />
+										<column width="140px"
+											label="Resultado" />
+										<column width="160px"
+											label="Fecha de resultado" />
+									</columns>
+									<rows>
+										<row>
+											<cell>
+												<hlayout>
+													<radiogroup
+														id="rdbBaciloscopia" />
+													<radio label="SÍ"
+														radiogroup="rdbBaciloscopia" value="1" />
+													<space />
+													<radio label="NO"
+														radiogroup="rdbBaciloscopia" value="2" checked="true" />
+												</hlayout>
+											</cell>
+											<cell>
+												<hlayout>
+													<datebox
+														id="dtbxFecha_toma_baciloscopia"
+														onCreate="self.value = new Date();" format="dd-MM-yyyy"
+														width="150px" />
+												</hlayout>
+											</cell>
+											<cell>
+												<hlayout>
+													<textbox
+														id="tbxResultado_indice" width="100px"
+														style="text-transform:uppercase" maxlength="20" />
+												</hlayout>
+											</cell>
+											<cell>
+												<hlayout>
+													<datebox
+														id="dtbxFecha_resultado1"
+														onCreate="self.value = new Date();" format="yyyy-MM-dd"
+														width="150px" />
+												</hlayout>
+											</cell>
+										</row>
+									</rows>
+								</grid>
+							</groupbox>
+
+							<groupbox closable="false">
+								<grid>
+									<columns>
+										<column width="190px" />
+										<column width="200px"
+											label="Biopsia" />
+										<column width="200px"
+											label="Fecha de toma de biopsia" />
+										<column width="130px" />
+									</columns>
+									<rows>
+										<row>
+											<cell />
+											<cell>
+												<hlayout>
+													<space width="40px" />
+													<radiogroup
+														id="rdbBiopsia" />
+													<radio label="SÏ"
+														value="1" radiogroup="rdbBiopsia" />
+													<space />
+													<radio label="NO"
+														value="2" radiogroup="rdbBiopsia" checked="true" />
+												</hlayout>
+											</cell>
+											<cell>
+												<hlayout>
+													<space width="30px" />
+													<datebox
+														id="dtbxFecha_toma_biopsia"
+														onCreate="self.value = new Date();" format="dd-MM-yyyy"
+														width="120px" />
+												</hlayout>
+											</cell>
+											<cell />
+										</row>
+									</rows>
+								</grid>
+							</groupbox>
+
+
+							<groupbox closable="false">
+								<grid>
+									<columns>
+										<column width="650px"
+											label="Resultado de la histopatología" />
+										<column width="150px"
+											label="Fecha de Resultado" />
+									</columns>
+									<rows>
+										<row>
+											<cell>
+												<hlayout>
+													<radiogroup
+														id="rdbResultado_histopatologia" />
+													<radio
+														label="Indeterminada" checked="true" 
+														radiogroup="rdbResultado_histopatologia" value="1" />
+													<space />
+													<radio
+														label="Tuberculoide"
+														radiogroup="rdbResultado_histopatologia" value="2"
+														/>
+													<space />
+													<radio
+														label="Dimorfa(borderline)"
+														radiogroup="rdbResultado_histopatologia" value="3" />
+													<space />
+													<radio
+														label="Lepromatosa"
+														radiogroup="rdbResultado_histopatologia" value="4" />
+													<space />
+													<radio
+														label="Neural" radiogroup="rdbResultado_histopatologia"
+														value="5" />
+													<space />
+												</hlayout>
+											</cell>
+											<cell>
+												<hlayout>
+													<datebox
+														id="dtbxFecha_resultado2"
+														onCreate="self.value = new Date();" format="dd-MM-yyyy"
+														width="120px" />
+												</hlayout>
+											</cell>
+										</row>
+									</rows>
+								</grid>
+							</groupbox>
+
+							<groupbox closable="false">
+								<grid>
+									<columns>
+										<column width="320px"
+											label="Máximo grado de discapacidad evaluado" />
+										<column width="280px"
+											label="¿Presenta reacción leprótica?" />
+										<column width="200px"
+											label="Fecha de inicio de tratamiento" />
+									</columns>
+									<rows>
+										<row>
+											<cell>
+												<hlayout>
+													<radiogroup
+														id="rdbMaximo_grado_discap" />
+													<radio
+														label="Grado cero" value="1"
+														radiogroup="rdbMaximo_grado_discap" />
+													<space />
+													<radio
+														label="Grado uno" value="2"
+														radiogroup="rdbMaximo_grado_discap" checked="true" />
+													<space />
+													<radio
+														label="Grado dos" value="3"
+														radiogroup="rdbMaximo_grado_discap" />
+												</hlayout>
+											</cell>
+											<cell>
+												<hlayout>
+													<radiogroup
+														id="rdbPresenta_reaccion" />
+													<radio
+														label="Tipo uno" value="1"
+														radiogroup="rdbPresenta_reaccion" />
+													<space />
+													<radio
+														label="Tipo dos" value="2"
+														radiogroup="rdbPresenta_reaccion" checked="true" />
+													<space />
+													<radio
+														label="Ninguna" value="3"
+														radiogroup="rdbPresenta_reaccion" />
+												</hlayout>
+											</cell>
+											<cell>
+												<hlayout>
+													<space width="47px" />
+													<datebox
+														id="dtbxFecha_de_inicio_trata"
+														onCreate="self.value = new Date();" format="dd-MM-yyyy"
+														width="120px" />
+												</hlayout>
+											</cell>
+										</row>
+									</rows>
+								</grid>
+							</groupbox>
+						</groupbox>
+
+						<groupbox mold="3d" closable="false">
+							<caption
+								label="INVESTIGACIÓN DE CONVIVIENTES" style="font-weight:bold" />
+							<groupbox closable="false">
+								<grid>
+									<columns>
+										<column width="600px"
+											label="Método de captación" />
+										<column width="180px"
+											label="Posible fuente de contagio" />
+									</columns>
+									<rows>
+										<row>
+											<cell>
+												<hlayout>
+													<radiogroup
+														id="rdbMetodo_de_captacion" />
+													<radio
+														label="Búsqueda activa" value="1" checked="true"
+														radiogroup="rdbMetodo_de_captacion" />
+													<space />
+													<radio
+														label="Consulta en servicios de salud" value="2"
+														radiogroup="rdbMetodo_de_captacion" />
+													<space />
+													<radio
+														label="Investigación de contacto" value="3"
+														radiogroup="rdbMetodo_de_captacion" />
+												</hlayout>
+											</cell>
+											<cell>
+												<hlayout>
+													<radiogroup
+														id="rdbPosible_fuente_contagio" />
+												</hlayout>
+												<hlayout>
+													<radio
+														label="Familia / hogar" value="1"
+														radiogroup="rdbPosible_fuente_contagio" />
+												</hlayout>
+												<hlayout>
+													<radio
+														label="Comunidad" radiogroup="rdbPosible_fuente_contagio"
+														value="2" checked="true" />
+												</hlayout>
+												<hlayout>
+													<radio
+														label="Desconocido" value="3"
+														radiogroup="rdbPosible_fuente_contagio" />
+												</hlayout>
+											</cell>
+										</row>
+									</rows>
+								</grid>
+							</groupbox>
+
+							<groupbox closable="false">
+								<grid>
+									<columns>
+										<column width="215px"
+											label="Investigación de campo" />
+										<column width="205px"
+											label="Fecha de investigación" />
+										<column width="205px"
+											label="¿Tiempo convivientes?" />
+										<column width="180px"
+											label="N° total de convivientes" />
+									</columns>
+									<rows>
+										<row>
+											<cell>
+												<hlayout>
+													<space width="30px" />
+													<radiogroup
+														id="rdbInvestigacion_campo" />
+													<radio label="SÍ"
+														value="1" radiogroup="rdbInvestigacion_campo" />
+													<space />
+													<radio label="NO"
+														value="2" radiogroup="rdbInvestigacion_campo"
+														checked="true" />
+												</hlayout>
+											</cell>
+											<cell>
+												<hlayout>
+													<space width="30px" />
+													<datebox
+														id="dtbxFecha_de_investigacion"
+														onCreate="self.value = new Date();" format="dd-MM-yyyy"
+														width="130px" />
+												</hlayout>
+											</cell>
+											<cell>
+												<hlayout>
+													<space width="30px" />
+													<radiogroup
+														id="rdbTiene_convivientes" />
+													<radio label="SÍ"
+														radiogroup="rdbTiene_convivientes" value="1" />
+													<space />
+													<radio label="NO"
+														radiogroup="rdbTiene_convivientes" value="2"
+														checked="true" />
+												</hlayout>
+											</cell>
+											<cell>
+												<hlayout>
+													<space width="30px" />
+													<intbox
+														constraint="no negative:Este valor no puede ser negativo"
+														id="ibxNum_total_convivientes" width="100px"
+														style="text-transform:uppercase" />
+												</hlayout>
+											</cell>
+										</row>
+									</rows>
+								</grid>
+							</groupbox>
+
+							<groupbox closable="false">
+								<grid>
+									<columns>
+										<column width="250px"
+											label="N° total de convivientes examinados" />
+										<column width="250px"
+											label="N° total de convivientes sintomáticos" />
+										<column width="280px"
+											label="N° total de convivientes vacunados con BCG" />
+									</columns>
+									<rows>
+										<row>
+											<cell>
+												<hlayout>
+													<space width="50px" />
+													<intbox
+														constraint="no negative:Este valor no puede ser negativo"
+														id="ibxNum_total_conv_examin" width="110px"
+														style="text-transform:uppercase" />
+												</hlayout>
+											</cell>
+											<cell>
+												<hlayout>
+													<space width="50px" />
+													<intbox
+														constraint="no negative:Este valor no puede ser negativo"
+														id="ibxNum_total_conv_sintoma" width="110px"
+														style="text-transform:uppercase" />
+												</hlayout>
+											</cell>
+											<cell>
+												<hlayout>
+													<space width="70px" />
+													<intbox
+														constraint="no negative:Este valor no puede ser negativo"
+														id="ibxNum_conv_vacunados" width="110px"
+														style="text-transform:uppercase" />
+												</hlayout>
+											</cell>
+										</row>
+									</rows>
+								</grid>
+							</groupbox>
+						</groupbox>
+
+						<grid>
+							<columns>
+								<column />
+							</columns>
+							<rows>
+								<row>
+									<cell>
+										<hlayout>
+											<label
+												id="lbObservaciones_y_seguimientos"
+												value="Observaciones y seguimientos del caso: " />
+										</hlayout>
+										<hlayout>
+											<textbox
+												id="tbxObservaciones_y_seguimientos" width="800px" rows="4"
+												style="text-transform:uppercase" maxlength="-1" />
+										</hlayout>
+									</cell>
+								</row>
+							</rows>
+						</grid>
+
+
+					</groupbox>
+				</div>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

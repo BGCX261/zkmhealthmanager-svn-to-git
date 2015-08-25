@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.NegacionDao">
+
+	
+
+	<resultMap id="negacionMap" type="negacion">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="nro_solicitud" property="nro_solicitud" />
+		<result column="fecha" property="fecha" />
+		<result column="codigo_servicio" property="codigo_servicio" />
+		<result column="justificacion" property="justificacion" />
+		<result column="fundamento_legal" property="fundamento_legal" />
+		<result column="alternativa1" property="alternativa1" />
+		<result column="alternativa2" property="alternativa2" />
+		<result column="alternativa3" property="alternativa3" />
+		<result column="alternativa4" property="alternativa4" />
+		<result column="creacion_date" property="creacion_date" />
+		<result column="ultimo_update" property="ultimo_update" />
+		<result column="delete_date" property="delete_date" />
+		<result column="creacion_user" property="creacion_user" />
+		<result column="ultimo_user" property="ultimo_user" />
+		<result column="delete_user" property="delete_user" />
+		<result column="leido" property="leido" />
+		<result column="fecha_diligenciamiento" property="fecha_diligenciamiento" />
+		<result column="nombre" property="nombre" />
+	</resultMap>
+
+	<insert id="crear" parameterType="negacion">
+		insert into public.negacion (codigo_empresa,codigo_sucursal,
+		nro_solicitud,fecha,codigo_servicio,
+		justificacion,fundamento_legal,alternativa1,
+		alternativa2,alternativa3,alternativa4,
+		creacion_date,ultimo_update,delete_date,
+		creacion_user,ultimo_user,delete_user,
+		leido,fecha_diligenciamiento,nombre)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{nro_solicitud},#{fecha},#{codigo_servicio},
+		#{justificacion},#{fundamento_legal},#{alternativa1},
+		#{alternativa2},#{alternativa3},#{alternativa4},
+		#{creacion_date},#{ultimo_update},#{delete_date},
+		#{creacion_user},#{ultimo_user},#{delete_user},
+		#{leido},#{fecha_diligenciamiento},#{nombre})
+	</insert>
+
+	<update id="actualizar" parameterType="negacion">
+		update public.negacion set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},nro_solicitud = #{nro_solicitud},
+		fecha = #{fecha},codigo_servicio = #{codigo_servicio},
+		justificacion = #{justificacion},fundamento_legal = #{fundamento_legal},
+		alternativa1 = #{alternativa1},alternativa2 = #{alternativa2},
+		alternativa3 = #{alternativa3},alternativa4 = #{alternativa4},
+		creacion_date = #{creacion_date},ultimo_update = #{ultimo_update},
+		delete_date = #{delete_date},creacion_user = #{creacion_user},
+		ultimo_user = #{ultimo_user},delete_user = #{delete_user},
+		leido = #{leido},fecha_diligenciamiento = #{fecha_diligenciamiento},
+		nombre = #{nombre}
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and nro_solicitud = #{nro_solicitud}
+		and codigo_servicio = #{codigo_servicio}
+	</update>
+
+	<select id="consultar" resultMap="negacionMap" parameterType="negacion">
+		select codigo_empresa,codigo_sucursal,
+		nro_solicitud,fecha,codigo_servicio,
+		justificacion,fundamento_legal,alternativa1,alternativa2,
+		alternativa3,alternativa4,creacion_date,ultimo_update,
+		delete_date,creacion_user,ultimo_user,delete_user,
+		leido,fecha_diligenciamiento,nombre
+		from public.negacion
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">AND codigo_empresa = #{codigo_empresa}</if>
+			<if test="codigo_sucursal != null">AND codigo_sucursal = #{codigo_sucursal}</if>
+			<if test="nro_solicitud != null">AND nro_solicitud = #{nro_solicitud}</if>
+			<if test="codigo_servicio != null">AND codigo_servicio = #{codigo_servicio}</if>
+		</trim>
+	</select>
+
+	<delete id="eliminar" parameterType="negacion">
+		delete from public.negacion
+		where codigo_empresa =
+		#{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo =
+		#{codigo}
+	</delete>
+
+	<select id="listar" resultMap="negacionMap" parameterType="java.util.Map">
+		select codigo_empresa,codigo_sucursal,
+		nro_solicitud,fecha,codigo_servicio,
+		justificacion,fundamento_legal,alternativa1,alternativa2,
+		alternativa3,alternativa4,creacion_date,ultimo_update,
+		delete_date,creacion_user,ultimo_user,delete_user,
+		leido,fecha_diligenciamiento,nombre
+		from public.negacion
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">AND codigo_empresa = #{codigo_empresa}</if>
+			<if test="codigo_sucursal != null">AND codigo_sucursal = #{codigo_sucursal}</if>
+			<if test="nro_solicitud != null">AND nro_solicitud = #{nro_solicitud}</if>
+			<if test="codigo_servicio != null">AND codigo_servicio = #{codigo_servicio}</if>
+			<if test="parameter != null">AND ${parameter} like '${value}'</if>
+		</trim>
+		<if test="limit != null">
+			${limit}
+		</if>
+	</select>
+
+</mapper>

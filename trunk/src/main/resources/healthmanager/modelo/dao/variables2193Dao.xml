@@ -1,0 +1,801 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.variables2193Model">
+<select id="variable_1" resultType="java.util.HashMap" parameterType="java.util.Map">
+	SELECT
+		pac.tipo_usuario,
+		COUNT (1)::bigint AS cant
+	FROM
+		vacunas_pacientes vp
+	INNER JOIN paciente pac
+		ON pac.codigo_empresa = vp.codigo_empresa
+		AND pac.codigo_sucursal = vp.codigo_sucursal
+		AND pac.nro_identificacion = vp.nro_identificacion
+	<trim prefix="WHERE" prefixOverrides="AND |OR ">
+		<if test="codigo_empresa != null">AND vp.codigo_empresa = #{codigo_empresa}</if>
+		<if test="codigo_sucursal != null">AND vp.codigo_sucursal = #{codigo_sucursal}</if>
+		<if test="fecha_inicial != null and fecha_final !=null">AND vp.fecha_vacunacion BETWEEN #{fecha_inicial} AND #{fecha_final}</if>
+	</trim>
+	<if test="limit != null">
+		${limit}
+	</if>
+	GROUP BY
+		pac.tipo_usuario
+</select>
+
+<select id="variable_2" resultType="java.util.HashMap" parameterType="java.util.Map">
+	SELECT
+		pac.tipo_usuario,
+		COUNT (1)::bigint AS cant
+	FROM
+		historia_clinica hc
+	INNER JOIN prestadores prest
+		ON prest.codigo_empresa = hc.codigo_empresa
+		AND prest.codigo_sucursal = hc.codigo_sucursal
+		AND prest.nro_identificacion = hc.prestador
+		AND	prest.tipo_prestador = '02'
+	INNER JOIN paciente pac
+		ON pac.codigo_empresa = hc.codigo_empresa
+		AND pac.codigo_sucursal = hc.codigo_sucursal
+		AND pac.nro_identificacion = hc.nro_identificacion
+	<trim prefix="WHERE" prefixOverrides="AND |OR ">
+		<if test="true">AND hc.via_ingreso IN ('7', '8', '9', '10', '11')</if>
+		<if test="codigo_empresa != null">AND hc.codigo_empresa = #{codigo_empresa}</if>
+		<if test="codigo_sucursal != null">AND hc.codigo_sucursal = #{codigo_sucursal}</if>
+		<if test="fecha_inicial != null and fecha_final !=null">AND hc.fecha_historia BETWEEN #{fecha_inicial} AND #{fecha_final}</if>
+	</trim>
+	<if test="limit != null">
+		${limit}
+	</if>
+	GROUP BY
+		pac.tipo_usuario
+</select>
+
+<select id="variable_3" resultType="java.util.HashMap" parameterType="java.util.Map">
+	SELECT
+		pac.tipo_usuario,
+		COUNT (1)::bigint AS cant
+	FROM
+		historia_clinica hc
+	INNER JOIN prestadores prest
+		ON prest.codigo_empresa = hc.codigo_empresa
+		AND prest.codigo_sucursal = hc.codigo_sucursal
+		AND prest.nro_identificacion = hc.prestador
+		AND	prest.tipo_prestador = '02'
+	INNER JOIN paciente pac
+		ON pac.codigo_empresa = hc.codigo_empresa
+		AND pac.codigo_sucursal = hc.codigo_sucursal
+		AND pac.nro_identificacion = hc.nro_identificacion
+	<trim prefix="WHERE" prefixOverrides="AND |OR ">
+		<if test="true">AND hc.via_ingreso NOT IN ('7', '8', '9', '10', '11')</if>
+		<if test="codigo_empresa != null">AND hc.codigo_empresa = #{codigo_empresa}</if>
+		<if test="codigo_sucursal != null">AND hc.codigo_sucursal = #{codigo_sucursal}</if>
+		<if test="fecha_inicial != null and fecha_final !=null">AND hc.fecha_historia BETWEEN #{fecha_inicial} AND #{fecha_final}</if>
+	</trim>
+	<if test="limit != null">
+		${limit}
+	</if>
+	GROUP BY
+		pac.tipo_usuario
+
+	UNION ALL
+
+	SELECT
+		pac.tipo_usuario,
+		COUNT (1)::bigint AS cant
+	FROM
+		his_formato_tuberculosis hc
+	INNER JOIN prestadores prest
+		ON prest.codigo_empresa = hc.codigo_empresa
+		AND prest.codigo_sucursal = hc.codigo_sucursal
+		AND prest.nro_identificacion = hc.creacion_user
+		AND	prest.tipo_prestador = '02'
+	INNER JOIN paciente pac
+		ON pac.codigo_empresa = hc.codigo_empresa
+		AND pac.codigo_sucursal = hc.codigo_sucursal
+		AND pac.nro_identificacion = hc.identificacion
+	<trim prefix="WHERE" prefixOverrides="AND |OR ">
+		<if test="codigo_empresa != null">AND hc.codigo_empresa = #{codigo_empresa}</if>
+		<if test="codigo_sucursal != null">AND hc.codigo_sucursal = #{codigo_sucursal}</if>
+		<if test="fecha_inicial != null and fecha_final !=null">AND hc.creacion_date BETWEEN #{fecha_inicial} AND #{fecha_final}</if>
+	</trim>
+	<if test="limit != null">
+		${limit}
+	</if>
+	GROUP BY
+		pac.tipo_usuario
+
+	UNION ALL
+
+	SELECT
+		pac.tipo_usuario,
+		COUNT (1)::bigint AS cant
+	FROM
+		ficha_inicio_lepra hc
+	INNER JOIN prestadores prest
+		ON prest.codigo_empresa = hc.codigo_empresa
+		AND prest.codigo_sucursal = hc.codigo_sucursal
+		AND prest.nro_identificacion = hc.creacion_user
+		AND	prest.tipo_prestador = '02'
+	INNER JOIN paciente pac
+		ON pac.codigo_empresa = hc.codigo_empresa
+		AND pac.codigo_sucursal = hc.codigo_sucursal
+		AND pac.nro_identificacion = hc.nro_identificacion
+	<trim prefix="WHERE" prefixOverrides="AND |OR ">
+		<if test="codigo_empresa != null">AND hc.codigo_empresa = #{codigo_empresa}</if>
+		<if test="codigo_sucursal != null">AND hc.codigo_sucursal = #{codigo_sucursal}</if>
+		<if test="fecha_inicial != null and fecha_final !=null">AND hc.creacion_date BETWEEN #{fecha_inicial} AND #{fecha_final}</if>
+	</trim>
+	<if test="limit != null">
+		${limit}
+	</if>
+	GROUP BY
+		pac.tipo_usuario
+</select>
+
+<select id="variable_4" resultType="java.util.HashMap" parameterType="java.util.Map">
+	SELECT
+		pac.tipo_usuario,
+		COUNT (1)::bigint AS cant
+	FROM
+		muestra_citologia_vaginal muestra
+	INNER JOIN paciente pac
+		ON pac.codigo_empresa = muestra.codigo_empresa
+		AND pac.codigo_sucursal = muestra.codigo_sucursal
+		AND pac.nro_identificacion = muestra.identificacion
+	<trim prefix="WHERE" prefixOverrides="AND |OR ">
+		<if test="codigo_empresa != null">AND muestra.codigo_empresa = #{codigo_empresa}</if>
+		<if test="codigo_sucursal != null">AND muestra.codigo_sucursal = #{codigo_sucursal}</if>
+		<if test="fecha_inicial != null and fecha_final !=null">AND muestra.fecha_ingreso BETWEEN #{fecha_inicial} AND #{fecha_final}</if>
+	</trim>
+	<if test="limit != null">
+		${limit}
+	</if>
+	GROUP BY
+		pac.tipo_usuario
+</select>
+
+<select id="variable_5" resultType="java.util.HashMap" parameterType="java.util.Map">
+	SELECT
+		pac.tipo_usuario,
+		COUNT (1)::bigint AS cant
+	FROM
+		historia_clinica hc
+	INNER JOIN paciente pac ON pac.codigo_empresa = hc.codigo_empresa
+	AND pac.codigo_sucursal = hc.codigo_sucursal
+	AND pac.nro_identificacion = hc.nro_identificacion
+	
+	INNER JOIN admision adm ON adm.codigo_empresa = hc.codigo_empresa
+	AND adm.codigo_sucursal = hc.codigo_sucursal
+	AND adm.nro_identificacion = hc.nro_identificacion
+	AND adm.nro_ingreso = hc.nro_ingreso
+	AND adm.codigo_cita != ''
+
+	<trim prefix="WHERE" prefixOverrides="AND |OR ">
+		<if test="true">AND hc.via_ingreso = '2'</if>
+		<if test="codigo_empresa != null">AND hc.codigo_empresa = #{codigo_empresa}</if>
+		<if test="codigo_sucursal != null">AND hc.codigo_sucursal = #{codigo_sucursal}</if>
+		<if test="fecha_inicial != null and fecha_final !=null">AND hc.fecha_historia BETWEEN #{fecha_inicial} AND #{fecha_final}</if>
+	</trim>
+	<if test="limit != null">
+		${limit}
+	</if>
+	GROUP BY
+		pac.tipo_usuario
+</select>
+
+<select id="variable_7" resultType="java.util.HashMap" parameterType="java.util.Map">
+	SELECT
+		pac.tipo_usuario,
+		COUNT (1)::bigint AS cant
+	FROM
+		historia_clinica hc
+	INNER JOIN paciente pac ON pac.codigo_empresa = hc.codigo_empresa
+	AND pac.codigo_sucursal = hc.codigo_sucursal
+	AND pac.nro_identificacion = hc.nro_identificacion
+	
+	<trim prefix="WHERE" prefixOverrides="AND |OR ">
+		<if test="true">AND hc.via_ingreso = '1'</if>
+		<if test="codigo_empresa != null">AND hc.codigo_empresa = #{codigo_empresa}</if>
+		<if test="codigo_sucursal != null">AND hc.codigo_sucursal = #{codigo_sucursal}</if>
+		<if test="fecha_inicial != null and fecha_final !=null">AND hc.fecha_historia BETWEEN #{fecha_inicial} AND #{fecha_final}</if>
+	</trim>
+	<if test="limit != null">
+		${limit}
+	</if>
+	GROUP BY
+		pac.tipo_usuario
+</select>
+
+<select id="variable_9" resultType="java.util.HashMap" parameterType="java.util.Map">
+	SELECT
+		pac.tipo_usuario,
+		COUNT (1)::bigint AS cant
+	FROM
+		historia_clinica hc
+	INNER JOIN paciente pac ON pac.codigo_empresa = hc.codigo_empresa
+		AND pac.codigo_sucursal = hc.codigo_sucursal
+		AND pac.nro_identificacion = hc.nro_identificacion
+	
+	INNER JOIN admision adm ON adm.codigo_empresa = hc.codigo_empresa
+		AND adm.codigo_sucursal = hc.codigo_sucursal
+		AND adm.nro_identificacion = hc.nro_identificacion
+		AND adm.nro_ingreso = hc.nro_ingreso
+		AND adm.codigo_cita != ''
+	
+	INNER JOIN prestadores prest ON prest.codigo_empresa = hc.codigo_empresa
+		AND prest.codigo_sucursal = hc.codigo_sucursal
+		AND prest.codigo_sucursal = hc.prestador
+		AND prest.nro_identificacion IN 
+		(
+			SELECT DISTINCT
+				codigo_usuario
+			FROM
+				roles_usuarios
+			WHERE codigo_usuario NOT IN(
+				SELECT DISTINCT
+					codigo_usuario
+				FROM
+					roles_usuarios
+				WHERE
+					rol IN ('05','11','12','13','16','20','21','23','24','25','26','27','28','43','44','45')
+				)
+		)
+	<trim prefix="WHERE" prefixOverrides="AND |OR ">
+		<if test="codigo_empresa != null">AND hc.codigo_empresa = #{codigo_empresa}</if>
+		<if test="codigo_sucursal != null">AND hc.codigo_sucursal = #{codigo_sucursal}</if>
+		<if test="fecha_inicial != null and fecha_final !=null">AND hc.fecha_historia BETWEEN #{fecha_inicial} AND #{fecha_final}</if>
+	</trim>
+	<if test="limit != null">
+		${limit}
+	</if>
+	GROUP BY
+		pac.tipo_usuario
+</select>
+
+<select id="variable_10" resultType="java.util.HashMap" parameterType="java.util.Map">
+	SELECT
+		pac.tipo_usuario,
+		COUNT (1)::bigint AS cant
+	FROM
+		odontologia hc
+	INNER JOIN prestadores prest
+		ON prest.codigo_empresa = hc.codigo_empresa
+		AND prest.codigo_sucursal = hc.codigo_sucursal
+		AND prest.nro_identificacion = hc.codigo_prestador
+	INNER JOIN paciente pac
+		ON pac.codigo_empresa = hc.codigo_empresa
+		AND pac.codigo_sucursal = hc.codigo_sucursal
+		AND pac.nro_identificacion = hc.identificacion
+	<trim prefix="WHERE" prefixOverrides="AND |OR ">
+		<if test="codigo_empresa != null">AND hc.codigo_empresa = #{codigo_empresa}</if>
+		<if test="codigo_sucursal != null">AND hc.codigo_sucursal = #{codigo_sucursal}</if>
+		<if test="fecha_inicial != null and fecha_final !=null">AND hc.fecha_ingreso BETWEEN #{fecha_inicial} AND #{fecha_final}</if>
+	</trim>
+	<if test="limit != null">
+		${limit}
+	</if>
+	GROUP BY
+		pac.tipo_usuario
+</select>
+
+<select id="variable_11" resultType="java.util.HashMap" parameterType="java.util.Map">
+	SELECT
+		pac.tipo_usuario,
+		COUNT (1)::bigint AS cant
+	FROM
+		historia_clinica hc
+	INNER JOIN prestadores prest
+		ON prest.codigo_empresa = hc.codigo_empresa
+		AND prest.codigo_sucursal = hc.codigo_sucursal
+		AND prest.nro_identificacion = hc.prestador
+	INNER JOIN paciente pac
+		ON pac.codigo_empresa = hc.codigo_empresa
+		AND pac.codigo_sucursal = hc.codigo_sucursal
+		AND pac.nro_identificacion = hc.nro_identificacion
+	<trim prefix="WHERE" prefixOverrides="AND |OR ">
+		<if test="true">AND hc.via_ingreso IN ('17','18','19')</if>
+		<if test="codigo_empresa != null">AND hc.codigo_empresa = #{codigo_empresa}</if>
+		<if test="codigo_sucursal != null">AND hc.codigo_sucursal = #{codigo_sucursal}</if>
+		<if test="fecha_inicial != null and fecha_final !=null">AND hc.fecha_historia BETWEEN #{fecha_inicial} AND #{fecha_final}</if>
+	</trim>
+	<if test="limit != null">
+		${limit}
+	</if>
+	GROUP BY
+		pac.tipo_usuario
+</select>
+
+<select id="variable_13" resultType="java.util.HashMap" parameterType="java.util.Map">
+	SELECT
+		pac.tipo_usuario,
+		COUNT (1)::bigint AS cant
+	FROM
+		datos_procedimiento procedimiento
+	INNER JOIN paciente pac
+		ON pac.codigo_empresa = procedimiento.codigo_empresa
+		AND pac.codigo_sucursal = procedimiento.codigo_sucursal
+		AND pac.nro_identificacion = procedimiento.nro_identificacion
+	<trim prefix="WHERE" prefixOverrides="AND |OR ">
+		<if test="true">AND procedimiento.codigo_cups IN ('997101','997102')</if>
+		<if test="codigo_empresa != null">AND procedimiento.codigo_empresa = #{codigo_empresa}</if>
+		<if test="codigo_sucursal != null">AND procedimiento.codigo_sucursal = #{codigo_sucursal}</if>
+		<if test="fecha_inicial != null and fecha_final !=null">AND procedimiento.fecha_procedimiento BETWEEN #{fecha_inicial} AND #{fecha_final}</if>
+	</trim>
+	<if test="limit != null">
+		${limit}
+	</if>
+	GROUP BY
+		pac.tipo_usuario
+</select>
+
+<select id="variable_14" resultType="java.util.HashMap" parameterType="java.util.Map">
+	SELECT
+		pac.tipo_usuario,
+		COUNT (1)::bigint AS cant
+	FROM
+		datos_procedimiento procedimiento
+	INNER JOIN paciente pac
+		ON pac.codigo_empresa = procedimiento.codigo_empresa
+		AND pac.codigo_sucursal = procedimiento.codigo_sucursal
+		AND pac.nro_identificacion = procedimiento.nro_identificacion
+	<trim prefix="WHERE" prefixOverrides="AND |OR ">
+		<if test="true">AND procedimiento.codigo_cups IN ('536100','997102','232102','36201')</if>
+		<if test="codigo_empresa != null">AND procedimiento.codigo_empresa = #{codigo_empresa}</if>
+		<if test="codigo_sucursal != null">AND procedimiento.codigo_sucursal = #{codigo_sucursal}</if>
+		<if test="fecha_inicial != null and fecha_final !=null">AND procedimiento.fecha_procedimiento BETWEEN #{fecha_inicial} AND #{fecha_final}</if>
+	</trim>
+	<if test="limit != null">
+		${limit}
+	</if>
+	GROUP BY
+		pac.tipo_usuario
+</select>
+
+<select id="variable_15" resultType="java.util.HashMap" parameterType="java.util.Map">
+	SELECT
+		pac.tipo_usuario,
+		COUNT (1)::bigint AS cant
+	FROM
+		datos_procedimiento procedimiento
+	INNER JOIN paciente pac
+		ON pac.codigo_empresa = procedimiento.codigo_empresa
+		AND pac.codigo_sucursal = procedimiento.codigo_sucursal
+		AND pac.nro_identificacion = procedimiento.nro_identificacion
+	<trim prefix="WHERE" prefixOverrides="AND |OR ">
+		<if test="true">AND procedimiento.codigo_cups IN ('231200','230202','231301','231302','230101','230102','230201','231400','231300','230100','230200','231100')</if>
+		<if test="codigo_empresa != null">AND procedimiento.codigo_empresa = #{codigo_empresa}</if>
+		<if test="codigo_sucursal != null">AND procedimiento.codigo_sucursal = #{codigo_sucursal}</if>
+		<if test="fecha_inicial != null and fecha_final !=null">AND procedimiento.fecha_procedimiento BETWEEN #{fecha_inicial} AND #{fecha_final}</if>
+	</trim>
+	<if test="limit != null">
+		${limit}
+	</if>
+	GROUP BY
+		pac.tipo_usuario
+</select>
+
+<select id="variable_16" resultType="java.util.HashMap" parameterType="java.util.Map">
+	SELECT
+	pac.tipo_usuario,
+	COUNT (1)::bigint AS cant
+FROM
+	impresion_diagnostica imp
+INNER JOIN paciente pac
+	ON pac.codigo_empresa = imp.codigo_empresa
+	AND pac.codigo_sucursal = imp.codigo_sucursal
+	AND pac.nro_identificacion = imp.nro_identificacion
+INNER JOIN elemento tipo_u
+	ON tipo_u.tipo = 'tipo_usuario'
+	AND tipo_u.codigo = pac.tipo_usuario
+INNER JOIN historia_clinica hc
+	ON hc.codigo_historia = imp.codigo_historia
+	AND hc.via_ingreso = '1'
+	<trim prefix="WHERE" prefixOverrides="AND |OR ">
+		<if test="true">AND imp.cie_principal IN ('O800','O801','O808','O809','O810','O811','O812','O813','O814','O815','O820','O821','O822','O828','O829','O831','O832','O833','O834','O838','O839','O840','O841')</if>
+		<if test="codigo_empresa != null">AND imp.codigo_empresa = #{codigo_empresa}</if>
+		<if test="codigo_sucursal != null">AND imp.codigo_sucursal = #{codigo_sucursal}</if>
+		<if test="fecha_inicial != null and fecha_final !=null">AND imp.creacion_date BETWEEN #{fecha_inicial} AND #{fecha_final}</if>
+	</trim>
+	<if test="limit != null">
+		${limit}
+	</if>
+	GROUP BY
+		pac.tipo_usuario
+</select>
+
+<select id="variable_18" resultType="java.util.HashMap" parameterType="java.util.Map">
+	SELECT
+		pac.tipo_usuario,
+		COUNT (1)::bigint AS cant
+	FROM
+		hospitalizacion egreso
+	INNER JOIN paciente pac
+		ON pac.codigo_empresa = egreso.codigo_empresa
+		AND pac.codigo_sucursal = egreso.codigo_sucursal
+		AND pac.nro_identificacion = egreso.nro_identificacion
+	<trim prefix="WHERE" prefixOverrides="AND |OR ">
+		<if test="codigo_empresa != null">AND egreso.codigo_empresa = #{codigo_empresa}</if>
+		<if test="codigo_sucursal != null">AND egreso.codigo_sucursal = #{codigo_sucursal}</if>
+		<if test="fecha_inicial != null and fecha_final !=null">AND egreso.fecha_egreso BETWEEN #{fecha_inicial} AND #{fecha_final}</if>
+	</trim>
+	<if test="limit != null">
+		${limit}
+	</if>
+	GROUP BY
+		pac.tipo_usuario
+</select>
+
+<select id="variable_19" resultType="java.util.HashMap" parameterType="java.util.Map">
+	SELECT
+		pac.tipo_usuario,
+		COUNT (1)::bigint AS cant
+	FROM
+		hospitalizacion egreso
+	INNER JOIN paciente pac
+		ON pac.codigo_empresa = egreso.codigo_empresa
+		AND pac.codigo_sucursal = egreso.codigo_sucursal
+		AND pac.nro_identificacion = egreso.nro_identificacion
+	<trim prefix="WHERE" prefixOverrides="AND |OR ">
+		<if test="true">
+		AND 
+		(
+			egreso.codigo_diagnostico_principal LIKE 'O%'
+			OR
+			egreso.codigo_diagnostico1 LIKE 'O%'
+			OR
+			egreso.codigo_diagnostico2 LIKE 'O%'
+			OR
+			egreso.codigo_diagnostico3 LIKE 'O%'
+		)
+		</if>
+		<if test="codigo_empresa != null">AND egreso.codigo_empresa = #{codigo_empresa}</if>
+		<if test="codigo_sucursal != null">AND egreso.codigo_sucursal = #{codigo_sucursal}</if>
+		<if test="fecha_inicial != null and fecha_final !=null">AND egreso.fecha_egreso BETWEEN #{fecha_inicial} AND #{fecha_final}</if>
+	</trim>
+	<if test="limit != null">
+		${limit}
+	</if>
+	GROUP BY
+		pac.tipo_usuario
+</select>
+
+<select id="variable_21" resultType="java.util.HashMap" parameterType="java.util.Map">
+	SELECT
+		pac.tipo_usuario,
+		COUNT (1)::bigint AS cant
+	FROM
+		hospitalizacion egreso
+	INNER JOIN paciente pac
+		ON pac.codigo_empresa = egreso.codigo_empresa
+		AND pac.codigo_sucursal = egreso.codigo_sucursal
+		AND pac.nro_identificacion = egreso.nro_identificacion
+	<trim prefix="WHERE" prefixOverrides="AND |OR ">
+		<if test="true">
+		AND 
+		(
+			egreso.codigo_diagnostico_principal NOT LIKE 'O%'
+			AND
+			egreso.codigo_diagnostico1 NOT LIKE 'O%'
+			AND
+			egreso.codigo_diagnostico2 NOT LIKE 'O%'
+			AND
+			egreso.codigo_diagnostico3 NOT LIKE 'O%'
+		)
+		</if>
+		<if test="codigo_empresa != null">AND egreso.codigo_empresa = #{codigo_empresa}</if>
+		<if test="codigo_sucursal != null">AND egreso.codigo_sucursal = #{codigo_sucursal}</if>
+		<if test="fecha_inicial != null and fecha_final !=null">AND egreso.fecha_egreso BETWEEN #{fecha_inicial} AND #{fecha_final}</if>
+	</trim>
+	<if test="limit != null">
+		${limit}
+	</if>
+	GROUP BY
+		pac.tipo_usuario
+</select>
+
+<select id="variable_23" resultType="java.util.HashMap" parameterType="java.util.Map">
+	SELECT
+		pac.tipo_usuario,
+		COUNT(1)::bigint cant
+	FROM
+		urgencias egreso
+	INNER JOIN paciente pac
+		ON pac.codigo_empresa = egreso.codigo_empresa
+		AND pac.codigo_sucursal = egreso.codigo_sucursal
+		AND pac.nro_identificacion = egreso.nro_identificacion
+	<trim prefix="WHERE" prefixOverrides="AND |OR ">
+		<if test="codigo_empresa != null">AND egreso.codigo_empresa = #{codigo_empresa}</if>
+		<if test="codigo_sucursal != null">AND egreso.codigo_sucursal = #{codigo_sucursal}</if>
+		<if test="fecha_inicial != null and fecha_final !=null">AND egreso.fecha_egreso BETWEEN #{fecha_inicial} AND #{fecha_final}</if>
+	</trim>
+	
+	<![CDATA[
+	GROUP BY
+		pac.tipo_usuario
+	HAVING
+		(
+		((SUM(extract(epoch from (egreso.fecha_egreso-fecha_ingreso)))/60)::BIGINT) > 120
+	AND
+		((SUM(extract(epoch from (egreso.fecha_egreso-fecha_ingreso)))/60)::BIGINT) <= 360
+		)
+		]]>
+	<if test="limit != null">
+		${limit}
+	</if>
+</select>
+
+<select id="variable_25" resultType="java.util.HashMap" parameterType="java.util.Map">
+	SELECT
+		pac.tipo_usuario,
+		(SUM(extract(epoch from (egreso.fecha_egreso-fecha_ingreso)))/60/60/24)::bigint cant
+	FROM
+		hospitalizacion egreso
+	INNER JOIN paciente pac
+		ON pac.codigo_empresa = egreso.codigo_empresa
+		AND pac.codigo_sucursal = egreso.codigo_sucursal
+		AND pac.nro_identificacion = egreso.nro_identificacion
+	<trim prefix="WHERE" prefixOverrides="AND |OR ">
+		<if test="codigo_empresa != null">AND egreso.codigo_empresa = #{codigo_empresa}</if>
+		<if test="codigo_sucursal != null">AND egreso.codigo_sucursal = #{codigo_sucursal}</if>
+		<if test="fecha_inicial != null and fecha_final !=null">AND egreso.fecha_egreso BETWEEN #{fecha_inicial} AND #{fecha_final}</if>
+	</trim>
+	<if test="limit != null">
+		${limit}
+	</if>
+	GROUP BY
+		pac.tipo_usuario
+</select>
+
+<select id="variable_26" resultType="java.util.HashMap" parameterType="java.util.Map">
+	SELECT
+		pac.tipo_usuario,
+		(SUM(extract(epoch from (egreso.fecha_egreso-fecha_ingreso)))/60/60/24)::bigint cant
+	FROM
+		hospitalizacion egreso
+	INNER JOIN paciente pac
+		ON pac.codigo_empresa = egreso.codigo_empresa
+		AND pac.codigo_sucursal = egreso.codigo_sucursal
+		AND pac.nro_identificacion = egreso.nro_identificacion
+	<trim prefix="WHERE" prefixOverrides="AND |OR ">
+		<if test="true">
+		AND 
+		(
+			egreso.codigo_diagnostico_principal LIKE 'O%'
+			OR
+			egreso.codigo_diagnostico1 LIKE 'O%'
+			OR
+			egreso.codigo_diagnostico2 LIKE 'O%'
+			OR
+			egreso.codigo_diagnostico3 LIKE 'O%'
+		)
+		</if>
+		<if test="codigo_empresa != null">AND egreso.codigo_empresa = #{codigo_empresa}</if>
+		<if test="codigo_sucursal != null">AND egreso.codigo_sucursal = #{codigo_sucursal}</if>
+		<if test="fecha_inicial != null and fecha_final !=null">AND egreso.fecha_egreso BETWEEN #{fecha_inicial} AND #{fecha_final}</if>
+	</trim>
+	<if test="limit != null">
+		${limit}
+	</if>
+	GROUP BY
+		pac.tipo_usuario
+</select>
+
+<select id="variable_28" resultType="java.util.HashMap" parameterType="java.util.Map">
+	SELECT
+		pac.tipo_usuario,
+		(SUM(extract(epoch from (egreso.fecha_egreso-fecha_ingreso)))/60/60/24)::bigint cant
+	FROM
+		hospitalizacion egreso
+	INNER JOIN paciente pac
+		ON pac.codigo_empresa = egreso.codigo_empresa
+		AND pac.codigo_sucursal = egreso.codigo_sucursal
+		AND pac.nro_identificacion = egreso.nro_identificacion
+	<trim prefix="WHERE" prefixOverrides="AND |OR ">
+		<if test="true">
+		AND 
+		(
+			egreso.codigo_diagnostico_principal NOT LIKE 'O%'
+			AND
+			egreso.codigo_diagnostico1 NOT LIKE 'O%'
+			AND
+			egreso.codigo_diagnostico2 NOT LIKE 'O%'
+			AND
+			egreso.codigo_diagnostico3 NOT LIKE 'O%'
+		)
+		</if>
+		<if test="codigo_empresa != null">AND egreso.codigo_empresa = #{codigo_empresa}</if>
+		<if test="codigo_sucursal != null">AND egreso.codigo_sucursal = #{codigo_sucursal}</if>
+		<if test="fecha_inicial != null and fecha_final !=null">AND egreso.fecha_egreso BETWEEN #{fecha_inicial} AND #{fecha_final}</if>
+	</trim>
+	<if test="limit != null">
+		${limit}
+	</if>
+	GROUP BY
+		pac.tipo_usuario
+</select>
+
+<select id="variable_31" resultType="java.util.HashMap" parameterType="java.util.Map">
+	<![CDATA[
+   	SELECT
+		'-1' as tipo_usuario,
+		SUM(
+		CASE 
+			WHEN (cama.fecha_ingreso <  #{fecha_inicial} AND cama.fecha_egreso IS NULL)
+			THEN	#{fecha_final}::DATE-#{fecha_inicial}::DATE
+			WHEN (cama.fecha_ingreso > #{fecha_inicial} AND cama.fecha_egreso IS NULL)
+			THEN	#{fecha_final}::DATE-cama.fecha_ingreso::DATE
+			WHEN (cama.fecha_ingreso >=  #{fecha_inicial} AND cama.fecha_egreso <= #{fecha_final}::DATE)
+			THEN	cama.fecha_egreso::DATE-cama.fecha_ingreso::DATE
+			WHEN (cama.fecha_ingreso <  #{fecha_inicial} AND cama.fecha_egreso <= #{fecha_final}::DATE)
+			THEN	cama.fecha_egreso::DATE-#{fecha_inicial} ::DATE
+			WHEN (cama.fecha_ingreso >=  #{fecha_inicial} AND cama.fecha_egreso > #{fecha_final}::DATE)
+			THEN	#{fecha_final}::DATE-cama.fecha_ingreso::DATE
+
+		END
+		)::bigint AS cant
+	FROM
+		admision_cama cama
+	INNER JOIN paciente pac
+		ON pac.codigo_empresa = cama.codigo_empresa
+		AND pac.codigo_sucursal = cama.codigo_sucursal
+		AND pac.nro_identificacion = cama.nro_identificacion
+	]]>
+	<trim prefix="WHERE" prefixOverrides="AND |OR ">
+		<if test="codigo_empresa != null">AND cama.codigo_empresa = #{codigo_empresa}</if>
+		<if test="codigo_sucursal != null">AND cama.codigo_sucursal = #{codigo_sucursal}</if>
+		<if test="fecha_inicial != null and fecha_final !=null">
+			<![CDATA[
+				AND (
+				cama.fecha_egreso BETWEEN #{fecha_inicial} AND #{fecha_final}
+				OR
+				cama.fecha_ingreso BETWEEN #{fecha_inicial} AND #{fecha_final}
+				OR
+				cama.fecha_ingreso < #{fecha_inicial} AND cama.fecha_egreso IS NULL
+				)
+			]]>
+		</if>
+	</trim>
+	<if test="limit != null">
+		${limit}
+	</if>
+</select>
+
+<select id="variable_32" resultType="java.util.HashMap" parameterType="java.util.Map">
+	<![CDATA[
+   	SELECT
+		'-1' as tipo_usuario,
+		((#{fecha_final}::DATE-#{fecha_inicial}::DATE) * (SELECT count(1) FROM cama)) - SUM(
+		CASE 
+			WHEN (cama.fecha_ingreso <  #{fecha_inicial} AND cama.fecha_egreso IS NULL)
+			THEN	#{fecha_final}::DATE-#{fecha_inicial}::DATE
+			WHEN (cama.fecha_ingreso > #{fecha_inicial} AND cama.fecha_egreso IS NULL)
+			THEN	#{fecha_final}::DATE-cama.fecha_ingreso::DATE
+			WHEN (cama.fecha_ingreso >=  #{fecha_inicial} AND cama.fecha_egreso <= #{fecha_final}::DATE)
+			THEN	cama.fecha_egreso::DATE-cama.fecha_ingreso::DATE
+			WHEN (cama.fecha_ingreso <  #{fecha_inicial} AND cama.fecha_egreso <= #{fecha_final}::DATE)
+			THEN	cama.fecha_egreso::DATE-#{fecha_inicial} ::DATE
+			WHEN (cama.fecha_ingreso >=  #{fecha_inicial} AND cama.fecha_egreso > #{fecha_final}::DATE)
+			THEN	#{fecha_final}::DATE-cama.fecha_ingreso::DATE
+
+		END
+		)::bigint AS cant
+	FROM
+		admision_cama cama
+	INNER JOIN paciente pac
+		ON pac.codigo_empresa = cama.codigo_empresa
+		AND pac.codigo_sucursal = cama.codigo_sucursal
+		AND pac.nro_identificacion = cama.nro_identificacion
+	]]>
+	<trim prefix="WHERE" prefixOverrides="AND |OR ">
+		<if test="codigo_empresa != null">AND cama.codigo_empresa = #{codigo_empresa}</if>
+		<if test="codigo_sucursal != null">AND cama.codigo_sucursal = #{codigo_sucursal}</if>
+		<if test="fecha_inicial != null and fecha_final !=null">
+			<![CDATA[
+				AND (
+				cama.fecha_egreso BETWEEN #{fecha_inicial} AND #{fecha_final}
+				OR
+				cama.fecha_ingreso BETWEEN #{fecha_inicial} AND #{fecha_final}
+				OR
+				cama.fecha_ingreso < #{fecha_inicial} AND cama.fecha_egreso IS NULL
+				)
+			]]>
+		</if>
+	</trim>
+	<if test="limit != null">
+		${limit}
+	</if>
+</select>
+
+
+<select id="variable_34" resultType="java.util.HashMap" parameterType="java.util.Map">
+	SELECT
+		pac.tipo_usuario,
+		COUNT (1)::bigint AS cant
+	FROM
+		resultado_laboratorios lab
+	INNER JOIN paciente pac
+		ON pac.codigo_empresa = lab.codigo_empresa
+		AND pac.codigo_sucursal = lab.codigo_sucursal
+		AND pac.nro_identificacion = lab.nro_identificacion
+	<trim prefix="WHERE" prefixOverrides="AND |OR ">
+		<if test="codigo_empresa != null">AND lab.codigo_empresa = #{codigo_empresa}</if>
+		<if test="codigo_sucursal != null">AND lab.codigo_sucursal = #{codigo_sucursal}</if>
+		<if test="fecha_inicial != null and fecha_final !=null">AND lab.fecha_resultado BETWEEN #{fecha_inicial} AND #{fecha_final}</if>
+	</trim>
+	<if test="limit != null">
+		${limit}
+	</if>
+	GROUP BY
+		pac.tipo_usuario
+</select>
+
+<select id="variable_35" resultType="java.util.HashMap" parameterType="java.util.Map">
+	SELECT
+		pac.tipo_usuario,
+		COUNT (1)::bigint AS cant
+	FROM
+		imagen_diagnostica.laboratorios_resultados img
+	INNER JOIN public.paciente pac
+		ON pac.codigo_empresa = img.codigo_empresa
+		AND pac.codigo_sucursal = img.codigo_sucursal
+		AND pac.nro_identificacion = img.nro_identificacion
+	<trim prefix="WHERE" prefixOverrides="AND |OR ">
+		<if test="codigo_empresa != null">AND img.codigo_empresa = #{codigo_empresa}</if>
+		<if test="codigo_sucursal != null">AND img.codigo_sucursal = #{codigo_sucursal}</if>
+		<if test="fecha_inicial != null and fecha_final !=null">AND img.fecha_realizacion BETWEEN #{fecha_inicial} AND #{fecha_final}</if>
+	</trim>
+	<if test="limit != null">
+		${limit}
+	</if>
+	GROUP BY
+		pac.tipo_usuario
+</select>
+
+<select id="variable_36" resultType="java.util.HashMap" parameterType="java.util.Map">
+	SELECT
+		pac.tipo_usuario,
+		COUNT (1)::bigint AS cant
+	FROM
+		datos_procedimiento procedimiento
+	INNER JOIN paciente pac
+		ON pac.codigo_empresa = procedimiento.codigo_empresa
+		AND pac.codigo_sucursal = procedimiento.codigo_sucursal
+		AND pac.nro_identificacion = procedimiento.nro_identificacion
+	<trim prefix="WHERE" prefixOverrides="AND |OR ">
+		<if test="true">AND procedimiento.codigo_cups IN ('890411','890611','931000')</if>
+		<if test="codigo_empresa != null">AND procedimiento.codigo_empresa = #{codigo_empresa}</if>
+		<if test="codigo_sucursal != null">AND procedimiento.codigo_sucursal = #{codigo_sucursal}</if>
+		<if test="fecha_inicial != null and fecha_final !=null">AND procedimiento.fecha_procedimiento BETWEEN #{fecha_inicial} AND #{fecha_final}</if>
+	</trim>
+	<if test="limit != null">
+		${limit}
+	</if>
+	GROUP BY
+		pac.tipo_usuario
+</select>
+
+<select id="variable_37" resultType="java.util.HashMap" parameterType="java.util.Map">
+	SELECT
+		pac.tipo_usuario,
+		COUNT (1)::bigint AS cant
+	FROM
+		datos_procedimiento procedimiento
+	INNER JOIN paciente pac
+		ON pac.codigo_empresa = procedimiento.codigo_empresa
+		AND pac.codigo_sucursal = procedimiento.codigo_sucursal
+		AND pac.nro_identificacion = procedimiento.nro_identificacion
+	<trim prefix="WHERE" prefixOverrides="AND |OR ">
+		<if test="true">AND procedimiento.codigo_cups IN ('890212','890312')</if>
+		<if test="codigo_empresa != null">AND procedimiento.codigo_empresa = #{codigo_empresa}</if>
+		<if test="codigo_sucursal != null">AND procedimiento.codigo_sucursal = #{codigo_sucursal}</if>
+		<if test="fecha_inicial != null and fecha_final !=null">AND procedimiento.fecha_procedimiento BETWEEN #{fecha_inicial} AND #{fecha_final}</if>
+	</trim>
+	<if test="limit != null">
+		${limit}
+	</if>
+	GROUP BY
+		pac.tipo_usuario
+</select>
+
+</mapper>

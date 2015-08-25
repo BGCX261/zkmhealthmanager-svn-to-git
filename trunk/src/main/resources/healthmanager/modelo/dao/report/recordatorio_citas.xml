@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.recordatorioCitasModel">
+	<select id="select" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+		SELECT
+		citas.codigo_cita,
+		citas.nro_identificacion,
+		citas.codigo_prestador,
+		citas.fecha_cita,
+		citas.hora,
+		usuarios.nombres,
+		usuarios.apellidos,
+		usuarios.registro_medico,
+		paciente.apellido1,
+		paciente.apellido2,
+		paciente.nombre1,
+		paciente.nombre2,
+		paciente.nro_identificacion,
+		elemento.descripcion as tipo_cita
+		FROM
+		citas
+		INNER JOIN usuarios ON usuarios.codigo_empresa = citas.codigo_empresa AND usuarios.codigo_sucursal = citas.codigo_sucursal AND usuarios.codigo = citas.codigo_prestador
+		INNER JOIN paciente ON paciente.codigo_empresa = citas.codigo_empresa AND paciente.codigo_sucursal = citas.codigo_sucursal AND paciente.nro_identificacion = citas.nro_identificacion
+		LEFT JOIN elemento elemento ON elemento.codigo = citas.tipo_consulta and elemento.tipo = 'via_ingreso'
+		where citas.codigo_empresa = #{codigo_empresa}
+		AND citas.codigo_sucursal = #{codigo_sucursal}
+		<if test="codigo_cita != null">AND citas.codigo_cita = #{codigo_cita}</if>
+	</select>
+
+</mapper>

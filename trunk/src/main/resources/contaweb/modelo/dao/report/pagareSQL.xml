@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="contaweb.modelo.dao.report.pagareModel">
+    <select id="select" resultType="java.util.HashMap" parameterType="java.util.Map">
+	    SELECT pg.codigo_comprobante,pg.codigo_documento,pg.codigo_tercero,pg.fecha,
+		pg.nro_cuota,pg.primer_vencimiento,pg.valor_pagare::double precision,pg.interes::double precision,
+		dp.codigo_servicio,dp.concepto,dp.cantidad,dp.valor_unitario::double precision,
+		dp.valor_total::double precision,dp.copago::double precision,'' as tercero
+		from contaweb.pagare pg
+		inner join contaweb.detalle_pagare dp on (dp.codigo_empresa = pg.codigo_empresa
+		and dp.codigo_sucursal = pg.codigo_sucursal and dp.codigo_comprobante = pg.codigo_comprobante
+		and dp.codigo_documento = pg.codigo_documento)
+		WHERE pg.codigo_empresa = #{codigo_empresa}
+		AND pg.codigo_sucursal = #{codigo_sucursal}
+		AND pg.codigo_comprobante = #{codigo_comprobante}
+		AND pg.codigo_documento = #{codigo_documento}
+	    
+    </select>
+   
+</mapper>

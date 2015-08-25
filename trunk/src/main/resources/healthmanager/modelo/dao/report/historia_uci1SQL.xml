@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.historia_clinica_uci1Model">
+    <select id="select" resultType="java.util.HashMap" parameterType="java.util.Map">
+    select h.nro_historia,h.nro_identificacion as id_pct,pct.nombre1 as nom1_pct,pct.nombre2 as nom2_pct,
+	pct.apellido1 as ape1_pct,pct.apellido2 as ape2_pct,tipo_id.descripcion as tipo_id_pct,
+	get_edad(pct.fecha_nacimiento,CURRENT_DATE, '1') as edad,sexo.descripcion as sexo_pct,
+	pct.fecha_nacimiento as nac_pct,ad.nombre as nom_admin,h.fecha_ingreso,pct.profesion as ocupacion_pct,
+	ec.descripcion as estado_civil_pct,pct.direccion as dir_pct,pct.tel_res as tel_pct,h.acompaniante,
+	acom.descripcion as relacion_acom,h.tel_acompaniante,h.antecedentes_personales,h.enfermedades,
+	h.hospitalizaciones,h.quirurgicos,h.transfusiones,h.medicamentos,h.toxicos,h.alergicos,h.grupo_rh,
+	h.menarquia,h.ciclos,h.embarzao_controlado,h.nro_consultas,h.fum,h.fpp,h.peso_nacer,h.edad_gestacional,
+	h.apgar,h.problemas_embarazo,h.embarazos_anteriores,h.padre_vivo,h.enfermedad_padre,
+	h.madre_vivo,h.enfermedad_madre,h.hermanos,h.cuantos_hermanos,h.hermanos_vivos,h.enfermedad_hermanos,
+	h.esquema_vacunacion,h.motivo_consulta,h.enfermedad_actual
+	from historia_clinica_uci h
+	left join paciente pct on (pct.codigo_empresa = h.codigo_empresa
+	and pct.codigo_sucursal = h.codigo_sucursal and pct.nro_identificacion = h.nro_identificacion)
+	left join elemento tipo_id on (tipo_id.tipo = 'tipo_id'
+	and tipo_id.codigo = pct.tipo_identificacion)
+	left join elemento sexo on (sexo.tipo = 'sexo'
+	and sexo.codigo = pct.sexo)
+	left join elemento ec on (ec.tipo = 'estado_civil'
+	and ec.codigo = pct.estado_civil)
+	left join admision am on (am.codigo_empresa = h.codigo_empresa
+	and am.codigo_sucursal = h.codigo_sucursal and am.nro_identificacion = h.nro_identificacion
+	and am.nro_ingreso = h.nro_ingreso)
+	inner join administradora ad on (ad.codigo = am.codigo_administradora)
+	left join elemento acom on (acom.tipo = 'relacion_acomp'
+	and acom.codigo = h.relacion)
+	where h.codigo_empresa = #{codigo_empresa}
+    and h.codigo_sucursal = #{codigo_sucursal}
+    and h.nro_historia = #{nro_historia}
+    </select>
+   
+</mapper>

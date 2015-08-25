@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.OcupacionesDao">
+
+	
+
+	<resultMap id="ocupacionesMap" type="ocupaciones">
+		<result column="id" property="id" />
+		<result column="nombre" property="nombre" />
+		<result column="creacion_date" property="creacion_date" />
+		<result column="ultimo_update" property="ultimo_update" />
+		<result column="creacion_user" property="creacion_user" />
+		<result column="ultimo_user" property="ultimo_user" />
+	</resultMap>
+
+	<insert id="crear" parameterType="ocupaciones">
+		insert into public.ocupaciones (id,nombre,
+		creacion_date,ultimo_update,creacion_user,
+		ultimo_user)
+
+		values (#{id},#{nombre},
+		#{creacion_date},#{ultimo_update},#{creacion_user},
+		#{ultimo_user})
+	</insert>
+
+	<update id="actualizar" parameterType="ocupaciones">
+		update public.ocupaciones set id = #{id},
+		nombre = #{nombre},creacion_date = #{creacion_date},
+		ultimo_update = #{ultimo_update},creacion_user = #{creacion_user},
+		ultimo_user = #{ultimo_user}
+		where 		id = #{id}
+	</update>
+
+	<select id="consultar" resultMap="ocupacionesMap" parameterType="ocupaciones">
+		select id,nombre,
+		creacion_date,ultimo_update,creacion_user,ultimo_user
+		from public.ocupaciones where id = #{id}
+	</select>
+
+	<delete id="eliminar" parameterType="ocupaciones">
+		delete from public.ocupaciones
+		where id = #{id}
+	</delete>
+
+	<select id="listar" resultMap="ocupacionesMap" parameterType="java.util.Map">
+		select id,nombre,
+		creacion_date,ultimo_update,creacion_user,ultimo_user
+		from public.ocupaciones 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="parameter != null">AND ${parameter} like '${value}'</if>
+			<if test="paramTodo != null">
+			AND (lower(id) like '%${paramTodo}%' or lower(nombre) like '%${paramTodo}%')
+			</if>
+		</trim>
+		<if test="orden_nombre != null">
+			order by nombre ASC
+		</if>
+	</select>
+
+</mapper>

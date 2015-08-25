@@ -1,0 +1,255 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formReceta_rips" width="100%" height="100%"
+		use="healthmanager.controller.Receta_ripsAction">
+		<style src="estilo.css" />
+		<style>
+			body ,table{ margin:0; padding:0;
+
+			} .z-fieldset{ -moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; }
+
+			tr.z-row .z-cell{ background-image:none; }
+
+			tr.z-row td.z-row-inner{ background-image:none; }
+		</style>
+		<groupbox id="groupboxConsulta" visible="false" closable="false"
+			mold="3d" height="90%">
+			<caption label="Consultar"
+				style="color: blue;font-weight: bold" />
+
+			<separator />
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" height="90%" mold="paging"
+				pageSize="20" vflex="1">
+				<auxhead>
+					<auxheader colspan="4">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<separator />
+							<textbox id="tbxValue" width="200px"
+								onOK="formReceta_rips.buscarDatos();"
+								style="text-transform:uppercase" />
+							<separator />
+							<button mold="trendy"
+								image="/images/Magnifier.gif"
+								onClick="formReceta_rips.buscarDatos();"
+								tooltiptext="Consultar préscripcion medica" />
+							<separator />
+							<button mold="trendy" id="btnNuevaReceta"
+								image="/images/New16.gif"
+								onClick='formReceta_rips.crearNuevaReceta()'
+								tooltiptext="Nuevo préscripcion medica" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<auxhead>
+					<auxheader colspan="2" label="PRESTADOR"
+						align="center" />
+					<auxheader colspan="2" />
+				</auxhead>
+				<columns sizable="true">
+					<column label="Codigo" width="20%" />
+					<column label="Nombre" />
+					<column label="Fecha" />
+					<column label="Acciones" align="center"
+						width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+		<borderlayout width="100%" height="98%"
+			id="brlContenedorReceta">
+			<north>
+				<div>
+					<div id="dvContenedornoPametrizado">
+						<toolbar width="100%" align="start">
+
+							<textbox id="tbxAccion" value="registrar"
+								visible="false" />
+							<textbox id="tbxNro_identificacion" value=""
+								visible="false" />
+							<textbox id="tbxSexo_pct" value=""
+								visible="false" />
+							<textbox id="tbxFecha_nac" value=""
+								visible="false" />
+							<textbox id="tbxCodigo_administradora"
+								value="" visible="false" />
+							<textbox id="tbxId_plan" value=""
+								visible="false" />
+							<textbox id="tbxNro_ingreso" value=""
+								visible="false" />
+							<textbox id="tbxTipo_hc" value=""
+								visible="false" />
+
+							<toolbarbutton image="/images/Save16.gif"
+								label="Guardar Receta" onClick="formReceta_rips.guardarDatos();"
+								id="btGuardar" />
+							<toolbarbutton image="/images/eliminar.gif"
+								label="Eliminar Receta"
+								onClick='formReceta_rips.eliminarDatos(tbxCodigo_receta.getValue());'
+								id="btEliminar" />
+							<toolbarbutton image="/images/print_ico.gif"
+								label="Imprimir Receta"
+								onClick="formReceta_rips.imprimir(tbxCodigo_receta.getValue());"
+								id="btImprimir" />
+							<space />
+
+							<label value="Formato impresión: " />
+							<listbox id="lbxFormato" mold="select"
+								width="150px" sclass="combobox">
+								<listitem value="pdf" label="PDF"
+									selected="true" />
+								<listitem value="rtf" label="WORD" />
+							</listbox>
+							<space />
+							<toolbarbutton image="/images/generar.png"
+								label="Historial de Recetas" id="btnHistorialRecetas"
+								onClick="formReceta_rips.mostrarHistoriaRecetas()" />
+
+						</toolbar>
+
+						<grid sclass="GridSinBorde"
+							style="border:none">
+							<columns visible="false">
+								<column label="" width="10%" />
+								<column label="" width="" />
+								<column label="" width="" />
+								<column label="" width="" />
+								<column label="" width="50px" />
+								<column label="" />
+							</columns>
+
+							<rows>
+								<row>
+									<cell>
+										<label id="lbCodigo_prestador"
+											value="Prestador: " />
+									</cell>
+									<cell>
+										<bandbox
+											id="tbxCodigo_prestador" autodrop="true" readonly="true"
+											width="98%"
+											onOpen='formReceta_rips.buscarPrestador(tbxValuePrestador.getValue(),lbxPrestador)'>
+											<bandpopup>
+												<vbox>
+													<toolbar>
+														<label
+															value="Buscar: " />
+														<textbox
+															id="tbxValuePrestador"
+															onChanging='formReceta_rips.buscarPrestador(event.getValue(),lbxPrestador)'
+															style="text-transform:uppercase;" />
+														<toolbarbutton
+															image="/images/borrar.gif" tooltiptext="Quitar"
+															onClick='formReceta_rips.selectedPrestador(new Listitem())' />
+													</toolbar>
+													<listbox
+														height="300px" width="600px" mold="paging" pageSize="8"
+														id="lbxPrestador"
+														onSelect='formReceta_rips.selectedPrestador(self.getSelectedItem())'>
+														<listhead>
+															<listheader
+																label="Tipo Ident." width="65px" />
+															<listheader
+																label="Identificación" />
+															<listheader
+																label="Nombres" />
+															<listheader
+																label="Apellidos" />
+															<listheader
+																label="Especialidad" />
+														</listhead>
+													</listbox>
+												</vbox>
+											</bandpopup>
+										</bandbox>
+									</cell>
+									<cell colspan="2">
+										<textbox id="tbxNomPrestador"
+											width="98%" style="text-transform:uppercase" readonly="true" />
+									</cell>
+									<cell>
+										<label id="lbCodigo_receta"
+											value="Nro: " />
+									</cell>
+									<cell>
+										<textbox id="tbxCodigo_receta"
+											width="" style="text-transform:uppercase" readonly="true" />
+									</cell>
+								</row>
+
+								<row>
+									<cell>
+										<label id="lbFecha_orden"
+											value="Fecha: " />
+									</cell>
+									<cell>
+										<datebox id="dtbxFecha"
+											onCreate="" format="yyyy-MM-dd" width="98%" />
+									</cell>
+									<cell colspan="2">
+										<button mold="trendy"
+											label="Adicionar Registro"
+											onClick="formReceta_rips.openArticulo();" id="btAdicionar" />
+									</cell>
+									<cell colspan="2" />
+								</row>
+							</rows>
+						</grid>
+					</div>
+					<div id="divContenedorPametrizado" visible="false"
+						style="border:0px">
+						<hbox align="end"> 
+							<toolbarbutton 
+								label="Adicionar Registro" image="/images/generar.png"
+								onClick="formReceta_rips.openArticulo();" id="btAdicionar2" />
+
+							<toolbarbutton image="/images/print_ico.gif"
+								label="Imprimir Receta"
+								onClick="formReceta_rips.imprimir(tbxCodigo_receta.getValue());"
+								id="btImprimir2" />
+						</hbox>
+					</div>
+				</div>
+			</north>
+			<center autoscroll="true" border="none">
+				<grid id="gridReceta" style="margin-top:3px"
+					mold="paging" pageSize="20" vflex="1">
+					<columns sizable="true">
+						<column label="Código" width="70px" />
+						<column label="Medicamento" align="center" />
+						<column label="Cant Rec." width="80px" />
+						<column label="Valor unit" align="center"
+							width="" id="colValor_unitario" />
+						<column label="Valor total" align="center"
+							width="" id="colValor_total" />
+						<column label="Tiempo tto." width="90px" />
+						<column label="Posología" align="center"
+							width="" />
+						<column label="" align="center" width="" />
+						<column label="" align="center" width="40px" />
+					</columns>
+					<rows id="rowsReceta" width="100%" />
+					<foot id="footIndicacionRecomendaciones">
+						<footer span="9">
+							<groupbox mold="3d">
+								<caption
+									label="INDICACIONES Y/O RECOMENDACION" />
+								<textbox id="tbxObservaciones" rows="4"
+									width="98%" />
+							</groupbox>
+						</footer>
+					</foot>
+				</grid>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

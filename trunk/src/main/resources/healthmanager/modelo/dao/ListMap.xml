@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.MapToList">
+
+   
+
+	<resultMap id="detalles_horariosMap" type="detalles_horarios">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="codigo_medico" property="codigo_medico" />
+		<result column="creacion_date" property="creacion_date" />
+		<result column="creacion_user" property="creacion_user" />
+		<result column="consecutivo" property="consecutivo" />
+		<result column="fecha_inicial" property="fecha_inicial" />
+		<result column="fecha_final" property="fecha_final" />
+		<result column="dia_semana" property="dia_semana" />
+		<result column="cita" property="cita" />
+		<result column="descripcion" property="descripcion" />
+		<result column="ubicacion" property="ubicacion" />
+		<result column="color_header" property="color_header" />
+		<result column="color_content" property="color_content" />
+	</resultMap>
+
+
+	<select id="horarios_disponibles" resultMap="detalles_horariosMap" parameterType="detalles_horarios">
+		SELECT  public.detalles_horarios.codigo_empresa,
+				public.detalles_horarios.codigo_sucursal,
+				public.detalles_horarios.codigo_medico,
+				public.detalles_horarios.creacion_date,
+				public.detalles_horarios.creacion_user,
+				public.detalles_horarios.consecutivo,
+				public.detalles_horarios.fecha_inicial,
+				public.detalles_horarios.fecha_final,
+				public.detalles_horarios.dia_semana,
+				public.detalles_horarios.cita,
+				public.detalles_horarios.descripcion,
+				public.detalles_horarios.ubicacion,
+				public.detalles_horarios.color_header,
+				public.detalles_horarios.color_content
+		FROM public.detalles_horarios
+		WHERE NOT EXISTS (SELECT * FROM public.citas WHERE citas.codigo_detalle_horario =
+		detalles_horarios.consecutivo)
+		AND detalles_horarios.fecha_inicial &gt; now()
+		AND detalles_horarios.codigo_empresa = #{codigo_empresa}
+		AND detalles_horarios.codigo_sucursal = #{codigo_sucursal}
+		AND detalles_horarios.codigo_medico = #{codigo_medico}
+		<if test="limit != null">
+		   ${limit}
+		</if>
+    </select>
+</mapper>

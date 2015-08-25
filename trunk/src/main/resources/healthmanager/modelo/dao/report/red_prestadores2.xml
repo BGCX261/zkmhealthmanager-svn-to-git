@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.red_prestadores2Model">
+	<select id="select" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+		SELECT
+		prest.codigo,
+		prest.nit,
+		prest.nombre,
+		prest.direccion
+		FROM
+		public.administradora AS prest
+		WHERE
+		prest.tercerizada = 'S' AND
+		EXISTS
+		(SELECT 1 FROM contratos AS cont
+		WHERE cont.codigo_empresa = prest.codigo_empresa
+		AND cont.codigo_sucursal = prest.codigo_sucursal
+		AND cont.codigo_administradora = prest.codigo
+		AND cont.cerrado = FALSE)
+		and prest.codigo_empresa = #{codigo_empresa}
+		and prest.codigo_sucursal = #{codigo_sucursal}
+	</select>
+</mapper>

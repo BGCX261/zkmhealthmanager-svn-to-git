@@ -1,0 +1,423 @@
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<?page title="Contrareferencia" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formContrareferencias" width="100%" height="97%"
+		use="healthmanager.controller.Contrareferencias_externasAction">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+
+
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="false" closable="false"
+			mold="3d" height="98%">
+			<caption label="Consultar" style="font-weight: bold">
+				<toolbarbutton image="/images/add_perfil.png"
+					style="font-weight:bold;float:right;margin-right:50px"
+					label="PACIENTE ADMISIONADO"
+					id="toolbarbuttonPaciente_admisionado1" />
+			</caption>
+
+			<listbox id="lbxAtendida" mold="select" sclass="combobox"
+				width="150px" visible="false" />
+
+			<separator />
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" height="90%" mold="paging"
+				pageSize="20" vflex="1">
+				<auxhead>
+					<auxheader colspan="5">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="120px" />
+							<space width="5px" />
+							<textbox id="tbxValue" width="120px"
+								onOK="formContrareferencias.buscarDatos();"
+								style="text-transform:uppercase" />
+							<space />
+
+							<label value="Tipo" />
+							<space width="5px" />
+							<listbox id="lbxTipo_historia" mold="select"
+								width="120px" onSelect="formContrareferencias.buscarDatos()">
+								<listitem label="Todas" selected="true"
+									value="0" />
+								<listitem label="Primera Vez" value="1" />
+								<listitem label="Control" value="2" />
+							</listbox>
+
+							<space />
+							<toolbarbutton label="Consultar"
+								image="/images/Magnifier.gif"
+								onClick="formContrareferencias.buscarDatos();"
+								tooltiptext="Consultar" />
+							<space width="5px" />
+							<button mold="trendy"
+								image="/images/New16.gif"
+								onClick='formContrareferencias.accionForm(healthmanager.controller.ZKWindow.OpcionesFormulario.REGISTRAR,null);'
+								tooltiptext="Nuevo" visible="false" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Código historia" width="150px" />
+					<column label="Identificación" width="200px" />
+					<column label="Nombre" />
+					<column label="Fecha" width="150px" />
+					<column label="Tipo Historia" width="150px" />
+					<column label="Acciones" align="center"
+						width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<groupbox id="groupboxEditar" visible="true" closable="false"
+			mold="3d" height="100%">
+
+			<borderlayout width="100%" height="100%"
+				id="borderlayoutEditar" visible="true">
+				<north border="none" id="northEditar">
+					<div height="50px">
+						<toolbar width="100%" align="start">
+							<textbox id="tbxAccion" value="registrar"
+								visible="false" />
+							<toolbarbutton image="/images/Save16.gif"
+								label="Guardar Contrareferencia"
+								onClick="formContrareferencias.guardarDatos();" id="btGuardar" />
+
+							<space />
+							<toolbarbutton image="/images/trasladar.gif"
+								label="Cancelar"
+								onClick='formContrareferencias.accionForm(healthmanager.controller.ZKWindow.OpcionesFormulario.CONSULTAR,null);'
+								id="btnCancelar" visible="false" />
+							<toolbarbutton image="/images/print_ico.gif"
+								label="Imprimir Historia"
+								onClick="formContrareferencias.imprimir();" id="btImprimir"
+								visible="false" />
+							<space />
+							<label value="Formato impresión: "
+								visible="false" />
+							<listbox id="lbxFormato" mold="select"
+								width="150px" visible="false" sclass="combobox">
+								<listitem value="pdf" label="PDF"
+									selected="true" />
+								<listitem value="rtf" label="WORD" />
+							</listbox>
+
+						</toolbar>
+						<toolbarbutton image="/images/info_icon.png"
+							style="font-weight:bold;float:right;margin-right:50px"
+							label="Historia Clínica de Control"
+							id="toolbarbuttonTipo_historia" visible="false" />
+					</div>
+				</north>
+				<center autoscroll="true" border="none">
+					<div align="center">
+						<groupbox closable="false" width="905px"
+							mold="3d">
+							<grid sclass="GridSinBorde" hflex="1">
+								<columns>
+									<column width="80px" />
+									<column width="250px" />
+									<column width="90px" />
+									<column />
+									<column width="80px" />
+									<column />
+								</columns>
+								<rows>
+									<group align="left">
+
+										<hbox>
+											<label
+												value="Información del prestador" />
+
+											<toolbarbutton
+												image="/images/refresh_m.png"
+												onClick="formContrareferencias.cargarDatosIniciales()"
+												width="430" label="Recargar" />
+										</hbox>
+
+
+									</group>
+									<row>
+										<cell>
+											<label
+												value="
+											Entidad " />
+										</cell>
+										<cell colspan="3">
+											<intbox
+												id="tbxPrestador_remision" visible="false" />
+											<space width="5px" />
+											<textbox
+												id="tbxNombre_prestador" width="490px" readonly="true" />
+										</cell>
+										<cell>
+											<label
+												value="Identificación" />
+										</cell>
+										<cell>
+											<textbox id="tbxId"
+												hflex="1" style="text-transform:uppercase" readonly="true" />
+										</cell>
+									</row>
+
+									<row>
+										<cell>
+											<label value="Dirección" />
+										</cell>
+										<cell>
+											<textbox id="tbxDirecion"
+												hflex="1" style="text-transform:uppercase" readonly="true" />
+										</cell>
+										<cell>
+											<label
+												value="Departamento:  " />
+										</cell>
+										<cell>
+											<listbox
+												id="lbxDepartamento" name="lbxDepartamento" mold="select"
+												hflex="1" sclass="combobox"
+												onSelect="formContrareferencias.listarMunicipios(lbxMunicipio, self)"
+												disabled="true" />
+										</cell>
+										<cell>
+											<label value="Municipo: " />
+										</cell>
+										<cell>
+											<listbox id="lbxMunicipio"
+												name="lbxMunicipio" mold="select" hflex="1"
+												sclass="combobox" disabled="true" />
+										</cell>
+									</row>
+
+									<group label="Datos del paciente" />
+
+									<row>
+										<cell>
+											<label value="Paciente" />
+										</cell>
+										<cell colspan="3">
+											<textbox
+												id="tbxDatos_paciente" hflex="1"
+												style="text-transform:uppercase" readonly="true" />
+										</cell>
+										<cell height="30px">
+											<label
+												value="Identificación: " />
+										</cell>
+										<cell>
+											<textbox
+												id="tbxIdentificacion_paciente" hflex="1"
+												style="text-transform:uppercase" readonly="true" />
+										</cell>
+									</row>
+
+									<row>
+										<cell>
+											<label value="Dirección" />
+										</cell>
+										<cell>
+											<textbox
+												id="tbxDireccion_paciente" hflex="1"
+												style="text-transform:uppercase" readonly="true" />
+										</cell>
+										<cell>
+											<label value="Telefono:  " />
+										</cell>
+										<cell>
+											<textbox
+												id="tbxTelefono_paciente" hflex="1"  
+												style="text-transform:uppercase" readonly="true" />
+										</cell>
+										<cell>
+											<label value="Fecha Nac: " />
+										</cell>
+										<cell>
+											<datebox
+												id="tbxFecha_nac_paciente" hflex="1"
+												style="text-transform:uppercase" readonly="true"
+												format="yyyy-MM-dd" buttonVisible="false" />
+										</cell>
+									</row>
+
+									<group
+										label="Datos de la persona responsable del paciente" />
+
+									<row>
+										<cell>
+											<label
+												id="lbNombre_responsable" value="Responsable: " />
+										</cell>
+										<cell>
+											<textbox
+												id="tbxNombre_responsable" style="text-transform:uppercase"
+												hflex="1" tooltiptext="Nombres de la persona responsable" />
+											<space width="5px" />
+											<textbox
+												id="tbxApellido_responsable"
+												style="text-transform:uppercase" hflex="1"
+												tooltiptext="Apellidos de la persona responsable"
+												visible="false" />
+										</cell>
+										<cell>
+											<label
+												id="lbTipo_id_responsable" value="Tipo Identif " />
+										</cell>
+										<cell>
+											<listbox
+												id="lbxTipo_id_responsable" name="tipo_id" mold="select"
+												hflex="1" sclass="combobox" disabled="true" />
+										</cell>
+
+										<cell>
+											<label
+												id="lbNro_id_responsable" value="Identificación: " />
+										</cell>
+										<cell>
+											<textbox
+												id="tbxNro_id_responsable" hflex="1"
+												style="text-transform:uppercase" />
+										</cell>
+
+									</row>
+
+									<row>
+										<cell visible="false">
+											<label
+												id="lbDir_responsable" value="Direccion: " />
+
+											<textbox
+												id="tbxDir_responsable" hflex="1"
+												style="text-transform:uppercase" />
+										</cell>
+										<cell>
+											<label
+												id="lbTer_responsable" value="Teléfono: " />
+										</cell>
+										<cell>
+											<intbox
+												id="ibxTer_responsable" hflex="1"
+												style="text-transform:uppercase"  />
+										</cell>
+										<cell>
+											<label
+												id="lbDep_responsable" value="Departamento: " />
+										</cell>
+										<cell>
+											<listbox
+												id="lbxDep_responsable" name="Dep_responsable" mold="select"
+												hflex="1" sclass="combobox"
+												onSelect="formContrareferencias.listarMunicipios(lbxMun_responsable, self)"
+												disabled="true" />
+										</cell>
+										<cell>
+											<label
+												id="lbMun_responsable" value="Municipio: " />
+										</cell>
+										<cell>
+											<listbox
+												id="lbxMun_responsable" name="Mun_responsable" mold="select"
+												hflex="1" sclass="combobox" disabled="true" />
+										</cell>
+									</row>
+
+									<group
+										label="Profesional que contrarefiere" />
+
+									<row>
+										<cell>
+											<label value="Solicitante" />
+										</cell>
+
+										<cell>
+											<textbox
+												id="tbxNombre_solictante" style="text-transform:uppercase"
+												hflex="1" tooltiptext="Nombres de la persona que solicita" />
+											<space width="5px" />
+											<textbox
+												id="tbxApellido_solicitante"
+												style="text-transform:uppercase" hflex="1"
+												tooltiptext="Apellidos de la persona que solicita" />
+										</cell>
+										<cell>
+											<label value="Teléfono: " />
+										</cell>
+										<cell>
+											<doublebox id="dbxTelefono"
+												hflex="1" format="####"  />
+										</cell>
+
+										<cell>
+											<label value="Celular: " />
+										</cell>
+										<cell>
+											<doublebox id="dbxCel"
+												hflex="1" format="####"  />
+										</cell>
+									</row>
+
+									<row>
+										<cell colspan="6">
+											<label
+												value="Servicio que contrarefiere" />
+											<space />
+											<textbox
+												id="tbxNombre_contrarefiere" hflex="3"
+												style="text-transform:uppercase" />
+										</cell>
+									</row>
+
+									<group label="Información clinica" />
+
+									<row>
+										<cell colspan="6"
+											align="justify">
+											<label
+												value="Diligencie en orden indicando: Fecha de inicio de atención 
+												(anotar el día, mes y año en el cual se inició la atención del paciente
+												remitido). Fecha de alta o finalización (Anotar el día, mes y año en el cual
+												se dío de alta o finalizó la atención del paciente remitido).
+												Resumen de la evolución, fecha y resultados de exámenes de apoyo
+												diagnóstico realizados, diagnósticos, complicaciones, tratamientos
+												empleados. Pronóstico, recomendaciones, firma y registro del profesional responsable. ">
+											</label>
+										</cell>
+									</row>
+
+									<row>
+										<cell colspan="6">
+											<textbox
+												id="tbxInformacionClinica" width="99%"
+												style="text-transform:uppercase" rows="10" />
+										</cell>
+									</row>
+
+								</rows>
+							</grid>
+						</groupbox>
+
+
+					</div>
+				</center>
+			</borderlayout>
+		</groupbox>
+	</window>
+</zk>

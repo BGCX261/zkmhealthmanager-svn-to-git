@@ -1,0 +1,261 @@
+<?page title="Inscripciones_pyp" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+<window id="formInscripciones_pyp" width="100%" height="97%" use="healthmanager.controller.Inscripciones_pypAction">
+<style>
+		body ,table{ margin:0; padding:0;
+		} .z-fieldset{ -moz-border-radius:5px; border-radius: 5px;
+		-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+		border: 1px solid silver; }
+		tr.z-row .z-cell{ background-image:none; }
+		tr.z-row td.z-row-hover{ background-image:none; }
+		.GridSinBorde tr.z-row td.z-row-inner, tr.z-row
+			.z-cell,div.z-grid { border: none; overflow: hidden;
+			zoom: 1; border-top: none; border-left: none;
+			border-right: none; border-bottom: none; }
+		</style>
+
+<!-- **************** -->
+<!-- Zona de Consulta -->
+<!-- **************** -->
+	<groupbox id="groupboxConsulta" visible="flase" closable="false" mold="3d" height="97%">
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" height="90%" vflex="1">
+				<auxhead>
+					<auxheader colspan="4">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<separator />
+							<textbox id="tbxValue" width="200px"
+								onOK="formInscripciones_pyp.buscarDatos();"
+								style="text-transform:uppercase" />
+							<separator />
+							<button mold="trendy"
+								image="/images/Magnifier.gif"
+								onClick="formInscripciones_pyp.buscarDatos();"
+								tooltiptext="Consultar Inscripción PyP" />
+							<separator />
+							<button mold="trendy"
+								image="/images/New16.gif"
+								onClick='formInscripciones_pyp.accionForm(true,"registrar");'
+								tooltiptext="Nueva Inscripción PyP" />
+							<separator />
+							<hlayout id="hlayoutManager"
+								visible="false">
+								<image tooltiptext="Anterior"
+									style="cursor:pointer" src="/images/back.png"
+									id="imageManager_back" />
+								<intbox style="text-align:center"
+									id="intboxManager_pagina" width="40px" />
+								<label id="labelManager_paginas"
+									style="font-weight:bold" value=" / 100" />
+								<image tooltiptext="Siguiente"
+									style="cursor:pointer" src="/images/next.png"
+									id="imageManager_next" />
+								<space width="10px" />
+								<label id="labelInfoPaginas" value="" style="font-weight:bold" />
+							</hlayout>
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Identificación" width="100px" />
+					<column label="Nombre" />
+					<column label="Estado" width="100px" />
+					<column label="Acciones" align="center" width="80px" />
+				</columns>
+				<rows id="rowsResultado" hflex="1" />
+			</grid>
+		</groupbox>
+
+		<borderlayout hflex="1" height="90%" id="groupboxEditar" visible="true">
+				<north border="none">
+						<toolbar width="100%" align="start">
+								<textbox id="tbxAccion" value="registrar"
+										visible="false" />
+								<toolbarbutton image="/images/Save16.gif"
+										label="Guardar Inscripciones pyp"
+										onClick="formInscripciones_pyp.guardarDatos();" id="btGuardar" />
+		 		                  <toolbarbutton image="/images/New16.gif"
+										label="Nueva Inscripciones pyp"
+										onClick='formInscripciones_pyp.accionForm(true,"registrar");'
+										id="btNew" />
+								<space />
+		 		                  <toolbarbutton image="/images/trasladar.gif"
+										label="Cancelar" onClick='formInscripciones_pyp.accionForm(false,tbxAccion.getText());'
+										id="btCancel" />
+								<toolbarbutton image="/images/print_ico.gif"
+										label="Imprimir Inscripciones pyp"
+										onClick="formInscripciones_pyp.imprimir();"
+										id="btImprimir" visible="false"/>
+								<space />
+								<label value="Formato impresión: " visible="false"/>
+									<listbox id="lbxFormato" mold="select" width="150px" visible="false"
+										sclass="combobox">
+										<listitem value="pdf" label="PDF"
+												selected="true" />
+										<listitem value="rtf" label="WORD" />
+								</listbox>
+						</toolbar>
+				</north>
+				<center autoscroll="true" border="none" >
+				<div align="center">
+
+<!-- *************************** -->
+<!-- *** Insertar/Actualizar *** -->
+<!-- *************************** -->
+<groupbox  closable="false"  width="905px" mold="3d">
+	<groupbox>
+	<grid id="mcInformacion">
+		<columns visible="false">
+			<column width="120px" />
+			<column width="150px" />
+			<column width="100px" />
+			<column width="150px" />
+			<column />
+			<column width="110px"/>
+			<column width="130px" />
+		</columns>
+			<rows>
+
+			<row>
+				<cell>
+					<label value="Paciente" />
+				</cell>
+				<cell>
+					<bandboxRegistros
+									id="bandboxPaciente" widthBandbox="100px"
+									widthListbox="600px" heightListbox="300px"
+									columnas="Tipo Id.#80px|Identificación#140px|Paciente"/>
+								<toolbarbutton
+									id="btnLimpiar_paciente"
+									image="/images/borrar.gif" visible="false" hflex="1"/>
+				</cell>
+				<cell colspan="3">
+					<textbox id="tbxInfoPaciente" width="98%"
+						style="text-transform:uppercase" readonly="true" />
+				</cell>
+				<cell>
+					<label value="Género" />
+				</cell>
+				<cell>
+					<textbox id="tbxSexo" hflex="1"
+						style="text-transform:uppercase" readonly="true" />
+				</cell>
+			</row>
+	
+			<row>
+				<cell>
+					<label value="Fecha Ncto." />
+				</cell>
+				<cell>
+					<datebox id="dtbxFecha_ncto" hflex="1"
+						format="yyyy-MM-dd" readonly="true" buttonVisible="false" />
+				</cell>
+				<cell>
+					<label value="Edad" />
+				</cell>
+				<cell>
+					<textbox id="tbxEdad" hflex="1" readonly="true" style="text-transform:uppercase"/>
+				</cell>
+				<cell/>
+				<cell>
+					<label value="Estado civil" />
+				</cell>
+				<cell>
+					<textbox hflex="1" readonly="true"
+						id="tbxEstado_civil" style="text-transform:uppercase"/>
+				</cell>
+			</row>
+	
+			<row>
+				<cell>
+					<label value="Pertenencia étnica:" />
+				</cell>
+				<cell>
+					<textbox hflex="1" readonly="true" id="tbxRaza" style="text-transform:uppercase"/>
+				</cell>
+				<cell>
+					<label value="Lugar Ncto." />
+				</cell>
+				<cell colspan="4">
+					<textbox hflex="1" readonly="true" id="tbxLugar_ncto" width="98%" style="text-transform:uppercase"/>
+				</cell>
+			</row>
+	
+			<row>
+				<cell>
+					<label value="Barrio" />
+				</cell>
+				<cell>
+					<textbox hflex="1" readonly="true" id="tbxBarrio" style="text-transform:uppercase"/>
+				</cell>
+				<cell>
+					<label value="Dirección" />
+				</cell>
+				<cell colspan="2">
+					<textbox hflex="1" readonly="true" id="tbxDireccion" style="text-transform:uppercase"/>
+				</cell>
+				<cell>
+					<label value="Localidad" />
+				</cell>
+				<cell>
+					<textbox hflex="1" readonly="true" id="tbxLocalidad" style="text-transform:uppercase"/>
+				</cell>
+				
+			</row>
+	
+			<row>
+				<cell>
+					<label value="Teléfonos" />
+				</cell>
+				<cell>
+					<textbox hflex="1" readonly="true" id="tbxTelefonos" style="text-transform:uppercase"/>
+				</cell>
+				<cell>
+					<label value="Ocupación" />
+					</cell>
+					<cell colspan="2">
+					<textbox hflex="1" readonly="true" id="tbxOcupacion" style="text-transform:uppercase"/>
+				</cell>
+				<cell>
+					<label value="N. Educativo" />
+					</cell>
+					<cell>
+					<textbox hflex="1" readonly="true" id="tbxEducativo" style="text-transform:uppercase"/>
+				</cell>
+			</row>
+		</rows>
+	</grid>
+	</groupbox>
+	<space height="5px"/>
+	<groupbox id="groupboxProgramas" visible="false">
+		<grid id="gridProgramasPyp">
+			<columns>
+			<column label="Fecha" width="100px"/>
+			<column label="Inscrip." tooltiptext="Número de inscripción" width="80px"/>	
+			<column label="Programas" />
+			<column label="Estado" width="130px"/>
+			<column label="Observaciones" width="150px"/>
+			</columns>				
+			<rows id="rowsProgramasPyp"/>
+		</grid>
+	</groupbox>
+</groupbox>
+	</div>
+	</center>
+	</borderlayout>
+			<popup id="popupAseguradora"
+			onOpen="tbxPopup_aseguradora.setValue(tbxAseguradora.getValue())"
+			width="400px">
+			<textbox id="tbxPopup_aseguradora" hflex="1"
+				readonly="true" />
+		</popup>
+</window>
+</zk>

@@ -1,0 +1,401 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+
+<window id="formRiesgo_intervencion" width="100%" height="100%" use="healthmanager.controller.Riesgo_intervencionAction">
+<style src="estilo.css" />
+<style>
+body ,table{
+	margin:0;
+	padding:0;
+	
+}
+.z-fieldset{
+	-moz-border-radius:5px;
+	border-radius: 5px;
+	-webkit-border-radius: 5px;
+}
+.combobox{
+	font-size:12px;
+	border: 1px solid silver;
+}
+
+tr.z-row .z-cell{
+	background-image:none;
+}
+
+tr.z-row td.z-row-inner{
+	background-image:none;
+}
+</style>
+
+<borderlayout width="100%" height="100%" onCreate="formRiesgo_intervencion.initRiesgo_intervencion();">
+<center autoscroll="true" border="none">
+
+<!-- *********************** -->
+<!--        Principal        -->
+<!-- *********************** -->
+<groupbox id="groupboxPrincipal" style="border:0;padding:2px">
+
+<!-- **************** -->
+<!-- Zona de Consulta -->
+<!-- **************** -->
+<groupbox id="groupboxConsulta" visible="false" closable="false" style="border:0;padding:0">
+
+<toolbar sclass="vista">
+<label value="Criterios de B&#250;squeda :" />
+<listbox id="lbxParameter" mold="select" sclass="combobox" width="150px"/>
+<textbox id="tbxValue" width="200px" onOK="formRiesgo_intervencion.buscarDatos();" style="text-transform:uppercase"/>
+<toolbarbutton image="/images/Magnifier.gif" onClick="formRiesgo_intervencion.buscarDatos();" tooltiptext="Consultar Riesgo_intervencion" id="btConsultar"/>
+<toolbarbutton image="/images/New16.gif" onClick='formRiesgo_intervencion.accionForm(true,"registrar");' tooltiptext="Nuevo Riesgo_intervencion" id="btNew"/>
+</toolbar>
+
+<space/>
+
+<!-- ***************************** -->
+<!--  Resultado Consulta Maestros  -->
+<!-- ***************************** -->
+<grid id="gridResultado" height="300px" mold="paging" pageSize="20">
+<columns sizable="true">
+	<column label="Acciones" align="center" width="80px"/>
+</columns>
+<rows id="rowsResultado" width="100%" />
+</grid>
+</groupbox>
+
+<!-- *************************** -->
+<!-- *** Insertar/Actualizar *** -->
+<!-- *************************** -->
+<groupbox visible="true" id="groupboxEditar" closable="false" style="border:0;padding:0">
+
+<!-- *************************** -->
+<!-- **** Barra de Botones ***** -->
+<!-- *************************** -->
+
+<toolbar width="100%" align="start">
+<textbox id="tbxAccion" value="registrar" visible="false"/>
+<toolbarbutton image="/images/Save16.gif" tooltiptext="Guardar Datos" label="Guardar Datos" onClick="formRiesgo_intervencion.guardarDatos();" id="btGuardar"/>
+<toolbarbutton image="/images/New16.gif" label="Nuevo" onClick='formRiesgo_intervencion.accionForm(true,"registrar");' tooltiptext="Nuevo Riesgo Intervencion" id="btNuevo"/>
+</toolbar>
+
+<space/>
+<grid sclass="GridSinBorde">
+<columns>
+<column label="" width="13%"/>
+<column label="" width="20%"/>
+<column label="" width="14%"/>
+<column label="" width="20%"/>
+<column label="" width="13%"/>
+<column label="" width="20%"/>
+</columns>
+<rows>
+
+<!-- fila 1 -->
+<row>
+<cell><label id="lbPeso" value="Peso (Kgs): "/></cell>
+<cell><textbox id="tbxPeso" width="170px" style="text-transform:uppercase"/></cell>
+<cell><label id="lbTalla" value="Talla (cms): "/></cell>
+<cell><textbox id="tbxTalla" width="170px" style="text-transform:uppercase"/></cell>
+<cell><label id="lbEdad_gestacional" value="Edad gestacional al nacer: "/></cell>
+<cell><textbox id="tbxEdad_gestacional" width="170px" style="text-transform:uppercase"/></cell>
+</row>
+
+<!-- fila 2 -->
+<row>
+<cell><label id="lbFecha_peso" value="Fecha de peso: "/></cell>
+<cell><datebox id="dtbxFecha_peso" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="170px"/></cell>
+<cell><label id="lbFecha_talla" value="Fecha de la talla: "/></cell>
+<cell><datebox id="dtbxFecha_talla" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="170px"/></cell>
+<cell><label id="lbFecha_parto" value="Fecha probable de parto: "/></cell>
+<cell><datebox id="dtbxFecha_parto" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="170px"/></cell>
+
+</row>
+
+<!-- fila 3 -->
+<row>
+<cell><label id="lbBcg" value="BCG: "/></cell>
+<cell><listbox id="lbxBcg" name="bcg" mold="select" width="170px" sclass="combobox" onOK="lbBcg.focus();"/></cell>
+<cell><label id="lbHepatitis_b" value="Hepatitis B menores de 1 año: "/></cell>
+<cell><listbox id="lbxHepatitis_b" name="hepatitis_b" mold="select" width="170px" sclass="combobox" onOK="lbHepatitis_b.focus();"/></cell>
+<cell><label id="lbPentavalente" value="Pentavalente: "/></cell>
+<cell><listbox id="lbxPentavalente" name="pentavalente" mold="select" width="170px" sclass="combobox" onOK="lbPentavalente.focus();"/></cell>
+</row>
+
+<!-- fila 4 -->
+<row>
+<cell><label id="lbPollo" value="Polio: "/></cell>
+<cell><listbox id="lbxPollo" name="pollo" mold="select" width="170px" sclass="combobox" onOK="lbPollo.focus();"/></cell>
+<cell><label id="lbDpt" value="DPT menores de 5 años: "/></cell>
+<cell><listbox id="lbxDpt" name="dpt" mold="select" width="170px" sclass="combobox" onOK="lbDpt.focus();"/></cell>
+<cell><label id="lbRotavirus" value="Rotavirus: "/></cell>
+<cell><listbox id="lbxRotavirus" name="rotavirus" mold="select" width="170px" sclass="combobox" onOK="lbRotavirus.focus();"/></cell>
+</row>
+
+<!-- fila 5 -->
+<row>
+<cell><label id="lbNeumococo" value="Neumococo: "/></cell>
+<cell><listbox id="lbxNeumococo" name="neumococo" mold="select" width="170px" sclass="combobox" onOK="lbNeumococo.focus();"/></cell>
+<cell><label id="lbInfluenza" value="Influenza Niños: "/></cell>
+<cell><listbox id="lbxInfluenza" name="influenza" mold="select" width="170px" sclass="combobox" onOK="lbInfluenza.focus();"/></cell>
+<cell><label id="lbFiebre_amarilla" value="Fiebre amarilla niños de 1 año: "/></cell>
+<cell><listbox id="lbxFiebre_amarilla" name="fiebre_amarilla" mold="select" width="170px" sclass="combobox" onOK="lbFiebre_amarilla.focus();"/></cell>
+</row>
+
+<!-- fila 6 -->
+<row>
+<cell><label id="lbHepatitis_a" value="Hepatitis A: "/></cell>
+<cell><listbox id="lbxHepatitis_a" name="hepatitis_a" mold="select" width="170px" sclass="combobox" onOK="lbHepatitis_a.focus();"/></cell>
+<cell><label id="lbTriple_viral" value="Triple viral niños: "/></cell>
+<cell><listbox id="lbxTriple_viral" name="triple_viral" mold="select" width="170px" sclass="combobox" onOK="lbTriple_viral.focus();"/></cell>
+<cell><label id="lbVph" value="Virus del Papiloma Humano (VPH): "/></cell>
+<cell><listbox id="lbxVph" name="vph" mold="select" width="170px" sclass="combobox" onOK="lbVph.focus();"/></cell>
+</row>
+
+<!-- fila 7 -->
+<row>
+<cell><label id="lbTd_tt" value="TD o TT mujeres en edad Fértil: "/></cell>
+<cell><listbox id="lbxTd_tt" name="td_tt" mold="select" width="170px" sclass="combobox" onOK="lbTd_tt.focus();"/></cell>
+<cell><label id="lbPlaca_bacteriana" value="Control Placa Bacteriana: "/></cell>
+<cell><listbox id="lbxPlaca_bacteriana" name="placa_bacteriana" mold="select" width="170px" sclass="combobox" onOK="lbPlaca_bacteriana.focus();"/></cell>
+<cell><label id="lbFecha_consejeria_lactancia" value="Fecha consejeria en lactancia materna: "/></cell>
+<cell><datebox id="dtbxFecha_consejeria_lactancia" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="170px"/></cell>
+</row>
+
+<!-- fila 8 -->
+<row>
+<cell><label id="lbFecha_atencion_parto" value="Fecha de atención parto o cesária: "/></cell>
+<cell><datebox id="dtbxFecha_atencion_parto" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="170px"/></cell>
+<cell><label id="lbFecha_salida_atencion" value="Fecha salida de la atención: "/></cell>
+<cell><datebox id="dtbxFecha_salida_atencion" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="170px"/></cell>
+<cell><label id="lbFecha_recien_nacido" value="Control recién nacido: "/></cell>
+<cell><datebox id="dtbxFecha_recien_nacido" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="170px"/></cell>
+</row>
+
+<!-- fila 9 -->
+<row>
+<cell><label id="lbFecha_planificacion_familiar" value="Planificación familiar 1ra vez: "/></cell>
+<cell><datebox id="dtbxFecha_planificacion_familiar" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="170px"/></cell>
+<cell><label id="lbSuministro_anticonceptivo" value="Suministro de método anticonceptivo: "/></cell>
+<cell><listbox id="lbxSuministro_anticonceptivo" name="suministro_anticonceptivo" mold="select" width="170px" sclass="combobox" onOK="lbSuministro_anticonceptivo.focus();"/></cell>
+<cell><label id="lbFecha_suministro_anticonceptivo" value="Fecha suministro de anticonceptivo: "/></cell>
+<cell><datebox id="dtbxFecha_suministro_anticonceptivo" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="170px"/></cell>
+</row>
+
+<!-- fila 10 -->
+<row>
+<cell><label id="lbFecha_control_prenatal" value="Control prenatal 1ra vez: "/></cell>
+<cell><datebox id="dtbxFecha_control_prenatal" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="170px"/></cell>
+<cell><label id="lbControl_prenatal" value="Control prenatal: "/></cell>
+<cell><textbox id="tbxControl_prenatal" width="170px" style="text-transform:uppercase"/></cell>
+<cell><label id="lbUltimo_control_prenatal" value="Último control prenatal: "/></cell>
+<cell><datebox id="dtbxUltimo_control_prenatal" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="170px"/></cell>
+</row>
+
+<!-- fila 11 -->
+<row>
+<cell><label id="lbSuministro_acido_folico" value="Suministro ácido fólico en último control prenatal: "/></cell>
+<cell><listbox id="lbxSuministro_acido_folico" name="suministro_acido_folico" mold="select" width="170px" sclass="combobox" onOK="lbSuministro_acido_folico.focus();"/></cell>
+<cell><label id="lbSuministro_sulfato" value="Suministro sulfato ferroso en último control prenatal: "/></cell>
+<cell><listbox id="lbxSuministro_sulfato" name="suministro_sulfato" mold="select" width="170px" sclass="combobox" onOK="lbSuministro_sulfato.focus();"/></cell>
+<cell><label id="lbSuministro_carbonato" value="Suministro carbonato de calcio en último control prenatal: "/></cell>
+<cell><listbox id="lbxSuministro_carbonato" name="suministro_carbonato" mold="select" width="170px" sclass="combobox" onOK="lbSuministro_carbonato.focus();"/></cell>
+</row>
+
+<!-- fila 12 -->
+<row>
+<cell height="30px"><label id="lbFecha_agudeza_visual" value="Valoración agudeza visual: "/></cell>
+<cell><datebox id="dtbxFecha_agudeza_visual" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="170px"/></cell>
+<cell><label id="lbFecha_oftalmologia" value="Consulta por oftalmología: "/></cell>
+<cell><datebox id="dtbxFecha_oftalmologia" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="170px"/></cell>
+<cell><label id="lbFecha_diagnistico_desnutricion" value="Diagnóstico desnutrición proteico calórica: "/></cell>
+<cell><datebox id="dtbxFecha_diagnistico_desnutricion" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="170px"/></cell>
+</row>
+
+<!-- fila 13 -->
+<row>
+<cell height="30px"><label id="lbFecha_consulta_maltrato" value="Consulta mujer víctima maltrato: "/></cell>
+<cell><datebox id="dtbxFecha_consulta_maltrato" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="170px"/></cell>
+<cell><label id="lbFecha_consulta_violacion" value="Consulta mujer víctima violencia: "/></cell>
+<cell><datebox id="dtbxFecha_consulta_violacion" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="170px"/></cell>
+<cell><label id="lbFecha_nutricion" value="Fecha nutrición: "/></cell>
+<cell><datebox id="dtbxFecha_nutricion" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="170px"/></cell>
+</row>
+
+<!-- fila 14 -->
+<row>
+<cell><label id="lbFecha_psicologia" value="Consulta de Psicología: "/></cell>
+<cell><datebox id="dtbxFecha_psicologia" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="170px"/></cell>
+<cell><label id="lbFecha_crecimiento" value="Consulta de crecimiento y Desarrollo: "/></cell>
+<cell><datebox id="dtbxFecha_crecimiento" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="170px"/></cell>
+<cell><label id="lbSuministro_sulfato_ultima" value="Suministro de sulfato última consulta: "/></cell>
+<cell><listbox id="lbxSuministro_sulfato_ultima" name="suministro_sulfato_ultima" mold="select" width="170px" sclass="combobox" onOK="lbSuministro_sulfato_ultima.focus();"/></cell>
+</row>
+
+<!-- fila 15 -->
+<row>
+<cell><label id="lbSuministro_vitamina_a" value="Suministro de vitamina A última consulta: "/></cell>
+<cell><listbox id="lbxSuministro_vitamina_a" name="suministro_vitamina_a" mold="select" width="170px" sclass="combobox" onOK="lbSuministro_vitamina_a.focus();"/></cell>
+<cell><label id="lbFecha_consulta_joven" value="Consulta de joven 1ra vez: "/></cell>
+<cell><datebox id="dtbxFecha_consulta_joven" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="170px"/></cell>
+<cell><label id="lbFecha_consulta_adulto" value="Consulta de adulto 1ra vez: "/></cell>
+<cell><datebox id="dtbxFecha_consulta_adulto" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="170px"/></cell>
+</row>
+
+<!-- fila 16 -->
+<row>
+<cell><label id="lbPreservativos" value="Preservativos a pacientes con ITS: "/></cell>
+<cell><textbox id="tbxPreservativos" width="170px" style="text-transform:uppercase"/></cell>
+<cell><label id="lbFecha_asesoria_vih" value="Asesoría Pre test Elisa VIH: "/></cell>
+<cell><datebox id="dtbxFecha_asesoria_vih" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="170px"/></cell>
+<cell><label id="lbFecha_asesoria_vih_pos" value="Asesoría Pos test Elisa VIH: "/></cell>
+<cell><datebox id="dtbxFecha_asesoria_vih_pos" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="170px"/></cell>
+</row>
+
+<!-- fila 17 -->
+<row>
+<cell><label id="lbDiagnostico" value="Diagnóstico de Ansiedad,Depresión, Esquizofrenía,Déficit de atención, consumo SPA y Bipolaridad: "/></cell>
+<cell><listbox id="lbxDiagnostico" name="diagnostico" mold="select" width="170px" sclass="combobox" onOK="lbDiagnostico.focus();"/></cell>
+<cell><label id="lbFecha_antigeno_hepatitis_b" value="Fecha antígeno de superficie hepatitis B en gestantes: "/></cell>
+<cell><datebox id="dtbxFecha_antigeno_hepatitis_b" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="170px"/></cell>
+<cell><label id="lbResultado_antigeno_hepatitis_b" value="Resultado antígeno de superficie hepatitis B en gestantes: "/></cell>
+<cell><listbox id="lbxResultado_antigeno_hepatitis_b" name="resultado_antigeno_hepatitis_b" mold="select" width="170px" sclass="combobox" onOK="lbResultado_antigeno_hepatitis_b.focus();"/></cell>
+</row>
+
+<!-- fila 18 -->
+<row>
+<cell><label id="lbFecha_serologia" value="Fecha Serología Sífilis: "/></cell>
+<cell><datebox id="dtbxFecha_serologia" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="170px"/></cell>
+<cell><label id="lbResultado_serologia" value="Resultado Serología Sífilis: "/></cell>
+<cell><listbox id="lbxResultado_serologia" name="resultado_serologia" mold="select" width="170px" sclass="combobox" onOK="lbResultado_serologia.focus();"/></cell>
+<cell><label id="lbFecha_toma_vih" value="Fecha toma de Elisa para VIH: "/></cell>
+<cell><datebox id="dtbxFecha_toma_vih" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="170px"/></cell>
+</row>
+
+
+<!-- fila 19 -->
+<row>
+<cell><label id="lbResultado_vih" value="Resultado Elisa para VIH: "/></cell>
+<cell><listbox id="lbxResultado_vih" name="resultado_vih" mold="select" width="170px" sclass="combobox" onOK="lbResultado_vih.focus();"/></cell>
+<cell><label id="lbFecha_tsh" value="Fecha tsh Neonatal: "/></cell>
+<cell><datebox id="dtbxFecha_tsh" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="170px"/></cell>
+<cell><label id="lbResultado_tsh" value="Resultado TSH Neonatal: "/></cell>
+<cell><listbox id="lbxResultado_tsh" name="resultado_tsh" mold="select" width="170px" sclass="combobox" onOK="lbResultado_tsh.focus();"/></cell>
+</row>
+
+<!-- fila 20 -->
+<row>
+<cell><label id="lbTamizaje" value="Tamizaje Cáncer cuello Uterino: "/></cell>
+<cell><listbox id="lbxTamizaje" name="tamizaje" mold="select" width="170px" sclass="combobox" onOK="lbTamizaje.focus();"/></cell>
+<cell><label id="lbFecha_citologia_cervico" value="Citologia Cervico Uterino: "/></cell>
+<cell><datebox id="dtbxFecha_citologia_cervico" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="170px"/></cell>
+<cell><label id="lbResultado_citologia_cervico" value="Resultado_citologia_cervico: "/></cell>
+<cell><listbox id="lbxResultado_citologia_cervico" name="resultado_citologia_cervico" mold="select" width="170px" sclass="combobox" onOK="lbResultado_citologia_cervico.focus();"/></cell>
+</row>
+
+<!-- fila 21 -->
+<row>
+<cell><label id="lbCalidad_citologia_cervico" value="Calidad en la muestra citología cervico: "/></cell>
+<cell><listbox id="lbxCalidad_citologia_cervico" name="calidad_citologia_cervico" mold="select" width="170px" sclass="combobox" onOK="lbCalidad_citologia_cervico.focus();"/></cell>
+<cell><label id="lbCodigo_ips_citologia" value="Código IPS donde se toma la citología: "/></cell>
+<cell><textbox id="tbxCodigo_ips_citologia" width="170px" style="text-transform:uppercase"/></cell>
+<cell><label id="lbFecha_colposcopia" value="Fecha Colposcopia: "/></cell>
+<cell><datebox id="dtbxFecha_colposcopia" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="170px"/></cell>
+</row>
+
+<!-- fila 22 -->
+<row>
+<cell><label id="lbCodigo_ips_colposcopia" value="Código IPS donde se toma la colposcopia: "/></cell>
+<cell><textbox id="tbxCodigo_ips_colposcopia" width="170px" style="text-transform:uppercase"/></cell>
+<cell><label id="lbFecha_biopsia" value="Fecha Biopsia Cervical: "/></cell>
+<cell><datebox id="dtbxFecha_biopsia" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="170px"/></cell>
+<cell><label id="lbResultado_biopsia" value="Resultado Biopsia Cervical: "/></cell>
+<cell><listbox id="lbxResultado_biopsia" name="resultado_biopsia" mold="select" width="170px" sclass="combobox" onOK="lbResultado_biopsia.focus();"/></cell>
+</row>
+
+<!-- fila 23 -->
+<row>
+<cell><label id="lbCodigo_ips_biopsia" value="Código IPS donde se toma Biopsia: "/></cell>
+<cell><textbox id="tbxCodigo_ips_biopsia" width="170px" style="text-transform:uppercase"/></cell>
+<cell><label id="lbFecha_mamografia" value="Fecha Mamografía: "/></cell>
+<cell><datebox id="dtbxFecha_mamografia" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="170px"/></cell>
+<cell><label id="lbResultado_mamografia" value="Resultado Mamografía: "/></cell>
+<cell><listbox id="lbxResultado_mamografia" name="resultado_mamografia" mold="select" width="170px" sclass="combobox" onOK="lbResultado_mamografia.focus();"/></cell>
+</row>
+
+<!-- fila 24 -->
+<row>
+<cell><label id="lbCodigo_ips_mamografia" value="Código IPS donde se toma la mamografia: "/></cell>
+<cell><textbox id="tbxCodigo_ips_mamografia" width="170px" style="text-transform:uppercase"/></cell>
+<cell><label id="lbFecha_biopsia_seno" value="Fecha toma Biopsia Seno por BACAF: "/></cell>
+<cell><datebox id="dtbxFecha_biopsia_seno" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="170px"/></cell>
+<cell><label id="lbFecha_resultado_biopsia_seno" value="Fecha resultado Biopsia Seno por BACAF: "/></cell>
+<cell><datebox id="dtbxFecha_resultado_biopsia_seno" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="170px"/></cell>
+</row>
+
+<!-- fila 25 -->
+<row>
+<cell><label id="lbBipsia_seno" value="Biopsia Seno por BACAF: "/></cell>
+<cell><listbox id="lbxBipsia_seno" name="bipsia_seno" mold="select" width="170px" sclass="combobox" onOK="lbBipsia_seno.focus();"/></cell>
+<cell><label id="lbCodigo_ips_biopsia_seno" value="Código IPS donde se toma la Biopsia Seno: "/></cell>
+<cell><textbox id="tbxCodigo_ips_biopsia_seno" width="170px" style="text-transform:uppercase"/></cell>
+<cell><label id="lbFecha_hemoglobina" value="Fecha toma de Hemoglobina: "/></cell>
+<cell><datebox id="dtbxFecha_hemoglobina" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="170px"/></cell>
+</row>
+
+<!-- fila 16 -->
+<row>
+<cell><label id="lbHemoglibina" value="Hemoglibina: "/></cell>
+<cell><doublebox id="dbxHemoglibina" format="#,##0.00" width="170px" value="0.00"/></cell>
+<cell><label id="lbFecha_glisemia" value="Fecha toma Glisemia Basal: "/></cell>
+<cell><datebox id="dtbxFecha_glisemia" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="170px"/></cell>
+<cell><label id="lbFecha_creatinina" value="Fecha Creatinina: "/></cell>
+<cell><datebox id="dtbxFecha_creatinina" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="170px"/></cell>
+</row>
+
+<!-- fila 17 -->
+<row>
+<cell><label id="lbCreatinina" value="Creatinina: "/></cell>
+<cell><doublebox id="dbxCreatinina" format="#,##0.00" width="170px" value="0.00"/></cell>
+<cell><label id="lbFecha_hemoglobina_glicosilada" value="Fecha Hemoglobina Glicosilada: "/></cell>
+<cell><datebox id="dtbxFecha_hemoglobina_glicosilada" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="170px"/></cell>
+<cell><label id="lbHemoglobina_glicosilada" value="Hemoglobina Glicosilada: "/></cell>
+<cell><doublebox id="dbxHemoglobina_glicosilada" format="#,##0.00" width="170px" value="0.00"/></cell>
+</row>
+
+<!-- fila 18 -->
+<row>
+<cell><label id="lbFecha_microalbuminuria" value="Fecha toma Microalbuminuria: "/></cell>
+<cell><datebox id="dtbxFecha_microalbuminuria" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="170px"/></cell>
+<cell><label id="lbFecha_hdl" value="Fecha toma HDL: "/></cell>
+<cell><datebox id="dtbxFecha_hdl" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="170px"/></cell>
+<cell><label id="lbFecha_basiloscopia" value="Fecha toma Basiloscopia: "/></cell>
+<cell><datebox id="dtbxFecha_basiloscopia" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="170px"/></cell>
+</row>
+
+<!-- fila 19 -->
+<row>
+<cell><label id="lbBasiloscopia" value="Basiloscopia: "/></cell>
+<cell><listbox id="lbxBasiloscopia" name="basiloscopia" mold="select" width="170px" sclass="combobox" onOK="lbBasiloscopia.focus();"/></cell>
+<cell><label id="lbTratamiento_hipotiroidismo" value="Tratamiento Hipotiroidismo Congénito: "/></cell>
+<cell><listbox id="lbxTratamiento_hipotiroidismo" name="tratamiento_hipotiroidismo" mold="select" width="170px" sclass="combobox" onOK="lbTratamiento_hipotiroidismo.focus();"/></cell>
+<cell><label id="lbTratamiento_sifilis_gestional" value="Tratamiento Sífilis Gestional: "/></cell>
+<cell><listbox id="lbxTratamiento_sifilis_gestional" name="tratamiento_sifilis_gestional" mold="select" width="170px" sclass="combobox" onOK="lbTratamiento_sifilis_gestional.focus();"/></cell>
+</row>
+
+<!-- fila 20 -->
+<row>
+<cell><label id="lbTratamiento_sifilis_congenita" value="Tratamiento Sífilis Congénita: "/></cell>
+<cell><listbox id="lbxTratamiento_sifilis_congenita" name="tratamiento_sifilis_congenita" mold="select" width="170px" sclass="combobox" onOK="lbTratamiento_sifilis_congenita.focus();"/></cell>
+<cell><label id="lbTratamiento_lepra" value="Tratamiento Lepra: "/></cell>
+<cell><listbox id="lbxTratamiento_lepra" name="tratamiento_lepra" mold="select" width="170px" sclass="combobox" onOK="lbTratamiento_lepra.focus();"/></cell>
+<cell><label id="lbFecha_leismaniasis" value="Fecha terminación Leismaniasis: "/></cell>
+<cell><datebox id="dtbxFecha_leismaniasis" onCreate="self.value = new Date();" format="yyyy-MM-dd" width="170px"/></cell>
+</row>
+
+</rows>
+</grid>
+</groupbox>
+</groupbox>
+</center>
+</borderlayout>
+</window>
+</zk>

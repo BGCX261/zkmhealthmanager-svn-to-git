@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.notas_enfermeriaModel">
+	<select id="select" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+		select
+		p.apellido1 as apellido1_paciente,
+		p.apellido2 as apellido2_paciente,
+		p.nombre1 as nombre1_paciente,
+		p.nombre2 as nombre2_paciente,
+		p.sexo,
+		p.fecha_nacimiento,
+		er.descripcion as regimen,
+		ne.nro_documento,
+		ne.nro_ingreso,
+		a.nombre as administradora,
+		ne.fecha_nota,
+		ne.descripcion_nota,
+		ne.codigo_nota,
+		u.codigo,
+		u.nombres as nombres_enfermera,
+		u.apellidos as apellidos_enfermera
+		from notas_enfermeria ne
+		left JOIN admision ad on
+		ad.codigo_empresa = ne.codigo_empresa and
+		ad.codigo_sucursal = ne.codigo_sucursal and
+		ad.nro_ingreso = ne.nro_ingreso and
+		ad.nro_identificacion = ne.nro_documento
+		left join paciente p on
+		p.codigo_empresa = ne.codigo_empresa
+		and p.codigo_sucursal = ne.codigo_sucursal
+		and p.nro_identificacion = ne.nro_documento
+		left join administradora a on
+		a.codigo = ad.codigo_administradora
+		left JOIN usuarios u on
+		u.codigo_empresa = ne.codigo_empresa and
+		u.codigo_sucursal = ne.codigo_sucursal and
+		u.codigo = ne.codigo_enfermera
+		left join elemento er on
+		er.codigo = p.tipo_usuario and
+		er.tipo = 'tipo_usuario'
+
+		where ne.nro_ingreso = #{nro_ingreso}
+		and ne.nro_documento = #{nro_documento}
+		and ne.codigo_empresa = #{codigo_empresa}
+		and ne.codigo_sucursal = #{codigo_sucursal}
+		and ne.codigo_centro = #{codigo_centro}
+		and ne.codigo_nota in (${codigo_nota_in})
+		order by ne.fecha_nota
+	</select>
+</mapper>

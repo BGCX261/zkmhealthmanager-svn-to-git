@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.Nota_pypDao">
+
+	
+
+	<resultMap id="nota_pypMap" type="nota_pyp">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="codigo_historia" property="codigo_historia" />
+		<result column="identificacion" property="identificacion" />
+		<result column="fecha_inicial" property="fecha_inicial" />
+		<result column="asunto" property="asunto" />
+		<result column="nota" property="nota" />
+		<result column="codigo_consulta_pyp" property="codigo_consulta_pyp" />
+		<result column="finalidad_cons" property="finalidad_cons" />
+		<result column="causas_externas" property="causas_externas" />
+		<result column="tipo_disnostico" property="tipo_disnostico" />
+		<result column="tipo_principal" property="tipo_principal" />
+		<result column="tipo_relacionado_1" property="tipo_relacionado_1" />
+		<result column="tipo_relacionado_2" property="tipo_relacionado_2" />
+		<result column="tipo_relacionado_3" property="tipo_relacionado_3" />
+		<result column="tratamiento" property="tratamiento" />
+	</resultMap>
+
+	<insert id="crear" parameterType="nota_pyp">
+		insert into public.nota_pyp (codigo_empresa,codigo_sucursal,
+		codigo_historia,identificacion,fecha_inicial,
+		asunto,nota,codigo_consulta_pyp,
+		finalidad_cons,causas_externas,tipo_disnostico,
+		tipo_principal,tipo_relacionado_1,tipo_relacionado_2,
+		tipo_relacionado_3,tratamiento)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{codigo_historia},#{identificacion},#{fecha_inicial},
+		#{asunto},#{nota},#{codigo_consulta_pyp},
+		#{finalidad_cons},#{causas_externas},#{tipo_disnostico},
+		#{tipo_principal},#{tipo_relacionado_1},#{tipo_relacionado_2},
+		#{tipo_relacionado_3},#{tratamiento})
+	</insert>
+
+	<update id="actualizar" parameterType="nota_pyp">
+		update public.nota_pyp set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},codigo_historia = #{codigo_historia},
+		identificacion = #{identificacion},fecha_inicial = #{fecha_inicial},
+		asunto = #{asunto},nota = #{nota},
+		codigo_consulta_pyp = #{codigo_consulta_pyp},finalidad_cons = #{finalidad_cons},
+		causas_externas = #{causas_externas},tipo_disnostico = #{tipo_disnostico},
+		tipo_principal = #{tipo_principal},tipo_relacionado_1 = #{tipo_relacionado_1},
+		tipo_relacionado_2 = #{tipo_relacionado_2},tipo_relacionado_3 = #{tipo_relacionado_3},
+		tratamiento = #{tratamiento}
+		where 		codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and codigo_historia = #{codigo_historia}
+	</update>
+
+	<select id="consultar" resultMap="nota_pypMap" parameterType="nota_pyp">
+		select codigo_empresa,codigo_sucursal,
+		codigo_historia,identificacion,fecha_inicial,asunto,
+		nota,codigo_consulta_pyp,finalidad_cons,causas_externas,
+		tipo_disnostico,tipo_principal,tipo_relacionado_1,tipo_relacionado_2,
+		tipo_relacionado_3,tratamiento
+		from public.nota_pyp where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_historia = #{codigo_historia}
+	</select>
+
+	<delete id="eliminar" parameterType="nota_pyp">
+		delete from public.nota_pyp
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_historia = #{codigo_historia}
+	</delete>
+
+	<select id="listar" resultMap="nota_pypMap" parameterType="java.util.Map">
+		select codigo_empresa,codigo_sucursal,
+		codigo_historia,identificacion,fecha_inicial,asunto,
+		nota,codigo_consulta_pyp,finalidad_cons,causas_externas,
+		tipo_disnostico,tipo_principal,tipo_relacionado_1,tipo_relacionado_2,
+		tipo_relacionado_3,tratamiento
+		from public.nota_pyp 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">AND codigo_empresa = #{codigo_empresa}</if>
+			<if test="codigo_sucursal != null">AND codigo_sucursal = #{codigo_sucursal}</if>
+			<if test="parameter != null">AND ${parameter} like '${value}'</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+
+</mapper>

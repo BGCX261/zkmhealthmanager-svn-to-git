@@ -1,0 +1,1481 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formAnexo3_entidad" width="100%" height="100%"
+		use="healthmanager.controller.Anexo3_entidadAction" border="none">
+		<style>
+			.GridSinBorde tr.z-row td.z-row-inner, tr.z-row
+			.z-cell,div.z-grid { border: none; overflow: hidden; zoom:
+			1; border-top: none; border-left: none; border-right: none;
+			border-bottom: none; }
+		</style>
+
+
+		<groupbox id="groupboxConsulta" visible="true" closable="false"
+			height="95%" mold="3d">
+			<caption label="Consultar"
+				style="color: black;font-weight: bold" />
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" mold="paging" pageSize="20"
+				vflex="1">
+				<auxhead>
+					<auxheader colspan="6">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<separator />
+							<textbox id="tbxValue" width="200px"
+								onOK="formAnexo3_entidad.buscarDatos();"
+								style="text-transform:uppercase" />
+							<separator />
+							<button mold="trendy"
+								image="/images/Magnifier.gif"
+								onClick="formAnexo3_entidad.buscarDatos();"
+								tooltiptext="Consultar Prueba" />
+							<separator />
+							<button mold="trendy"
+								image="/images/New16.gif"
+								onClick='formAnexo3_entidad.newAutorizacion()'
+								tooltiptext="Nuevo Prueba" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Nro solicitud" />
+					<column label="Fecha" />
+					<column label="Codigo prestador" />
+					<column label="Prestador" />
+					<column label="Direccion" />
+					<column label="Acciones" align="center"
+						width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+		<borderlayout width="100%" height="100%" id="groupboxEditar"
+			visible="false">
+			<north>
+				<toolbar width="100%" align="start">
+					<toolbarbutton image="/images/Save16.gif"
+						label="Guardar Autorizacion"
+						onClick="formAnexo3_entidad.guardarDatos();" id="btn_guardar" />
+
+					<space />
+
+					<toolbarbutton image="/images/New16.gif"
+						label="Nueva Autorizacion"
+						onClick='formAnexo3_entidad.newAutorizacion()' id="btn_nuevo" />
+					<space />
+
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Cancelar" onClick='formAnexo3_entidad.cancel()'
+						id="btn_cancel" />
+					<space />
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Imprimir" onClick='formAnexo3_entidad.imprimir()'
+						visible="false" />
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center">
+					<groupbox closable="false" mold="3d" height="100%"
+						width="850px" vflex="1">
+
+						<grid sclass="GridSinBorde" vflex="1">
+							<columns>
+								<column label="" width="100px" />
+								<column label="" width="180px" />
+								<column label="" width="100px" />
+								<column label="" width="180px" />
+								<column label="" width="11%" />
+							</columns>
+							<rows>
+
+								<row id="rowPrestadorServicio">
+									<cell colspan="6">
+										<groupbox visible="true"
+											closable="false" height="90%" mold="3d">
+											<caption
+												label="Datos del Prestador de servicios"
+												style="color: black;font-weight: bold" />
+											<grid sclass="GridSinBorde"
+												vflex="1" style="border:none">
+												<columns>
+													<column label=""
+														width="14%" />
+													<column label=""
+														width="25%" />
+													<column label=""
+														width="14%" />
+													<column label=""
+														width="25%" />
+													<column label=""
+														width="11%" />
+												</columns>
+												<rows>
+													<row
+														visible="false">
+														<cell
+															height="30px">
+															<label
+																id="lbNumero_solicitud" value="NUMERO SOLICITUD: "
+																visible="false" />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxNumero_solicitud" width="170px"
+																style="text-transform:uppercase" readonly="true"
+																visible="false" />
+														</cell>
+														<cell
+															height="30px">
+															<label
+																id="lbFecha" value="Fecha: " />
+														</cell>
+														<cell>
+															<datebox
+																id="dtbxFecha" onCreate="self.value = new Date();"
+																format="yyyy-MM-dd hh:mm" width="170px"
+																buttonVisible="false" readonly="true" />
+														</cell>
+														<cell></cell>
+													</row>
+													<row>
+														<cell
+															height="30px">
+															<label
+																value="* " style="color: red"
+																tooltiptext="Campo obligatorio" />
+															<label
+																id="lbCodigo_administradora" value="Prestador: " />
+														</cell>
+														<cell>
+
+															<bandbox
+																id="tbxCodigo_prestador" autodrop="true" readonly="true"
+																width="170px"
+																onOpen='formAnexo3_entidad.buscarPrestador(tbxValuePrestador.getValue(),lbxPrestador)'>
+																<bandpopup>
+																	<vbox>
+																		<toolbar>
+																			<label
+																				value="Buscar: " />
+																			<textbox
+																				id="tbxValuePrestador"
+																				onChanging='formAnexo3_entidad.buscarPrestador(event.getValue(),lbxPrestador)'
+																				style="text-transform:uppercase;" />
+																			<toolbarbutton
+																				image="/images/borrar.gif" tooltiptext="Quitar"
+																				onClick='formAnexo3_entidad.selectedPrestador(new Listitem())' />
+																		</toolbar>
+																		<listbox
+																			height="300px" width="600px" mold="paging"
+																			pageSize="8" id="lbxPrestador"
+																			onSelect='formAnexo3_entidad.selectedPrestador(self.getSelectedItem())'>
+																			<listhead>
+																				<listheader
+																					label="Codigo" width="150px" />
+																				<listheader
+																					label="Nit" width="170px" />
+																				<listheader
+																					label="Nombre" />
+																			</listhead>
+																		</listbox>
+																	</vbox>
+																</bandpopup>
+															</bandbox>
+														</cell>
+														<cell
+															colspan="2" align="left">
+															<textbox
+																id="tbxNomPrestador" width="285px"
+																style="text-transform:uppercase" readonly="true" />
+														</cell>
+														<cell></cell>
+													</row>
+													<row>
+														<cell
+															height="30px">
+															<label
+																value="Identificacion " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxId" width="170px"
+																style="text-transform:uppercase" readonly="true" />
+														</cell>
+														<cell
+															height="30px">
+
+															<label
+																value="Direccion: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxdirecion" width="170px"
+																style="text-transform:uppercase" readonly="true" />
+														</cell>
+														<cell></cell>
+													</row>
+													<row>
+
+														<cell
+															height="30px">
+															<label
+																value="Departamento:  " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxDepartamento" width="170px"
+																style="text-transform:uppercase" readonly="true" />
+														</cell>
+														<cell
+															height="30px">
+															<label
+																value="Municipo: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxMunicipio" width="170px"
+																style="text-transform:uppercase" readonly="true" />
+														</cell>
+														<cell></cell>
+													</row>
+												</rows>
+											</grid>
+										</groupbox>
+									</cell>
+								</row>
+
+
+								<row>
+									<cell colspan="6">
+										<groupbox visible="true"
+											closable="false" height="90%" mold="3d">
+											<caption
+												label="Datos del paciente"
+												style="color: black;font-weight: bold" />
+											<grid sclass="GridSinBorde"
+												vflex="1" style="border:none">
+												<columns>
+													<column label=""
+														width="11%" visible="false" />
+													<column label=""
+														width="14%" />
+													<column label=""
+														width="25%" />
+													<column label=""
+														width="14%" />
+													<column label=""
+														width="25%" />
+													<column label=""
+														width="11%" />
+												</columns>
+												<rows>
+													<row>
+														<cell></cell>
+														<cell
+															height="30px">
+															<label
+																value="Identificación: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxIdentificacionPaciente" width="170px"
+																style="text-transform:uppercase" readonly="true" />
+														</cell>
+														<cell
+															height="30px">
+															<label
+																value="Tipo Id: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxTipoId" width="170px"
+																style="text-transform:uppercase" readonly="true" />
+														</cell>
+														<cell></cell>
+													</row>
+													<row>
+														<cell></cell>
+														<cell
+															height="30px">
+															<label
+																value="1er Apellido: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxapellido1Paciente" width="170px"
+																style="text-transform:uppercase" readonly="true" />
+														</cell>
+														<cell
+															height="30px">
+															<label
+																value="2do Apellido: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxapellido2paciente" width="170px"
+																style="text-transform:uppercase" readonly="true" />
+														</cell>
+														<cell></cell>
+													</row>
+													<row>
+														<cell></cell>
+														<cell
+															height="30px">
+															<label
+																value="1er Nombre: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxnombre1Paciente" width="170px"
+																style="text-transform:uppercase" readonly="true" />
+														</cell>
+														<cell
+															height="30px">
+															<label
+																value="2do Nombre: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxnombre2paciente" width="170px"
+																style="text-transform:uppercase" readonly="true" />
+														</cell>
+														<cell></cell>
+													</row>
+													<row>
+														<cell></cell>
+														<cell
+															height="30px">
+															<label
+																value="Dirección: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxdirPaciente" width="170px"
+																style="text-transform:uppercase" readonly="true" />
+														</cell>
+														<cell
+															height="30px" colspan="2">
+															<label
+																value="Tel: " />
+															<textbox
+																id="tbxtelpaciente" width="70px"
+																style="text-transform:uppercase" readonly="true" />
+															<space></space>
+															<label
+																value="Fecha Nac: " />
+															<datebox
+																id="tbxFechNacpaciente" width="70px"
+																style="text-transform:uppercase" readonly="true"
+																format="yyyy-MM-dd" buttonVisible="false" />
+														</cell>
+														<cell></cell>
+													</row>
+												</rows>
+											</grid>
+										</groupbox>
+									</cell>
+								</row>
+								<row>
+									<cell colspan="6">
+										<groupbox visible="true"
+											closable="false" height="90%" mold="3d">
+											<caption
+												label="Cobertura en salud "
+												style="color: black;font-weight: bold" />
+											<div align="left">
+												<listbox
+													id="lbxCobertura" name="Cobertura" mold="select"
+													width="170px" sclass="combobox" />
+											</div>
+										</groupbox>
+									</cell>
+								</row>
+
+								<row>
+									<cell colspan="6">
+										<groupbox visible="true"
+											closable="false" height="90%" mold="3d">
+											<caption
+												label="Origen de la atencion"
+												style="color: black;font-weight: bold" />
+											<grid sclass="GridSinBorde"
+												vflex="1" style="border:none">
+												<columns>
+													<column label=""
+														width="11%" visible="false" />
+													<column label=""
+														width="22%" />
+													<column label=""
+														width="22%" />
+													<column label=""
+														width="22%" />
+													<column label=""
+														width="11%" />
+												</columns>
+												<rows>
+													<row>
+														<cell></cell>
+														<cell>
+															<checkbox
+																id="chbOrigen_general" label="Enfermedad General"
+																checked="true" />
+														</cell>
+														<cell>
+															<checkbox
+																id="chbOrigen_trabajo" label="Accidente de trabajo" />
+														</cell>
+
+														<cell>
+															<checkbox
+																id="chbOrigen_evento" label="Evento catastrofico" />
+														</cell>
+														<cell></cell>
+													</row>
+
+													<!-- fila 3 -->
+													<row>
+														<cell></cell>
+														<cell>
+															<checkbox
+																id="chbOrigen_profesional"
+																label="Enfermedad Profesional" />
+														</cell>
+
+														<cell>
+															<checkbox
+																id="chbOrigen_transito" label="Accidente de tránsito" />
+														</cell>
+														<cell></cell>
+													</row>
+
+												</rows>
+											</grid>
+										</groupbox>
+									</cell>
+								</row>
+								<row>
+									<cell colspan="6">
+										<grid sclass="GridSinBorde"
+											style="border:none">
+											<columns>
+												<column label=""
+													width="19%" visible="false" />
+												<column label=""
+													width="25%" />
+												<column label=""
+													width="25%" />
+												<column label=""
+													width="29%" />
+											</columns>
+											<rows>
+												<row>
+													<cell></cell>
+													<cell
+														height="30px">
+														<label
+															id="lbTipo_servicio"
+															value="Tipo de servicios solicitados: " />
+													</cell>
+													<cell>
+														<listbox
+															id="lbxTipo_servicio" name="Tipo_servicio" mold="select"
+															width="170px" sclass="combobox" />
+													</cell>
+													<cell></cell>
+												</row>
+
+												<!-- fila 2 -->
+												<row>
+													<cell></cell>
+													<cell
+														height="30px">
+														<label
+															id="lbPrioridad" value="Prioridad de la atención: " />
+													</cell>
+													<cell>
+														<listbox
+															id="lbxPrioridad" name="Prioridad" mold="select"
+															width="170px" sclass="combobox" />
+													</cell>
+													<cell></cell>
+												</row>
+
+											</rows>
+										</grid>
+									</cell>
+								</row>
+								<row>
+									<cell colspan="6">
+										<groupbox visible="true"
+											closable="false" height="90%" mold="3d">
+											<caption
+												label="Ubicación del Paciente al momento de la solicitud de autorizacion"
+												style="color: black;font-weight: bold" />
+											<grid sclass="GridSinBorde"
+												style="border:none">
+												<columns>
+													<column label=""
+														width="30%" visible="false" />
+													<column label=""
+														width="14%" />
+													<column label=""
+														width="25%" />
+													<column label=""
+														width="29%" />
+												</columns>
+												<rows>
+
+													<!-- fila 1 -->
+													<row>
+														<cell></cell>
+														<cell
+															height="30px">
+															<label
+																id="lbUbicacion" value="Ubicacion: " />
+														</cell>
+														<cell>
+															<listbox
+																id="lbxUbicacion" name="Ubicacion" mold="select"
+																width="170px" sclass="combobox" />
+														</cell>
+														<cell></cell>
+													</row>
+
+													<!-- fila 2 -->
+													<row>
+														<cell></cell>
+														<cell
+															height="30px">
+															<label
+																id="lbServicio" value="Servicio: " />
+														</cell>
+														<cell
+															colspan="2">
+															<textbox
+																id="tbxServicio" width="90%"
+																style="text-transform:uppercase" />
+														</cell>
+														<cell></cell>
+													</row>
+
+													<!-- fila 3 -->
+													<row>
+														<cell></cell>
+														<cell
+															height="30px">
+															<label
+																id="lbCama" value="Cama: " />
+														</cell>
+														<cell>
+															<listbox
+																id="lbxCama" name="Cama" mold="select" width="170px"
+																sclass="combobox" />
+														</cell>
+														<cell></cell>
+													</row>
+
+												</rows>
+											</grid>
+										</groupbox>
+									</cell>
+								</row>
+								<row>
+									<cell colspan="6">
+										<grid sclass="GridSinBorde"
+											style="border:none">
+											<columns>
+												<column label=""
+													width="19%" />
+												<column label=""
+													width="25%" />
+												<column label=""
+													width="34%" />
+												<column label=""
+													width="20%" />
+											</columns>
+											<rows>
+												<row>
+													<cell></cell>
+													<cell
+														height="30px">
+														<label
+															id="lbGuia_atencion"
+															value="Manejo Integral según Guía de: " />
+													</cell>
+													<cell>
+														<textbox
+															id="tbxGuia_atencion" width="270px"
+															style="text-transform:uppercase" />
+													</cell>
+													<cell></cell>
+												</row>
+												<row>
+													<cell colspan="4">
+														<tabbox>
+															<tabs>
+																<tab
+																	label="LABORATORIOS" id="tabLAB" />
+																<tab
+																	label="RADIOGRAFIA" id="tabRAD" />
+																<tab
+																	label="ECOGRAFIA" id="tabECO" />
+																<tab
+																	label="ENDOSCOPIA" id="tabEND" />
+																<tab
+																	label="TAC" id="tabTAC" />
+																<tab
+																	label="RESONACIA MAGNETICA" id="tabRES" />
+																<tab
+																	label="CITOLOGIAS" id="tabCitologias" />
+																<tab
+																	label="ELECTROCARDIOGRAMA" id="tabElectrocardiograma" />
+															</tabs>
+															<tabpanels>
+																<tabpanel>
+																	<grid
+																		sclass="GridSinBorde" vflex="1" style="border:none">
+																		<columns>
+																			<column
+																				label="" width="11%" />
+																			<column
+																				label="Código Cups " width="14%" />
+																			<column
+																				label="Descripción" width="36%" />
+																			<column
+																				label="Cantidad" width="14%" />
+																			<column
+																				label="" width="14%" />
+																			<column
+																				label="" width="11%" />
+																		</columns>
+																		<rows>
+																			<!-- Listamos los LC (Laboratorios) -->
+																			<row>
+																				<cell />
+																				<cell>
+																					<bandboxRegistros
+																						id="tbxprocedimiento1" widthBandbox="65%"
+																						widthListbox="700px" heightListbox="300px"
+																						columnas="Codigo Soat#80px|Codigo Cups#80px|Nombre" />
+																				</cell>
+																				<cell>
+																					<textbox
+																						id="tbxNomProcemiento1" width="85%"
+																						style="text-transform:uppercase" readonly="true" />
+																					<space
+																						width="2px" />
+																					<toolbarbutton
+																						id="btnLimpiarProcedimiento1"
+																						image="/images/borrar.gif" />
+																				</cell>
+																				<cell >
+																				   <intbox
+																						id="ibx_cantidad1" value="0" />
+																				</cell>
+																				<cell>
+																					<listbox
+																						id="lbxestado1" mold="select" width="90%"
+																						sclass="combobox" />
+																				</cell>
+																				<cell></cell>
+																			</row>
+																			<row>
+																				<cell />
+																				<cell>
+																					<bandboxRegistros
+																						id="tbxprocedimiento2" widthBandbox="65%"
+																						widthListbox="700px" heightListbox="300px"
+																						columnas="Codigo Soat#80px|Codigo Cups#80px|Nombre" />
+																				</cell>
+																				<cell>
+																					<textbox
+																						id="tbxNomProcemiento2" width="85%"
+																						style="text-transform:uppercase" readonly="true" />
+																					<space
+																						width="2px" />
+																					<toolbarbutton
+																						id="btnLimpiarProcedimiento2"
+																						image="/images/borrar.gif" />
+																				</cell>
+																				<cell >
+																				   <intbox
+																						id="ibx_cantidad2" value="0" />
+																				</cell>
+																				<cell>
+																					<listbox
+																						id="lbxestado2" mold="select" width="90%"
+																						sclass="combobox" />
+																				</cell>
+																				<cell></cell>
+																			</row>
+																			<row>
+																				<cell />
+																				<cell>
+																					<bandboxRegistros
+																						id="tbxprocedimiento3" widthBandbox="65%"
+																						widthListbox="700px" heightListbox="300px"
+																						columnas="Codigo Soat#80px|Codigo Cups#80px|Nombre" />
+																				</cell>
+																				<cell>
+																					<textbox
+																						id="tbxNomProcemiento3" width="85%"
+																						style="text-transform:uppercase" readonly="true" />
+																					<space
+																						width="2px" />
+																					<toolbarbutton
+																						id="btnLimpiarProcedimiento3"
+																						image="/images/borrar.gif" />
+																				</cell>
+																				<cell >
+																				   <intbox
+																						id="ibx_cantidad3" value="0" />
+																				</cell>
+																				<cell>
+																					<listbox
+																						id="lbxestado3" mold="select" width="90%"
+																						sclass="combobox" />
+																				</cell>
+																				<cell></cell>
+																			</row>
+																			<row>
+																				<cell />
+																				<cell>
+																					<bandboxRegistros
+																						id="tbxprocedimiento4" widthBandbox="65%"
+																						widthListbox="700px" heightListbox="300px"
+																						columnas="Codigo Soat#80px|Codigo Cups#80px|Nombre" />
+																				</cell>
+																				<cell>
+																					<textbox
+																						id="tbxNomProcemiento4" width="85%"
+																						style="text-transform:uppercase" readonly="true" />
+																					<space
+																						width="2px" />
+																					<toolbarbutton
+																						id="btnLimpiarProcedimiento4"
+																						image="/images/borrar.gif" />
+																				</cell>
+																				<cell >
+																				   <intbox
+																						id="ibx_cantidad4" value="0" />
+																				</cell>
+																				<cell>
+																					<listbox
+																						id="lbxestado4" mold="select" width="90%"
+																						sclass="combobox" />
+																				</cell>
+																				<cell></cell>
+																			</row>
+
+																		</rows>
+																	</grid>
+																</tabpanel>
+
+																<tabpanel>
+																	<grid
+																		sclass="GridSinBorde" vflex="1" style="border:none">
+																		<columns>
+																			<column
+																				label="" width="11%" />
+																			<column
+																				label="Código Cups " width="14%" />
+																			<column
+																				label="Descripción" width="50%" />
+																			<column
+																				label="Cantidad" width="14%" />
+																			<column
+																				label="" width="11%" />
+																		</columns>
+																		<rows>
+																			<row>
+																				<cell />
+																				<cell>
+																					<bandboxRegistros
+																						id="tbxprocedimiento5" widthBandbox="65%"
+																						widthListbox="700px" heightListbox="300px"
+																						columnas="Codigo Soat#80px|Codigo Cups#80px|Nombre" />
+																				</cell>
+																				<cell>
+																					<textbox
+																						id="tbxNomProcemiento5" width="90%"
+																						style="text-transform:uppercase" readonly="true" />
+																					<space
+																						width="2px" />
+																					<toolbarbutton
+																						id="btnLimpiarProcedimiento5"
+																						image="/images/borrar.gif" />
+																				</cell>
+																				<cell >
+																				   <intbox
+																						id="ibx_cantidad5" value="0" />
+																				</cell>
+																				<cell></cell>
+																			</row>
+																			<row>
+																				<cell />
+																				<cell>
+																					<bandboxRegistros
+																						id="tbxprocedimiento6" widthBandbox="65%"
+																						widthListbox="700px" heightListbox="300px"
+																						columnas="Codigo Soat#80px|Codigo Cups#80px|Nombre" />
+																				</cell>
+																				<cell>
+																					<textbox
+																						id="tbxNomProcemiento6" width="90%"
+																						style="text-transform:uppercase" readonly="true" />
+																					<space
+																						width="2px" />
+																					<toolbarbutton
+																						id="btnLimpiarProcedimiento6"
+																						image="/images/borrar.gif" />
+																				</cell>
+																				<cell >
+																				   <intbox
+																						id="ibx_cantidad6" value="0" />
+																				</cell>
+																				<cell></cell>
+																			</row>
+																			<row>
+																				<cell />
+																				<cell>
+																					<bandboxRegistros
+																						id="tbxprocedimiento7" widthBandbox="65%"
+																						widthListbox="700px" heightListbox="300px"
+																						columnas="Codigo Soat#80px|Codigo Cups#80px|Nombre" />
+																				</cell>
+																				<cell>
+																					<textbox
+																						id="tbxNomProcemiento7" width="90%"
+																						style="text-transform:uppercase" readonly="true" />
+																					<space
+																						width="2px" />
+																					<toolbarbutton
+																						id="btnLimpiarProcedimiento7"
+																						image="/images/borrar.gif" />
+																				</cell>
+																				<cell >
+																				   <intbox
+																						id="ibx_cantidad7" value="0" />
+																				</cell>
+																				<cell></cell>
+																			</row>
+																			<row>
+																				<cell />
+																				<cell>
+																					<bandboxRegistros
+																						id="tbxprocedimiento8" widthBandbox="65%"
+																						widthListbox="700px" heightListbox="300px"
+																						columnas="Codigo Soat#80px|Codigo Cups#80px|Nombre" />
+																				</cell>
+																				<cell>
+																					<textbox
+																						id="tbxNomProcemiento8" width="90%"
+																						style="text-transform:uppercase" readonly="true" />
+																					<space
+																						width="2px" />
+																					<toolbarbutton
+																						id="btnLimpiarProcedimiento8"
+																						image="/images/borrar.gif" />
+																				</cell>
+																				<cell >
+																				   <intbox
+																						id="ibx_cantidad8" value="0" />
+																				</cell>
+																				<cell></cell>
+																			</row>
+
+																		</rows>
+																	</grid>
+																</tabpanel>
+
+																<tabpanel>
+																	<grid
+																		sclass="GridSinBorde" vflex="1" style="border:none">
+																		<columns>
+																			<column
+																				label="" width="11%" />
+																			<column
+																				label="Código Cups " width="14%" />
+																			<column
+																				label="Descripción" width="50%" />
+																			<column
+																				label="Cantidad" width="14%" />
+																			<column
+																				label="" width="11%" />
+																		</columns>
+																		<rows>
+																			<row>
+																				<cell />
+																				<cell>
+																					<bandboxRegistros
+																						id="tbxprocedimiento9" widthBandbox="65%"
+																						widthListbox="700px" heightListbox="300px"
+																						columnas="Codigo Soat#80px|Codigo Cups#80px|Nombre" />
+																				</cell>
+																				<cell>
+																					<textbox
+																						id="tbxNomProcemiento9" width="90%"
+																						style="text-transform:uppercase" readonly="true" />
+																					<space
+																						width="2px" />
+																					<toolbarbutton
+																						id="btnLimpiarProcedimiento9"
+																						image="/images/borrar.gif" />
+																				</cell>
+																				<cell >
+																				   <intbox
+																						id="ibx_cantidad9" value="0" />
+																				</cell>
+																				<cell></cell>
+																			</row>
+																			<row>
+																				<cell />
+																				<cell>
+																					<bandboxRegistros
+																						id="tbxprocedimiento10" widthBandbox="65%"
+																						widthListbox="700px" heightListbox="300px"
+																						columnas="Codigo Soat#80px|Codigo Cups#80px|Nombre" />
+																				</cell>
+																				<cell>
+																					<textbox
+																						id="tbxNomProcemiento10" width="90%"
+																						style="text-transform:uppercase" readonly="true" />
+																					<space
+																						width="2px" />
+																					<toolbarbutton
+																						id="btnLimpiarProcedimiento10"
+																						image="/images/borrar.gif" />
+																				</cell>
+																				<cell >
+																				   <intbox
+																						id="ibx_cantidad10" value="0" />
+																				</cell>
+																				<cell></cell>
+																			</row>
+																			<row>
+																				<cell />
+																				<cell>
+																					<bandboxRegistros
+																						id="tbxprocedimiento11" widthBandbox="65%"
+																						widthListbox="700px" heightListbox="300px"
+																						columnas="Codigo Soat#80px|Codigo Cups#80px|Nombre" />
+																				</cell>
+																				<cell>
+																					<textbox
+																						id="tbxNomProcemiento11" width="90%"
+																						style="text-transform:uppercase" readonly="true" />
+																					<space
+																						width="2px" />
+																					<toolbarbutton
+																						id="btnLimpiarProcedimiento11"
+																						image="/images/borrar.gif" />
+																				</cell>
+																				<cell >
+																				   <intbox
+																						id="ibx_cantidad11" value="0" />
+																				</cell>
+																				<cell></cell>
+																			</row>
+																			<row>
+																				<cell />
+																				<cell>
+																					<bandboxRegistros
+																						id="tbxprocedimiento12" widthBandbox="65%"
+																						widthListbox="700px" heightListbox="300px"
+																						columnas="Codigo Soat#80px|Codigo Cups#80px|Nombre" />
+																				</cell>
+																				<cell>
+																					<textbox
+																						id="tbxNomProcemiento12" width="90%"
+																						style="text-transform:uppercase" readonly="true" />
+																					<space
+																						width="2px" />
+																					<toolbarbutton
+																						id="btnLimpiarProcedimiento12"
+																						image="/images/borrar.gif" />
+																				</cell>
+																				<cell >
+																				   <intbox
+																						id="ibx_cantidad12" value="0" />
+																				</cell>
+																				<cell></cell>
+																			</row>
+
+																		</rows>
+																	</grid>
+																</tabpanel>
+
+																<tabpanel>
+																	<grid
+																		sclass="GridSinBorde" vflex="1" style="border:none">
+																		<columns>
+																			<column
+																				label="" width="11%" />
+																			<column
+																				label="Código Cups " width="14%" />
+																			<column
+																				label="Descripción" width="50%" />
+																			<column
+																				label="Cantidad" width="14%" />
+																			<column
+																				label="" width="11%" />
+																		</columns>
+																		<rows>
+																			<row>
+																				<cell />
+																				<cell>
+																					<bandboxRegistros
+																						id="tbxprocedimiento13" widthBandbox="65%"
+																						widthListbox="700px" heightListbox="300px"
+																						columnas="Codigo Soat#80px|Codigo Cups#80px|Nombre" />
+																				</cell>
+																				<cell>
+																					<textbox
+																						id="tbxNomProcemiento13" width="90%"
+																						style="text-transform:uppercase" readonly="true" />
+																					<space
+																						width="2px" />
+																					<toolbarbutton
+																						id="btnLimpiarProcedimiento13"
+																						image="/images/borrar.gif" />
+																				</cell>
+																				<cell >
+																				   <intbox
+																						id="ibx_cantidad13" value="0" />
+																				</cell>
+																				<cell></cell>
+																			</row>
+																			<row>
+																				<cell />
+																				<cell>
+																					<bandboxRegistros
+																						id="tbxprocedimiento14" widthBandbox="65%"
+																						widthListbox="700px" heightListbox="300px"
+																						columnas="Codigo Soat#80px|Codigo Cups#80px|Nombre" />
+																				</cell>
+																				<cell>
+																					<textbox
+																						id="tbxNomProcemiento14" width="90%"
+																						style="text-transform:uppercase" readonly="true" />
+																					<space
+																						width="2px" />
+																					<toolbarbutton
+																						id="btnLimpiarProcedimiento14"
+																						image="/images/borrar.gif" />
+																				</cell>
+																				<cell >
+																				   <intbox
+																						id="ibx_cantidad14" value="0" />
+																				</cell>
+																				<cell></cell>
+																			</row>
+																			<row>
+																				<cell />
+																				<cell>
+																					<bandboxRegistros
+																						id="tbxprocedimiento15" widthBandbox="65%"
+																						widthListbox="700px" heightListbox="300px"
+																						columnas="Codigo Soat#80px|Codigo Cups#80px|Nombre" />
+																				</cell>
+																				<cell>
+																					<textbox
+																						id="tbxNomProcemiento15" width="90%"
+																						style="text-transform:uppercase" readonly="true" />
+																					<space
+																						width="2px" />
+																					<toolbarbutton
+																						id="btnLimpiarProcedimiento15"
+																						image="/images/borrar.gif" />
+																				</cell>
+																				<cell >
+																				   <intbox
+																						id="ibx_cantidad15" value="0" />
+																				</cell>
+																				<cell></cell>
+																			</row>
+																		</rows>
+																	</grid>
+																</tabpanel>
+
+																<tabpanel>
+																	<grid
+																		sclass="GridSinBorde" vflex="1" style="border:none">
+																		<columns>
+																			<column
+																				label="" width="11%" />
+																			<column
+																				label="Código Cups " width="14%" />
+																			<column
+																				label="Descripción" width="50%" />
+																			<column
+																				label="Cantidad" width="14%" />
+																			<column
+																				label="" width="11%" />
+																		</columns>
+																		<rows>
+																			<row>
+																				<cell />
+																				<cell>
+																					<bandboxRegistros
+																						id="tbxprocedimiento16" widthBandbox="65%"
+																						widthListbox="700px" heightListbox="300px"
+																						columnas="Codigo Soat#80px|Codigo Cups#80px|Nombre" />
+																				</cell>
+																				<cell>
+																					<textbox
+																						id="tbxNomProcemiento16" width="90%"
+																						style="text-transform:uppercase" readonly="true" />
+																					<space
+																						width="2px" />
+																					<toolbarbutton
+																						id="btnLimpiarProcedimiento16"
+																						image="/images/borrar.gif" />
+																				</cell>
+																				<cell >
+																				   <intbox
+																						id="ibx_cantidad16" value="0" />
+																				</cell>
+																				<cell></cell>
+																			</row>
+																		</rows>
+																	</grid>
+																</tabpanel>
+
+																<tabpanel>
+																	<grid
+																		sclass="GridSinBorde" vflex="1" style="border:none">
+																		<columns>
+																			<column
+																				label="" width="11%" />
+																			<column
+																				label="Código Cups " width="14%" />
+																			<column
+																				label="Descripción" width="50%" />
+																			<column
+																				label="Cantidad" width="14%" />
+																			<column
+																				label="" width="11%" />
+																		</columns>
+																		<rows>
+																			<row>
+																				<cell />
+																				<cell>
+																					<bandboxRegistros
+																						id="tbxprocedimiento17" widthBandbox="65%"
+																						widthListbox="700px" heightListbox="300px"
+																						columnas="Codigo Soat#80px|Codigo Cups#80px|Nombre" />
+																				</cell>
+																				<cell>
+																					<textbox
+																						id="tbxNomProcemiento17" width="90%"
+																						style="text-transform:uppercase" readonly="true" />
+																					<space
+																						width="2px" />
+																					<toolbarbutton
+																						id="btnLimpiarProcedimiento17"
+																						image="/images/borrar.gif" />
+																				</cell>
+																				<cell >
+																				   <intbox
+																						id="ibx_cantidad17" value="0" />
+																				</cell>
+																				<cell></cell>
+																			</row>
+																			<row>
+																				<cell />
+																				<cell>
+																					<bandboxRegistros
+																						id="tbxprocedimiento18" widthBandbox="65%"
+																						widthListbox="700px" heightListbox="300px"
+																						columnas="Codigo Soat#80px|Codigo Cups#80px|Nombre" />
+																				</cell>
+																				<cell>
+																					<textbox
+																						id="tbxNomProcemiento18" width="90%"
+																						style="text-transform:uppercase" readonly="true" />
+																					<space
+																						width="2px" />
+																					<toolbarbutton
+																						id="btnLimpiarProcedimiento18"
+																						image="/images/borrar.gif" />
+																				</cell>
+																				<cell >
+																				   <intbox
+																						id="ibx_cantidad18" value="0" />
+																				</cell>
+																				<cell></cell>
+																			</row>
+																		</rows>
+																	</grid>
+																</tabpanel>
+
+																<!--											citologias-->
+
+																<tabpanel>
+																	<grid
+																		sclass="GridSinBorde" vflex="1" style="border:none">
+																		<columns>
+																			<column
+																				label="" width="11%" />
+																			<column
+																				label="Código Cups " width="14%" />
+																			<column
+																				label="Descripción" width="50%" />
+																			<column
+																				label="Cantidad" width="14%" />
+																			<column
+																				label="" width="11%" />
+																		</columns>
+																		<rows>
+																			<row>
+																				<cell />
+																				<cell>
+																					<bandboxRegistros
+																						id="tbxprocedimiento19" widthBandbox="65%"
+																						widthListbox="700px" heightListbox="300px"
+																						columnas="Codigo Soat#80px|Codigo Cups#80px|Nombre" />
+																				</cell>
+																				<cell>
+																					<textbox
+																						id="tbxNomProcemiento19" width="90%"
+																						style="text-transform:uppercase" readonly="true" />
+																					<space
+																						width="2px" />
+																					<toolbarbutton
+																						id="btnLimpiarProcedimiento19"
+																						image="/images/borrar.gif" />
+																				</cell>
+																				<cell >
+																				   <intbox
+																						id="ibx_cantidad19" value="0" />
+																				</cell>
+																				<cell></cell>
+																			</row>
+																		</rows>
+																	</grid>
+																</tabpanel>
+
+																<tabpanel>
+																	<grid
+																		sclass="GridSinBorde" vflex="1" style="border:none">
+																		<columns>
+																			<column
+																				label="" width="11%" />
+																			<column
+																				label="Código Cups " width="14%" />
+																			<column
+																				label="Descripción" width="50%" />
+																			<column
+																				label="Cantidad" width="14%" />
+																			<column
+																				label="" width="11%" />
+																		</columns>
+																		<rows>
+																			<row>
+																				<cell />
+																				<cell>
+																					<bandboxRegistros
+																						id="tbxprocedimiento20" widthBandbox="65%"
+																						widthListbox="700px" heightListbox="300px"
+																						columnas="Codigo Soat#80px|Codigo Cups#80px|Nombre" />
+																				</cell>
+																				<cell>
+																					<textbox
+																						id="tbxNomProcemiento20" width="90%"
+																						style="text-transform:uppercase" readonly="true" />
+																					<space
+																						width="2px" />
+																					<toolbarbutton
+																						id="btnLimpiarProcedimiento20"
+																						image="/images/borrar.gif" />
+																				</cell>
+																				<cell >
+																				   <intbox
+																						id="ibx_cantidad20" value="0" />
+																				</cell>
+																				<cell></cell>
+																			</row>
+																		</rows>
+																	</grid>
+																</tabpanel>
+
+															</tabpanels>
+														</tabbox>
+													</cell>
+												</row>
+												<row>
+													<cell colspan="6">
+														<vbox
+															width="100%">
+															<label
+																value="Justificación Clínica" />
+															<textbox
+																id="txt_justificacion" rows="3" width="90%" />
+														</vbox>
+													</cell>
+												</row>
+											</rows>
+										</grid>
+									</cell>
+								</row>
+								<row>
+									<cell colspan="6">
+										<grid sclass="GridSinBorde"
+											style="border:none">
+											<columns>
+												<column label=""
+													width="12%" visible="false" />
+												<column label=""
+													width="14%" />
+												<column label=""
+													width="20%" />
+												<column label=""
+													width="39%" />
+												<column label=""
+													width="11%" />
+											</columns>
+											<rows>
+												<row>
+													<cell></cell>
+													<cell>
+														<label
+															id="lbImpresion_diagnostica" value="Diag Ppal: " />
+													</cell>
+													<cell colspan="2">
+														<textbox
+															id="tbxDx" width="90%" style="text-transform:uppercase"
+															readonly="true" />
+													</cell>
+													<cell></cell>
+												</row>
+												<row>
+													<cell></cell>
+													<cell>
+														<label
+															value="Diag R1: " />
+													</cell>
+													<cell colspan="2">
+														<textbox
+															id="tbxRelacionado_1" width="90%"
+															style="text-transform:uppercase" readonly="true" />
+													</cell>
+
+													<cell></cell>
+												</row>
+
+												<!-- relacionado 2 -->
+												<row>
+													<cell></cell>
+													<cell>
+														<label
+															value="Diag R2:  " />
+													</cell>
+													<cell colspan="2">
+														<textbox
+															id="tbxRelacionado_2" width="90%"
+															style="text-transform:uppercase" readonly="true" />
+													</cell>
+
+													<cell></cell>
+												</row>
+											</rows>
+										</grid>
+									</cell>
+								</row>
+								<row>
+									<cell colspan="6">
+										<groupbox visible="true"
+											closable="false" height="97%" mold="3d">
+											<caption
+												label="INFORMACION DE LA PERSONA QUE SOLICITA"
+												style="color: black;font-weight: bold" />
+
+											<grid sclass="GridSinBorde"
+												vflex="1">
+												<columns>
+													<column label=""
+														width="11%" visible="false" />
+													<column label=""
+														width="14%" />
+													<column label=""
+														width="25%" />
+													<column label=""
+														width="14%" />
+													<column label=""
+														width="25%" />
+													<column label=""
+														width="11%" />
+												</columns>
+												<rows>
+													<row>
+														<cell></cell>
+														<cell
+															height="30px">
+															<label
+																id="lbNombre_solicita"
+																value="Nombre de quien solicita: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxNombre_solicita" width="170px"
+																style="text-transform:uppercase" readonly="true" />
+														</cell>
+														<cell
+															height="30px">
+															<label
+																value="Telefono: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxTelefono" width="170px"
+																style="text-transform:uppercase" readonly="true" />
+														</cell>
+														<cell></cell>
+													</row>
+													<row>
+														<cell></cell>
+														<cell
+															height="30px">
+															<label
+																value="Cargo o actividad: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxCargo" width="170px"
+																style="text-transform:uppercase" readonly="true" />
+														</cell>
+														<cell
+															height="30px">
+															<label
+																value="Celular: " />
+														</cell>
+														<cell>
+															<textbox
+																id="tbxCel" width="170px"
+																style="text-transform:uppercase" readonly="true" />
+														</cell>
+														<cell></cell>
+													</row>
+												</rows>
+											</grid>
+										</groupbox>
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+				</div>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

@@ -1,0 +1,264 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formAportantes_ma" width="100%" height="90%"
+		use="healthmanager.controller.Aportantes_maAction" border="none">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+
+		<groupbox id="groupboxConsulta" visible="true" closable="false"
+			height="90%" mold="3d">
+			<caption label="Consultar"
+				style="color: black;font-weight: bold" />
+
+
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" mold="paging" pageSize="20"
+				vflex="1">
+				<auxhead>
+					<auxheader colspan="7">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<separator />
+							<textbox id="tbxValue" width="200px"
+								onOK="formAportantes_ma.buscarDatos();"
+								style="text-transform:uppercase" />
+							<separator />
+							<button mold="trendy"
+								image="/images/Magnifier.gif"
+								onClick="formAportantes_ma.buscarDatos();"
+								tooltiptext="Consultar Prueba" />
+							<separator />
+							<button mold="trendy"
+								image="/images/New16.gif"
+								onClick='formAportantes_ma.accionForm(true,"registrar");'
+								tooltiptext="Nuevo Prueba" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Tipo identificación" align="left"
+						width="150px" />
+					<column label="Nro identificación" align="left"
+						width="150px" />
+					<column label="Nombre" align="left" />
+					<column label="Tipo" align="left" width="100px" />
+					<column label="Sector" align="left" width="100px" />
+					<column label="CIIU" align="left" />
+					<column label="Acciones" align="left" width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<!-- *************************** -->
+		<!-- *** Insertar/Actualizar *** -->
+		<!-- *************************** -->
+		<borderlayout width="100%" height="95%" id="groupboxEditar"
+			visible="false">
+			<north border="none">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<toolbarbutton image="/images/Save16.gif"
+						label="Guardar Aportante"
+						onClick="formAportantes_ma.guardarDatos();" id="btGuardar" />
+					<toolbarbutton image="/images/New16.gif"
+						label="Nuevo Aportante"
+						onClick='formAportantes_ma.accionForm(true,"registrar");'
+						id="btNew" />
+					<space />
+					<toolbarbutton image="/images/trasladar.gif"
+						label="Cancelar"
+						onClick='formAportantes_ma.accionForm(false,"registrar");'
+						id="btCancel" />
+					<toolbarbutton image="/images/print_ico.gif"
+						label="Imprimir Administradora"
+						onClick="formAportantes_ma.imprimir();" id="btImprimir"
+						visible="false" />
+					<space />
+					<label value="Formato impresión: " visible="false" />
+					<listbox id="lbxFormato" mold="select" width="150px"
+						visible="false" sclass="combobox">
+						<listitem value="pdf" label="PDF"
+							selected="true" />
+						<listitem value="rtf" label="WORD" />
+					</listbox>
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center">
+					<space />
+					<groupbox closable="false" mold="3d" height="90%"
+						width="660px">
+						<caption label="Registrar/Actualizar"
+							style="color: black;font-weight: bold" />
+						<grid sclass="GridSinBorde" vflex="1">
+							<columns>
+								<column label="" width="10px" />
+								<column label="" width="130px"
+									align="left" />
+								<column label="" width="182px"
+									align="left" />
+								<column label="" width="130px"
+									align="left" />
+								<column label="" width="182px"
+									align="left" />
+								<column label="" width="10px"
+									align="left" />
+							</columns>
+							<rows>
+								<!-- fila 1 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label
+											id="lbTipo_identificacion" value="Tipo identificación: " />
+									</cell>
+									<cell>
+										<listbox
+											id="lbxTipo_identificacion" name="tipo_id" mold="select"
+											hflex="1" sclass="combobox" />
+									</cell>
+
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbNro_identificacon"
+											value="Nro identificación: " />
+									</cell>
+									<cell>
+										<hbox>
+											<textbox
+												id="tbxNro_identificacon" width="112px"
+												style="text-transform:uppercase" />
+											<separator />
+											<label id="lbDv"
+												value="Dv: " />
+											<textbox id="tbxDv"
+												width="20px" style="text-transform:uppercase" maxlength="1" />
+										</hbox>
+									</cell>
+									<cell></cell>
+								</row>
+
+
+
+								<!-- fila 4 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbNombre"
+											value="Nombre: " />
+									</cell>
+									<cell>
+										<textbox id="tbxNombre"
+											hflex="1" style="text-transform:uppercase" />
+									</cell>
+
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbTipo_aportante"
+											value="Tipo: " />
+									</cell>
+									<cell>
+										<listbox id="lbxTipo_aportante"
+											name="tipo_aportante" mold="select" hflex="1"
+											sclass="combobox" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 6 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbSector_aportante"
+											value="Sector: " />
+									</cell>
+									<cell colspan="3">
+										<listbox
+											id="lbxSector_aportante" name="sector_aportante"
+											mold="select" hflex="1" sclass="combobox" />
+									</cell>
+									<cell></cell>
+								</row>
+
+								<!-- fila 7 -->
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label id="lbRevision_ciiu"
+											value="Actividad económica: " style="font-size:10px"/>
+									</cell>
+									<cell>
+										<bandbox id="tbxCodigo_CIIU"
+											autodrop="true" readonly="true" hflex="1"
+											onOpen='formAportantes_ma.buscarCIIU(tbxValueCIIU.getValue(),lbxCIIU)'>
+											<bandpopup>
+												<vbox>
+													<toolbar>
+														<label
+															value="Buscar: " />
+														<textbox
+															id="tbxValueCIIU"
+															onChanging='formAportantes_ma.buscarCIIU(event.getValue(),lbxCIIU)'
+															style="text-transform:uppercase;" />
+														<toolbarbutton
+															image="/images/borrar.gif" tooltiptext="Quitar"
+															onClick='formAportantes_ma.selectedCIIU(new Listitem())' />
+													</toolbar>
+													<listbox
+														height="300px" width="600px" mold="paging" pageSize="8"
+														id="lbxCIIU"
+														onSelect='formAportantes_ma.selectedCIIU(self.getSelectedItem())'>
+														<listhead>
+															<listheader
+																label="Codigo" width="65px" />
+															<listheader
+																label="Descripcion" />
+														</listhead>
+													</listbox>
+												</vbox>
+											</bandpopup>
+										</bandbox>
+									</cell>
+									<cell colspan="2">
+										<textbox id="tbxNomCIIU"
+											hflex="1" style="text-transform:uppercase" readonly="true" />
+									</cell>
+									<cell />
+								</row>
+
+							</rows>
+						</grid>
+					</groupbox>
+				</div>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

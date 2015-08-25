@@ -1,0 +1,231 @@
+<?page title="Hoja_gastos" contentType="text/html;charset=UTF-8"?>
+<?component name="bandboxRegistros" macroURI="/WEB-INF/macros/bandboxRegistros.zul"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window id="formHoja_gastos" width="100%" height="99%"
+		use="healthmanager.controller.Hoja_gastosAction">
+		<style>
+			body ,table{ margin:0; padding:0; } .z-fieldset{
+			-moz-border-radius:5px; border-radius: 5px;
+			-webkit-border-radius: 5px; } .combobox{ font-size:12px;
+			border: 1px solid silver; } tr.z-row .z-cell{
+			background-image:none; } tr.z-row td.z-row-hover{
+			background-image:none; } .GridSinBorde tr.z-row
+			td.z-row-inner, tr.z-row .z-cell,div.z-grid { border: none;
+			overflow: hidden; zoom: 1; border-top: none; border-left:
+			none; border-right: none; border-bottom: none; }
+		</style>
+
+
+
+		<!-- **************** -->
+		<!-- Zona de Consulta -->
+		<!-- **************** -->
+		<groupbox id="groupboxConsulta" visible="false" closable="false"
+			mold="3d" height="99%">
+			<caption label="Consultar"
+				style="color: blue;font-weight: bold" />
+
+			<separator />
+
+			<!-- ***************************** -->
+			<!--  Resultado Consulta Maestros  -->
+			<!-- ***************************** -->
+			<grid id="gridResultado" height="90%" mold="paging"
+				pageSize="20" vflex="1">
+				<auxhead>
+					<auxheader colspan="7">
+						<hbox align="center">
+							<label value="Criterios de B&#250;squeda :" />
+							<space />
+							<listbox id="lbxParameter" mold="select"
+								sclass="combobox" width="150px" />
+							<separator />
+							<textbox id="tbxValue" width="200px"
+								onOK="formHoja_gastos.buscarDatos();"
+								style="text-transform:uppercase" />
+							<separator />
+							<button mold="trendy"
+								image="/images/Magnifier.gif"
+								onClick="formHoja_gastos.buscarDatos();"
+								tooltiptext="Consultar Hoja gastos" />
+							<separator />
+							<button mold="trendy"
+								image="/images/New16.gif"
+								onClick='formHoja_gastos.accionForm(true,"registrar");'
+								tooltiptext="Nuevo Hoja gastos" />
+						</hbox>
+					</auxheader>
+				</auxhead>
+				<columns sizable="true">
+					<column label="Nro ingreso" width="100px" />
+					<column label="Tipo ident" width="70px" />
+					<column label="Nro identificacion" width="120px" />
+					<column label="Apellidos" />
+					<column label="Nombres" />
+					<column label="Fecha" width="100px" />
+					<column label="Acciones" align="center"
+						width="80px" />
+				</columns>
+				<rows id="rowsResultado" width="100%" />
+			</grid>
+		</groupbox>
+
+		<borderlayout width="100%" height="99%" id="groupboxEditar"
+			visible="true">
+			<north border="none">
+				<toolbar width="100%" align="start">
+					<textbox id="tbxAccion" value="registrar"
+						visible="false" />
+					<toolbarbutton image="/images/Save16.gif" 
+						label="Guardar Hoja gastos" disabled="true"
+						onClick="formHoja_gastos.guardarDatos();" id="btGuardar" />
+					<toolbarbutton image="/images/New16.gif"
+						label="Nueva Hoja gastos"
+						onClick='formHoja_gastos.accionForm(true,"registrar");' id="btNew"
+						visible="false" />
+					<space />
+					<toolbarbutton image="/images/quit.png"
+						label="Atras"
+						onClick='formHoja_gastos.accionForm(false,tbxAccion.getText());'
+						id="btCancel" />
+					<toolbarbutton image="/images/print_ico.gif"
+						label="Imprimir Hoja gastos" onClick="formHoja_gastos.imprimir()"
+						id="btImprimir" />
+					<space />
+					<label value="Formato impresión: " visible="false" />
+					<listbox id="lbxFormato" mold="select" width="150px"
+						visible="false" sclass="combobox">
+						<listitem value="pdf" label="PDF"
+							selected="true" />
+						<listitem value="rtf" label="WORD" />
+					</listbox>
+				</toolbar>
+			</north>
+			<center autoscroll="true" border="none">
+				<div align="center">
+					<space />
+					<groupbox visible="true" closable="false"
+						 mold="3d" width="655px" id="groupboxPaciente" >
+						<caption label="Datos del paciente"
+							style="color: black;font-weight: bold" />
+						<grid sclass="GridSinBorde"
+							style="border:none">
+							<columns>
+								<column label="" width="10px" />
+								<column label="" width="100px"
+									align="left" />
+								<column label="" width="152px"
+									align="left" />
+								<column label="" width="35px"
+									align="left" />
+								<column label="" width="100px"
+									align="left" />
+								<column label="" width="210px"
+									align="left" />
+								<column label="" width=""
+									align="left" />
+							</columns>
+							<rows>
+								<row>
+									<cell />
+									<cell>
+										<label value="* "
+											style="color: red" tooltiptext="Campo obligatorio" />
+										<label value="Paciente" />
+									</cell>
+									<cell>
+										<bandboxRegistros
+											id="bandboxAdmision" widthBandbox="140px"
+											widthListbox="600px" heightListbox="300px"
+											columnas="Nro ingreso#65px|Identificación|Nombres|Apellidos" />
+									</cell>
+									<cell colspan="3">
+										<textbox id="tbxInfoPaciente"
+											hflex="1" style="text-transform:uppercase" readonly="true" />
+									</cell>
+									<cell>
+										<toolbarbutton
+											id="btnLimpiarPaciente" image="/images/borrar.gif" />
+									</cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label value="N° Ingreso: " />
+									</cell>
+									<cell colspan="4">
+										<textbox id="tbxNroIngreso"
+											hflex="1" style="text-transform:uppercase" readonly="true" />
+									</cell>
+									<cell></cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label value="Dirección: " />
+									</cell>
+									<cell colspan="4">
+										<textbox id="tbxdirPaciente"
+											hflex="1" style="text-transform:uppercase" readonly="true" />
+									</cell>
+									<cell></cell>
+								</row>
+								<row>
+									<cell></cell>
+									<cell height="30px">
+										<label value="Télefono: " />
+									</cell>
+									<cell colspan="2">
+										<textbox id="tbxtelpaciente"
+											hflex="1" style="text-transform:uppercase" readonly="true" />
+									</cell>
+									<cell height="30px">
+										<label value="Fecha Nacim: " />
+									</cell>
+									<cell>
+										<datebox id="tbxFechNacpaciente"
+											hflex="1" style="text-transform:uppercase" readonly="true"
+											format="yyyy-MM-dd" buttonVisible="false" />
+									</cell>
+									<cell></cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+
+					<space />
+					<!-- hoja de gastos -->
+
+					<listbox id="listboxRegistros" height="300px"
+						width="650px">
+						<auxhead visible="false" id="auxHeadAccion">
+							<auxheader align="left" colspan="7">
+								<toolbarbutton image="/images/add.png"
+									label="Agregar"
+									onClick="formHoja_gastos.openArticulo()" />
+							</auxheader>
+						</auxhead>
+						<listhead>
+							<listheader label="Articulo" width="70px" />
+							<listheader label="Nombre" />
+							<listheader label="Bodega" width="120px" />
+							<listheader label="Cantidad" width="70px" />
+							<listheader label="Tipo" width="100px"/>
+							<listheader label="Fact" width="50px" align="center"/>
+							<listheader label="" align="center"
+								width="30px" />
+						</listhead>
+
+						<listfoot>
+							<listfooter span="8" align="right">
+								<label value="Nro Total: " />
+								<intbox id="ibxTotal" width="150px"
+									value="0" readonly="true" style="text-align:right" />
+							</listfooter>
+						</listfoot>
+					</listbox>
+				</div>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

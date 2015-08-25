@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.orden_servicio2Model">
+	<select id="select" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+		select distinct os.codigo_orden,os.codigo_paciente,p.apellido1 as
+		apellido1_paciente,
+		p.apellido2 as apellido2_paciente,p.nombre1 as
+		nombre1_paciente,
+		p.nombre2 as
+		nombre2_paciente,p.fecha_nacimiento,p.lugar_exp,p.estrato,
+		ta.descripcion as tipo_afiliado,p.codigo_administradora,a.nombre as
+		administradora,
+		ds.codigo_cups as codigo_procedimiento,
+		os.codigo_prestador as id_prestador,a2.nombres||' '||a2.apellidos as
+		nombre_prestador,
+		a2.direccion as direccion_prestador,a2.tel_res as
+		tel_prestador,cast(ds.unidades as integer) as unidades,
+		os.fecha_orden,sx.descripcion as sexo,tu.descripcion tipo_usuario,
+		os.codigo_dx1,dx1.nombre as dx1,os.codigo_dx2,dx2.nombre as
+		dx2,esp.nombre as especialidad,os.observaciones,
+		get_edad(p.fecha_nacimiento, current_date, p.unidad_medidad) as
+		edad,cups.nombre as nombre_procedimiento,
+		cast(ds.consecutivo as
+		integer)
+		from orden_servicio2 os
+		inner join detalle_orden2 ds on
+		ds.codigo_orden = os.id
+		left join cups on (cups.codigo =
+		ds.codigo_cups)
+		left join cie dx1 on (dx1.codigo = os.codigo_dx1)
+		left
+		join cie dx2 on (dx2.codigo = os.codigo_dx2)
+		left join paciente p on
+		p.codigo_empresa = os.codigo_empresa
+		and p.codigo_sucursal =
+		os.codigo_sucursal
+		and p.nro_identificacion = os.codigo_paciente
+		left
+		join elemento ta on ta.tipo = 'tipo_afiliado2' and ta.codigo =
+		p.tipo_afiliado
+		left join elemento sx on sx.tipo = 'sexo' and sx.codigo
+		= p.sexo
+		left join elemento tu on tu.tipo = 'tipo_usuario' and
+		tu.codigo = p.tipo_usuario
+		left join administradora a on a.codigo =
+		p.codigo_administradora
+		left join prestadores a2 on
+		a2.codigo_empresa =
+		os.codigo_empresa
+		and a2.codigo_sucursal = os.codigo_sucursal
+		and
+		a2.nro_identificacion = os.codigo_prestador
+		left join especialidad esp
+		on (esp.codigo = a2.codigo_especialidad)
+		where os.codigo_empresa =
+		#{codigo_empresa}
+		and os.codigo_sucursal = #{codigo_sucursal}
+		<if test="codigo_orden != null">
+			and os.codigo_orden = #{codigo_orden}
+		</if>
+		<if test="id != null">
+			and os.id = #{id}
+		</if>
+		order by cast(ds.consecutivo as integer)
+	</select>
+
+</mapper>

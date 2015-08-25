@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.recibo_cajaModel">
+	<select id="select" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+		SELECT
+			rc.codigo AS codigo_recibo,
+			rc.efectivo,
+			rc.valor_neto,
+			rc.cambio,
+			rc.aplica_descuento,
+			rc.fecha,
+			dtrc.codigo_detalle,
+			dtrc.descripcion,
+			dtrc.cantidad,
+			dtrc.valor_unitario,
+			dtrc.valor_total,
+			rc.valor_descuento AS descuento,
+			(
+				pc.nombre1 || ' ' || pc.nombre2 || ' ' || pc.apellido1 || ' ' || pc.apellido2
+			) AS paciente,
+			pc.nro_identificacion,
+			ad.codigo_administradora,
+			rc.valor_total AS subtotal,
+			rc.quien_autoriza,
+			adra.nombre AS nombre_administradora,
+			rc.creacion_user 
+		FROM
+			detalle_recibo_caja dtrc
+		INNER JOIN recibo_caja rc ON (dtrc.id_recibo = rc."id")
+		LEFT JOIN paciente pc ON (
+			rc.nro_identificacion = pc.nro_identificacion
+			AND rc.codigo_empresa = pc.codigo_empresa
+			AND rc.codigo_sucursal = pc.codigo_sucursal
+		)
+		LEFT JOIN admision ad ON (
+			rc.nro_identificacion = ad.nro_identificacion
+			AND rc.codigo_empresa = ad.codigo_empresa
+			AND rc.codigo_sucursal = ad.codigo_sucursal
+			AND rc.nro_ingreso = ad.nro_ingreso
+		)
+		LEFT JOIN administradora adra ON (
+			ad.codigo_administradora = adra.codigo
+			AND rc.codigo_empresa = adra.codigo_empresa
+			AND rc.codigo_sucursal = adra.codigo_sucursal
+		)
+		WHERE
+			rc."id" = #{id_recibo}
+	</select>
+</mapper>

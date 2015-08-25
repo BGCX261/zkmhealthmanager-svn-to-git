@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="healthmanager.modelo.dao.report.reporteAdmisionModel">
+	<select id="select" resultType="java.util.HashMap" parameterType="java.util.Map">
+		select ad.nro_ingreso,ad.nro_identificacion,
+		pct.nombre1||' '||pct.nombre2||' '||pct.apellido1||' '||pct.apellido2 as paciente,
+		ass.nombre as administradora,pl.nombre as plan,ta.descripcion as
+		tipo_afiliado,
+		pl.observacion as
+		obs_plan,pct.fecha_nacimiento,get_edad(pct.fecha_nacimiento,current_date,pct.unidad_medidad)
+		as edad,
+		sexo.descripcion as sexo,tipo_id.descripcion as tipo_id,pct.estrato,pct.direccion,
+		pct.tel_res,dpto.nombre as dpto,mun.nombre as mun,via_ing.descripcion
+		as
+		via_ingreso,ad.fecha_ingreso,ad.nro_autorizacion,tipo_atencion.descripcion
+		as tipo_atencion,esp.nombre as
+		especialidad,ad.ingreso_programa,ad.primera_vez,condicion_us.descripcion
+		as condicion_usuaria,causa_ext.descripcion as causa_externa,
+		tipo_dig.descripcion as
+		tipo_diagnostico,ad.diagnostico_ingreso,cie.nombre as diagn,
+		tipo_disc.descripcion as tipo_discapacidad,grado_disc.descripcion as
+		grado_discapacidad
+		from admision ad
+		left join paciente pct on
+		ad.codigo_empresa = pct.codigo_empresa
+		and ad.codigo_sucursal = pct.codigo_sucursal
+		and ad.nro_identificacion = pct.nro_identificacion
+		left join elemento ta on
+		ta.tipo = 'tipo_afiliado2'
+		and ta.codigo = pct.tipo_afiliado
+		left join elemento sexo on
+		sexo.tipo = 'sexo'
+		and sexo.codigo = pct.sexo
+		left join elemento tipo_id on
+		tipo_id.tipo = 'tipo_id'
+		and tipo_id.codigo = pct.tipo_identificacion
+		left join departamentos dpto on
+		dpto.codigo = pct.codigo_dpto
+		left join municipios mun on
+		mun.coddep = pct.codigo_dpto
+		and mun.codigo = pct.codigo_municipio
+		left join administradora ass on
+		ad.codigo_administradora = ass.codigo
+		left join contratos pl on
+		ad.codigo_empresa = pl.codigo_empresa
+		and ad.codigo_sucursal = pl.codigo_sucursal
+		and ad.codigo_administradora = pl.codigo_administradora
+		and ad.id_plan = pl.id_plan
+		left join elemento via_ing on
+		via_ing.tipo = 'via_ingreso'
+		and via_ing.codigo = ad.via_ingreso
+		left join elemento tipo_atencion on
+		tipo_atencion.tipo = 'tipo_atencion'
+		and tipo_atencion.codigo = ad.tipo_atencion
+		left join especialidad esp on
+		esp.codigo = ad.codigo_especialidad
+		left join elemento condicion_us on
+		condicion_us.tipo = 'condicion_usuaria'
+		and condicion_us.codigo = ad.condicion_usuaria
+		left join elemento causa_ext on
+		causa_ext.tipo = 'causa_externa'
+		and causa_ext.codigo = ad.causa_externa
+		left join elemento tipo_dig on
+		tipo_dig.tipo = 'tipo_diagnostico'
+		and tipo_dig.codigo = ad.tipo_diagnostico
+		left join cie cie on
+		cie.codigo = ad.diagnostico_ingreso
+		left join elemento tipo_disc on
+		tipo_disc.tipo = 'tipo_discapacidad'
+		and tipo_disc.codigo = ad.tipo_discapacidad
+		left join elemento grado_disc on
+		grado_disc.tipo = 'grado_discapacidad'
+		and grado_disc.codigo = ad.grado_discapacidad
+		where ad.codigo_empresa = #{codigo_empresa}
+		and ad.codigo_sucursal = #{codigo_sucursal}
+		and ad.nro_identificacion = #{nro_identificacion}
+		and ad.nro_ingreso = #{nro_ingreso}
+       </select>
+
+</mapper>

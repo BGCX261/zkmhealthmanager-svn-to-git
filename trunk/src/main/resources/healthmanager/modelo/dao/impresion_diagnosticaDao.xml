@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="healthmanager.modelo.dao.Impresion_diagnosticaDao">
+
+	<resultMap id="impresion_diagnosticaMap" type="impresion_diagnostica">
+		<result column="codigo_empresa" property="codigo_empresa" />
+		<result column="codigo_sucursal" property="codigo_sucursal" />
+		<result column="codigo_historia" property="codigo_historia" />
+		<result column="cie_principal" property="cie_principal" />
+		<result column="tipo_principal" property="tipo_principal" />
+		<result column="cie_relacionado1" property="cie_relacionado1" />
+		<result column="tipo_relacionado1" property="tipo_relacionado1" />
+		<result column="cie_relacionado2" property="cie_relacionado2" />
+		<result column="tipo_relacionado2" property="tipo_relacionado2" />
+		<result column="cie_relacionado3" property="cie_relacionado3" />
+		<result column="tipo_relacionado3" property="tipo_relacionado3" />
+		<result column="finalidad_consulta" property="finalidad_consulta" />
+		<result column="codigo_consulta_pyp" property="codigo_consulta_pyp" />
+		<result column="causas_externas" property="causas_externas" />
+		<result column="cie_relacionado4" property="cie_relacionado4" />
+		<result column="tipo_relacionado4" property="tipo_relacionado4" />
+		<result column="nro_identificacion" property="nro_identificacion" />
+		<result column="creacion_date" property="creacion_date" />
+	</resultMap>
+
+	<insert id="crear" parameterType="impresion_diagnostica">
+		insert into public.impresion_diagnostica (codigo_empresa,codigo_sucursal,
+		codigo_historia,cie_principal,tipo_principal,
+		cie_relacionado1,tipo_relacionado1,cie_relacionado2,
+		tipo_relacionado2,cie_relacionado3,tipo_relacionado3,
+		finalidad_consulta,codigo_consulta_pyp,causas_externas,
+		cie_relacionado4,tipo_relacionado4,
+		nro_identificacion,creacion_date)
+
+		values (#{codigo_empresa},#{codigo_sucursal},
+		#{codigo_historia},#{cie_principal},#{tipo_principal},
+		#{cie_relacionado1},#{tipo_relacionado1},#{cie_relacionado2},
+		#{tipo_relacionado2},#{cie_relacionado3},#{tipo_relacionado3},
+		#{finalidad_consulta},#{codigo_consulta_pyp},#{causas_externas},
+		#{cie_relacionado4},#{tipo_relacionado4},
+		#{nro_identificacion},#{creacion_date})
+	</insert>
+
+	<update id="actualizar" parameterType="impresion_diagnostica">
+		update public.impresion_diagnostica set codigo_empresa = #{codigo_empresa},
+		codigo_sucursal = #{codigo_sucursal},codigo_historia = #{codigo_historia},
+		cie_principal = #{cie_principal},tipo_principal = #{tipo_principal},
+		cie_relacionado1 = #{cie_relacionado1},tipo_relacionado1 = #{tipo_relacionado1},
+		cie_relacionado2 = #{cie_relacionado2},tipo_relacionado2 = #{tipo_relacionado2},
+		cie_relacionado3 = #{cie_relacionado3},tipo_relacionado3 = #{tipo_relacionado3},
+		finalidad_consulta = #{finalidad_consulta},codigo_consulta_pyp = #{codigo_consulta_pyp},
+		causas_externas = #{causas_externas},
+		cie_relacionado4 = #{cie_relacionado4},tipo_relacionado4 = #{tipo_relacionado4},
+		nro_identificacion = #{nro_identificacion},creacion_date = #{creacion_date}
+		where 		codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal}
+		and codigo_historia = #{codigo_historia}
+	</update>
+
+	<select id="consultar" parameterType="impresion_diagnostica" resultMap="impresion_diagnosticaMap">
+		select codigo_empresa,codigo_sucursal,
+		codigo_historia,cie_principal,tipo_principal,cie_relacionado1,
+		tipo_relacionado1,cie_relacionado2,tipo_relacionado2,cie_relacionado3,
+		tipo_relacionado3,finalidad_consulta,codigo_consulta_pyp,causas_externas,
+		cie_relacionado4,tipo_relacionado4,nro_identificacion,
+		creacion_date
+		from public.impresion_diagnostica where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_historia = #{codigo_historia} 
+	</select>
+
+	<delete id="eliminar" parameterType="impresion_diagnostica">
+		delete from public.impresion_diagnostica
+		where codigo_empresa = #{codigo_empresa}
+		and codigo_sucursal = #{codigo_sucursal} and codigo_historia = #{codigo_historia} 
+	</delete>
+
+	<select id="listar" parameterType="java.util.Map" resultMap="impresion_diagnosticaMap">
+		select codigo_empresa,codigo_sucursal,
+		codigo_historia,cie_principal,tipo_principal,cie_relacionado1,
+		tipo_relacionado1,cie_relacionado2,tipo_relacionado2,cie_relacionado3,
+		tipo_relacionado3,finalidad_consulta,codigo_consulta_pyp,causas_externas,
+		cie_relacionado4,tipo_relacionado4,nro_identificacion,
+		creacion_date
+		from public.impresion_diagnostica 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="nro_identificacion != null">
+			AND nro_identificacion = #{nro_identificacion}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limite_paginado != null">
+		${limite_paginado}
+		</if>
+	</select>
+	
+	<select id="listar_paciente_contuberculosis_lepra" parameterType="java.util.Map" resultMap="impresion_diagnosticaMap">
+		select codigo_empresa,codigo_sucursal,
+			codigo_historia,cie_principal,tipo_principal,cie_relacionado1,
+			tipo_relacionado1,cie_relacionado2,tipo_relacionado2,cie_relacionado3,
+			tipo_relacionado3,finalidad_consulta,codigo_consulta_pyp,causas_externas,
+			cie_relacionado4,tipo_relacionado4,nro_identificacion,
+			creacion_date
+		from public.impresion_diagnostica
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="nro_identificacion != null">
+			AND nro_identificacion = #{nro_identificacion}
+			</if>
+			<if test="parameters != null">
+			and ((#{parameters} like '%'||cie_principal||'%' and cie_principal !='')
+			 or (#{parameters} like '%'||cie_relacionado1||'%' and cie_relacionado1 !='')
+			 or (#{parameters} like '%'||cie_relacionado2||'%' and cie_relacionado2 !='')
+			 or (#{parameters} like '%'||cie_relacionado3||'%' and cie_relacionado3 !=''))
+			</if>
+		</trim>
+		<if test="limite_paginado != null">
+		${limite_paginado}
+		</if>
+	</select>
+
+	<select id="existe" resultType="java.lang.Boolean">
+		select count(1) != 0 AS exist 		from public.impresion_diagnostica 
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="codigo_empresa != null">
+			AND codigo_empresa = #{codigo_empresa}
+			</if>
+			<if test="codigo_sucursal != null">
+			AND codigo_sucursal = #{codigo_sucursal}
+			</if>
+			<if test="parameter != null">
+			AND ${parameter} like '${value}'
+			</if>
+		</trim>
+		<if test="limit != null">
+		${limit}
+		</if>
+	</select>
+	
+	<select id="getInformacionDiagnostica" parameterType="admision" resultMap="impresion_diagnosticaMap">
+		SELECT
+			impre_diag.codigo_empresa,
+			impre_diag.codigo_sucursal,
+			impre_diag.codigo_historia,
+			impre_diag.cie_principal,
+			impre_diag.tipo_principal,
+			impre_diag.cie_relacionado1,
+			impre_diag.tipo_relacionado1,
+			impre_diag.cie_relacionado2,
+			impre_diag.tipo_relacionado2,
+			impre_diag.cie_relacionado3,
+			impre_diag.tipo_relacionado3,
+			impre_diag.finalidad_consulta,
+			impre_diag.codigo_consulta_pyp,
+			impre_diag.causas_externas,
+			impre_diag.cie_relacionado4,
+			impre_diag.tipo_relacionado4,
+			impre_diag.nro_identificacion,
+			impre_diag.creacion_date
+			FROM
+			public.impresion_diagnostica AS impre_diag
+			INNER JOIN public.historia_clinica AS hist ON hist.codigo_empresa = impre_diag.codigo_empresa 
+			        AND hist.codigo_sucursal = impre_diag.codigo_sucursal AND hist.codigo_historia = impre_diag.codigo_historia
+			where impre_diag.codigo_empresa = #{codigo_empresa}
+			and impre_diag.codigo_sucursal = #{codigo_sucursal} and hist.nro_ingreso = #{nro_ingreso}
+			and hist.nro_identificacion = #{nro_identificacion}
+			limit 1 offset 0
+	</select>
+
+</mapper>
